@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "better_runtime_resource_pack",
+  "id": "advanced_runtime_resource_pack",
   "version": "${version}",
-  "name": "Better Runtime Resource Pack",
-  "description": "an simple extension of ARRP mod",
+  "name": "Advanced Runtime Resource Pack (Fixed)",
+  "description": "fix of ARRP mod",
   "authors": [
     "HalfOf2",
     "SolidBlock"
@@ -23,8 +23,8 @@
     "arrp.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.8.8+build.202",
-    "minecraft": ">=1.16.1"
+    "fabricloader": ">=0.13.0",
+    "minecraft": ">=1.16.0"
   },
   "custom": {
     "modmenu": {
