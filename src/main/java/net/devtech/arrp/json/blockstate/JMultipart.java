@@ -1,54 +1,78 @@
 package net.devtech.arrp.json.blockstate;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import net.devtech.arrp.api.JSONSerializable;
 
-public class JMultipart implements Cloneable {
-	// one or list
-	private final List<JBlockModel> apply = new ArrayList<>();
-	private JWhen when;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-	/**
-	 * @see JState#multipart(JBlockModel...)
-	 */
-	public JMultipart() {}
+/**
+ * An entry of the {@link BlockStatesDefinition#multiparts multipart} field of a {@link BlockStatesDefinition}. Note: this class represents an entry, not a list of it.<br>
+ * The multipart entry consists of the following fields: <ul>
+ * <li><b>{@code apply}</b> - The {@link JBlockModel block model definition} that will be used, or a list of it to randomly choose.</li>
+ * <li><b>{@code when}</b> - The {@link JWhen condition} that the part will be used. Optional.</li>
+ * </ul>
+ */
+public class JMultipart implements Cloneable, JSONSerializable {
+  // one or list
+  public final List<JBlockModel> apply;
+  public JWhen when;
 
-	@Override
-	public JMultipart clone() {
-		try {
-			return (JMultipart) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new InternalError(e);
-		}
-	}
+  public JMultipart() {
+    this.apply = new ArrayList<>();
+  }
 
-	public JMultipart when(JWhen when) {
-		this.when = when;
-		return this;
-	}
+  /**
+   * Specify a simplest situation of a part, which will always be used (or always choose a random one from the array).
+   */
+  public JMultipart(JBlockModel... apply) {
+    this.apply = Arrays.asList(apply);
+  }
 
-	public JMultipart addModel(JBlockModel model) {
-		this.apply.add(model);
-		return this;
-	}
+  /**
+   * Specify a conditioned situation of a part, which will be used when the condition is met.
+   */
+  public JMultipart(JWhen when, JBlockModel... apply) {
+    this(apply);
+    this.when = when;
+  }
 
-	public static class Serializer implements JsonSerializer<JMultipart> {
-		@Override
-		public JsonElement serialize(JMultipart src, Type typeOfSrc, JsonSerializationContext context) {
-			JsonObject obj = new JsonObject();
-			if (src.apply.size() == 1) {
-				obj.add("apply", context.serialize(src.apply.get(0)));
-			} else {
-				obj.add("apply", context.serialize(src.apply));
-			}
-			obj.add("when", context.serialize(src.when));
-			return obj;
-		}
-	}
+  @Override
+  public JMultipart clone() {
+    try {
+      return (JMultipart) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new InternalError(e);
+    }
+  }
+
+  public JMultipart when(JWhen when) {
+    this.when = when;
+    return this;
+  }
+
+  /**
+   * Add a model in the {@link #apply} list.<br>
+   * If the list contains multiple elements, Minecraft will choose a random one in it when rendering.
+   */
+  public JMultipart addModel(JBlockModel model) {
+    this.apply.add(model);
+    return this;
+  }
+
+  @Override
+  public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+    JsonObject obj = new JsonObject();
+    if (this.apply.size() == 1) {
+      obj.add("apply", context.serialize(this.apply.get(0)));
+    } else {
+      obj.add("apply", context.serialize(this.apply));
+    }
+    obj.add("when", context.serialize(this.when));
+    return obj;
+  }
 }

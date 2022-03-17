@@ -1,118 +1,146 @@
 package net.devtech.arrp.json.blockstate;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import net.devtech.arrp.api.JSONSerializable;
+import net.minecraft.util.Identifier;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+/**
+ * @deprecated Please use {@link BlockStatesDefinition}, which is an improved version.
+ */
+@Deprecated
+public final class JState implements JSONSerializable {
+  final List<JVariant> variants = new ArrayList<>();
+  final List<JMultipart> multiparts = new ArrayList<>();
 
-import net.minecraft.util.Identifier;
+  /**
+   * @see #state()
+   * @see #state(JMultipart...)
+   * @see #state(JVariant...)
+   */
+  public JState() {
+  }
 
-public final class JState {
-	private final List<JVariant> variants = new ArrayList<>();
-	private final List<JMultipart> multiparts = new ArrayList<>();
+  public static JState state() {
+    return new JState();
+  }
 
-	/**
-	 * @see #state()
-	 * @see #state(JMultipart...)
-	 * @see #state(JVariant...)
-	 */
-	public JState() {
-	}
+  /**
+   * @deprecated use {@link BlockStatesDefinition#variants(VariantDefinition...)}
+   */
+  @Deprecated
+  public static JState state(JVariant... variants) {
+    JState state = new JState();
+    for (JVariant variant : variants) {
+      state.add(variant);
+    }
+    return state;
+  }
 
-	public static JState state() {
-		return new JState();
-	}
+  public JState add(JVariant variant) {
+    if (!this.multiparts.isEmpty()) {
+      throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
+    }
+    this.variants.add(variant);
+    return this;
+  }
 
-	public static JState state(JVariant... variants) {
-		JState state = new JState();
-		for (JVariant variant : variants) {
-			state.add(variant);
-		}
-		return state;
-	}
+  /**
+   * @deprecated use {@link BlockStatesDefinition#multipart(JMultipart...)}
+   */
+  public static JState state(JMultipart... parts) {
+    JState state = new JState();
+    for (JMultipart part : parts) {
+      state.add(part);
+    }
+    return state;
+  }
 
-	public JState add(JVariant variant) {
-		if (!this.multiparts.isEmpty()) {
-			throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
-		}
-		this.variants.add(variant);
-		return this;
-	}
+  public JState add(JMultipart multiparts) {
+    if (!this.variants.isEmpty()) {
+      throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
+    }
+    this.multiparts.add(multiparts);
+    return this;
+  }
 
-	public static JState state(JMultipart... parts) {
-		JState state = new JState();
-		for (JMultipart part : parts) {
-			state.add(part);
-		}
-		return state;
-	}
+  /**
+   * @deprecated Please directly use {@link JVariant#JVariant()}
+   */
+  @Deprecated
+  public static JVariant variant() {
+    return new JVariant();
+  }
 
-	public JState add(JMultipart multiparts) {
-		if (!this.variants.isEmpty()) {
-			throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
-		}
-		this.multiparts.add(multiparts);
-		return this;
-	}
+  public static JVariant variant(JBlockModel model) {
+    JVariant variant = new JVariant();
+    variant.put("", model);
+    return variant;
+  }
 
-	public static JVariant variant() {
-		return new JVariant();
-	}
+  /**
+   * @deprecated Please directly use the constructor method {@link JBlockModel#JBlockModel()}.
+   */
+  @Deprecated
+  public static JBlockModel model(String id) {
+    return new JBlockModel(id);
+  }
 
-	public static JVariant variant(JBlockModel model) {
-		JVariant variant = new JVariant();
-		variant.put("", model);
-		return variant;
-	}
+  /**
+   * @deprecated Please directly use the constructor method {@link JBlockModel#JBlockModel()}.
+   */
+  @Deprecated
+  public static JBlockModel model(Identifier id) {
+    return new JBlockModel(id);
+  }
 
-	public static JBlockModel model(String id) {
-		return new JBlockModel(id);
-	}
+  /**
+   * @deprecated Please directly use the constructor method {@link JMultipart }.
+   */
+  @Deprecated
+  public static JMultipart multipart(JBlockModel... models) {
+    JMultipart multipart = new JMultipart();
+    for (JBlockModel model : models) {
+      multipart.addModel(model);
+    }
+    return multipart;
+  }
 
-	public static JBlockModel model(Identifier id) {
-		return new JBlockModel(id);
-	}
+  /**
+   * @deprecated Please directly use the constructor method {@link JWhen}.
+   */
+  @Deprecated
+  public static JWhen when() {
+    return new JWhen();
+  }
 
-	public static JMultipart multipart(JBlockModel... models) {
-		JMultipart multipart = new JMultipart();
-		for (JBlockModel model : models) {
-			multipart.addModel(model);
-		}
-		return multipart;
-	}
+  @Override
+  public JState clone() {
+    try {
+      return (JState) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new InternalError(e);
+    }
+  }
 
-	public static JWhen when() {
-		return new JWhen();
-	}
-
-	@Override
-	public JState clone() {
-		try {
-			return (JState) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new InternalError(e);
-		}
-	}
-
-	public static class Serializer implements JsonSerializer<JState> {
-		@Override
-		public JsonElement serialize(JState src, Type typeOfSrc, JsonSerializationContext context) {
-			JsonObject json = new JsonObject();
-			if (!src.variants.isEmpty()) {
-				if (src.variants.size() == 1) {
-					json.add("variants", context.serialize(src.variants.get(0)));
-				} else {
-					json.add("variants", context.serialize(src.variants));
-				}
-			}
-			if (!src.multiparts.isEmpty()) {
-				json.add("multipart", context.serialize(src.multiparts));
-			}
-			return json;
-		}
-	}
+  @Override
+  public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+    JsonObject json = new JsonObject();
+    if (!this.variants.isEmpty()) {
+      if (this.variants.size() == 1) {
+        json.add("variants", context.serialize(this.variants.get(0)));
+      } else {
+        json.add("variants", context.serialize(this.variants));
+      }
+    }
+    if (!this.multiparts.isEmpty()) {
+      json.add("multipart", context.serialize(this.multiparts));
+    }
+    return json;
+  }
 }

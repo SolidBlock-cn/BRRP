@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "advanced_runtime_resource_pack",
+  "id": "better_runtime_resource_pack",
   "version": "${version}",
-  "name": "Advanced Runtime Resource Pack (Fixed)",
+  "name": "Better Runtime Resource Pack (derived from ARRP mod)",
   "description": "fix of ARRP mod",
   "authors": [
     "HalfOf2",
@@ -24,7 +24,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.13.0",
-    "minecraft": ">=1.16.0"
+    "minecraft": ">=1.18.2"
   },
   "custom": {
     "modmenu": {
