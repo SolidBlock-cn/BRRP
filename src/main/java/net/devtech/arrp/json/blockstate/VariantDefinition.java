@@ -3,7 +3,7 @@ package net.devtech.arrp.json.blockstate;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.devtech.arrp.api.JSONSerializable;
+import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.state.property.Property;
 
 import java.lang.reflect.Type;
@@ -14,7 +14,7 @@ import java.util.HashMap;
  * It's a simple hash map for the key-value pairs. The key is a string specifying the variant conditions, which can be null, a single or multiple property key-value pairs(s). The value is an array of block model definitions, which can be sometimes a singleton.
  */
 @SuppressWarnings("unused")
-public class VariantDefinition extends HashMap<String, JBlockModel[]> implements JSONSerializable {
+public class VariantDefinition extends HashMap<String, JBlockModel[]> implements JsonSerializable {
   /**
    * Add a simple variant situation.
    *

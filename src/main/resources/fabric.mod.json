@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "better_runtime_resource_pack",
-  "version": "${version}",
+  "version": "0.6.0",
   "name": "Better Runtime Resource Pack (derived from ARRP mod)",
-  "description": "fix of ARRP mod",
+  "description": "BRRP is derived from ARRP mod, which fixes some issues and some bugs. The mod is trying the best to make it compatible with ARRP. Installing this mod does not require installing ARRP, and other mods depending on ARRP can depend on this mod.",
   "authors": [
     "HalfOf2",
     "SolidBlock"
@@ -17,6 +17,12 @@
   "entrypoints": {
     "preLaunch": [
       "net.devtech.arrp.ARRP"
+    ],
+    "main": [
+      "net.devtech.arrp.BRRPInitialize"
+    ],
+    "brrp:develop": [
+      "net.devtech.arrp.BRRPDevelopment"
     ]
   },
   "mixins": [
@@ -24,11 +30,12 @@
   ],
   "depends": {
     "fabricloader": ">=0.13.0",
-    "minecraft": ">=1.18.2"
+    "minecraft": ">=1.18.2",
+    "better_runtime_resource_pack": "*"
   },
   "custom": {
     "modmenu": {
-      "badges": [ "library" ]
-    }  
+      "badges": ["library"]
+    }
   }
 }

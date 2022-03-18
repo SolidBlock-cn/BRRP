@@ -2,7 +2,7 @@ package test;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.devtech.arrp.api.JSONSerializable;
+import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.lang.JLang;
@@ -35,7 +35,7 @@ public class RRPPreTest {
                 .west(face("all").uv(9, 0, 11, 16))
                 .east(face("all").uv(9, 0, 11, 16))));
 
-    Gson gson = new GsonBuilder().registerTypeAdapter(JSONSerializable.class, JSONSerializable.SERIALIZER)
+    Gson gson = new GsonBuilder().registerTypeAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
         .setPrettyPrinting()
         .create();
 

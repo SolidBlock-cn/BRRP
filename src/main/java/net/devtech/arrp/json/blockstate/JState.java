@@ -3,7 +3,7 @@ package net.devtech.arrp.json.blockstate;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.devtech.arrp.api.JSONSerializable;
+import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Type;
@@ -14,14 +14,12 @@ import java.util.List;
  * @deprecated Please use {@link BlockStatesDefinition}, which is an improved version.
  */
 @Deprecated
-public final class JState implements JSONSerializable {
+public final class JState implements JsonSerializable {
   final List<JVariant> variants = new ArrayList<>();
   final List<JMultipart> multiparts = new ArrayList<>();
 
   /**
-   * @see #state()
-   * @see #state(JMultipart...)
-   * @see #state(JVariant...)
+   * @see BlockStatesDefinition#variants(VariantDefinition...)
    */
   public JState() {
   }

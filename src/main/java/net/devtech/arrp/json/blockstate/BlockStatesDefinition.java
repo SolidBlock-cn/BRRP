@@ -3,26 +3,26 @@ package net.devtech.arrp.json.blockstate;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.devtech.arrp.api.JSONSerializable;
+import net.devtech.arrp.ARRP;
+import net.devtech.arrp.api.JsonSerializable;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A simple improved version of {@link JState}.
  */
-public class BlockStatesDefinition implements JSONSerializable {
-  public final List<VariantDefinition> variants;
+public class BlockStatesDefinition implements JsonSerializable {
+  public final VariantDefinition variants;
   public final List<JMultipart> multiparts;
 
-  private BlockStatesDefinition(List<VariantDefinition> variants, List<JMultipart> multiparts) {
+  private BlockStatesDefinition(VariantDefinition variants, List<JMultipart> multiparts) {
     this.variants = variants;
     this.multiparts = multiparts;
   }
 
-  public static BlockStatesDefinition variants(List<VariantDefinition> variants) {
+  public static BlockStatesDefinition variants(VariantDefinition variants) {
     return new BlockStatesDefinition(variants, null);
   }
 
@@ -30,29 +30,25 @@ public class BlockStatesDefinition implements JSONSerializable {
     return new BlockStatesDefinition(null, multiparts);
   }
 
-  public static BlockStatesDefinition variants(VariantDefinition... variants) {
-    return variants(Arrays.asList(variants));
-  }
-
   public static BlockStatesDefinition multipart(JMultipart... multiparts) {
     return multipart(Arrays.asList(multiparts));
   }
 
   /**
-   * Add a variant definition for a block states definition of variants.
+   * Add a variant to the definition for a block states definition .
    *
-   * @throws IllegalStateException if the block states definition is for multiples (for example, created from {@link #multipart(JMultipart...)}.
+   * @throws IllegalStateException if the block states definition is for multiparts (for example, created from {@link #multipart(JMultipart...)}.
    */
-  public BlockStatesDefinition add(VariantDefinition variant) {
+  public BlockStatesDefinition addVariant(String variant, JBlockModel... modelDefinition) {
     if (variant == null) throw new IllegalStateException("A block state definition can only have either variants or multiparts, not both");
-    variants.add(variant);
+    variants.addVariant(variant, modelDefinition);
     return this;
   }
 
   /**
    * Add a variant definition for a block states definition of variants.
    *
-   * @throws IllegalStateException if the block states definition is for multiples (for example, created from {@link #variants(VariantDefinition...)}.
+   * @throws IllegalStateException if the block states definition is for multiples (for example, created from {@link #variants(VariantDefinition)}.
    */
   public BlockStatesDefinition add(JMultipart multipart) {
     if (multiparts == null) throw new IllegalStateException("A block state definition can only have either variants or multiparts, not both");
@@ -70,7 +66,10 @@ public class BlockStatesDefinition implements JSONSerializable {
       instance = multipart(jState.multiparts);
     } else {
       // It's regarded a 'variants'.
-      instance = variants(jState.variants.stream().map(VariantDefinition::of).collect(Collectors.toList()));
+      instance = variants(VariantDefinition.of(jState.variants.get(0)));
+      if (jState.variants.size() > 1) {
+        ARRP.LOGGER.warn("Only one variant definition is allowed, but provided multiple. Only the first one will be used.");
+      }
     }
     return instance;
   }

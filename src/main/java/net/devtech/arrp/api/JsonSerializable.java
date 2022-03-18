@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
  *        .registerTypeAdapter(JSONSerializable.class, JSONSerializable.SERIALIZER)}
  * </pre>
  */
-public interface JSONSerializable {
+public interface JsonSerializable {
   /**
    * Your class should override this method to specify how to serialize. This is slightly like {@link JsonSerializer#serialize(Object, Type, JsonSerializationContext)}, while the parameter <code>src</code> is replaced with <code>this</code>.
    *
@@ -24,5 +24,5 @@ public interface JSONSerializable {
    */
   JsonElement serialize(Type typeOfSrc, JsonSerializationContext context);
 
-  JsonSerializer<JSONSerializable> SERIALIZER = JSONSerializable::serialize;
+  JsonSerializer<JsonSerializable> SERIALIZER = JsonSerializable::serialize;
 }

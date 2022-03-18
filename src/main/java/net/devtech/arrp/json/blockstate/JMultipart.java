@@ -3,7 +3,7 @@ package net.devtech.arrp.json.blockstate;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.devtech.arrp.api.JSONSerializable;
+import net.devtech.arrp.api.JsonSerializable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.List;
  * <li><b>{@code when}</b> - The {@link JWhen condition} that the part will be used. Optional.</li>
  * </ul>
  */
-public class JMultipart implements Cloneable, JSONSerializable {
+public class JMultipart implements Cloneable, JsonSerializable {
   // one or list
   public final List<JBlockModel> apply;
   public JWhen when;
@@ -31,6 +31,10 @@ public class JMultipart implements Cloneable, JSONSerializable {
    */
   public JMultipart(JBlockModel... apply) {
     this.apply = Arrays.asList(apply);
+  }
+
+  public JMultipart(List<JBlockModel> apply) {
+    this.apply = apply;
   }
 
   /**

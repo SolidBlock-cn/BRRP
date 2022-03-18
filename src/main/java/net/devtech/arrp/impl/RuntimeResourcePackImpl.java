@@ -1,50 +1,11 @@
 package net.devtech.arrp.impl;
 
-import static java.lang.String.valueOf;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.IntUnaryOperator;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
-import javax.imageio.ImageIO;
-
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import net.devtech.arrp.api.JSONSerializable;
+import com.google.gson.*;
+import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
+import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
 import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.loot.JLootTable;
@@ -54,14 +15,31 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.*;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
+import static java.lang.String.valueOf;
 
 
 /**
@@ -76,7 +54,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   public static final Gson GSON = new GsonBuilder()
       .setPrettyPrinting()
       .disableHtmlEscaping()
-      .registerTypeAdapter(JSONSerializable.class, JSONSerializable.SERIALIZER)
+      .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
+      .registerTypeAdapter(Identifier.class, (JsonSerializer<Identifier>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getNamespace() + ":" + src.getPath()))
       .create();
   // @formatter:on
   private static final Logger LOGGER = LoggerFactory.getLogger("RRP");
@@ -117,6 +96,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
   private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
+  private final Map<Identifier, JLang> langMergable = new ConcurrentHashMap<>();
 
   public RuntimeResourcePackImpl(Identifier id) {
     this(id, 5);
@@ -125,22 +105,6 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   public RuntimeResourcePackImpl(Identifier id, int version) {
     this.packVersion = version;
     this.id = id;
-  }
-
-  private static byte[] serialize(Object object) {
-    UnsafeByteArrayOutputStream ubaos = new UnsafeByteArrayOutputStream();
-    OutputStreamWriter writer = new OutputStreamWriter(ubaos);
-    GSON.toJson(object, writer);
-    try {
-      writer.close();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    return ubaos.getBytes();
-  }
-
-  private static Identifier fix(Identifier identifier, String prefix, String append) {
-    return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
   }
 
   @Override
@@ -175,6 +139,20 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   }
 
   @Override
+  public void mergeLang(Identifier identifier, JLang lang) {
+    this.langMergable.compute(identifier, (identifier1, lang1) -> {
+      if (lang1 == null) {
+        lang1 = new JLang();
+        this.addLazyResource(ResourceType.CLIENT_RESOURCES, identifier, (pack, identifier2) -> {
+          return pack.addLang(identifier, lang);
+        });
+      }
+      lang1.getLang().putAll(lang.getLang());
+      return lang1;
+    });
+  }
+
+  @Override
   public byte[] addLootTable(Identifier identifier, JLootTable table) {
     return this.addData(fix(identifier, "loot_tables", "json"), serialize(table));
   }
@@ -196,6 +174,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   public void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> func) {
     this.getSys(type).put(path, new Memoized<>(func, path));
   }
+
 
   @Override
   public byte[] addResource(ResourceType type, Identifier path, byte[] data) {
@@ -244,6 +223,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public byte[] addBlockState(JState state, Identifier path) {
+    return this.addAsset(fix(path, "blockstates", "json"), serialize(state));
+  }
+
+  @Override
+  public byte[] addBlockState(BlockStatesDefinition state, Identifier path) {
     return this.addAsset(fix(path, "blockstates", "json"), serialize(state));
   }
 
@@ -477,6 +461,22 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
     // unlock
     this.waiting.unlock();
+  }
+
+  private static byte[] serialize(Object object) {
+    UnsafeByteArrayOutputStream ubaos = new UnsafeByteArrayOutputStream();
+    OutputStreamWriter writer = new OutputStreamWriter(ubaos);
+    GSON.toJson(object, writer);
+    try {
+      writer.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return ubaos.getBytes();
+  }
+
+  private static Identifier fix(Identifier identifier, String prefix, String append) {
+    return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
   }
 
   protected byte[] read(ZipEntry entry, InputStream stream) throws IOException {

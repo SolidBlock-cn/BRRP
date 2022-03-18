@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "advanced_runtime_resource_pack",
+  "version": "0.6.0",
+  "name": "Advanced Runtime Resource Pack",
+  "description": "This is a nested mod. More information can be found in BRRP.",
+  "authors": [
+    "HalfOf2"
+  ],
+  "contact": {
+    "sources": "https://github.com/Devan-Kerman/RRP"
+  },
+  "license": "MPLv2",
+  "icon": "arrp_icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"]
+    }
+  }
+}

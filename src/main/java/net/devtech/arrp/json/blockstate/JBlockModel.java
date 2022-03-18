@@ -4,7 +4,8 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The simple block model that usually represents as the value in {@link JVariant}.
+ * The simple block model that usually represents as the value in {@link JVariant}.<br>
+ * <B>Note: </B>This class is used as a model definition in the block states definition file. To represent a model's content, please use {@link net.devtech.arrp.json.models.JModel}.
  */
 public class JBlockModel implements Cloneable {
   /**
@@ -103,6 +104,11 @@ public class JBlockModel implements Cloneable {
 
   public JBlockModel uvlock(boolean uvlock) {
     this.uvlock = uvlock;
+    return this;
+  }
+
+  public JBlockModel weight(int weight) {
+    this.weight = weight;
     return this;
   }
 }

@@ -3,7 +3,7 @@ package net.devtech.arrp.json.blockstate;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.devtech.arrp.api.JSONSerializable;
+import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Pair;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * The map for property names and values. The key is the property name, and the value is the property value, or joined with `|` if there are multiple values.
  */
-public class JWhen extends LinkedHashMap<String, String> implements Cloneable, JSONSerializable {
+public class JWhen extends LinkedHashMap<String, String> implements Cloneable, JsonSerializable {
   /**
    * Please use {@link #alternatives}.
    */

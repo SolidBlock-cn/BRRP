@@ -3,7 +3,7 @@ package net.devtech.arrp.json.blockstate;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.devtech.arrp.api.JSONSerializable;
+import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
 
@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * @deprecated use {@link VariantDefinition}
  */
-public final class JVariant implements Cloneable, JSONSerializable {
+public final class JVariant implements Cloneable, JsonSerializable {
   final Map<String, JBlockModel> models = new HashMap<>();
 
   public JVariant() {

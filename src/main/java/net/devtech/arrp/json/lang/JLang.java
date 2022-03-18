@@ -38,7 +38,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    */
   @Deprecated
   public JLang translate(String in, String out) {
-    ((Map<String, String>) this).put(in, out);
+    put(in, out);
     return this;
   }
 
@@ -49,26 +49,25 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   }
 
   private JLang object(String type, Identifier identifier, String translation) {
-    ((Map<String, String>) this).put(type + '.' + identifier.getNamespace() + '.' + identifier.getPath(), translation);
+    put(type + '.' + identifier.getNamespace() + '.' + identifier.getPath(), translation);
     return this;
   }
 
   public JLang entry(String entry, String name) {
-    ((Map<String, String>) this).put(entry, name);
+    put(entry, name);
     return this;
   }
-
 
   /**
    * adds a translation key for an item, respects {@link Item#getTranslationKey()}
    */
   public JLang itemRespect(Item item, String name) {
-    ((Map<String, String>) this).put(item.getTranslationKey(), name);
+    put(item.getTranslationKey(), name);
     return this;
   }
 
   public JLang item(ItemStack stack, String name) {
-    ((Map<String, String>) this).put(stack.getTranslationKey(), name);
+    put(stack.getTranslationKey(), name);
     return this;
   }
 
@@ -84,7 +83,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * adds a translation key for an block, respects {@link Block#getTranslationKey()}
    */
   public JLang blockRespect(Block block, String name) {
-    ((Map<String, String>) this).put(block.getTranslationKey(), name);
+    put(block.getTranslationKey(), name);
     return this;
   }
 
@@ -104,7 +103,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * adds a translation key for an entity, respects {@link EntityType#getTranslationKey()}
    */
   public JLang entityRespect(EntityType<?> type, String name) {
-    ((Map<String, String>) this).put(type.getTranslationKey(), name);
+    put(type.getTranslationKey(), name);
     return this;
   }
 
@@ -120,7 +119,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * adds a translation key for an entity, respects {@link Enchantment#getTranslationKey()}
    */
   public JLang enchantmentRespect(Enchantment enchantment, String name) {
-    ((Map<String, String>) this).put(enchantment.getTranslationKey(), name);
+    put(enchantment.getTranslationKey(), name);
     return this;
   }
 
@@ -186,22 +185,22 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   }
 
   public JLang tippedArrow(Identifier id, String name) {
-    ((Map<String, String>) this).put("item.minecraft.tipped_arrow.effect." + id.getPath(), name);
+    put("item.minecraft.tipped_arrow.effect." + id.getPath(), name);
     return this;
   }
 
   public JLang lingeringPotion(Identifier id, String name) {
-    ((Map<String, String>) this).put("item.minecraft.lingering_potion.effect." + id.getPath(), name);
+    put("item.minecraft.lingering_potion.effect." + id.getPath(), name);
     return this;
   }
 
   public JLang splashPotion(Identifier id, String name) {
-    ((Map<String, String>) this).put("item.minecraft.splash_potion.effect." + id.getPath(), name);
+    put("item.minecraft.splash_potion.effect." + id.getPath(), name);
     return this;
   }
 
   public JLang drinkablePotion(Identifier id, String name) {
-    ((Map<String, String>) this).put("item.minecraft.potion.effect." + id.getPath(), "Potion of " + name);
+    put("item.minecraft.potion.effect." + id.getPath(), "Potion of " + name);
     return this;
   }
 
@@ -209,7 +208,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * Like {@link JLang#drinkablePotion}, but it adds in the "Potion of" automatically.
    */
   public JLang drinkablePotionOf(Identifier id, String effectName) {
-    ((Map<String, String>) this).put("item.minecraft.potion.effect." + id.getPath(), "Potion of " + effectName);
+    put("item.minecraft.potion.effect." + id.getPath(), "Potion of " + effectName);
     return this;
   }
 
@@ -217,7 +216,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * Like {@link JLang#splashPotion}, but it adds in the "Splash Potion of" automatically.
    */
   public JLang splashPotionOf(Identifier id, String effectName) {
-    ((Map<String, String>) this).put("item.minecraft.splash_potion.effect." + id.getPath(), "Splash Potion of " + effectName);
+    put("item.minecraft.splash_potion.effect." + id.getPath(), "Splash Potion of " + effectName);
     return this;
   }
 
@@ -225,7 +224,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * Like {@link JLang#lingeringPotion}, but it adds in the "Lingering Potion of" automatically.
    */
   public JLang lingeringPotionOf(Identifier id, String effectName) {
-    ((Map<String, String>) this).put("item.minecraft.lingering_potion.effect." + id.getPath(), "Lingering Potion of " + effectName);
+    put("item.minecraft.lingering_potion.effect." + id.getPath(), "Lingering Potion of " + effectName);
     return this;
   }
 
@@ -233,7 +232,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * Like {@link JLang#tippedArrow}, but it adds in the "Tipped Arrow of" automatically.
    */
   public JLang tippedArrowOf(Identifier id, String effectName) {
-    ((Map<String, String>) this).put("item.minecraft.tipped_arrow.effect." + id.getPath(), "Tipped Arrow of " + effectName);
+    put("item.minecraft.tipped_arrow.effect." + id.getPath(), "Tipped Arrow of " + effectName);
     return this;
   }
 
