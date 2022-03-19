@@ -18,9 +18,6 @@ public final class JState implements JsonSerializable {
   final List<JVariant> variants = new ArrayList<>();
   final List<JMultipart> multiparts = new ArrayList<>();
 
-  /**
-   * @see BlockStatesDefinition#variants(VariantDefinition...)
-   */
   public JState() {
   }
 
@@ -29,7 +26,7 @@ public final class JState implements JsonSerializable {
   }
 
   /**
-   * @deprecated use {@link BlockStatesDefinition#variants(VariantDefinition...)}
+   * @deprecated use {@link BlockStatesDefinition#ofVariants(VariantDefinition)}
    */
   @Deprecated
   public static JState state(JVariant... variants) {
@@ -49,7 +46,7 @@ public final class JState implements JsonSerializable {
   }
 
   /**
-   * @deprecated use {@link BlockStatesDefinition#multipart(JMultipart...)}
+   * @deprecated use {@link BlockStatesDefinition#ofMultiparts(JMultipart...)}
    */
   public static JState state(JMultipart... parts) {
     JState state = new JState();

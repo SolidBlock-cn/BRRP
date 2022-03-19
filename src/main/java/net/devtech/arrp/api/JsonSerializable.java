@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
  * <pre>
  *   {@code
  *       new GsonBuilder()
- *        .registerTypeAdapter(JSONSerializable.class, JSONSerializable.SERIALIZER)}
+ *        .registerTypeHierarchyAdapter(JSONSerializable.class, JSONSerializable.SERIALIZER)}
  * </pre>
  */
 public interface JsonSerializable {

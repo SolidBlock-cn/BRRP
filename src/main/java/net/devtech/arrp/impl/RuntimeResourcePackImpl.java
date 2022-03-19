@@ -55,10 +55,10 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       .setPrettyPrinting()
       .disableHtmlEscaping()
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
-      .registerTypeAdapter(Identifier.class, (JsonSerializer<Identifier>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getNamespace() + ":" + src.getPath()))
+      .registerTypeHierarchyAdapter(Identifier.class, (JsonSerializer<Identifier>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getNamespace() + ":" + src.getPath()))
       .create();
   // @formatter:on
-  private static final Logger LOGGER = LoggerFactory.getLogger("RRP");
+  private static final Logger LOGGER = LoggerFactory.getLogger(RuntimeResourcePackImpl.class);
 
   static {
     Properties properties = new Properties();
@@ -127,7 +127,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
         ImageIO.write(recolored, "png", baos);
         return baos.getBytes();
       } catch (Throwable e) {
-        e.printStackTrace();
+        LOGGER.error("Failed to add resources:", e);
         throw new RuntimeException(e);
       }
     });
@@ -143,9 +143,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     this.langMergable.compute(identifier, (identifier1, lang1) -> {
       if (lang1 == null) {
         lang1 = new JLang();
-        this.addLazyResource(ResourceType.CLIENT_RESOURCES, identifier, (pack, identifier2) -> {
-          return pack.addLang(identifier, lang);
-        });
+        this.addLazyResource(ResourceType.CLIENT_RESOURCES, identifier, (pack, identifier2) -> pack.addLang(identifier, lang));
       }
       lang1.getLang().putAll(lang.getLang());
       return lang1;

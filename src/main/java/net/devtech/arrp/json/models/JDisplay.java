@@ -73,9 +73,6 @@ public class JDisplay extends EnumMap<JDisplay.DisplayPosition, JPosition> imple
   @Deprecated(forRemoval = true)
   private JPosition fixed;
 
-  /**
-   * @see JModel#display()
-   */
   public JDisplay() {
     super(DisplayPosition.class);
   }
@@ -121,7 +118,7 @@ public class JDisplay extends EnumMap<JDisplay.DisplayPosition, JPosition> imple
   }
 
   /**
-   * This method quite resembles {@link EnumMap#put(Enum, Object)}, but returns the instance itself, making it possible to chain call.=
+   * This method quite resembles {@link EnumMap#put(Enum, Object)}, but returns the instance itself, making it possible to chain call.
    */
   public JDisplay set(DisplayPosition displayPosition, JPosition position) {
     put(displayPosition, position);

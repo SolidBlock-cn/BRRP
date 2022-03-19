@@ -66,16 +66,29 @@ public class JBlockModel implements Cloneable {
   public JBlockModel() {
   }
 
+  /**
+   * @param modelId The identifier of the block model. For example, {@code "minecraft:block/oak_slab_top"}.
+   * @deprecated Please use {@link #JBlockModel(Identifier)} or {@link #JBlockModel(String, String)}.
+   */
   @Deprecated
-  public JBlockModel(String model) {
-    this(new Identifier(model));
+  public JBlockModel(String modelId) {
+    this(new Identifier(modelId));
   }
 
   /**
-   * @see JState#model(String)
+   * @param modelId The identifier of the block model. For example, <code>{@code new Identifier("minecraft", "block/oak_slab_top")}</code>.
+   * @see #JBlockModel(String, String)
    */
-  public JBlockModel(Identifier model) {
-    this.model = model;
+  public JBlockModel(Identifier modelId) {
+    this.model = modelId;
+  }
+
+  /**
+   * @param idNamespace The namespace of the block model id. For example, {@code "minecraft"}.
+   * @param idPath      The path of the block model id. For example, {@code "block/oak_slab_top"}.
+   */
+  public JBlockModel(String idNamespace, String idPath) {
+    this(new Identifier(idNamespace, idPath));
   }
 
   @Override
@@ -85,6 +98,14 @@ public class JBlockModel implements Cloneable {
     } catch (CloneNotSupportedException e) {
       throw new InternalError(e);
     }
+  }
+
+  /**
+   * Set the model id.
+   */
+  public JBlockModel modelId(Identifier model) {
+    this.model = model;
+    return this;
   }
 
   public JBlockModel x(int x) {

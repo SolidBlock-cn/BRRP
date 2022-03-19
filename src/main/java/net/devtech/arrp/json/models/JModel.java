@@ -11,7 +11,15 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * a block/item model, static import this class
+ * <p>This is the class representing the models in resource packs. It includes block models and item models.</p>
+ * <p>Don't be confused with {@link net.devtech.arrp.json.blockstate.JBlockModel}, which is used in a block states definition file.</p>
+ *
+ * @see net.minecraft.data.client.Model
+ * @see net.minecraft.client.render.block.BlockModels
+ * @see net.minecraft.client.render.model.BakedModel
+ * @see net.minecraft.client.render.model.BasicBakedModel
+ * @see net.minecraft.client.render.model.UnbakedModel
+ * @see net.minecraft.client.render.model.json.JsonUnbakedModel
  */
 @SuppressWarnings("unused")
 public class JModel implements Cloneable {
@@ -193,7 +201,7 @@ public class JModel implements Cloneable {
   }
 
   /**
-   * Set the identifier of model parent. You can also specify the model parent in the {@link #JModel(String) constructor}.
+   * Set the identifier of model parent. You can also specify the model parent in the {@linkplain #JModel(String) constructor}.
    */
   public JModel parent(String parent) {
     this.parent = parent;
@@ -201,7 +209,7 @@ public class JModel implements Cloneable {
   }
 
   /**
-   * Set the identifier of model parent. You can also specify the model parent in the {@link #JModel(Identifier) constructor}.
+   * Set the identifier of model parent. You can also specify the model parent in the {@linkplain #JModel(Identifier) constructor}.
    */
   public JModel parent(Identifier parent) {
     this.parent = parent.toString();
@@ -230,7 +238,7 @@ public class JModel implements Cloneable {
   }
 
   /**
-   * Set the texture variables of the model. If it exists already, will override it, instead of append it.
+   * Set the {@linkplain #textures texture variables} of the model. If it exists already, will override it, instead of append it.
    */
   public JModel textures(JTextures textures) {
     this.textures = textures;
@@ -254,12 +262,26 @@ public class JModel implements Cloneable {
   }
 
   /**
-   * Add an element to the model. If the {@link #elements} field already exists, it will append to the field.
+   * Add several texture variables to the {@link #textures} field. This method is a convenient way.
+   *
+   * @param strings The texture names and values. Must be an even number.
+   */
+  public JModel addTextures(String... strings) {
+    if (textures == null) textures = new JTextures();
+    textures.vars(strings);
+    return this;
+  }
+
+  /**
+   * Add one or more elements to the model. If the {@link #elements} field already exists, they will be appended to the field.
    */
   public JModel element(JElement... elements) {
     return element(Arrays.asList(elements));
   }
 
+  /**
+   * Add a collection of elements to the model. If the {@link #elements} field already exists, they will be appended to the field.
+   */
   public JModel element(Collection<? extends JElement> elements) {
     if (this.elements == null) {
       this.elements = new ArrayList<>(elements);
@@ -271,7 +293,7 @@ public class JModel implements Cloneable {
 
   /**
    * Set the {@link #elements} field. If the field exists, it will be directly replaced.<p>
-   * In this case you can make different {@code JModel}s share the same {@link #elements} field, which can also be an immutable list.
+   * In this case you can make different {@code JModel}s share the same {@link #elements} field, which can be an immutable list.
    */
   public JModel setElements(List<JElement> elements) {
     this.elements = elements;
