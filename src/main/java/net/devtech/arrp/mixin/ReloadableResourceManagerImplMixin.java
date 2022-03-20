@@ -7,8 +7,6 @@ import net.minecraft.util.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +17,8 @@ import java.util.concurrent.Executor;
 public abstract class ReloadableResourceManagerImplMixin {
   private static final Logger ARRP_LOGGER = LoggerFactory.getLogger("ARRP/ReloadableResourceManagerImplMixin");
 
-  @ModifyVariable(method = "reload",
-      at = @At(value = "HEAD"), argsOnly = true)
+  //  @ModifyVariable(method = "reload",
+//      at = @At(value = "HEAD"), argsOnly = true)
   private List<ResourcePack> registerARRPs(List<ResourcePack> packs, Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> packs0) {
     ARRP_LOGGER.info("BRRP register - before vanilla");
     List<ResourcePack> before = new ArrayList<>();

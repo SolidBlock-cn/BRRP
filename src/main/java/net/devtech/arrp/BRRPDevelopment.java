@@ -9,6 +9,7 @@ import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
 import net.devtech.arrp.json.blockstate.JBlockModel;
 import net.devtech.arrp.json.blockstate.VariantDefinition;
 import net.devtech.arrp.json.lang.JLang;
+import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -110,6 +111,20 @@ public class BRRPDevelopment implements ModInitializer {
     LAVA_SLAB.writeAll(PACK);
     CUSTOM_SLAB.writeAll(PACK);
     SMOOTH_STONE.writeAll(PACK);
+    PACK.addLootTable(new Identifier("brrp", "test"), new JLootTable("block"));
+    PACK.addData(new Identifier("brrp", "recipes/test.json"), """
+        {
+          "type": "minecraft:crafting_shapeless",
+          "group": "wooden_button",
+          "ingredients": [
+            {
+              "item": "minecraft:oak_planks"
+            }
+          ],
+          "result": {
+            "item": "minecraft:oak_button"
+          }
+        }""".getBytes());
 
     RRPCallback.AFTER_VANILLA.register(a -> a.add(PACK));
   }

@@ -1,5 +1,6 @@
 package net.devtech.arrp.impl;
 
+import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
@@ -176,7 +177,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public byte[] addResource(ResourceType type, Identifier path, byte[] data) {
-    this.getSys(type).put(path, () -> data);
+    this.getSys(type).put(path, Suppliers.ofInstance(data));
     return data;
   }
 
