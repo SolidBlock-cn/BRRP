@@ -3,7 +3,10 @@ package net.devtech.arrp.generator;
 import net.devtech.arrp.IdentifierExtension;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
+import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -167,4 +170,29 @@ public interface BlockResourceGenerator {
 
 
   // SERVER PART
+  default Identifier getLootTableId() {
+    return ((IdentifierExtension) getBlockId()).prepend("blocks/");
+  }
+
+  default JLootTable getLootTable() {
+    return JLootTable.simple(getBlockId().toString());
+  }
+
+  default void writeLootTable(RuntimeResourcePack pack) {
+    final JLootTable lootTable = getLootTable();
+    if (lootTable != null) {
+      pack.addLootTable(getLootTableId(), lootTable);
+    }
+  }
+
+  default void writeData(RuntimeResourcePack pack) {
+    writeLootTable(pack);
+  }
+
+  default void writeAll(RuntimeResourcePack pack) {
+    if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+      writeAssets(pack);
+    }
+    writeData(pack);
+  }
 }

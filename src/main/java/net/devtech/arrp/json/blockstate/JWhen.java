@@ -3,6 +3,7 @@ package net.devtech.arrp.json.blockstate;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Pair;
@@ -19,9 +20,10 @@ import java.util.stream.Collectors;
  */
 public class JWhen extends LinkedHashMap<String, String> implements Cloneable, JsonSerializable {
   /**
-   * Please use {@link #alternatives}.
+   * @deprecated Please use {@link #alternatives}.
    */
-  @Deprecated
+  @SuppressWarnings({"DeprecatedIsStillUsed"})
+  @Deprecated(forRemoval = true)
   private final List<Pair<String, String[]>> OR = new ArrayList<>();
 
   /**
@@ -60,6 +62,7 @@ public class JWhen extends LinkedHashMap<String, String> implements Cloneable, J
 
   public <T extends Comparable<T>> JWhen add(Property<T> property, T value) {
     put(property.getName(), value.toString());
+
     return this;
   }
 
@@ -71,11 +74,13 @@ public class JWhen extends LinkedHashMap<String, String> implements Cloneable, J
 
   public JWhen add(String property, String value) {
     put(property, value);
+    OR.add(new Pair<>(property, new String[]{value}));
     return this;
   }
 
   public JWhen add(String property, String... value) {
     put(property, String.join("|", value));
+    OR.add(new Pair<>(property, value));
     return this;
   }
 
@@ -92,5 +97,16 @@ public class JWhen extends LinkedHashMap<String, String> implements Cloneable, J
       object.add("OR", context.serialize(alternatives));
     }
     return object;
+  }
+
+  /**
+   * @deprecated This class is kept for compatibility.
+   */
+  @Deprecated
+  public static class Serializer implements JsonSerializer<JWhen> {
+    @Override
+    public JsonElement serialize(JWhen src, Type typeOfSrc, JsonSerializationContext context) {
+      return src.serialize(typeOfSrc, context);
+    }
   }
 }

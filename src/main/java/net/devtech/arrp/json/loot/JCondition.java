@@ -1,20 +1,32 @@
 package net.devtech.arrp.json.loot;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collection;
 
-
+/**
+ * A condition in a loot table is called "predicate"
+ */
 public class JCondition implements Cloneable, JsonSerializable {
-  public JsonObject parameters = new JsonObject();
+  /**
+   * The id (as string) of the condition.
+   */
+  public String condition;
+  public JsonObject parameters;
+
+  public JCondition(String condition, JsonObject parameters) {
+    this.condition = condition;
+    this.parameters = parameters;
+  }
 
   public JCondition(String condition) {
-    if (condition != null) {
-      this.condition(condition);
-    }
+    this(condition, new JsonObject());
   }
 
   public JCondition() {
@@ -23,47 +35,59 @@ public class JCondition implements Cloneable, JsonSerializable {
 
   public JCondition(JsonObject parameters) {
     this.parameters = parameters;
+    if (parameters.has("condition")) this.condition = parameters.get("condition").getAsString();
   }
 
+  @CanIgnoreReturnValue
   public JCondition condition(String condition) {
-    this.parameters.addProperty("condition", condition);
+    this.condition = condition;
     return this;
   }
 
+  @CanIgnoreReturnValue
   public JCondition set(JsonObject parameters) {
     parameters.addProperty("condition", this.parameters.get("condition").getAsString());
     this.parameters = parameters;
     return this;
   }
 
+  @CanIgnoreReturnValue
   public JCondition parameter(String key, Number value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
+  @CanIgnoreReturnValue
   public JCondition parameter(String key, JsonElement value) {
     this.parameters.add(key, value);
     return this;
   }
 
+  @CanIgnoreReturnValue
   public JCondition parameter(String key, Boolean value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
+  @CanIgnoreReturnValue
   public JCondition parameter(String key, Character value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
+  @CanIgnoreReturnValue
   public JCondition parameter(String key, Identifier value) {
     return parameter(key, value.toString());
   }
 
+  @CanIgnoreReturnValue
   public JCondition parameter(String key, String value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
   /**
    * "or"'s the conditions together
+   *
+   * @deprecated Please use {@link #ofAlternative}.
    */
+  @Deprecated
   public JCondition alternative(JCondition... conditions) {
     JsonArray array = new JsonArray();
     for (JCondition condition : conditions) {
@@ -71,6 +95,16 @@ public class JCondition implements Cloneable, JsonSerializable {
     }
     this.parameters.add("terms", array);
     return this;
+  }
+
+  public static JCondition ofAlternative(Collection<JCondition> conditions) {
+    final JCondition result = new JCondition("alternative");
+    result.parameters.add("terms", RuntimeResourcePackImpl.GSON.toJsonTree(conditions));
+    return result;
+  }
+
+  public static JCondition ofAlternative(JCondition... conditions) {
+    return ofAlternative(Arrays.asList(conditions));
   }
 
   @Override
@@ -84,6 +118,19 @@ public class JCondition implements Cloneable, JsonSerializable {
 
   @Override
   public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+    final JsonObject parameters = this.parameters;
+    parameters.addProperty("condition", condition);
     return parameters;
+  }
+
+  /**
+   * @deprecated This class is kept for compatibility.
+   */
+  @Deprecated
+  public static class Serializer implements JsonSerializer<JCondition> {
+    @Override
+    public JsonElement serialize(JCondition src, Type typeOfSrc, JsonSerializationContext context) {
+      return src.serialize(typeOfSrc, context);
+    }
   }
 }

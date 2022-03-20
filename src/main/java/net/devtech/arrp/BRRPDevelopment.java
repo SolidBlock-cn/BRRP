@@ -106,10 +106,10 @@ public class BRRPDevelopment implements ModInitializer {
     TextureRegistry.register(CUSTOM_SLAB, "block/oak_leaves");
 //    TextureRegistry.register(SMOOTH_STONE, "block/smooth_stone_slab_double");
 
-    LAVA_BLOCK.writeAssets(PACK);
-    LAVA_SLAB.writeAssets(PACK);
-    CUSTOM_SLAB.writeAssets(PACK);
-    SMOOTH_STONE.writeAssets(PACK);
+    LAVA_BLOCK.writeAll(PACK);
+    LAVA_SLAB.writeAll(PACK);
+    CUSTOM_SLAB.writeAll(PACK);
+    SMOOTH_STONE.writeAll(PACK);
 
     RRPCallback.AFTER_VANILLA.register(a -> a.add(PACK));
   }

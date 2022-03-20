@@ -27,7 +27,7 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    implementation project(path: ":arrp", configuration: 'namedElements')
+    modApi project(path: ":arrp", configuration: 'namedElements')
     include project(path: ":arrp", configuration: 'namedElements')
 }
 
@@ -47,6 +47,10 @@ processResources {
     filesMatching("fabric.mod.json") {
         expand "version": version
     }
+}
+
+remapJar {
+    addNestedDependencies = true
 }
 
 tasks.withType(JavaCompile).configureEach {
