@@ -2,7 +2,13 @@
   "required": true,
   "package": "net.devtech.arrp.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": ["BlockMixin", "IdentifierMixin", "LifecycledResourceManagerMixin", "MinecraftServerMixin", "ReloadableResourceManagerImplMixin"],
+  "mixins": [
+    "BlockMixin",
+    "IdentifierMixin",
+    "LifecycledResourceManagerImplMixin",
+    "LifecycledResourceManagerMixin",
+    "MinecraftServerMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
