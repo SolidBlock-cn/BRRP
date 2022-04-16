@@ -136,7 +136,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public byte[] addLang(Identifier identifier, JLang lang) {
-    return this.addAsset(fix(identifier, "lang", "json"), serialize(lang.getLang()));
+    return this.addAsset(fix(identifier, "lang", "json"), serialize(lang));
   }
 
   @Override
@@ -146,7 +146,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
         lang1 = new JLang();
         this.addLazyResource(ResourceType.CLIENT_RESOURCES, identifier, (pack, identifier2) -> pack.addLang(identifier, lang));
       }
-      lang1.getLang().putAll(lang.getLang());
+      lang1.putAll(lang);
       return lang1;
     });
   }
@@ -221,7 +221,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   }
 
   @Override
-  public byte[] addBlockState(JState state, Identifier path) {
+  public byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier path) {
     return this.addAsset(fix(path, "blockstates", "json"), serialize(state));
   }
 

@@ -1,41 +1,102 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.Contract;
 
-public class JResult {
-	protected final String item;
+import java.lang.reflect.Type;
 
-	JResult(final String id) {
-		this.item = id;
-	}
+public class JResult implements Cloneable, JsonSerializable {
+  /**
+   * The identifier (as string) of the resulting item.
+   */
+  public final String item;
+  /**
+   * The count of the result.
+   */
+  public Integer count;
 
-	public static JResult item(final Item item) {
-		return result(Registry.ITEM.getId(item).toString());
-	}
+  public JResult(final String id) {
+    this.item = id;
+  }
 
-	public static JResult result(final String id) {
-		return new JResult(id);
-	}
+  public JResult(final Identifier id) {
+    this(id.toString());
+  }
 
-	public static JStackedResult itemStack(final Item item, final int count) {
-		return stackedResult(Registry.ITEM.getId(item).toString(), count);
-	}
+  /**
+   * This method will query the id of the item. You should ensure that the item has been registered.
+   */
+  public JResult(final Item item) {
+    this(Registry.ITEM.getId(item));
+  }
 
-	public static JStackedResult stackedResult(final String id, final int count) {
-		final JStackedResult stackedResult = new JStackedResult(id);
+  /**
+   * This method will query the id of the item. You should ensure that the item has been registered.
+   */
+  public JResult(final ItemConvertible item) {
+    this(item.asItem());
+  }
 
-		stackedResult.count = count;
+  /**
+   * @deprecated Please directly call {@link #JResult(Item)}.
+   */
+  public static JResult item(final Item item) {
+    return result(Registry.ITEM.getId(item).toString());
+  }
 
-		return stackedResult;
-	}
+  /**
+   * @deprecated Please directly call {@link #JResult(String)} .
+   */
+  public static JResult result(final String id) {
+    return new JResult(id);
+  }
 
-	@Override
-	protected JResult clone() {
-		try {
-			return (JResult) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new InternalError(e);
-		}
-	}
+  /**
+   * Set the count of this result.
+   */
+  @Contract("_ -> this")
+  @CanIgnoreReturnValue
+  public JResult count(int count) {
+    this.count = count;
+    return this;
+  }
+
+  @Deprecated
+  public static JStackedResult itemStack(final Item item, final int count) {
+    return stackedResult(Registry.ITEM.getId(item).toString(), count);
+  }
+
+  @Deprecated
+  public static JStackedResult stackedResult(final String id, final int count) {
+    final JStackedResult stackedResult = new JStackedResult(id);
+
+    stackedResult.count = count;
+
+    return stackedResult;
+  }
+
+  @Override
+  public JResult clone() {
+    try {
+      return (JResult) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new InternalError(e);
+    }
+  }
+
+  @Override
+  public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+    final JsonObject jsonObject = new JsonObject();
+    jsonObject.addProperty("item", item);
+    if (count != null) jsonObject.addProperty("count", count);
+    return jsonObject;
+  }
 }

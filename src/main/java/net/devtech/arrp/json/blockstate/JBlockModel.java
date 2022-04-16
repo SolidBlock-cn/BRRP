@@ -35,12 +35,12 @@ public class JBlockModel implements Cloneable {
    *   {@code simpleRandom(new SimpleBlockModelDefinition(new Identifier("minecraft","block/dirt"))}
    * </pre>
    * which returns an array block model definition like this:
-   * <pre>
-   *   [{  "model": "minecraft:block/dirt"  },
-   *    {  "model": "minecraft:block/dirt",  "y": 90  },
-   *    {  "model": "minecraft:block/dirt",  "y": 180  },
-   *    {  "model": "minecraft:block/dirt",  "y": 270  }  ]
-   * </pre>
+   * <pre>{@code
+   *   [{ "model": "minecraft:block/dirt"  },
+   *    { "model": "minecraft:block/dirt", "y": 90  },
+   *    { "model": "minecraft:block/dirt", "y": 180  },
+   *    { "model": "minecraft:block/dirt", "y": 270  }  ]
+   * }</pre>
    */
   public static JBlockModel[] simpleRandom(JBlockModel basicModel) {
     final JBlockModel[] multiple = new JBlockModel[4];

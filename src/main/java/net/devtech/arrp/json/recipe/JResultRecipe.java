@@ -1,21 +1,49 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Contract;
+
 public abstract class JResultRecipe extends JRecipe {
-	private final JResult result;
+  public final JResult result;
 
-	JResultRecipe(final String type, final JResult result) {
-		super(type);
+  protected JResultRecipe(final String type, final JResult result) {
+    super(type);
+    this.result = result;
+  }
 
-		this.result = result;
-	}
+  protected JResultRecipe(String type, String result) {
+    this(type, new JResult(result));
+  }
 
-	@Override
-	public JResultRecipe group(final String group) {
-		return (JResultRecipe) super.group(group);
-	}
+  protected JResultRecipe(String type, Identifier result) {
+    this(type, new JResult(result));
+  }
 
-	@Override
-	protected JResultRecipe clone() {
-		return (JResultRecipe) super.clone();
-	}
+  protected JResultRecipe(String type, Item result) {
+    this(type, new JResult(result));
+  }
+
+  protected JResultRecipe(String type, ItemConvertible result) {
+    this(type, new JResult(result));
+  }
+
+  @Contract("_ -> this")
+  @CanIgnoreReturnValue
+  public JResultRecipe resultCount(int count) {
+    this.result.count = count;
+    return this;
+  }
+
+  @Override
+  public JResultRecipe group(final String group) {
+    return (JResultRecipe) super.group(group);
+  }
+
+  @Override
+  public JResultRecipe clone() {
+    return (JResultRecipe) super.clone();
+  }
 }

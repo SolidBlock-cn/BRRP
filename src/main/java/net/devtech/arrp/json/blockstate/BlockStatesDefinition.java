@@ -27,6 +27,12 @@ public class BlockStatesDefinition implements JsonSerializable {
   public final VariantDefinition variants;
   public final List<JMultipart> multiparts;
 
+  /**
+   * The basic constructor method. Please don't directly call it. Please call {@link #ofVariants} or {@link #ofMultiparts}.
+   *
+   * @param variants   The variant definition. One of these two parameters must be {@code null}.
+   * @param multiparts The list of multiparts. One of these two parameters must be {@code null}.
+   */
   private BlockStatesDefinition(VariantDefinition variants, List<JMultipart> multiparts) {
     this.variants = variants;
     this.multiparts = multiparts;

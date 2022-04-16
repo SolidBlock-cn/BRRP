@@ -1,96 +1,248 @@
 package net.devtech.arrp.json.recipe;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
+import net.devtech.arrp.api.JsonSerializable;
+import net.devtech.arrp.json.tags.IdentifiedTag;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-public class JIngredient implements Cloneable {
-	protected String item;
-	protected String tag;
-	protected List<JIngredient> ingredients;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-	JIngredient() {}
+/**
+ * <p>An <b>ingredient</b>, as it literally means, is used in several types of recipes. It has either an item, or an item tag.</p>
+ * <p>It takes two forms: a single ingredient, with an item or tag specified, and a <i>list</i> of ingredients, with multiple single ingredients specified.</p>
+ */
+public class JIngredient implements Cloneable, JsonSerializable {
+  /**
+   * The identifier of the {@link Item}. It should exist only when {@link #tag} and {@link #ingredients} are null.
+   */
+  protected String item;
+  /**
+   * The identifier of the item tag. It should exist only when {@link #item} and {@link #ingredients} are null.
+   */
+  protected String tag;
+  /**
+   * The list of ingredients. If this field exists, the {@link #item} and {@link #tag} fields will be ignored and should be null, and this object will be serialized as a {@link com.google.gson.JsonArray}.
+   */
+  protected List<JIngredient> ingredients;
 
-	public static JIngredient ingredient() {
-		return new JIngredient();
-	}
+  public JIngredient() {
+  }
 
-	public JIngredient item(Item item) {
-		return this.item(Registry.ITEM.getId(item).toString());
-	}
+  /**
+   * When calling this constructor, either {@link #item} or {@link #tag} should be null.
+   *
+   * @param item The identifier (as string) of the item.
+   * @param tag  The identifier (as tag) of the item tag.
+   */
+  protected JIngredient(String item, String tag) {
+    this.item = item;
+    this.tag = tag;
+  }
 
-	public JIngredient item(String id) {
-		if (this.isDefined()) {
-			return this.add(JIngredient.ingredient().item(id));
-		}
+  protected JIngredient(List<JIngredient> ingredients) {
+    this.ingredients = ingredients;
+  }
 
-		this.item = id;
+  /**
+   * @deprecated Please directly call {@link #JIngredient()}. It's public now.
+   */
+  @Deprecated
+  public static JIngredient ingredient() {
+    return new JIngredient();
+  }
 
-		return this;
-	}
+  /**
+   * Set the item identifier of this ingredient. You must ensure that the item has been registered when calling this.
+   *
+   * @param item The item.
+   */
+  @CanIgnoreReturnValue
+  public JIngredient item(Item item) {
+    return this.item(Registry.ITEM.getId(item).toString());
+  }
 
-	public JIngredient tag(String tag) {
-		if (this.isDefined()) {
-			return this.add(JIngredient.ingredient().tag(tag));
-		}
+  /**
+   * Set the item identifier of this ingredient. You must ensure that the item has been registered when calling this.
+   *
+   * @param itemConvertible The item. It can be a block.
+   */
+  @CanIgnoreReturnValue
+  public JIngredient item(ItemConvertible itemConvertible) {
+    return item(itemConvertible.asItem());
+  }
 
-		this.tag = tag;
+  /**
+   * Set the item identifier of this ingredient.
+   *
+   * @param id The identifier as string.
+   */
+  @CanIgnoreReturnValue
+  public JIngredient item(String id) {
+    if (this.isDefined()) {
+      return this.add(JIngredient.ofItem(id));
+    }
 
-		return this;
-	}
+    this.item = id;
 
-	public JIngredient add(final JIngredient ingredient) {
-		if (this.ingredients == null) {
-			final List<JIngredient> ingredients = new ArrayList<>();
+    return this;
+  }
 
-			if (this.isDefined()) {
-				ingredients.add(this.clone());
-			}
+  /**
+   * Set the item identifier of this ingredient.
+   *
+   * @param id The identifier of the item.
+   */
+  @CanIgnoreReturnValue
+  public JIngredient item(Identifier id) {
+    return item(id.toString());
+  }
 
-			this.ingredients = ingredients;
-		}
+  public static JIngredient ofItem(Item item) {
+    return ofItem(Registry.ITEM.getId(item));
+  }
 
-		this.ingredients.add(ingredient);
+  public static JIngredient ofItem(ItemConvertible itemConvertible) {
+    return ofItem(itemConvertible.asItem());
+  }
 
-		return this;
-	}
+  public static JIngredient ofItem(String id) {
+    return new JIngredient(id, null);
+  }
 
-	private boolean isDefined() {
-		return this.item != null || this.tag != null;
-	}
+  public static JIngredient ofItem(Identifier id) {
+    return ofItem(id.toString());
+  }
 
-	@Override
-	public JIngredient clone() {
-		try {
-			return (JIngredient) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new InternalError(e);
-		}
-	}
+  public JIngredient tag(String tagId) {
+    if (this.isDefined()) {
+      return this.add(JIngredient.ingredient().tag(tagId));
+    }
 
-	public static class Serializer implements JsonSerializer<JIngredient> {
-		@Override
-		public JsonElement serialize(final JIngredient src,
-				final Type typeOfSrc,
-				final JsonSerializationContext context) {
-			if (src.ingredients != null) {
-				return context.serialize(src.ingredients);
-			}
+    this.tag = tagId;
 
-			final JsonObject object = new JsonObject();
+    return this;
+  }
 
-			object.add("item", context.serialize(src.item));
-			object.add("tag", context.serialize(src.tag));
+  public JIngredient tag(Identifier tagId) {
+    return tag(tagId.toString());
+  }
 
-			return object;
-		}
-	}
+  public JIngredient tag(IdentifiedTag tag) {
+    return tag(tag.identifier);
+  }
+
+  public static JIngredient ofTag(String tagId) {
+    return new JIngredient(null, tagId);
+  }
+
+  public static JIngredient ofTag(Identifier tagId) {
+    return ofTag(tagId.toString());
+  }
+
+  public static JIngredient ofTag(IdentifiedTag tag) {
+    return ofTag(tag.identifier);
+  }
+
+  public static JIngredient ofMultipleIngredients(List<JIngredient> ingredients) {
+    return new JIngredient(ingredients);
+  }
+
+  public static JIngredient ofItems(String... ids) {
+    return new JIngredient(Arrays.stream(ids).map(JIngredient::ofItem).collect(Collectors.toList()));
+  }
+
+  public static JIngredient ofItems(Identifier... ids) {
+    return new JIngredient(Arrays.stream(ids).map(JIngredient::ofItem).collect(Collectors.toList()));
+  }
+
+  public static JIngredient ofItems(Item... items) {
+    return new JIngredient(Arrays.stream(items).map(JIngredient::ofItem).collect(Collectors.toList()));
+  }
+
+  public static JIngredient ofItems(ItemConvertible... itemConvertibles) {
+    return new JIngredient(Arrays.stream(itemConvertibles).map(JIngredient::ofItem).collect(Collectors.toList()));
+  }
+
+  public static JIngredient ofTags(String... tagIds) {
+    return new JIngredient(Arrays.stream(tagIds).map(JIngredient::ofTag).collect(Collectors.toList()));
+  }
+
+  public static JIngredient ofTags(Identifier... tagIds) {
+    return new JIngredient(Arrays.stream(tagIds).map(JIngredient::ofTag).collect(Collectors.toList()));
+  }
+
+  public static JIngredient ofTags(IdentifiedTag... tags) {
+    return new JIngredient(Arrays.stream(tags).map(JIngredient::ofTag).collect(Collectors.toList()));
+  }
+
+  /**
+   * Add another ingredient to this ingredient. In this case, the {@link #ingredients} field will be non-null, and this object will be serialized to a {@link com.google.gson.JsonArray}.
+   */
+  @CanIgnoreReturnValue
+  public JIngredient add(final JIngredient ingredient) {
+    if (this.ingredients == null) {
+      final List<JIngredient> ingredients = new ArrayList<>();
+
+      if (this.isDefined()) {
+        ingredients.add(this.clone());
+      }
+
+      this.ingredients = ingredients;
+    }
+
+    this.ingredients.add(ingredient);
+
+    return this;
+  }
+
+  private boolean isDefined() {
+    return this.item != null || this.tag != null;
+  }
+
+  @Override
+  public JIngredient clone() {
+    try {
+      return (JIngredient) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new InternalError(e);
+    }
+  }
+
+  @Override
+  public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+    if (this.ingredients != null) {
+      return context.serialize(this.ingredients);
+    }
+
+    final JsonObject object = new JsonObject();
+
+    object.add("item", context.serialize(this.item));
+    object.add("tag", context.serialize(this.tag));
+
+    return object;
+  }
+
+  /**
+   * @deprecated This class is kept for only compatibility.
+   */
+  @Deprecated
+  public static class Serializer implements JsonSerializer<JIngredient> {
+    @Override
+    public JsonElement serialize(final JIngredient src,
+                                 final Type typeOfSrc,
+                                 final JsonSerializationContext context) {
+      return src.serialize(typeOfSrc, context);
+    }
+  }
 }

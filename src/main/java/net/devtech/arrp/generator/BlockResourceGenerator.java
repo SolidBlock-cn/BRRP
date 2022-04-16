@@ -5,9 +5,9 @@ import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
@@ -15,11 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>The interface is used for blocks.</p>
- * <p>As implemented in {@link net.devtech.arrp.mixin.BlockMixin}, this interface is by default implemented by {@link Block}s. The compiler does not think so, as it is not declared in the class, but you can simply cast a block object and call methods of it. For example: </p>
- * <pre>{@code
- * return ((BlockResourceGenerator) Blocks.STONE).getId();
- * }</pre>
  * <p>Your custom block class can implement this interface, and override some methods you need. For example:</p>
+ * <p>This interface simply <i>extends</i> {@link ItemResourceGenerator}, as the resources of the block item related to it will be also generated. It's also possible that the block does not have a block item; in this case the recipe and item model should be ignored.</p>
  * <pre>{@code
  * public class MyBlock extends Block implements BlockResourceGenerator {
  *   [...]
@@ -33,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>Also, your custom class can implement this interface. In this case, you <i>must</i> override {@link #getBlockId()} method, as it cannot be casted to {@code Block}.</p>
  * <p>It's highly recommended but not required to annotate methods related to client (block states definitions, block models, item models) as {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code>, as they are only used in the client version mod. The interface itself does not annotate it, in consideration of rare situations that the server really needs. But mostly these client-related methods are not needed in the server side.</p>
  */
-public interface BlockResourceGenerator {
+public interface BlockResourceGenerator extends ItemResourceGenerator {
   /**
    * Query the id of the block in {@link Registry#BLOCK}.<br>
    * You <i>must</i> override this method if you're implementing this interface on a non-{@code Block} class.
@@ -45,12 +42,14 @@ public interface BlockResourceGenerator {
   }
 
   /**
-   * Query the id of the corresponding block item. We assume that the block item has the same id as that of the block, and does not check if the block item really exists. You can override when needed, but most time there is no need.
+   * Query the id of the corresponding block item. You can override when needed, but most time there is no need.
    *
-   * @return The id of the block item.
+   * @return The id of the block item, or {@code null} if the block item is air, which indicated that it does not exist (or that block is air itself, but this case this method should not be reached).
    */
+  @Override
   default Identifier getItemId() {
-    return getBlockId();
+    final Item item = ((Block) this).asItem();
+    return item == Items.AIR ? null : Registry.ITEM.getId(item);
   }
 
 
@@ -64,15 +63,6 @@ public interface BlockResourceGenerator {
    */
   default Identifier getBlockModelId() {
     return ((IdentifierExtension) getBlockId()).prepend("block/");
-  }
-
-  /**
-   * The id of the model of its block item. It is usually {@code <i>namespace</i>:item/<i>path</i>}.
-   *
-   * @return The id of the item model.
-   */
-  default Identifier getItemModelId() {
-    return ((IdentifierExtension) getItemId()).prepend("item/");
   }
 
   /**
@@ -138,23 +128,42 @@ public interface BlockResourceGenerator {
   }
 
   /**
+   * If the item id is null, which means the block item does not exist, the item model id will be null as well.
+   *
+   * @return The id of the block item model.
+   */
+  @Override
+  default Identifier getItemModelId() {
+    final Identifier itemId = getItemId();
+    if (itemId == null) return null;
+    return ((IdentifierExtension) itemId).prepend("item/");
+  }
+
+  /**
+   * If the item id is null, which means the block item does not exist, the item model will not be generated, let alone written.
+   *
+   * @param pack The runtime resource pack.
+   */
+  @Override
+  default void writeItemModel(RuntimeResourcePack pack) {
+    final Identifier itemModelId = getItemModelId();
+    if (itemModelId != null) {
+      final JModel model = getItemModel();
+      if (model != null) {
+        pack.addModel(model, itemModelId);
+      }
+    }
+  }
+
+  /**
    * The model of the block item. It probably directly inherits the block model. But sometimes it is a "layer0" with the texture (for example, grass panes). In that case you can override this model.<p>
    * If you do not need an item model, you can override it and make it return null.
    *
    * @return The item model.
    */
+  @Override
   default @Nullable JModel getItemModel() {
     return new JModel(getBlockModelId());
-  }
-
-  /**
-   * Write the item model (returned in {@link #getItemModel} to the runtime resource pack. It does nothing if the returned model is {@code null}.
-   *
-   * @param pack The runtime resource pack.
-   */
-  default void writeItemModel(RuntimeResourcePack pack) {
-    final JModel model = getItemModel();
-    if (model != null) pack.addModel(model, getItemModelId());
   }
 
   /**
@@ -162,6 +171,7 @@ public interface BlockResourceGenerator {
    *
    * @param pack The runtime resource pack.
    */
+  @Override
   default void writeAssets(RuntimeResourcePack pack) {
     writeBlockStatesDefinition(pack);
     writeBlockModel(pack);
@@ -170,14 +180,30 @@ public interface BlockResourceGenerator {
 
 
   // SERVER PART
+
+  /**
+   * Get the id of the block loot table. It's by default in the format of <code><i>namespace:</i>blocks/<i>path</i></code>, note its "blocks" instead of "block". The loot table is used when the block is broken.
+   *
+   * @return The id of the block loot table.
+   */
   default Identifier getLootTableId() {
     return ((IdentifierExtension) getBlockId()).prepend("blocks/");
   }
 
+  /**
+   * Get the block loot table. It's by default the simplest loot table, which means one block of itself will be dropped when broken.
+   *
+   * @return The block loot table.
+   */
   default JLootTable getLootTable() {
     return JLootTable.simple(getBlockId().toString());
   }
 
+  /**
+   * Write the block loot table to the runtime resource pack.
+   *
+   * @param pack The runtime resource pack.
+   */
   default void writeLootTable(RuntimeResourcePack pack) {
     final JLootTable lootTable = getLootTable();
     if (lootTable != null) {
@@ -185,14 +211,13 @@ public interface BlockResourceGenerator {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @param pack The runtime resource pack.
+   */
   default void writeData(RuntimeResourcePack pack) {
     writeLootTable(pack);
-  }
-
-  default void writeAll(RuntimeResourcePack pack) {
-    if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-      writeAssets(pack);
-    }
-    writeData(pack);
+    writeRecipes(pack);
   }
 }

@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 /**
- * <p>A variant definition defines which models and adjust will be used in each block state property.</p>
+ * <p>A <b>variant definition</b> defines which models and adjust will be used in each block state property.</p>
  * <p>A simple extended version for {@link JVariant}.</p>
  * <p>It's a simple hash map for the key-value pairs. The key is a string specifying the variant conditions, which can be null, a single or multiple property key-value pairs(s). The value is an array of block model definitions, which can be sometimes a singleton.</p>
  * <p>A block states definition is either composed of "variant definition"s, or composed of "multiparts". A block states definition consisting of variant definitions can have codes like the following format:</p>
@@ -31,11 +31,13 @@ import java.util.function.Function;
  *   "": {"model": "minecraft:stone"}
  * }}
  * }</pre>
+ *
+ * @author SolidBlock
  */
 @SuppressWarnings("unused")
 public class VariantDefinition extends HashMap<String, JBlockModel[]> implements JsonSerializable {
   /**
-   * Simple 'upgrades' the deprecated jVariant to the improved version.
+   * Simply 'upgrades' the deprecated jVariant to the improved version.
    */
   public static VariantDefinition of(@SuppressWarnings("deprecation") JVariant jVariant) {
     final VariantDefinition instance = new VariantDefinition();
