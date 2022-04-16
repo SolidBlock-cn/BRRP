@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * This is a simple extension of a cube block. You can specify textures for it.
  */
-public class SmartCubeBlock extends Block implements BlockResourceGenerator {
+public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
   public final String parent;
   public final JTextures textures;
 
@@ -25,7 +25,7 @@ public class SmartCubeBlock extends Block implements BlockResourceGenerator {
    * @param textures Texture definitions of the model.
    */
   @ApiStatus.Internal
-  public SmartCubeBlock(Settings settings, String parent, JTextures textures) {
+  public BRRPCubeBlock(Settings settings, String parent, JTextures textures) {
     super(settings);
     this.parent = parent;
     this.textures = textures;
@@ -38,8 +38,8 @@ public class SmartCubeBlock extends Block implements BlockResourceGenerator {
    * @param allTexture Texture for all sides.
    * @return A new instance.
    */
-  public static SmartCubeBlock cubeAll(Settings settings, String allTexture) {
-    return new SmartCubeBlock(settings, "block/cube_all", JTextures.ofAll(allTexture));
+  public static BRRPCubeBlock cubeAll(Settings settings, String allTexture) {
+    return new BRRPCubeBlock(settings, "block/cube_all", JTextures.ofAll(allTexture));
   }
 
   /**
@@ -51,8 +51,8 @@ public class SmartCubeBlock extends Block implements BlockResourceGenerator {
    * @param bottomTexture Texture for bottom side.
    * @return A new instance.
    */
-  public static SmartCubeBlock cubeBottomTop(Settings settings, String topTexture, String sideTexture, String bottomTexture) {
-    return new SmartCubeBlock(settings, "block/cube_bottom_top", JTextures.ofSides(topTexture, sideTexture, bottomTexture));
+  public static BRRPCubeBlock cubeBottomTop(Settings settings, String topTexture, String sideTexture, String bottomTexture) {
+    return new BRRPCubeBlock(settings, "block/cube_bottom_top", JTextures.ofSides(topTexture, sideTexture, bottomTexture));
   }
 
   @Environment(EnvType.CLIENT)

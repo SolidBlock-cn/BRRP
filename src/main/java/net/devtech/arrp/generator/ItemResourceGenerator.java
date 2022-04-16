@@ -1,6 +1,5 @@
 package net.devtech.arrp.generator;
 
-import net.devtech.arrp.IdentifierExtension;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
@@ -44,7 +43,7 @@ public interface ItemResourceGenerator {
    * @return The id of the item model.
    */
   default Identifier getItemModelId() {
-    return ((IdentifierExtension) getItemId()).prepend("item/");
+    return getItemId().brrp_prepend("item/");
   }
 
   /**
@@ -53,7 +52,7 @@ public interface ItemResourceGenerator {
    * @return The id of the item texture.
    */
   default String getTextureId() {
-    return ((IdentifierExtension) getItemId()).prepend("item/").toString();
+    return getItemId().brrp_prepend("item/").toString();
   }
 
   /**

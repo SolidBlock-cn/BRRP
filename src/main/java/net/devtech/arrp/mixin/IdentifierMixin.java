@@ -14,12 +14,12 @@ public abstract class IdentifierMixin implements IdentifierExtension {
   public abstract String getPath();
 
   @Override
-  public Identifier append(String s) {
+  public Identifier brrp_append(String s) {
     return new Identifier(getNamespace(), getPath() + s);
   }
 
   @Override
-  public Identifier prepend(String s) {
+  public Identifier brrp_prepend(String s) {
     return new Identifier(getNamespace(), s + getPath());
   }
 }

@@ -1,8 +1,9 @@
 package net.devtech.arrp.generator;
 
-import net.devtech.arrp.IdentifierExtension;
+import com.google.gson.JsonObject;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
+import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
 import net.fabricmc.api.EnvType;
@@ -10,6 +11,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.SlabBlock;
+import net.minecraft.data.server.BlockLootTableGenerator;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * This is a simple extension of {@link SlabBlock} with the resource generation provided.
  */
-public class SmartSlabBlock extends SlabBlock implements BlockResourceGenerator {
+public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
   /**
    * The base block will be used to generate some files. It can be null.<br>
    * When the base block is null, the double-slab creates and uses the model or "slab_double" model, instead of directly using the model of base block.
@@ -27,11 +29,11 @@ public class SmartSlabBlock extends SlabBlock implements BlockResourceGenerator 
   /**
    * Simply creates an instance with a given base block. The block settings of the base block will be used, so you do not need to provide it.
    */
-  public SmartSlabBlock(@NotNull Block baseBlock) {
+  public BRRPSlabBlock(@NotNull Block baseBlock) {
     this(baseBlock, FabricBlockSettings.copyOf(baseBlock));
   }
 
-  public SmartSlabBlock(@Nullable Block baseBlock, Settings settings) {
+  public BRRPSlabBlock(@Nullable Block baseBlock, Settings settings) {
     super(settings);
     this.baseBlock = baseBlock;
   }
@@ -39,7 +41,7 @@ public class SmartSlabBlock extends SlabBlock implements BlockResourceGenerator 
   /**
    * Directly creates an instance without giving the base block.
    */
-  public SmartSlabBlock(Settings settings) {
+  public BRRPSlabBlock(Settings settings) {
     this(null, settings);
   }
 
@@ -47,7 +49,7 @@ public class SmartSlabBlock extends SlabBlock implements BlockResourceGenerator 
   @Override
   public @Nullable BlockStatesDefinition getBlockStatesDefinition() {
     final Identifier id = getBlockModelId();
-    return BlockStatesDefinition.simpleSlab(baseBlock != null ? ((BlockResourceGenerator) baseBlock).getBlockModelId() : ((IdentifierExtension) id).append("_double"), id, ((IdentifierExtension) id).append("_top"));
+    return BlockStatesDefinition.simpleSlab(baseBlock != null ? ResourceGeneratorHelper.getBlockModelId(baseBlock) : id.brrp_append("_double"), id, id.brrp_append("_top"));
   }
 
   @Environment(EnvType.CLIENT)
@@ -66,7 +68,7 @@ public class SmartSlabBlock extends SlabBlock implements BlockResourceGenerator 
     final String texture = TextureRegistry.getTexture(this, type);
     if (texture != null) return texture;
     if (baseBlock != null) {
-      return ((BlockResourceGenerator) baseBlock).getTextureId(type);
+      return ResourceGeneratorHelper.getTextureId(baseBlock, type);
     } else {
       return BlockResourceGenerator.super.getTextureId(type);
     }
@@ -79,10 +81,21 @@ public class SmartSlabBlock extends SlabBlock implements BlockResourceGenerator 
     if (model != null) {
       final Identifier id = getBlockModelId();
       pack.addModel(model, id);
-      pack.addModel(model.clone().parent("block/slab_top"), ((IdentifierExtension) id).append("_top"));
+      pack.addModel(model.clone().parent("block/slab_top"), id.brrp_append("_top"));
       if (baseBlock == null) {
-        pack.addModel(model.clone().parent("block/cube_bottom_top"), ((IdentifierExtension) id).append("_double"));
+        pack.addModel(model.clone().parent("block/cube_bottom_top"), id.brrp_append("_double"));
       }
     }
+  }
+
+  private static final JsonObject BLOCK_STATE_PROPERTY = new JsonObject();
+
+  static {
+    BLOCK_STATE_PROPERTY.addProperty("type", "double");
+  }
+
+  @Override
+  public JLootTable getLootTable() {
+    return JLootTable.delegate(BlockLootTableGenerator.slabDrops(this).build());
   }
 }

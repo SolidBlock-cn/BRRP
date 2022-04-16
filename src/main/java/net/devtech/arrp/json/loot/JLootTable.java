@@ -2,7 +2,14 @@ package net.devtech.arrp.json.loot;
 
 import com.google.common.collect.Lists;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSerializationContext;
+import net.devtech.arrp.api.JsonSerializable;
+import net.minecraft.loot.LootGsons;
+import net.minecraft.loot.LootTable;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -164,12 +171,32 @@ public class JLootTable implements Cloneable {
     return ofPools(type, JPool.ofEntries(entries));
   }
 
+  public static JLootTable delegate(LootTable delegate) {
+    return new FromLootTable(delegate);
+  }
+
   @Override
   public JLootTable clone() {
     try {
       return (JLootTable) super.clone();
     } catch (CloneNotSupportedException e) {
       throw new InternalError(e);
+    }
+  }
+
+  private static final class FromLootTable extends JLootTable implements JsonSerializable {
+
+    private transient final LootTable delegate;
+    private static final Gson GSON = LootGsons.getTableGsonBuilder().create();
+
+    public FromLootTable(LootTable lootTable) {
+      super(null);
+      delegate = lootTable;
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return GSON.toJsonTree(delegate);
     }
   }
 }

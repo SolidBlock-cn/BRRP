@@ -1,6 +1,5 @@
 package net.devtech.arrp.generator;
 
-import net.devtech.arrp.IdentifierExtension;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
 import net.devtech.arrp.json.loot.JLootTable;
@@ -62,7 +61,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The id of the block model.
    */
   default Identifier getBlockModelId() {
-    return ((IdentifierExtension) getBlockId()).prepend("block/");
+    return getBlockId().brrp_prepend("block/");
   }
 
   /**
@@ -87,7 +86,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
       final String texture = TextureRegistry.getTexture((Block) this, type);
       if (texture != null) return texture;
     }
-    return ((IdentifierExtension) getBlockId()).prepend("block/").toString();
+    return getBlockId().brrp_prepend("block/").toString();
   }
 
   /**
@@ -136,7 +135,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   default Identifier getItemModelId() {
     final Identifier itemId = getItemId();
     if (itemId == null) return null;
-    return ((IdentifierExtension) itemId).prepend("item/");
+    return itemId.brrp_prepend("item/");
   }
 
   /**
@@ -187,7 +186,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The id of the block loot table.
    */
   default Identifier getLootTableId() {
-    return ((IdentifierExtension) getBlockId()).prepend("blocks/");
+    return getBlockId().brrp_prepend("blocks/");
   }
 
   /**

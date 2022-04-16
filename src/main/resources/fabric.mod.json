@@ -36,6 +36,9 @@
   "custom": {
     "modmenu": {
       "badges": ["library"]
+    },
+    "loom:injected_interfaces": {
+      "net/minecraft/util/Identifier": ["net/devtech/arrp/IdentifierExtension"]
     }
   }
 }

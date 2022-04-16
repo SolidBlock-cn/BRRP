@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.JsonSerializable;
+import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Type;
@@ -153,6 +154,10 @@ public class BlockStatesDefinition implements JsonSerializable {
     return ofVariants(VariantDefinition.ofSlab(new JBlockModel(baseBlockModelId), bottomSlabModelId, topSlabModelId));
   }
 
+  public static BlockStatesDefinition delegate(BlockStateSupplier delegate) {
+    return new Delegate(delegate);
+  }
+
   @Override
   public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
     final JsonObject object = new JsonObject();
@@ -163,5 +168,19 @@ public class BlockStatesDefinition implements JsonSerializable {
       object.add("multipart", context.serialize(multiparts));
     }
     return object;
+  }
+
+  private static final class Delegate extends BlockStatesDefinition {
+    private final BlockStateSupplier delegate;
+
+    private Delegate(BlockStateSupplier delegate) {
+      super(null, null);
+      this.delegate = delegate;
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return delegate.get();
+    }
   }
 }

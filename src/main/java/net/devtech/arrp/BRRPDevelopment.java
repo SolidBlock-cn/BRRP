@@ -2,14 +2,14 @@ package net.devtech.arrp;
 
 import net.devtech.arrp.api.RRPCallback;
 import net.devtech.arrp.api.RuntimeResourcePack;
-import net.devtech.arrp.generator.SmartCubeBlock;
-import net.devtech.arrp.generator.SmartSlabBlock;
+import net.devtech.arrp.generator.BRRPCubeBlock;
+import net.devtech.arrp.generator.BRRPSlabBlock;
+import net.devtech.arrp.generator.BRRPStairsBlock;
 import net.devtech.arrp.generator.TextureRegistry;
 import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
 import net.devtech.arrp.json.blockstate.JBlockModel;
 import net.devtech.arrp.json.blockstate.VariantDefinition;
 import net.devtech.arrp.json.lang.JLang;
-import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -30,7 +30,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 public class BRRPDevelopment implements ModInitializer {
-  public static final SmartCubeBlock LAVA_BLOCK = Registry.register(Registry.BLOCK, new Identifier("brrp", "lava_block"), SmartCubeBlock.cubeAll(FabricBlockSettings.of(Material.LAVA).luminance(15), "block/lava_still"));
+  public static final BRRPCubeBlock LAVA_BLOCK = Registry.register(Registry.BLOCK, new Identifier("brrp", "lava_block"), BRRPCubeBlock.cubeAll(FabricBlockSettings.of(Material.LAVA).luminance(15), "block/lava_still"));
   public static final BlockItem LAVA_BLOCK_ITEM = blockItem(LAVA_BLOCK);
   public static final RuntimeResourcePack PACK = RuntimeResourcePack.create("brrp");
   public static final BooleanProperty HARDENED = BooleanProperty.of("hardened");
@@ -72,13 +72,15 @@ public class BRRPDevelopment implements ModInitializer {
   public static final BlockItem HARDENABLE_BLOCK_ITEM = blockItem(HARDENABLE_BLOCK);
   public static final BlockItem HARDENABLE_SLAB_ITEM = blockItem(HARDENABLE_SLAB);
 
-  public static final SmartSlabBlock LAVA_SLAB = Registry.register(Registry.BLOCK, new Identifier("brrp", "lava_slab"), new SmartSlabBlock(LAVA_BLOCK));
+  public static final BRRPStairsBlock LAVA_STAIRS = Registry.register(Registry.BLOCK, new Identifier("brrp", "lava_stairs"), new BRRPStairsBlock(LAVA_BLOCK));
+  public static final BlockItem LAVA_STAIRS_ITEM = blockItem(LAVA_STAIRS);
+  public static final BRRPSlabBlock LAVA_SLAB = Registry.register(Registry.BLOCK, new Identifier("brrp", "lava_slab"), new BRRPSlabBlock(LAVA_BLOCK));
   public static final BlockItem LAVA_SLAB_ITEM = blockItem(LAVA_SLAB);
 
-  public static final SmartCubeBlock SMOOTH_STONE = Registry.register(Registry.BLOCK, new Identifier("brrp", "smooth_stone"), SmartCubeBlock.cubeBottomTop(FabricBlockSettings.copyOf(Blocks.SMOOTH_STONE), "block/smooth_stone", "block/smooth_stone_slab_side", "block/smooth_stone"));
+  public static final BRRPCubeBlock SMOOTH_STONE = Registry.register(Registry.BLOCK, new Identifier("brrp", "smooth_stone"), BRRPCubeBlock.cubeBottomTop(FabricBlockSettings.copyOf(Blocks.SMOOTH_STONE), "block/smooth_stone", "block/smooth_stone_slab_side", "block/smooth_stone"));
   public static final BlockItem SMOOTH_STONE_ITEM = blockItem(SMOOTH_STONE);
 
-  public static final SmartSlabBlock CUSTOM_SLAB = Registry.register(Registry.BLOCK, new Identifier("brrp", "custom_slab"), new SmartSlabBlock(FabricBlockSettings.of(Material.LEAVES)));
+  public static final BRRPSlabBlock CUSTOM_SLAB = Registry.register(Registry.BLOCK, new Identifier("brrp", "custom_slab"), new BRRPSlabBlock(FabricBlockSettings.of(Material.LEAVES)));
   public static final BlockItem CUSTOM_SLAB_ITEM = blockItem(CUSTOM_SLAB);
 
   private static BlockItem blockItem(Block block) {
@@ -95,12 +97,13 @@ public class BRRPDevelopment implements ModInitializer {
 //    PACK.addModel(new JModel("brrp:block/lava_block"), new Identifier("brrp", "item/lava_block"));
     PACK.addLang(new Identifier("brrp", "en_us"), new JLang()
         .block(new Identifier("brrp", "lava_block"), "Lava Block")
-        .block(new Identifier("brrp", "lava_slab"), "Lava Slab"));
+        .block(new Identifier("brrp", "lava_slab"), "Lava Slab")
+        .blockRespect(LAVA_STAIRS, "Lava Stairs"));
 
     // hardenable block
     final VariantDefinition variants = VariantDefinition.of(HARDENED, false, new JBlockModel("minecraft", "block/stone")).addVariant(HARDENED, true, new JBlockModel("minecraft", "block/andesite"));
     PACK.addBlockState(BlockStatesDefinition.ofVariants(variants), new Identifier("brrp", "hardenable_block"));
-    PACK.addBlockState(BlockStatesDefinition.ofVariants(variants.composeToSlab(id -> ((IdentifierExtension) id).append("_slab"), id -> ((IdentifierExtension) id).append("_slab_top"))), new Identifier("brrp", "hardenable_slab"));
+    PACK.addBlockState(BlockStatesDefinition.ofVariants(variants.composeToSlab(id -> id.brrp_append("_slab"), id -> id.brrp_append("_slab_top"))), new Identifier("brrp", "hardenable_slab"));
     PACK.addModel(new JModel("block/stone"), new Identifier("brrp", "item/hardenable_block"));
     PACK.addModel(new JModel("block/stone_slab"), new Identifier("brrp", "item/hardenable_slab"));
 
@@ -108,23 +111,10 @@ public class BRRPDevelopment implements ModInitializer {
 //    TextureRegistry.register(SMOOTH_STONE, "block/smooth_stone_slab_double");
 
     LAVA_BLOCK.writeAll(PACK);
+    LAVA_STAIRS.writeAll(PACK);
     LAVA_SLAB.writeAll(PACK);
     CUSTOM_SLAB.writeAll(PACK);
     SMOOTH_STONE.writeAll(PACK);
-    PACK.addLootTable(new Identifier("brrp", "test"), new JLootTable("block"));
-    PACK.addData(new Identifier("brrp", "recipes/test.json"), """
-        {
-          "type": "minecraft:crafting_shapeless",
-          "group": "wooden_button",
-          "ingredients": [
-            {
-              "item": "minecraft:oak_planks"
-            }
-          ],
-          "result": {
-            "item": "minecraft:oak_button"
-          }
-        }""".getBytes());
 
     RRPCallback.AFTER_VANILLA.register(a -> a.add(PACK));
   }

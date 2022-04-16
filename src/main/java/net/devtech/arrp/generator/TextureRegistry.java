@@ -11,8 +11,8 @@ import java.util.Map;
 
 /**
  * <p>This is used for overriding textures. Sometimes you created a block, and wants the {@link BlockResourceGenerator#getTextureId} use textures other than the block id. You do not need to override the method, creating an anonymous subclass. You can directly use this registry to specify the textures used.</p>
- * <p>Notice that the texture registry is <i>not always</i> respected when getting the texture. For example, in {@link SmartCubeBlock}, the texture definitions may be predetermined when instantiating. That will ignore this registry, even if manually calling {@link BlockResourceGenerator#getTextureId} is still affected by the registry.</p>
- * <p>Block-based blocks, for example, slabs, may query the texture registry for their base blocks, as defined in {@link SmartSlabBlock#getTextureId}. This does not affect vanilla blocks.</p>
+ * <p>Notice that the texture registry is <i>not always</i> respected when getting the texture. For example, in {@link BRRPCubeBlock}, the texture definitions may be predetermined when instantiating. That will ignore this registry, even if manually calling {@link BlockResourceGenerator#getTextureId} is still affected by the registry.</p>
+ * <p>Block-based blocks, for example, slabs, may query the texture registry for their base blocks, as defined in {@link BRRPSlabBlock#getTextureId}. This does not affect vanilla blocks.</p>
  * <p>The texture registry consists of two parts: general and custom. You can specify a custom type, which can be {@code "top"}, {@code "bottom"}, or anything. When querying a type does not exists, it fall backs to general texture registry.</p>
  * <p>For example, if you register a sandstone block like this:</p>
  * <pre>{@code
@@ -29,7 +29,8 @@ import java.util.Map;
  * {@code TextureRegistry.getTexture(Blocks.SMOOTH_SANDSTONE)} returns {@code "minecraft:block/sandstone_top"}, as registered above, and
  * {@code TextureRegistry.getTexture(Blocks.SMOOTH_SANDSTONE, "top")} also returns {@code "minecraft:block/sandstone_top"}, because it fall backs to general registry.
  * </blockquote>
- * <p>You may also notice that the block as keys is regarded "reference" instead of "object", which means it determines equal through the "{@code ==}" operator, instead of {@code equals} method.</p>
+ * <p>You may also notice that the block as keys is regarded "reference" instead of "object", which means it determines equal through the {@code "=="} operator, instead of {@code equals} method.</p>
+ * <p>Texture registry can be a simplified version of {@link net.minecraft.data.client.TextureMap}, but in the future, texture-related apis will be made use of, and this texture registry will be deprecated.</p>
  */
 public final class TextureRegistry {
   /**
