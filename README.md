@@ -42,7 +42,7 @@ public class MyClass implements ModInitializer {
 
 Minecraft 有原版的数据生成功能，Fabric API 对其进行了扩展。BRRP 正尽可能地在 ARRP 与 Minecraft 的数据生成之间搭建桥梁。
 
-在 BRRP 中，部分 ARRP 对象可以直接使用 Minecraft 的原版对应的对象。例如，原版的 `BlockStateModelGenerator` 中，有很多用于直接生成方块定义对象的方法（这些方法原先是 private 的，Fabric Data Generation API 进行了访问拓宽。然后，可以直接使用 `JBlockStates.delegate` 以直接使用，代码片段如下：
+在 BRRP 中，部分 ARRP 对象可以直接使用 Minecraft 的原版对应的对象。例如，原版的 `BlockStateModelGenerator` 中，有很多用于直接生成方块定义对象的方法（这些方法原先是 private 的，Fabric Data Generation API 进行了访问拓宽）。然后，可以直接使用 `JBlockStates.delegate` 以直接使用，代码片段如下：
 
 ```
 JBlockStates.delegate(BlockStateModelGenerator.createStairsBlockState(
