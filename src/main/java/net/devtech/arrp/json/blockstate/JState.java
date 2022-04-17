@@ -1,10 +1,12 @@
 package net.devtech.arrp.json.blockstate;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -37,6 +39,8 @@ public final class JState implements JsonSerializable {
     return state;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JState add(JVariant variant) {
     if (!this.multiparts.isEmpty()) {
       throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
@@ -56,6 +60,8 @@ public final class JState implements JsonSerializable {
     return state;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JState add(JMultipart multiparts) {
     if (!this.variants.isEmpty()) {
       throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");

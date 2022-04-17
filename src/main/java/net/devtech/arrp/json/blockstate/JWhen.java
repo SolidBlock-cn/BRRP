@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.blockstate;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -60,6 +61,7 @@ public class JWhen extends LinkedHashMap<String, String> implements Cloneable, J
     add(property, value);
   }
 
+  @CanIgnoreReturnValue
   public <T extends Comparable<T>> JWhen add(Property<T> property, T value) {
     put(property.getName(), value.toString());
 
@@ -67,6 +69,7 @@ public class JWhen extends LinkedHashMap<String, String> implements Cloneable, J
   }
 
   @SafeVarargs
+  @CanIgnoreReturnValue
   public final <T extends Comparable<T>> JWhen add(Property<T> property, T... value) {
     put(property.getName(), Arrays.stream(value).map(Object::toString).collect(Collectors.joining("|")));
     return this;

@@ -1,10 +1,10 @@
 package net.devtech.arrp.json.recipe;
 
 public class JSmithingRecipe extends JResultRecipe {
-  private final JIngredient base;
-  private final JIngredient addition;
+  public final JIngredient base;
+  public final JIngredient addition;
 
-  JSmithingRecipe(final JIngredient base, final JIngredient addition, final JResult result) {
+  public JSmithingRecipe(final JIngredient base, final JIngredient addition, final JResult result) {
     super("smithing", result);
 
     this.base = base;

@@ -1,9 +1,11 @@
 package net.devtech.arrp.json.blockstate;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -54,6 +56,8 @@ public class JMultipart implements Cloneable, JsonSerializable {
     }
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JMultipart when(JWhen when) {
     this.when = when;
     return this;
@@ -63,6 +67,8 @@ public class JMultipart implements Cloneable, JsonSerializable {
    * Add a model in the {@link #apply} list.<br>
    * If the list contains multiple elements, Minecraft will choose a random one in it when rendering.
    */
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JMultipart addModel(JBlockModel model) {
     this.apply.add(model);
     return this;

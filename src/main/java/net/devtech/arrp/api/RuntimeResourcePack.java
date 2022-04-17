@@ -85,6 +85,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <p>
    * ex. addLang(MyMod.id("en_us"), lang().translate("something.something", "test"))
    */
+  @CanIgnoreReturnValue
   byte[] addLang(Identifier identifier, JLang lang);
 
   /**
@@ -95,6 +96,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * adds a loot table
    */
+  @CanIgnoreReturnValue
   byte[] addLootTable(Identifier identifier, JLootTable table);
 
   /**
@@ -114,6 +116,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * add a raw resource
    */
+  @CanIgnoreReturnValue
   byte[] addResource(ResourceType type, Identifier path, byte[] data);
 
   /**
@@ -138,16 +141,19 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <p>
    * A root resource is something like pack.png, pack.mcmeta, etc. By default ARRP generates a default mcmeta
    */
+  @CanIgnoreReturnValue
   byte[] addRootResource(String path, byte[] data);
 
   /**
    * add a clientside resource
    */
+  @CanIgnoreReturnValue
   byte[] addAsset(Identifier path, byte[] data);
 
   /**
    * add a serverside resource
    */
+  @CanIgnoreReturnValue
   byte[] addData(Identifier path, byte[] data);
 
   /**
@@ -155,6 +161,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * automatically
    * appended to the path
    */
+  @CanIgnoreReturnValue
   byte[] addModel(JModel model, Identifier path);
 
   /**
@@ -162,7 +169,8 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <p>
    * ".json" is automatically appended to the path
    */
-  byte[] addBlockState(JState state, Identifier path);
+  @CanIgnoreReturnValue
+  byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier path);
 
   /**
    * adds a blockstates definition file
@@ -178,6 +186,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <p>
    * ".png" is automatically appended to the path
    */
+  @CanIgnoreReturnValue
   byte[] addTexture(Identifier id, BufferedImage image);
 
   /**
@@ -185,6 +194,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <p>
    * ".png.mcmeta" is automatically appended to the path
    */
+  @CanIgnoreReturnValue
   byte[] addAnimation(Identifier id, JAnimation animation);
 
   /**
@@ -192,6 +202,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <p>
    * ".json" is automatically appended to the path
    */
+  @CanIgnoreReturnValue
   byte[] addTag(Identifier id, JTag tag);
 
   /**
@@ -203,6 +214,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param recipe the recipe to add
    * @return the new resource
    */
+  @CanIgnoreReturnValue
   byte[] addRecipe(Identifier id, JRecipe recipe);
 
   /**
