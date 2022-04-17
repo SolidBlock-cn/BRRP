@@ -18,7 +18,7 @@ public class ARRP implements PreLaunchEntrypoint {
 
   @Override
   public void onPreLaunch() {
-    LOGGER.info("I used the json to destroy the json");
+    LOGGER.info("BRRP data generation: PreLaunch");
     FabricLoader loader = FabricLoader.getInstance();
     List<Future<?>> futures = new ArrayList<>();
     for (RRPPreGenEntrypoint entrypoint : loader.getEntrypoints("rrp:pregen", RRPPreGenEntrypoint.class)) {

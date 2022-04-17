@@ -3,6 +3,8 @@ package net.devtech.arrp.json.loot;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
+import net.minecraft.loot.LootGsons;
+import net.minecraft.loot.function.LootFunction;
 import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Type;
@@ -23,6 +25,17 @@ public class JFunction implements Cloneable, JsonSerializable {
 
   public JFunction(String function) {
     function(function);
+  }
+
+  public static JFunction delegate(LootFunction delegate) {
+    return new JFunction(null) {
+      private static final Gson GSON = LootGsons.getFunctionGsonBuilder().create();
+
+      @Override
+      public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+        return GSON.toJsonTree(delegate);
+      }
+    };
   }
 
   /**

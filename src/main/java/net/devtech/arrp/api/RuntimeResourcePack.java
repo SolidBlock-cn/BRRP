@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.devtech.arrp.json.animation.JAnimation;
-import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
+import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.loot.JLootTable;
@@ -170,7 +170,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * ".json" is automatically appended to the path
    */
   @CanIgnoreReturnValue
-  byte[] addBlockState(BlockStatesDefinition state, Identifier path);
+  byte[] addBlockState(JBlockStates state, Identifier path);
 
 
   /**
@@ -255,4 +255,8 @@ public interface RuntimeResourcePack extends ResourcePack {
   void load(ZipInputStream stream) throws IOException;
 
   Identifier getId();
+
+  void clearResources(ResourceType side);
+
+  void clearResources();
 }

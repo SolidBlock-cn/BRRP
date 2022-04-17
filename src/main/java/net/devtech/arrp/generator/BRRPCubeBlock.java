@@ -1,6 +1,6 @@
 package net.devtech.arrp.generator;
 
-import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
+import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
 import net.fabricmc.api.EnvType;
@@ -57,13 +57,13 @@ public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull BlockStatesDefinition getBlockStatesDefinition() {
-    return BlockStatesDefinition.simple(getBlockModelId());
+  public @NotNull JBlockStates getBlockStatesDefinition() {
+    return JBlockStates.simple(getBlockModelId());
   }
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @Nullable JModel getBlockModel() {
+  public @NotNull JModel getBlockModel() {
     return new JModel(parent).textures(textures);
   }
 

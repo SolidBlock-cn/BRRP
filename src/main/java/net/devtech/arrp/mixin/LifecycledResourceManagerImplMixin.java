@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 
 @Mixin(LifecycledResourceManagerImpl.class)
 public abstract class LifecycledResourceManagerImplMixin {
-  private static final Logger ARRP_LOGGER = LogManager.getLogger("ARRP/ReloadableResourceManagerImplMixin");
+  private static final Logger ARRP_LOGGER = LogManager.getLogger("ARRP/LifecycledResourceManagerImpl");
 
   @ModifyVariable(method = "<init>",
       at = @At(value = "HEAD"),

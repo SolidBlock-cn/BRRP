@@ -1,8 +1,15 @@
 package net.devtech.arrp.json.loot;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSerializationContext;
+import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.minecraft.loot.LootGsons;
+import net.minecraft.loot.entry.LootPoolEntry;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -163,5 +170,23 @@ public class JEntry implements Cloneable {
     } catch (CloneNotSupportedException e) {
       throw new InternalError(e);
     }
+  }
+
+  private static final class Delegate extends JEntry implements JsonSerializable {
+    private static final Gson GSON = LootGsons.getTableGsonBuilder().create();
+    private final LootPoolEntry delegate;
+
+    private Delegate(LootPoolEntry delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return GSON.toJsonTree(delegate);
+    }
+  }
+
+  public static JEntry delegate(LootPoolEntry delegate) {
+    return new Delegate(delegate);
   }
 }

@@ -1,17 +1,26 @@
 package net.devtech.arrp.json.loot;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.SerializedName;
+import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.minecraft.loot.LootGsons;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
+import net.minecraft.loot.provider.number.LootNumberProvider;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @see net.minecraft.loot.LootPool
+ */
 public class JPool implements Cloneable {
   /**
    * The list of conditions of the pool. When Minecraft is applying the loot table, the pool is selected only when the condition is met. If there are more than one conditions, they must be all met.
@@ -43,7 +52,7 @@ public class JPool implements Cloneable {
    * The value provider of rolls.
    */
   @SerializedName("rolls")
-  public ValueProvider rollsProvider;
+  public LootNumberProvider rollsProvider;
   /**
    * The exact value of bonus rolls.
    *
@@ -62,7 +71,7 @@ public class JPool implements Cloneable {
    * The value provider of bonus rolls;
    */
   @SerializedName("bonus_rolls")
-  public ValueProvider bonusRollsProvider;
+  public LootNumberProvider bonusRollsProvider;
 
   public JPool() {
   }
@@ -79,6 +88,10 @@ public class JPool implements Cloneable {
 
   public static JPool ofEntries(JEntry... entries) {
     return ofEntries(Arrays.asList(entries));
+  }
+
+  public static JPool delegate(LootPool delegate) {
+    return new Delegate(delegate);
   }
 
   public JPool entry(JEntry entry) {
@@ -113,30 +126,30 @@ public class JPool implements Cloneable {
   @Deprecated
   @CanIgnoreReturnValue
   public JPool rolls(Integer rolls) {
-    this.rollsProvider = ValueProvider.of(rolls);
+    this.rollsProvider = ConstantLootNumberProvider.create(rolls);
     return this;
   }
 
   @CanIgnoreReturnValue
   public JPool rolls(int rolls) {
-    this.rollsProvider = ValueProvider.of(rolls);
+    this.rollsProvider = ConstantLootNumberProvider.create(rolls);
     return this;
   }
 
   @CanIgnoreReturnValue
   public JPool rolls(float rolls) {
-    this.rollsProvider = ValueProvider.of(rolls);
+    this.rollsProvider = ConstantLootNumberProvider.create(rolls);
     return this;
   }
 
   @CanIgnoreReturnValue
-  public JPool rolls(ValueProvider rolls) {
+  public JPool rolls(LootNumberProvider rolls) {
     this.rollsProvider = rolls;
     return this;
   }
 
   /**
-   * @deprecated Please use {@link #rolls(ValueProvider)}.
+   * @deprecated Please use {@link #rolls(LootNumberProvider)}.
    */
   @Deprecated
   public JPool rolls(JRoll roll) {
@@ -152,34 +165,34 @@ public class JPool implements Cloneable {
   @Deprecated
   @CanIgnoreReturnValue
   public JPool bonus(Integer bonus_rolls) {
-    this.bonusRollsProvider = ValueProvider.of(bonus_rolls);
+    this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
     return this;
   }
 
   @CanIgnoreReturnValue
   public JPool bonus(int bonus_rolls) {
-    this.bonusRollsProvider = ValueProvider.of(bonus_rolls);
+    this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
     return this;
   }
 
   @CanIgnoreReturnValue
   public JPool bonus(float bonus_rolls) {
-    this.bonusRollsProvider = ValueProvider.of(bonus_rolls);
+    this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
     return this;
   }
 
   @CanIgnoreReturnValue
-  public JPool bonus(ValueProvider bonusRollsProvider) {
+  public JPool bonus(LootNumberProvider bonusRollsProvider) {
     this.bonusRollsProvider = bonusRollsProvider;
     return this;
   }
 
   /**
-   * @deprecated Please use {@link #bonus(ValueProvider)}.
+   * @deprecated Please use {@link #bonus(LootNumberProvider)}.
    */
   @Deprecated
   public JPool bonus(JRoll bonus_roll) {
-    this.bonusRollsProvider = (ValueProvider) bonus_roll;
+    this.bonusRollsProvider = (LootNumberProvider) bonus_roll;
     return this;
   }
 
@@ -200,6 +213,20 @@ public class JPool implements Cloneable {
     @Override
     public JsonElement serialize(JPool src, Type typeOfSrc, JsonSerializationContext context) {
       return RuntimeResourcePackImpl.GSON.toJsonTree(src, typeOfSrc);
+    }
+  }
+
+  private static final class Delegate extends JPool implements JsonSerializable {
+    private final LootPool delegate;
+    private static final Gson GSON = LootGsons.getTableGsonBuilder().create();
+
+    private Delegate(LootPool delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return GSON.toJsonTree(delegate);
     }
   }
 }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @deprecated Please use {@link BlockStatesDefinition}, which is an improved version.
+ * @deprecated Please use {@link JBlockStates}, which is an improved version.
  */
 @Deprecated
 public final class JState implements JsonSerializable {
@@ -26,7 +26,7 @@ public final class JState implements JsonSerializable {
   }
 
   /**
-   * @deprecated use {@link BlockStatesDefinition#ofVariants(VariantDefinition)}
+   * @deprecated use {@link JBlockStates#ofVariants(VariantDefinition)}
    */
   @Deprecated
   public static JState state(JVariant... variants) {
@@ -46,7 +46,7 @@ public final class JState implements JsonSerializable {
   }
 
   /**
-   * @deprecated use {@link BlockStatesDefinition#ofMultiparts(JMultipart...)}
+   * @deprecated use {@link JBlockStates#ofMultiparts(JMultipart...)}
    */
   public static JState state(JMultipart... parts) {
     JState state = new JState();

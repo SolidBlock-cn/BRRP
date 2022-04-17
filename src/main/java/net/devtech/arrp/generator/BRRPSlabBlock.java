@@ -2,7 +2,7 @@ package net.devtech.arrp.generator;
 
 import com.google.gson.JsonObject;
 import net.devtech.arrp.api.RuntimeResourcePack;
-import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
+import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
@@ -26,6 +26,11 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
    */
   public final @Nullable Block baseBlock;
 
+  @Override
+  public @Nullable Block getBaseBlock() {
+    return baseBlock;
+  }
+
   /**
    * Simply creates an instance with a given base block. The block settings of the base block will be used, so you do not need to provide it.
    */
@@ -47,9 +52,9 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @Nullable BlockStatesDefinition getBlockStatesDefinition() {
+  public @Nullable JBlockStates getBlockStatesDefinition() {
     final Identifier id = getBlockModelId();
-    return BlockStatesDefinition.simpleSlab(baseBlock != null ? ResourceGeneratorHelper.getBlockModelId(baseBlock) : id.brrp_append("_double"), id, id.brrp_append("_top"));
+    return JBlockStates.simpleSlab(baseBlock != null ? ResourceGeneratorHelper.getBlockModelId(baseBlock) : id.brrp_append("_double"), id, id.brrp_append("_top"));
   }
 
   @Environment(EnvType.CLIENT)
@@ -60,18 +65,6 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
         getTextureId("side"),
         getTextureId("bottom")
     ));
-  }
-
-  @Environment(EnvType.CLIENT)
-  @Override
-  public @NotNull String getTextureId(@Nullable String type) {
-    final String texture = TextureRegistry.getTexture(this, type);
-    if (texture != null) return texture;
-    if (baseBlock != null) {
-      return ResourceGeneratorHelper.getTextureId(baseBlock, type);
-    } else {
-      return BlockResourceGenerator.super.getTextureId(type);
-    }
   }
 
   @Environment(EnvType.CLIENT)

@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * An entry of the {@link BlockStatesDefinition#multiparts multipart} field of a {@link BlockStatesDefinition}. Note: this class represents an entry, not a list of it.<br>
+ * An entry of the {@link JBlockStates#multiparts multipart} field of a {@link JBlockStates}. Note: this class represents an entry, not a list of it.<br>
  * The multipart entry consists of the following fields: <ul>
  * <li><b>{@code apply}</b> - The {@link JBlockModel block model definition} that will be used, or a list of it to randomly choose.</li>
  * <li><b>{@code when}</b> - The {@link JWhen condition} that the part will be used. Optional.</li>

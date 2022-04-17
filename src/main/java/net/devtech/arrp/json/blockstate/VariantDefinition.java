@@ -50,7 +50,7 @@ public class VariantDefinition extends HashMap<String, JBlockModel[]> implements
    *
    * @param modelDefinition The block model definition.
    * @see #of(String, JBlockModel...)
-   * @see BlockStatesDefinition#simple(Identifier)
+   * @see JBlockStates#simple(Identifier)
    */
   public static VariantDefinition ofNoVariants(JBlockModel... modelDefinition) {
     return of("", modelDefinition);
@@ -72,7 +72,7 @@ public class VariantDefinition extends HashMap<String, JBlockModel[]> implements
    *
    * @param model The block model definition that will be cloned.
    * @return The array of block model definitions in four rotations.
-   * @see BlockStatesDefinition#simpleRandomRotation
+   * @see JBlockStates#simpleRandomRotation
    */
   public static JBlockModel[] randomRotation(JBlockModel model) {
     final JBlockModel[] result = new JBlockModel[4];
@@ -99,7 +99,7 @@ public class VariantDefinition extends HashMap<String, JBlockModel[]> implements
    *      {"model": "brrp:block/stone_vertical_slab", "uvlock": true, "y": 270} }
    * }</pre>
    *
-   * @see BlockStatesDefinition#simpleHorizontalFacing
+   * @see JBlockStates#simpleHorizontalFacing
    */
   public static VariantDefinition ofHorizontalFacing(JBlockModel model) {
     final VariantDefinition variantDefinition = new VariantDefinition();

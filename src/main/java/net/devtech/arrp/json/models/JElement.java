@@ -45,8 +45,8 @@ public class JElement implements Cloneable {
   public JElement() {
   }
 
-  public JElement of(float x1, float y1, float z1,
-                     float x2, float y2, float z2) {
+  public static JElement of(float x1, float y1, float z1,
+                            float x2, float y2, float z2) {
     return new JElement().from(x1, y1, z1).to(x2, y2, z2);
   }
 

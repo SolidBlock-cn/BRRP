@@ -3,7 +3,7 @@ package net.devtech.arrp.json.loot;
 /**
  * The value provider in the loot table.
  *
- * @deprecated Please use {@link ValueProvider}.
+ * @deprecated Please use {@link net.minecraft.loot.provider.number.LootNumberProvider}.
  */
 @Deprecated
 public class JRoll implements Cloneable {

@@ -24,7 +24,7 @@ import java.util.List;
  * @author SolidBlock
  * @since BRRP 0.6.0
  */
-public class BlockStatesDefinition implements JsonSerializable {
+public class JBlockStates implements JsonSerializable {
   public final VariantDefinition variants;
   public final List<JMultipart> multiparts;
 
@@ -34,20 +34,20 @@ public class BlockStatesDefinition implements JsonSerializable {
    * @param variants   The variant definition. One of these two parameters must be {@code null}.
    * @param multiparts The list of multiparts. One of these two parameters must be {@code null}.
    */
-  private BlockStatesDefinition(VariantDefinition variants, List<JMultipart> multiparts) {
+  private JBlockStates(VariantDefinition variants, List<JMultipart> multiparts) {
     this.variants = variants;
     this.multiparts = multiparts;
   }
 
-  public static BlockStatesDefinition ofVariants(VariantDefinition variants) {
-    return new BlockStatesDefinition(variants, null);
+  public static JBlockStates ofVariants(VariantDefinition variants) {
+    return new JBlockStates(variants, null);
   }
 
-  public static BlockStatesDefinition ofMultiparts(List<JMultipart> multiparts) {
-    return new BlockStatesDefinition(null, multiparts);
+  public static JBlockStates ofMultiparts(List<JMultipart> multiparts) {
+    return new JBlockStates(null, multiparts);
   }
 
-  public static BlockStatesDefinition ofMultiparts(JMultipart... multiparts) {
+  public static JBlockStates ofMultiparts(JMultipart... multiparts) {
     return ofMultiparts(Arrays.asList(multiparts));
   }
 
@@ -56,7 +56,7 @@ public class BlockStatesDefinition implements JsonSerializable {
    *
    * @throws IllegalStateException if the block states definition is for multiparts (for example, created from {@link #ofMultiparts(JMultipart...)}.
    */
-  public BlockStatesDefinition addVariant(String variant, JBlockModel... modelDefinition) {
+  public JBlockStates addVariant(String variant, JBlockModel... modelDefinition) {
     if (variant == null) throw new IllegalStateException("A block state definition can only have either variants or multiparts, not both");
     variants.addVariant(variant, modelDefinition);
     return this;
@@ -67,7 +67,7 @@ public class BlockStatesDefinition implements JsonSerializable {
    *
    * @throws IllegalStateException if the block states definition is for multiples (for example, created from {@link #ofVariants(VariantDefinition)}.
    */
-  public BlockStatesDefinition add(JMultipart multipart) {
+  public JBlockStates add(JMultipart multipart) {
     if (multiparts == null) throw new IllegalStateException("A block state definition can only have either variants or multipart, not both");
     multiparts.add(multipart);
     return this;
@@ -76,8 +76,8 @@ public class BlockStatesDefinition implements JsonSerializable {
   /**
    * Simple "upgrade" the old version jState to the improved version.
    */
-  public static BlockStatesDefinition of(@SuppressWarnings("deprecation") JState jState) {
-    final BlockStatesDefinition instance;
+  public static JBlockStates of(@SuppressWarnings("deprecation") JState jState) {
+    final JBlockStates instance;
     if (jState.variants.isEmpty()) {
       // As 'variants' is empty, it's regarded as a 'multipart'.
       instance = ofMultiparts(jState.multiparts);
@@ -97,7 +97,7 @@ public class BlockStatesDefinition implements JsonSerializable {
    * { "variants": {"": {"model": "<blockModelId>"}}}
    * }</pre>
    */
-  public static BlockStatesDefinition simple(Identifier blockModelId) {
+  public static JBlockStates simple(Identifier blockModelId) {
     return ofVariants(VariantDefinition.ofNoVariants(new JBlockModel(blockModelId)));
   }
 
@@ -111,7 +111,7 @@ public class BlockStatesDefinition implements JsonSerializable {
    *     {"model": "<blockModelId>", "y": 270} ] }
    * }</pre>
    */
-  public static BlockStatesDefinition simpleRandomRotation(Identifier blockModelId) {
+  public static JBlockStates simpleRandomRotation(Identifier blockModelId) {
     return ofVariants(VariantDefinition.ofNoVariants(VariantDefinition.randomRotation(new JBlockModel(blockModelId))));
   }
 
@@ -133,7 +133,7 @@ public class BlockStatesDefinition implements JsonSerializable {
    * @param uvlock       The uvlock of the model. For blocks that can be identified rotation through their textures (for example, dispenser), it should be <code>false</code>. For blocks that can be identified rotation through shapes, and the texture of which does not matter (for example, stairs, vertical slab, button), it can be <code>true</code>.
    * @return The block states definition for the horizontal facing block.
    */
-  public static BlockStatesDefinition simpleHorizontalFacing(Identifier blockModelId, boolean uvlock) {
+  public static JBlockStates simpleHorizontalFacing(Identifier blockModelId, boolean uvlock) {
     return ofVariants(VariantDefinition.ofHorizontalFacing(new JBlockModel(blockModelId).uvlock(uvlock)));
   }
 
@@ -150,11 +150,11 @@ public class BlockStatesDefinition implements JsonSerializable {
    * @param topSlabModelId    The identifier of the top block model
    * @return The block states definition for the slab block.
    */
-  public static BlockStatesDefinition simpleSlab(Identifier baseBlockModelId, Identifier bottomSlabModelId, Identifier topSlabModelId) {
+  public static JBlockStates simpleSlab(Identifier baseBlockModelId, Identifier bottomSlabModelId, Identifier topSlabModelId) {
     return ofVariants(VariantDefinition.ofSlab(new JBlockModel(baseBlockModelId), bottomSlabModelId, topSlabModelId));
   }
 
-  public static BlockStatesDefinition delegate(BlockStateSupplier delegate) {
+  public static JBlockStates delegate(BlockStateSupplier delegate) {
     return new Delegate(delegate);
   }
 
@@ -170,7 +170,7 @@ public class BlockStatesDefinition implements JsonSerializable {
     return object;
   }
 
-  private static final class Delegate extends BlockStatesDefinition {
+  private static final class Delegate extends JBlockStates {
     private final BlockStateSupplier delegate;
 
     private Delegate(BlockStateSupplier delegate) {

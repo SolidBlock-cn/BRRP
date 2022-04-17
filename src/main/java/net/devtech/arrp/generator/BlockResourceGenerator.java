@@ -1,7 +1,7 @@
 package net.devtech.arrp.generator;
 
 import net.devtech.arrp.api.RuntimeResourcePack;
-import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
+import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
 import net.minecraft.block.Block;
@@ -30,6 +30,15 @@ import org.jetbrains.annotations.Nullable;
  * <p>It's highly recommended but not required to annotate methods related to client (block states definitions, block models, item models) as {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code>, as they are only used in the client version mod. The interface itself does not annotate it, in consideration of rare situations that the server really needs. But mostly these client-related methods are not needed in the server side.</p>
  */
 public interface BlockResourceGenerator extends ItemResourceGenerator {
+  /**
+   * The base block of this block. You should override this method for block-based blocks, like stairs, slab, etc.
+   *
+   * @return The base block of this block.
+   */
+  default @Nullable Block getBaseBlock() {
+    return null;
+  }
+
   /**
    * Query the id of the block in {@link Registry#BLOCK}.<br>
    * You <i>must</i> override this method if you're implementing this interface on a non-{@code Block} class.
@@ -82,9 +91,13 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The id of the texture.
    */
   default @NotNull String getTextureId(@Nullable String type) {
-    if (this instanceof Block) {
-      final String texture = TextureRegistry.getTexture((Block) this, type);
+    if (this instanceof Block thisBlock) {
+      final String texture = TextureRegistry.getTexture(thisBlock, type);
       if (texture != null) return texture;
+      final @Nullable Block baseBlock = getBaseBlock();
+      if (baseBlock != null) {
+        return ResourceGeneratorHelper.getTextureId(baseBlock, type);
+      }
     }
     return getBlockId().brrp_prepend("block/").toString();
   }
@@ -94,7 +107,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @return The block states definition of the block.
    */
-  default @Nullable BlockStatesDefinition getBlockStatesDefinition() {
+  default @Nullable JBlockStates getBlockStatesDefinition() {
     return null;
   }
 

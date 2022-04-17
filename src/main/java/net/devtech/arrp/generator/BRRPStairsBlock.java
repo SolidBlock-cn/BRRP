@@ -1,7 +1,7 @@
 package net.devtech.arrp.generator;
 
 import net.devtech.arrp.api.RuntimeResourcePack;
-import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
+import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
 import net.fabricmc.api.EnvType;
@@ -18,11 +18,16 @@ import org.jetbrains.annotations.Nullable;
 public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerator {
   public final Block baseBlock;
 
+  @Override
+  public @Nullable Block getBaseBlock() {
+    return baseBlock;
+  }
+
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull BlockStatesDefinition getBlockStatesDefinition() {
+  public @NotNull JBlockStates getBlockStatesDefinition() {
     final Identifier blockModelId = getBlockModelId();
-    return BlockStatesDefinition.delegate(BlockStateModelGenerator.createStairsBlockState(this, blockModelId.brrp_append("_inner"), blockModelId, blockModelId.brrp_append("_outer")));
+    return JBlockStates.delegate(BlockStateModelGenerator.createStairsBlockState(this, blockModelId.brrp_append("_inner"), blockModelId, blockModelId.brrp_append("_outer")));
   }
 
   @Environment(EnvType.CLIENT)
@@ -53,17 +58,5 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
 
   public BRRPStairsBlock(Block baseBlock) {
     this(baseBlock, FabricBlockSettings.copyOf(baseBlock));
-  }
-
-  @Environment(EnvType.CLIENT)
-  @Override
-  public @NotNull String getTextureId(@Nullable String type) {
-    final String texture = TextureRegistry.getTexture(this, type);
-    if (texture != null) return texture;
-    if (baseBlock != null) {
-      return ResourceGeneratorHelper.getTextureId(baseBlock, type);
-    } else {
-      return BlockResourceGenerator.super.getTextureId(type);
-    }
   }
 }

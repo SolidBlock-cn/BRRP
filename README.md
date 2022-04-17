@@ -1,4 +1,5 @@
 BRRP（Better Runtime Resource Pack，更好的运行时资源包），是基于 [ARRP](https://github.com/Devan-Kerman/ARRP) 模模组的库模组，并进行了一些增强。本模组提供 ARRP 的所有功能，并修复 ARRP 模组存在的一些问题，同时提供了一系列新的功能。
+
 [TOC]
 
 ## 什么是运行时资源包？
@@ -35,4 +36,20 @@ public class MyClass implements ModInitializer {
 
 您可以在游戏运行的任何时候生成数据并注册您的资源包。上述示例使用的是游戏初始化末期的 `main` 入口点。您亦可在 `preLaunch` 或 `rrp:pregen`（需实现 `RRPPreGenEntryPoint` 接口）生成数据，但这种情况不能使用游戏的某些内容，例如注册表。
 
-除了添加常规资源外，您也可以添加异步资源，以允许在 `rrp:pregen` 的时候就加入游戏内需要的内容。
+除了添加常规资源外，您也可以添加异步资源，以允许在 `rrp:pregen` 的时候就加入游戏内需要的内容。`rrp:pregen` 中注册的运行时资源包会采用多线程的模式生成。
+
+## 运行时资源包与数据生成
+
+Minecraft 有原版的数据生成功能，Fabric API 对其进行了扩展。BRRP 正尽可能地在 ARRP 与 Minecraft 的数据生成之间搭建桥梁。
+
+在 BRRP 中，部分 ARRP 对象可以直接使用 Minecraft 的原版对应的对象。例如，原版的 `BlockStateModelGenerator` 中，有很多用于直接生成方块定义对象的方法（这些方法原先是 private 的，Fabric Data Generation API 进行了访问拓宽。然后，可以直接使用 `JBlockStates.delegate` 以直接使用，代码片段如下：
+
+```
+JBlockStates.delegate(BlockStateModelGenerator.createStairsBlockState(
+    (Block) this, 
+    blockModelId.brrp_append("_inner"), 
+    blockModelId, 
+    blockModelId.brrp_append("_outer")))
+```
+
+这样，该对象在生成 JSON 时，直接使用 Minecraft 原版的 JSON 生成方式，非常方便。

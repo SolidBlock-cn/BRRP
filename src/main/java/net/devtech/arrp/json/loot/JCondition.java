@@ -4,6 +4,8 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.minecraft.loot.LootGsons;
+import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Type;
@@ -131,6 +133,20 @@ public class JCondition implements Cloneable, JsonSerializable {
     @Override
     public JsonElement serialize(JCondition src, Type typeOfSrc, JsonSerializationContext context) {
       return src.serialize(typeOfSrc, context);
+    }
+  }
+
+  private static final class Delegate extends JCondition {
+    private static final Gson GSON = LootGsons.getConditionGsonBuilder().create();
+    private final LootCondition delegate;
+
+    private Delegate(LootCondition delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return GSON.toJsonTree(delegate);
     }
   }
 }

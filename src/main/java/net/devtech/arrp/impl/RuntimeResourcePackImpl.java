@@ -6,7 +6,7 @@ import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
-import net.devtech.arrp.json.blockstate.BlockStatesDefinition;
+import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.loot.JLootTable;
@@ -16,9 +16,14 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
+import net.minecraft.loot.provider.number.LootNumberProvider;
+import net.minecraft.loot.provider.number.LootNumberProviderTypes;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.metadata.PackResourceMetadata;
+import net.minecraft.resource.metadata.PackResourceMetadataReader;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
@@ -57,6 +62,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       .disableHtmlEscaping()
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, (JsonSerializer<Identifier>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getNamespace() + ":" + src.getPath()))
+      .registerTypeHierarchyAdapter(LootNumberProvider.class, LootNumberProviderTypes.createGsonSerializer())
       .create();
   // @formatter:on
   private static final Logger LOGGER = LoggerFactory.getLogger(RuntimeResourcePackImpl.class);
@@ -106,6 +112,22 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   public RuntimeResourcePackImpl(Identifier id, int version) {
     this.packVersion = version;
     this.id = id;
+  }
+
+  private static byte[] serialize(Object object) {
+    UnsafeByteArrayOutputStream ubaos = new UnsafeByteArrayOutputStream();
+    OutputStreamWriter writer = new OutputStreamWriter(ubaos);
+    GSON.toJson(object, writer);
+    try {
+      writer.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return ubaos.getBytes();
+  }
+
+  private static Identifier fix(Identifier identifier, String prefix, String append) {
+    return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
   }
 
   @Override
@@ -174,7 +196,6 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     this.getSys(type).put(path, new Memoized<>(func, path));
   }
 
-
   @Override
   public byte[] addResource(ResourceType type, Identifier path, byte[] data) {
     this.getSys(type).put(path, Suppliers.ofInstance(data));
@@ -226,7 +247,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   }
 
   @Override
-  public byte[] addBlockState(BlockStatesDefinition state, Identifier path) {
+  public byte[] addBlockState(JBlockStates state, Identifier path) {
     return this.addAsset(fix(path, "blockstates", "json"), serialize(state));
   }
 
@@ -430,22 +451,18 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     return namespaces;
   }
 
-  // if it works, don't touch it
+  @SuppressWarnings("unchecked")
   @Override
   public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
-    if (metaReader.getKey().equals("pack")) {
-      JsonObject object = new JsonObject();
-      object.addProperty("pack_format", this.packVersion);
-      object.addProperty("description", "runtime resource pack");
-      return metaReader.fromJson(object);
+    if (metaReader instanceof PackResourceMetadataReader) {
+      return (T) new PackResourceMetadata(new LiteralText("Runtime resource pack"), packVersion);
     }
-    LOGGER.info("'" + metaReader.getKey() + "' is an unsupported metadata key!");
     return metaReader.fromJson(new JsonObject());
   }
 
   @Override
   public String getName() {
-    return "Runtime Resource Pack" + this.id;
+    return "Runtime Resource Pack " + this.id;
   }
 
   @Override
@@ -460,22 +477,6 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
     // unlock
     this.waiting.unlock();
-  }
-
-  private static byte[] serialize(Object object) {
-    UnsafeByteArrayOutputStream ubaos = new UnsafeByteArrayOutputStream();
-    OutputStreamWriter writer = new OutputStreamWriter(ubaos);
-    GSON.toJson(object, writer);
-    try {
-      writer.close();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    return ubaos.getBytes();
-  }
-
-  private static Identifier fix(Identifier identifier, String prefix, String append) {
-    return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
   }
 
   protected byte[] read(ZipEntry entry, InputStream stream) throws IOException {
@@ -516,6 +517,17 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public void clearResources(ResourceType side) {
+    getSys(side).clear();
+  }
+
+  @Override
+  public void clearResources() {
+    assets.clear();
+    data.clear();
   }
 
   private Map<Identifier, Supplier<byte[]>> getSys(ResourceType side) {

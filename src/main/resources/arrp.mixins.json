@@ -4,8 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "IdentifierMixin",
-    "LifecycledResourceManagerImplMixin",
-    "MinecraftServerMixin"
+    "LifecycledResourceManagerImplMixin"
   ],
   "injectors": {
     "defaultRequire": 1
