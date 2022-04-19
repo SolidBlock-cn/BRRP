@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -37,7 +38,7 @@ import java.util.zip.ZipOutputStream;
  * @see RRPCallback
  */
 public interface RuntimeResourcePack extends ResourcePack {
-  File DEFAULT_OUTPUT = new File("rrp.debug");
+  Path DEFAULT_OUTPUT = Paths.get("rrp.debug");
 
   /**
    * create a new runtime resource pack with the default supported resource pack version
@@ -229,7 +230,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   Future<?> async(Consumer<RuntimeResourcePack> action);
 
   /**
-   * forcefully dump all assets and data
+   * Write the runtime resource pack as a local file, making you available to directly visit its content.
    */
   default void dump() {
     this.dump(DEFAULT_OUTPUT);
@@ -240,7 +241,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   void load(Path path) throws IOException;
 
   /**
-   * forcefully dump all assets and data to a specified file
+   * Write the runtime resource pack as a local file, making you available to directly visit its content.
    *
    * @deprecated use {@link #dump(Path)}
    */
@@ -248,11 +249,13 @@ public interface RuntimeResourcePack extends ResourcePack {
   void dump(File file);
 
   /**
-   * forcefully dump all assets and data into `namespace;path/`, useful for debugging
+   * Write the runtime resource pack as a local file, making you available to directly visit its content.
+   *
+   * @param path The path to write the resource pack.
    */
   default void dump(Path path) {
     Identifier id = this.getId();
-    Path folder = path.resolve(id.getNamespace() + ';' + id.getPath());
+    Path folder = path.resolve(id.getNamespace() + '_' + id.getPath());
     this.dumpDirect(folder);
   }
 

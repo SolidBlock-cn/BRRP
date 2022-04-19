@@ -25,7 +25,7 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JBlockStates getBlockStatesDefinition() {
+  public @NotNull JBlockStates getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return JBlockStates.delegate(BlockStateModelGenerator.createStairsBlockState(this, blockModelId.brrp_append("_inner"), blockModelId, blockModelId.brrp_append("_outer")));
   }

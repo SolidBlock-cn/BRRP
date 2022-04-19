@@ -35,7 +35,7 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JBlockStates getBlockStatesDefinition() {
+  public @NotNull JBlockStates getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return JBlockStates.delegate(BlockStateModelGenerator.createFenceBlockState(
         this,

@@ -40,6 +40,16 @@ public class JCondition implements Cloneable, JsonSerializable {
     if (parameters.has("condition")) this.condition = parameters.get("condition").getAsString();
   }
 
+  public static JCondition ofAlternative(Collection<JCondition> conditions) {
+    final JCondition result = new JCondition("alternative");
+    result.parameters.add("terms", RuntimeResourcePackImpl.GSON.toJsonTree(conditions));
+    return result;
+  }
+
+  public static JCondition ofAlternative(JCondition... conditions) {
+    return ofAlternative(Arrays.asList(conditions));
+  }
+
   @CanIgnoreReturnValue
   public JCondition condition(String condition) {
     this.condition = condition;
@@ -97,16 +107,6 @@ public class JCondition implements Cloneable, JsonSerializable {
     }
     this.parameters.add("terms", array);
     return this;
-  }
-
-  public static JCondition ofAlternative(Collection<JCondition> conditions) {
-    final JCondition result = new JCondition("alternative");
-    result.parameters.add("terms", RuntimeResourcePackImpl.GSON.toJsonTree(conditions));
-    return result;
-  }
-
-  public static JCondition ofAlternative(JCondition... conditions) {
-    return ofAlternative(Arrays.asList(conditions));
   }
 
   @Override

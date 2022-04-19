@@ -1,19 +1,27 @@
 package net.devtech.arrp.json.blockstate;
 
+import com.google.common.collect.ForwardingMap;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.block.enums.SlabType;
+import net.minecraft.data.client.BlockStateVariant;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * <p>A <b>variant definition</b> defines which models and adjust will be used in each block state property.</p>
@@ -33,14 +41,36 @@ import java.util.function.Function;
  * }</pre>
  *
  * @author SolidBlock
+ * @see net.minecraft.data.client.BlockStateVariant
  */
 @SuppressWarnings("unused")
-public class VariantDefinition extends HashMap<String, JBlockModel[]> implements JsonSerializable {
+public class JVariants extends ForwardingMap<String, JBlockModel[]> implements JsonSerializable {
   /**
-   * Simply 'upgrades' the deprecated jVariant to the improved version.
+   * The real map storing its contents, used for the forwarding map. It is usually a {@link LinkedHashMap} by default, but you can specify other types of maps.
    */
-  public static VariantDefinition of(@SuppressWarnings("deprecation") JVariant jVariant) {
-    final VariantDefinition instance = new VariantDefinition();
+  private final Map<String, JBlockModel[]> variants;
+
+  /**
+   * Create a new {@code jVariant} object, which contains a linked hash map. This is the most common use. In this case, you can add properties to it.
+   */
+  public JVariants() {
+    this(new LinkedHashMap<>());
+  }
+
+  /**
+   * Create a new {@code jVariant} object, with the map explicitly specified.
+   *
+   * @param variants The map of properties. It can be immutable, which means you should not use methods like {@link #addVariant}. If you're deciding to create a new one, you may just use {@link #JVariants()}, unless you're sure to make it immutable.
+   */
+  public JVariants(Map<String, JBlockModel[]> variants) {
+    this.variants = variants;
+  }
+
+  /**
+   * Simply "upgrades" the deprecated {@code JVariant} object to this improved version.
+   */
+  public static JVariants upgrade(@SuppressWarnings("deprecation") JVariant jVariant) {
+    final JVariants instance = new JVariants();
     jVariant.models.forEach((k, v) -> instance.put(k, new JBlockModel[]{v}));
     return instance;
   }
@@ -52,7 +82,7 @@ public class VariantDefinition extends HashMap<String, JBlockModel[]> implements
    * @see #of(String, JBlockModel...)
    * @see JBlockStates#simple(Identifier)
    */
-  public static VariantDefinition ofNoVariants(JBlockModel... modelDefinition) {
+  public static JVariants ofNoVariants(JBlockModel... modelDefinition) {
     return of("", modelDefinition);
   }
 
@@ -74,7 +104,7 @@ public class VariantDefinition extends HashMap<String, JBlockModel[]> implements
    * @return The array of block model definitions in four rotations.
    * @see JBlockStates#simpleRandomRotation
    */
-  public static JBlockModel[] randomRotation(JBlockModel model) {
+  public static JBlockModel[] ofRandomRotation(JBlockModel model) {
     final JBlockModel[] result = new JBlockModel[4];
     for (int i = 0; i < result.length; i++) {
       result[i] = model.clone().y(90 * i);
@@ -101,12 +131,12 @@ public class VariantDefinition extends HashMap<String, JBlockModel[]> implements
    *
    * @see JBlockStates#simpleHorizontalFacing
    */
-  public static VariantDefinition ofHorizontalFacing(JBlockModel model) {
-    final VariantDefinition variantDefinition = new VariantDefinition();
+  public static JVariants ofHorizontalFacing(JBlockModel model) {
+    final JVariants JVariants = new JVariants();
     for (Direction direction : Direction.Type.HORIZONTAL) {
-      variantDefinition.addVariant(Properties.HORIZONTAL_FACING, direction, model.clone().y(((int) direction.asRotation())));
+      JVariants.addVariant(Properties.HORIZONTAL_FACING, direction, model.clone().y(((int) direction.asRotation())));
     }
-    return variantDefinition;
+    return JVariants;
   }
 
   /**
@@ -127,11 +157,77 @@ public class VariantDefinition extends HashMap<String, JBlockModel[]> implements
    * @return The model variant definition for the slab block.
    * @apiNote This method does not support additional block state properties. If you'd like to deal with slabs with properties, and you can confirm that the slab has all properties that the base block has, you can use {@link #composeToSlab(Function, Function)}.
    */
-  public static VariantDefinition ofSlab(JBlockModel model, Identifier bottomSlabIdentifier, Identifier topSlabIdentifier) {
-    return new VariantDefinition()
+  public static JVariants ofSlab(JBlockModel model, Identifier bottomSlabIdentifier, Identifier topSlabIdentifier) {
+    return new JVariants()
         .addVariant(Properties.SLAB_TYPE, SlabType.BOTTOM, model.clone().modelId(bottomSlabIdentifier))
         .addVariant(Properties.SLAB_TYPE, SlabType.TOP, model.clone().modelId(topSlabIdentifier))
         .addVariant(Properties.SLAB_TYPE, SlabType.DOUBLE, model);
+  }
+
+  /**
+   * This is a convenient way to create a block model definition with one variant defined.<br>
+   * If the {@code variant} is empty, you can call {@link #ofNoVariants(JBlockModel...)}.
+   *
+   * @param variant         The string describing the whole variant. It can be empty string {@code ""}, or one or more key-value pairs, for example {@code "snowy=false"}, or {@code "facing=south,half=top"}.
+   * @param modelDefinition The block model definition.
+   * @see #ofNoVariants(JBlockModel...)
+   * @see #addVariant(String, JBlockModel...)
+   */
+  public static JVariants of(String variant, JBlockModel... modelDefinition) {
+    return new JVariants().addVariant(variant, modelDefinition);
+  }
+
+  /**
+   * This is a convenient way to create a block model definition with one variant defined.<br>
+   * If the {@code variant} is empty, you can call {@link #ofNoVariants(JBlockModel...)}.
+   *
+   * @param property        The name of the property, represented as string.
+   * @param value           The value of the property, represented as string.
+   * @param modelDefinition The block model definition.
+   * @see #addVariant(String, String, JBlockModel...)
+   */
+  public static JVariants of(String property, String value, JBlockModel... modelDefinition) {
+    return new JVariants().addVariant(property, value, modelDefinition);
+  }
+
+  /**
+   * This is a convenient way to create a block model definition with one variant defined.<br>
+   * If the {@code variant} is empty, you can call {@link #ofNoVariants(JBlockModel...)}.
+   *
+   * @param property        The name of the property, represented as string.
+   * @param value           The value of the property, usually a {@link StringIdentifiable} object.
+   * @param modelDefinition The block model definition.
+   * @see #addVariant(String, String, JBlockModel...)
+   */
+  public static JVariants of(String property, StringIdentifiable value, JBlockModel... modelDefinition) {
+    return new JVariants().addVariant(property, value, modelDefinition);
+  }
+
+  /**
+   * This is a convenient way to create a block model definition with one variant defined.
+   *
+   * @param property        A block state property. Vanilla properties can be found in {@link net.minecraft.state.property.Properties}.
+   * @param value           The value that corresponds to the property.
+   * @param modelDefinition The block model definition.
+   * @see #addVariant(Property, Comparable, JBlockModel...)
+   */
+  public static <T extends Comparable<T>> JVariants of(Property<T> property, T value, JBlockModel... modelDefinition) {
+    return new JVariants().addVariant(property, value, modelDefinition);
+  }
+
+  /**
+   * Create a delegated object that has the same serialization of the delegation object. It can be seen as a bridge between {@link JVariants} and {@link BlockStateVariant}.
+   *
+   * @param delegate The delegated object, whose serialization will be directly used.
+   * @return The delegated object.
+   */
+  private static JVariants delegate(BlockStateVariant delegate) {
+    return new Delegate(delegate);
+  }
+
+  @Override
+  protected @NotNull Map<String, JBlockModel[]> delegate() {
+    return variants;
   }
 
   /**
@@ -162,8 +258,8 @@ public class VariantDefinition extends HashMap<String, JBlockModel[]> implements
    * @return The variant definition for the slab block.
    * @see #ofSlab
    */
-  public VariantDefinition composeToSlab(Function<Identifier, Identifier> bottomSlabIdFunction, Function<Identifier, Identifier> topSlabIdFunction) {
-    final VariantDefinition result = new VariantDefinition();
+  public JVariants composeToSlab(Function<Identifier, Identifier> bottomSlabIdFunction, Function<Identifier, Identifier> topSlabIdFunction) {
+    final JVariants result = new JVariants();
     this.forEach((property, models) -> {
       if (!property.isEmpty()) property += ",";
       result.put(property + "type=double", models);
@@ -174,52 +270,64 @@ public class VariantDefinition extends HashMap<String, JBlockModel[]> implements
   }
 
   /**
-   * This is a convenient way to create a block model definition with one variant defined.<br>
-   * If the {@code variant} is empty, you can call {@link #ofNoVariants(JBlockModel...)}.
-   *
-   * @param variant         The string describing the whole variant. It can be empty string {@code ""}, or one or more key-value pairs, for example {@code "snowy=false"}, or {@code "facing=south,half=top"}.
-   * @param modelDefinition The block model definition.
-   * @see #ofNoVariants(JBlockModel...)
-   * @see #addVariant(String, JBlockModel...)
-   */
-  public static VariantDefinition of(String variant, JBlockModel... modelDefinition) {
-    return new VariantDefinition().addVariant(variant, modelDefinition);
-  }
-
-  /**
-   * This is a convenient way to create a block model definition with one variant defined.
-   *
-   * @param property        A block state property. Vanilla properties can be found in {@link net.minecraft.state.property.Properties}.
-   * @param value           The value that corresponds to the property.
-   * @param modelDefinition The block model definition.
-   * @see #addVariant(Property, Comparable, JBlockModel...)
-   */
-  public static <T extends Comparable<T>> VariantDefinition of(Property<T> property, T value, JBlockModel... modelDefinition) {
-    return new VariantDefinition().addVariant(property, value, modelDefinition);
-  }
-
-  /**
    * Add a simple variant situation.
    *
    * @param variant         The string describing the whole variant. It can be empty string {@code ""}, or one or more key-value pairs, for example {@code "snowy=false"}, or {@code "facing=south,half=top"}.
    * @param modelDefinition The block model definition.
    * @see #of(String, JBlockModel...)
    */
-  public VariantDefinition addVariant(String variant, JBlockModel... modelDefinition) {
+  @CanIgnoreReturnValue
+  @Contract("_, _-> this")
+  public JVariants addVariant(String variant, JBlockModel... modelDefinition) {
     put(variant, modelDefinition);
     return this;
   }
 
+  @Override
+  public JBlockModel[] put(String key, JBlockModel... value) {
+    return super.put(key, value);
+  }
+
   /**
-   * Add a simple variant situation with a property and boolean value. In this method, a single key-value pair is used.
+   * Add a simple variant situation with a property and value. In this method, a single key-value pair is used.
    *
    * @param property        A block state property. Vanilla properties can be found in {@link net.minecraft.state.property.Properties}.
    * @param value           The value that corresponds to the property.
    * @param modelDefinition The block model definition.
    * @see #of(Property, Comparable, JBlockModel...)
    */
-  public <T extends Comparable<T>> VariantDefinition addVariant(Property<T> property, T value, JBlockModel... modelDefinition) {
-    return addVariant(property.getName() + "=" + value.toString(), modelDefinition);
+  @CanIgnoreReturnValue
+  @Contract("_,_,_ -> this")
+  public <T extends Comparable<T>> JVariants addVariant(Property<T> property, T value, JBlockModel... modelDefinition) {
+    return addVariant(property.getName() + "=" + property.name(value), modelDefinition);
+  }
+
+  /**
+   * Add a simple variant situation with a string property and value. In this method, a single key-value pair is used.
+   *
+   * @param property        The name of the property, represented as string.
+   * @param value           The value of the property, represented as string.
+   * @param modelDefinition The block model definition.
+   * @see #of(String, String, JBlockModel...)
+   */
+  @CanIgnoreReturnValue
+  @Contract("_,_,_ -> this")
+  public JVariants addVariant(String property, String value, JBlockModel... modelDefinition) {
+    return addVariant(property + "=" + value, modelDefinition);
+  }
+
+  /**
+   * Add a simple variant situation with a string property and value. In this method, a single key-value pair is used.
+   *
+   * @param property        The name of the property, represented as string.
+   * @param value           The value of the property, usually a {@link StringIdentifiable} object.
+   * @param modelDefinition The block model definition.
+   * @see #of(String, String, JBlockModel...)
+   */
+  @CanIgnoreReturnValue
+  @Contract("_,_,_ -> this")
+  public JVariants addVariant(String property, StringIdentifiable value, JBlockModel... modelDefinition) {
+    return addVariant(property, value.asString(), modelDefinition);
   }
 
   @Override
@@ -227,5 +335,23 @@ public class VariantDefinition extends HashMap<String, JBlockModel[]> implements
     final JsonObject object = new JsonObject();
     this.forEach((key, value) -> object.add(key, context.serialize(value.length == 1 ? value[0] : value)));
     return object;
+  }
+
+  private static final class Delegate extends JVariants implements JsonSerializable, Supplier<JsonElement> {
+    private final BlockStateVariant delegate;
+
+    private Delegate(BlockStateVariant delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public JsonElement get() {
+      return delegate.get();
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return delegate.get();
+    }
   }
 }

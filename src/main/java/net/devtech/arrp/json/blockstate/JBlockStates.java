@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * <p>A <b>block states definition</b> is the file in the {@code assets/<i>namespace</i>/blockstates} folder, which defines which models should be used when rendering a block state. It has two types:</p>
+ * <p>A <b>"block states"</b> is the file in the {@code assets/<i>namespace</i>/blockstates} folder, which defines which models should be used when rendering a block state. It has two types:</p>
  * <ul>
  *   <li><b>variants</b> - Each block state corresponds to a block model definition ({@link JBlockModel}). You can create a variant definition through {@link #variants}.</li>
  *   <li><b>multipart</b> - Each part has a block model, and an optional condition ({@link JWhen}). If the condition is met (which means the actual block states matches to the condition), the part will be used. In this case, it's possible that one part, multiple parts or no parts will be used. You can create a multipart definition through {@link #ofMultiparts}.</li>
@@ -22,10 +22,12 @@ import java.util.List;
  * <p>This class is a simple improved version of {@link JState}. You can "upgrade" the deprecated <code>JState</code> through {@link #of(JState)}.</p>
  *
  * @author SolidBlock
+ * @see net.minecraft.data.client.BlockStateModelGenerator
+ * @see BlockStateSupplier
  * @since BRRP 0.6.0
  */
 public class JBlockStates implements JsonSerializable {
-  public final VariantDefinition variants;
+  public final JVariants variants;
   public final List<JMultipart> multiparts;
 
   /**
@@ -34,12 +36,12 @@ public class JBlockStates implements JsonSerializable {
    * @param variants   The variant definition. One of these two parameters must be {@code null}.
    * @param multiparts The list of multiparts. One of these two parameters must be {@code null}.
    */
-  private JBlockStates(VariantDefinition variants, List<JMultipart> multiparts) {
+  private JBlockStates(JVariants variants, List<JMultipart> multiparts) {
     this.variants = variants;
     this.multiparts = multiparts;
   }
 
-  public static JBlockStates ofVariants(VariantDefinition variants) {
+  public static JBlockStates ofVariants(JVariants variants) {
     return new JBlockStates(variants, null);
   }
 
@@ -65,7 +67,7 @@ public class JBlockStates implements JsonSerializable {
   /**
    * Add a variant definition for a block states definition of variants.
    *
-   * @throws IllegalStateException if the block states definition is for multiples (for example, created from {@link #ofVariants(VariantDefinition)}.
+   * @throws IllegalStateException if the block states definition is for multiples (for example, created from {@link #ofVariants(JVariants)}.
    */
   public JBlockStates add(JMultipart multipart) {
     if (multiparts == null) throw new IllegalStateException("A block state definition can only have either variants or multipart, not both");
@@ -83,7 +85,7 @@ public class JBlockStates implements JsonSerializable {
       instance = ofMultiparts(jState.multiparts);
     } else {
       // It's regarded a 'variants'.
-      instance = ofVariants(VariantDefinition.of(jState.variants.get(0)));
+      instance = ofVariants(JVariants.upgrade(jState.variants.get(0)));
       if (jState.variants.size() > 1) {
         ARRP.LOGGER.warn("Only one variant definition is allowed, but provided multiple. Only the first one will be used.");
       }
@@ -98,7 +100,7 @@ public class JBlockStates implements JsonSerializable {
    * }</pre>
    */
   public static JBlockStates simple(Identifier blockModelId) {
-    return ofVariants(VariantDefinition.ofNoVariants(new JBlockModel(blockModelId)));
+    return ofVariants(JVariants.ofNoVariants(new JBlockModel(blockModelId)));
   }
 
   /**
@@ -112,7 +114,7 @@ public class JBlockStates implements JsonSerializable {
    * }</pre>
    */
   public static JBlockStates simpleRandomRotation(Identifier blockModelId) {
-    return ofVariants(VariantDefinition.ofNoVariants(VariantDefinition.randomRotation(new JBlockModel(blockModelId))));
+    return ofVariants(JVariants.ofNoVariants(JVariants.ofRandomRotation(new JBlockModel(blockModelId))));
   }
 
   /**
@@ -134,11 +136,11 @@ public class JBlockStates implements JsonSerializable {
    * @return The block states definition for the horizontal facing block.
    */
   public static JBlockStates simpleHorizontalFacing(Identifier blockModelId, boolean uvlock) {
-    return ofVariants(VariantDefinition.ofHorizontalFacing(new JBlockModel(blockModelId).uvlock(uvlock)));
+    return ofVariants(JVariants.ofHorizontalFacing(new JBlockModel(blockModelId).uvlock(uvlock)));
   }
 
   /**
-   * Quickly create a block states definition for a slab block. This does not support additional properties except {@code "type"}. If you want to make more complex ones, which allows slabs with additional properties, you may refer to {@link VariantDefinition#composeToSlab}. The format is:
+   * Quickly create a block states definition for a slab block. This does not support additional properties except {@code "type"}. If you want to make more complex ones, which allows slabs with additional properties, you may refer to {@link JVariants#composeToSlab}. The format is:
    * <pre>{@code
    * {"variants":
    *   {"type=bottom": {"model": "<bottomSlabModelId>" },
@@ -151,7 +153,7 @@ public class JBlockStates implements JsonSerializable {
    * @return The block states definition for the slab block.
    */
   public static JBlockStates simpleSlab(Identifier baseBlockModelId, Identifier bottomSlabModelId, Identifier topSlabModelId) {
-    return ofVariants(VariantDefinition.ofSlab(new JBlockModel(baseBlockModelId), bottomSlabModelId, topSlabModelId));
+    return ofVariants(JVariants.ofSlab(new JBlockModel(baseBlockModelId), bottomSlabModelId, topSlabModelId));
   }
 
   public static JBlockStates delegate(BlockStateSupplier delegate) {

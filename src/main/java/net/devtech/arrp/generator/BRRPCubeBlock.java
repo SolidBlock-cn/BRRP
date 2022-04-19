@@ -57,7 +57,7 @@ public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JBlockStates getBlockStatesDefinition() {
+  public @NotNull JBlockStates getBlockStates() {
     return JBlockStates.simple(getBlockModelId());
   }
 

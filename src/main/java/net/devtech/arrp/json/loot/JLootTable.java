@@ -8,6 +8,7 @@ import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootTable;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class JLootTable implements Cloneable {
   /**
    * @deprecated Please directly call the constructor {@link #JLootTable(String)}.
    */
+  @Deprecated
   public static JLootTable loot(String type) {
     return new JLootTable(type);
   }
@@ -60,6 +62,7 @@ public class JLootTable implements Cloneable {
   /**
    * @deprecated Please directly call {@link JEntry#JEntry() new JEntry()}.
    */
+  @Deprecated
   public static JEntry entry() {
     return new JEntry();
   }
@@ -112,6 +115,7 @@ public class JLootTable implements Cloneable {
    * @param pool The loot table pool.
    */
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JLootTable pool(JPool pool) {
     if (this.pools == null) {
       this.pools = new ArrayList<>(1);
@@ -126,6 +130,7 @@ public class JLootTable implements Cloneable {
    * @param function The loot table function.
    */
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JLootTable function(JFunction function) {
     if (this.functions == null) {
       this.functions = new ArrayList<>(1);

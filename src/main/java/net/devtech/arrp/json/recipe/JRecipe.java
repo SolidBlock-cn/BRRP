@@ -28,6 +28,7 @@ public abstract class JRecipe implements Cloneable {
   /**
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
+  @Deprecated
   public static JSmithingRecipe smithing(final JIngredient base, final JIngredient addition, final JResult result) {
     return new JSmithingRecipe(base, addition, result);
   }
@@ -35,6 +36,7 @@ public abstract class JRecipe implements Cloneable {
   /**
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
+  @Deprecated
   public static JStonecuttingRecipe stonecutting(final JIngredient ingredient, final JStackedResult result) {
     return new JStonecuttingRecipe(ingredient, result);
   }
@@ -44,6 +46,7 @@ public abstract class JRecipe implements Cloneable {
   /**
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
+  @Deprecated
   public static JShapedRecipe shaped(final JPattern pattern, final JKeys keys, final JResult result) {
     return new JShapedRecipe(result, pattern, keys);
   }
@@ -51,6 +54,7 @@ public abstract class JRecipe implements Cloneable {
   /**
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
+  @Deprecated
   public static JShapelessRecipe shapeless(final JIngredients ingredients, final JResult result) {
     return new JShapelessRecipe(result, ingredients);
   }
@@ -60,6 +64,7 @@ public abstract class JRecipe implements Cloneable {
   /**
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
+  @Deprecated
   public static JBlastingRecipe blasting(final JIngredient ingredient, final JResult result) {
     return new JBlastingRecipe(ingredient, result);
   }
@@ -67,6 +72,7 @@ public abstract class JRecipe implements Cloneable {
   /**
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
+  @Deprecated
   public static JSmeltingRecipe smelting(final JIngredient ingredient, final JResult result) {
     return new JSmeltingRecipe(ingredient, result);
   }
@@ -74,6 +80,7 @@ public abstract class JRecipe implements Cloneable {
   /**
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
+  @Deprecated
   public static JCampfireRecipe campfire(final JIngredient ingredient, final JResult result) {
     return new JCampfireRecipe(ingredient, result);
   }
@@ -81,6 +88,7 @@ public abstract class JRecipe implements Cloneable {
   /**
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
+  @Deprecated
   public static JSmokingRecipe smoking(final JIngredient ingredient, final JResult result) {
     return new JSmokingRecipe(ingredient, result);
   }

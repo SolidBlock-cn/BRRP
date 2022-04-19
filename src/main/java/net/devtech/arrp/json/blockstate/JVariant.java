@@ -21,10 +21,12 @@ import java.util.Map;
  *   }
  * </pre>
  *
- * @deprecated use {@link VariantDefinition}
+ * @deprecated use {@link JVariants}
  */
+@SuppressWarnings("DeprecatedIsStillUsed")
+@Deprecated
 public final class JVariant implements Cloneable, JsonSerializable {
-  final Map<String, JBlockModel> models = new HashMap<>();
+  public final Map<String, JBlockModel> models = new HashMap<>();
 
   public JVariant() {
   }

@@ -15,6 +15,7 @@ import java.util.List;
 /**
  * @deprecated Please use {@link JBlockStates}, which is an improved version.
  */
+@SuppressWarnings("DeprecatedIsStillUsed")
 @Deprecated
 public final class JState implements JsonSerializable {
   final List<JVariant> variants = new ArrayList<>();
@@ -23,12 +24,13 @@ public final class JState implements JsonSerializable {
   public JState() {
   }
 
+  @Deprecated
   public static JState state() {
     return new JState();
   }
 
   /**
-   * @deprecated use {@link JBlockStates#ofVariants(VariantDefinition)}
+   * @deprecated use {@link JBlockStates#ofVariants(JVariants)}
    */
   @Deprecated
   public static JState state(JVariant... variants) {
@@ -52,6 +54,7 @@ public final class JState implements JsonSerializable {
   /**
    * @deprecated use {@link JBlockStates#ofMultiparts(JMultipart...)}
    */
+  @Deprecated
   public static JState state(JMultipart... parts) {
     JState state = new JState();
     for (JMultipart part : parts) {
@@ -120,6 +123,7 @@ public final class JState implements JsonSerializable {
     return new JWhen();
   }
 
+  @Deprecated
   @Override
   public JState clone() {
     try {

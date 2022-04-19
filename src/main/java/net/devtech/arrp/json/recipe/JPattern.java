@@ -19,6 +19,7 @@ public class JPattern implements Cloneable, JsonSerializable {
    *
    * @deprecated Ambiguous name.
    */
+  @Deprecated
   public static JPattern pattern() {
     return new JPattern("   ", "   ", "   ");
   }

@@ -9,6 +9,8 @@ import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.json.tags.IdentifiedTag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -16,11 +18,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
  * <p>An <b>ingredient</b>, as it literally means, is used in several types of recipes. It has either an item, or an item tag.</p>
  * <p>It takes two forms: a single ingredient, with an item or tag specified, and a <i>list</i> of ingredients, with multiple single ingredients specified.</p>
+ *
+ * @see net.minecraft.recipe.Ingredient
  */
 public class JIngredient implements Cloneable, JsonSerializable {
   /**
@@ -187,6 +192,17 @@ public class JIngredient implements Cloneable, JsonSerializable {
   }
 
   /**
+   * Create a "delegated" JIngredient object from a vanilla Ingredient object. Its json serialization will be the same as the delegate.
+   *
+   * @param delegate The vanilla Ingredient object. When serializing, its serialization will be directly used.
+   * @return A "delegated" JIngredient object.
+   * @see Ingredient
+   */
+  public static JIngredient delegate(Ingredient delegate) {
+    return new Delegate(delegate);
+  }
+
+  /**
    * Add another ingredient to this ingredient. In this case, the {@link #ingredients} field will be non-null, and this object will be serialized to a {@link com.google.gson.JsonArray}.
    */
   @CanIgnoreReturnValue
@@ -243,6 +259,24 @@ public class JIngredient implements Cloneable, JsonSerializable {
                                  final Type typeOfSrc,
                                  final JsonSerializationContext context) {
       return src.serialize(typeOfSrc, context);
+    }
+  }
+
+  private static final class Delegate extends JIngredient implements JsonSerializable, Predicate<ItemStack> {
+    public final Ingredient delegate;
+
+    private Delegate(Ingredient delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public boolean test(ItemStack itemStack) {
+      return delegate.test(itemStack);
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return delegate.toJson();
     }
   }
 }

@@ -1,9 +1,11 @@
 package net.devtech.arrp.json.models;
 
+import com.google.common.collect.ForwardingMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
@@ -16,24 +18,106 @@ import java.util.Map;
  * <p>You can simply call {@link #of(String, String)} or {@link #of(String...)} to quickly create an instance with one or several variables defined.
  */
 @SuppressWarnings("unused")
-public class JTextures extends LinkedHashMap<String, String> implements JsonSerializable {
+public class JTextures extends ForwardingMap<String, String> implements JsonSerializable {
   /**
-   * @deprecated This field exists for compatibility, for mixins to apply. It's identical to the JTextures object itself.
+   * The map containing the values. It is usually a {@link LinkedHashMap}, as specified in {@link #JTextures()}.
    */
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated
   private final Map<String, String> textures;
 
   /**
    * This is the basic constructor method. However, if you want to add some texture variables after constructing, you may directly use {@link #of}, {@link #ofAll}, {@link #ofLayer0} and {@link #ofSides}.
    */
   public JTextures() {
-    this.textures = this;
+    this(new LinkedHashMap<>());
   }
 
-  public JTextures(Map<? extends String, ? extends String> stringMap) {
-    this();
-    putAll(stringMap);
+  /**
+   * Create a {@code JTextures} object with custom texture map specified. If you're just considering creating an empty mutable one, you can call {@link #JTextures()}.
+   *
+   * @param textures The map of textures. It can be <i>immutable</i>; in this case, methods such as {@link #var} should not be used, or {@link UnsupportedOperationException} will be thrown.
+   */
+  public JTextures(Map<String, String> textures) {
+    this.textures = textures;
+  }
+
+  /**
+   * <p>Conveniently create an instance with one texture variable defined. </p>
+   * <p>For example,</p>
+   * <pre>{@code new JTextures().var("name", "var")}</pre>
+   * <p>is identical to:</p>
+   * <pre>{@code JTextures.of("name", "var)}</pre>
+   * <p>If you want to specify multiple texture variables, you can call {@link #var(String, String)} or {@link #vars(String...)} to the instance, or just use {@link #of(String...)}. If the texture variable you add is named {@code "all"}, you can directly call {@link #ofAll(String)}; if named {@code "layer0"}, you can directly call {@link #ofLayer0(String)}.</p>
+   */
+  public static JTextures of(String name, String val) {
+    return new JTextures().var(name, val);
+  }
+
+  /**
+   * <p>Conveniently create an instance with multiple texture variables defined.</p>
+   * <p>If you want to specify {@code "top"}, {@code "side"} and {@code "bottom"} at one time, you can see {@link #ofSides(String, String, String)}.</p>
+   */
+  public static JTextures of(String... strings) {
+    return new JTextures().vars(strings);
+  }
+
+  /**
+   * Quickly creates an instance with variable {@code "all"} specified.<br>
+   * The following codes are identical:
+   * <pre>{@code
+   * new JTextures().var ("all", "block/stone");
+   * JTextures.of        ("all", "block/stone");
+   * new JTextures().all ("block/stone");
+   * JTextures.ofAll     ("block/stone");
+   * }</pre>
+   * It's obvious that the last one is the most convenient.
+   *
+   * @see #all(String)
+   * @see #of(String, String)
+   */
+  public static JTextures ofAll(String all) {
+    return new JTextures().all(all);
+  }
+
+  /**
+   * <p>Quickly creates an instance with variable {@code "top"}, {@code "side"} and {@code "bottom"} specified. Many models use this set of variables, for instance, models based on {@code "minecraft:block/stairs"}.</p>
+   * <p>This static method is a convenient way to construct a new JTextures object and add these three variables to it.</p>
+   * <p>The following codes are identical:</p>
+   * <pre>{@code
+   * new JTextures().var ("top",    "block/sandstone_top")
+   *                .var ("side",   "block/sandstone")
+   *                .var ("bottom", "block/sandstone_bottom")
+   * new JTextures().vars("top",    "block/sandstone_top",
+   *                      "side",   "block/sandstone",
+   *                      "bottom", "block/sandstone_bottom")
+   * JTextures.of        ("top",    "block/sandstone_top",
+   *                      "side",   "block/sandstone",
+   *                      "bottom", "block/sandstone_bottom")
+   * new JTextures().sides         ("block/sandstone_top",
+   *                                "block/sandstone",
+   *                                "block/sandstone_bottom")
+   * JTextures.ofSides             ("block/sandstone_top",
+   *                                "block/sandstone",
+   *                                "block/sandstone_bottom")
+   * }</pre>
+   *
+   * @see #sides(String, String, String)
+   */
+  public static JTextures ofSides(String top, String side, String bottom) {
+    return new JTextures().sides(top, side, bottom);
+  }
+
+  /**
+   * Quickly creates an instance with variable {@code "layer0"} specified. This is usually used by models based on {@code "minecraft:item/generated"}.
+   *
+   * @see #layer0(String)
+   */
+  public static JTextures ofLayer0(String layer0) {
+    return new JTextures().layer0(layer0);
+  }
+
+  @Override
+  protected @NotNull Map<String, String> delegate() {
+    return textures;
   }
 
   /**
@@ -86,26 +170,6 @@ public class JTextures extends LinkedHashMap<String, String> implements JsonSeri
   }
 
   /**
-   * <p>Conveniently create an instance with one texture variable defined. </p>
-   * <p>For example,</p>
-   * <pre>{@code new JTextures().var("name", "var")}</pre>
-   * <p>is identical to:</p>
-   * <pre>{@code JTextures.of("name", "var)}</pre>
-   * <p>If you want to specify multiple texture variables, you can call {@link #var(String, String)} or {@link #vars(String...)} to the instance, or just use {@link #of(String...)}. If the texture variable you add is named {@code "all"}, you can directly call {@link #ofAll(String)}; if named {@code "layer0"}, you can directly call {@link #ofLayer0(String)}.</p>
-   */
-  public static JTextures of(String name, String val) {
-    return new JTextures().var(name, val);
-  }
-
-  /**
-   * <p>Conveniently create an instance with multiple texture variables defined.</p>
-   * <p>If you want to specify {@code "top"}, {@code "side"} and {@code "bottom"} at one time, you can see {@link #ofSides(String, String, String)}.</p>
-   */
-  public static JTextures of(String... strings) {
-    return new JTextures().vars(strings);
-  }
-
-  /**
    * Adds a variable {@code "all"} specified. This is usually used models based on {@code "minecraft:block/cube_all"}. You can also directly call {@link #ofAll(String)} to create an instance with these three variables specified.
    *
    * @see #ofAll(String)
@@ -115,58 +179,12 @@ public class JTextures extends LinkedHashMap<String, String> implements JsonSeri
   }
 
   /**
-   * Quickly creates an instance with variable {@code "all"} specified.<br>
-   * The following codes are identical:
-   * <pre>{@code
-   * new JTextures().var ("all", "block/stone");
-   * JTextures.of        ("all", "block/stone");
-   * new JTextures().all ("block/stone");
-   * JTextures.ofAll     ("block/stone");
-   * }</pre>
-   * It's obvious that the last one is the most convenient.
-   *
-   * @see #all(String)
-   * @see #of(String, String)
-   */
-  public static JTextures ofAll(String all) {
-    return new JTextures().all(all);
-  }
-
-  /**
    * <p>Quickly adds variables {@code "top"}, {@code "side"} and {@code "bottom"}. You can also directly call {@link #ofSides(String, String, String)} to create an instance with these three variables specified.</p>
    *
    * @see #ofSides(String, String, String)
    */
   public JTextures sides(String top, String side, String bottom) {
     return var("top", top).var("side", side).var("bottom", bottom);
-  }
-
-  /**
-   * <p>Quickly creates an instance with variable {@code "top"}, {@code "side"} and {@code "bottom"} specified. Many models use this set of variables, for instance, models based on {@code "minecraft:block/stairs"}.</p>
-   * <p>This static method is a convenient way to construct a new JTextures object and add these three variables to it.</p>
-   * <p>The following codes are identical:</p>
-   * <pre>{@code
-   * new JTextures().var ("top",    "block/sandstone_top")
-   *                .var ("side",   "block/sandstone")
-   *                .var ("bottom", "block/sandstone_bottom")
-   * new JTextures().vars("top",    "block/sandstone_top",
-   *                      "side",   "block/sandstone",
-   *                      "bottom", "block/sandstone_bottom")
-   * JTextures.of        ("top",    "block/sandstone_top",
-   *                      "side",   "block/sandstone",
-   *                      "bottom", "block/sandstone_bottom")
-   * new JTextures().sides         ("block/sandstone_top",
-   *                                "block/sandstone",
-   *                                "block/sandstone_bottom")
-   * JTextures.ofSides             ("block/sandstone_top",
-   *                                "block/sandstone",
-   *                                "block/sandstone_bottom")
-   * }</pre>
-   *
-   * @see #sides(String, String, String)
-   */
-  public static JTextures ofSides(String top, String side, String bottom) {
-    return new JTextures().sides(top, side, bottom);
   }
 
   /**
@@ -185,15 +203,6 @@ public class JTextures extends LinkedHashMap<String, String> implements JsonSeri
   public JTextures layer0(String val) {
     put("layer0", val);
     return this;
-  }
-
-  /**
-   * Quickly creates an instance with variable {@code "layer0"} specified. This is usually used by models based on {@code "minecraft:item/generated"}.
-   *
-   * @see #layer0(String)
-   */
-  public static JTextures ofLayer0(String layer0) {
-    return new JTextures().layer0(layer0);
   }
 
   public JTextures layer1(String val) {
@@ -218,7 +227,11 @@ public class JTextures extends LinkedHashMap<String, String> implements JsonSeri
 
   @Override
   public JTextures clone() {
-    return (JTextures) super.clone();
+    try {
+      return (JTextures) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override

@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.common.collect.ForwardingMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,17 +11,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class JKeys extends HashMap<String, JIngredient> implements Cloneable, JsonSerializable {
+public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneable, JsonSerializable {
   /**
-   * @deprecated It's equal to the object itself, so you do not need it anymore. It's kept for only compatibility.
+   * The map storing its keys, used for the forwarding map. It's by default a {@link LinkedHashMap}.
    */
-  @SuppressWarnings("DeprecatedIsStillUsed")
   protected final Map<String, JIngredient> keys;
   /**
    * @deprecated You do not need it anymore.
@@ -30,10 +29,27 @@ public class JKeys extends HashMap<String, JIngredient> implements Cloneable, Js
   @ApiStatus.ScheduledForRemoval(inVersion = "unsure")
   protected final Map<String, List<JIngredient>> acceptableKeys;
 
+  /**
+   * Create a new, mutable {@code JKeys} object, with a new {@link LinkedHashMap} initialized.
+   */
   public JKeys() {
-    super(9, 1);
-    this.keys = this;
+    this.keys = new LinkedHashMap<>(9, 1);
     this.acceptableKeys = new HashMap<>();
+  }
+
+  /**
+   * Create a new {@code JKeys} object with keys explicitly specified. You can create an immutable one by this. If you want to create an empty, mutable one, you should use {@link #JKeys()}.
+   *
+   * @param keys The map of keys and ingredients, which will be directly used as a field. You can make it immutable; in this case, methods such as {@link #key} should not be used, or {@link UnsupportedOperationException} may be thrown.
+   */
+  public JKeys(Map<String, JIngredient> keys) {
+    this.keys = keys;
+    this.acceptableKeys = Collections.emptyMap();
+  }
+
+  @Override
+  protected @NotNull Map<String, JIngredient> delegate() {
+    return keys;
   }
 
   /**
@@ -102,7 +118,11 @@ public class JKeys extends HashMap<String, JIngredient> implements Cloneable, Js
 
   @Override
   public JKeys clone() {
-    return (JKeys) super.clone();
+    try {
+      return (JKeys) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override
@@ -118,6 +138,10 @@ public class JKeys extends HashMap<String, JIngredient> implements Cloneable, Js
     return object;
   }
 
+  /**
+   * @deprecated This class is kept for just compatibility. For example, some mixins may apply to it.
+   */
+  @Deprecated
   public static class Serializer implements JsonSerializer<JKeys> {
     @Override
     public JsonElement serialize(final JKeys src, final Type typeOfSrc, final JsonSerializationContext context) {

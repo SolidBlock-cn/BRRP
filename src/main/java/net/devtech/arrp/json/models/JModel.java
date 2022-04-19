@@ -111,6 +111,7 @@ public class JModel implements Cloneable {
   /**
    * @deprecated Please directly use the constructor {@link JOverride#JOverride(JCondition, String)}.
    */
+  @Deprecated
   public static JOverride override(JCondition predicate, Identifier model) {
     return new JOverride(predicate, model.toString());
   }
@@ -118,6 +119,7 @@ public class JModel implements Cloneable {
   /**
    * @deprecated Please directly use the constructor {@link JCondition#JCondition()}.
    */
+  @Deprecated
   public static JCondition condition() {
     return new JCondition((String) null);
   }
@@ -125,6 +127,7 @@ public class JModel implements Cloneable {
   /**
    * @deprecated Please directly use the constructor {@link #JModel(Identifier)}.
    */
+  @Deprecated
   public static JModel model(Identifier identifier) {
     return model(identifier.toString());
   }
@@ -132,6 +135,7 @@ public class JModel implements Cloneable {
   /**
    * @deprecated Please directly use the constructor {@link JDisplay#JDisplay()}.
    */
+  @Deprecated
   public static JDisplay display() {
     return new JDisplay();
   }
@@ -139,6 +143,7 @@ public class JModel implements Cloneable {
   /**
    * @deprecated Please directly use the constructor {@link JElement#JElement()}.
    */
+  @Deprecated
   public static JElement element() {
     return new JElement();
   }
@@ -146,6 +151,7 @@ public class JModel implements Cloneable {
   /**
    * @deprecated Please directly use the constructor {@link JFace#JFace(String)}.
    */
+  @Deprecated
   public static JFace face(String texture) {
     return new JFace(texture);
   }
@@ -153,6 +159,7 @@ public class JModel implements Cloneable {
   /**
    * @deprecated Please directly use the constructor {@link JFaces#JFaces()}.
    */
+  @Deprecated
   public static JFaces faces() {
     return new JFaces();
   }
@@ -160,6 +167,7 @@ public class JModel implements Cloneable {
   /**
    * @deprecated Please directly use the constructor {@link JPosition#JPosition()}.
    */
+  @Deprecated
   public static JPosition position() {
     return new JPosition();
   }
@@ -167,6 +175,7 @@ public class JModel implements Cloneable {
   /**
    * @deprecated Please directly use the constructor {@link JRotation#JRotation(Direction.Axis)}.
    */
+  @Deprecated
   public static JRotation rotation(Direction.Axis axis) {
     return new JRotation(axis);
   }
@@ -174,6 +183,7 @@ public class JModel implements Cloneable {
   /**
    * @deprecated Please directly use the constructor {@link JTextures#JTextures()}.
    */
+  @Deprecated
   public static JTextures textures() {
     return new JTextures();
   }

@@ -48,6 +48,7 @@ public class JResult implements Cloneable, JsonSerializable {
   /**
    * @deprecated Please directly call {@link #JResult(Item)}.
    */
+  @Deprecated
   public static JResult item(final Item item) {
     return result(Registry.ITEM.getId(item).toString());
   }
@@ -55,6 +56,7 @@ public class JResult implements Cloneable, JsonSerializable {
   /**
    * @deprecated Please directly call {@link #JResult(String)} .
    */
+  @Deprecated
   public static JResult result(final String id) {
     return new JResult(id);
   }

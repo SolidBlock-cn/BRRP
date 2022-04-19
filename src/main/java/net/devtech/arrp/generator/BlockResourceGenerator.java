@@ -107,17 +107,18 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @return The block states definition of the block.
    */
-  default @Nullable JBlockStates getBlockStatesDefinition() {
+  default @Nullable JBlockStates getBlockStates() {
     return null;
   }
 
   /**
-   * Write the block states definition (returned in {@link #getBlockStatesDefinition}) to the runtime resource pack, if that is not {@code null}. Usually a block has one block states definition file, with the id identical to the block id.
+   * Write the block states definition (returned in {@link #getBlockStates}) to the runtime resource pack, if that is not {@code null}. Usually a block has one block states definition file, with the id identical to the block id.
    *
    * @param pack The runtime resource pack.
    */
-  default void writeBlockStatesDefinition(RuntimeResourcePack pack) {
-    pack.addBlockState(getBlockStatesDefinition(), getBlockId());
+  default void writeBlockStates(RuntimeResourcePack pack) {
+    final JBlockStates blockStates = getBlockStates();
+    if (blockStates != null) pack.addBlockState(blockStates, getBlockId());
   }
 
   /**
@@ -185,7 +186,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @Override
   default void writeAssets(RuntimeResourcePack pack) {
-    writeBlockStatesDefinition(pack);
+    writeBlockStates(pack);
     writeBlockModel(pack);
     writeItemModel(pack);
   }
@@ -208,7 +209,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The block loot table.
    */
   default JLootTable getLootTable() {
-    return JLootTable.simple(getBlockId().toString());
+    return JLootTable.simple(getItemId().toString());
   }
 
   /**

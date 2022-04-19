@@ -13,12 +13,19 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * An entry of the {@link JBlockStates#multiparts multipart} field of a {@link JBlockStates}. Note: this class represents an entry, not a list of it.<br>
- * The multipart entry consists of the following fields: <ul>
+ * <p>An entry of the {@link JBlockStates#multiparts multipart} field of a {@link JBlockStates}. Note: this class represents an entry, not a list of it.</p>
+ * <p>The multipart entry consists of the following fields: </p><ul>
  * <li><b>{@code apply}</b> - The {@link JBlockModel block model definition} that will be used, or a list of it to randomly choose.</li>
  * <li><b>{@code when}</b> - The {@link JWhen condition} that the part will be used. Optional.</li>
  * </ul>
+ *
+ * @see net.minecraft.data.client.MultipartBlockStateSupplier
+ * @see net.minecraft.client.render.model.MultipartBakedModel
+ * @see net.minecraft.client.render.model.MultipartUnbakedModel
+ * @see net.minecraft.client.render.model.json.MultipartModelSelector
+ * @see net.minecraft.client.render.model.json.MultipartModelComponent
  */
+@SuppressWarnings("unused")
 public class JMultipart implements Cloneable, JsonSerializable {
   // one or list
   public final List<JBlockModel> apply;

@@ -52,7 +52,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @Nullable JBlockStates getBlockStatesDefinition() {
+  public @Nullable JBlockStates getBlockStates() {
     final Identifier id = getBlockModelId();
     return JBlockStates.simpleSlab(baseBlock != null ? ResourceGeneratorHelper.getBlockModelId(baseBlock) : id.brrp_append("_double"), id, id.brrp_append("_top"));
   }

@@ -1,12 +1,15 @@
 package net.devtech.arrp.json.blockstate;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * The simple block model that usually represents as the value in {@link JVariant}.<br>
  * <B>Note: </B>This class is used as a model definition in the block states definition file. To represent a model's content, please use {@link net.devtech.arrp.json.models.JModel}.
  */
+@SuppressWarnings("unused")
 public class JBlockModel implements Cloneable {
   /**
    * The model identifier. Usually compulsory. For example, {@code "minecraft:block/oak_slab_top"}.
@@ -28,29 +31,6 @@ public class JBlockModel implements Cloneable {
    * This field is used in the element of block definition arrays, which affect the probability that it will be selected in the random list.
    */
   public @Nullable Integer weight;
-
-  /**
-   * Simple create an array block model definition with random rotations. For example,
-   * <pre>
-   *   {@code simpleRandom(new SimpleBlockModelDefinition(new Identifier("minecraft","block/dirt"))}
-   * </pre>
-   * which returns an array block model definition like this:
-   * <pre>{@code
-   *   [{ "model": "minecraft:block/dirt"  },
-   *    { "model": "minecraft:block/dirt", "y": 90  },
-   *    { "model": "minecraft:block/dirt", "y": 180  },
-   *    { "model": "minecraft:block/dirt", "y": 270  }  ]
-   * }</pre>
-   */
-  public static JBlockModel[] simpleRandom(JBlockModel basicModel) {
-    final JBlockModel[] multiple = new JBlockModel[4];
-    for (int i = 0; i < 4; i++) {
-      final JBlockModel cloned = basicModel.clone();
-      cloned.y = 90 * i;
-      multiple[i] = cloned;
-    }
-    return multiple;
-  }
 
   /**
    * This constructor method usually directly creates a full instance with parameters, so fields are usually nullable.
@@ -91,6 +71,29 @@ public class JBlockModel implements Cloneable {
     this(new Identifier(idNamespace, idPath));
   }
 
+  /**
+   * Simple create an array block model definition with random rotations. For example,
+   * <pre>
+   *   {@code simpleRandom(new SimpleBlockModelDefinition(new Identifier("minecraft","block/dirt"))}
+   * </pre>
+   * which returns an array block model definition like this:
+   * <pre>{@code
+   *   [{ "model": "minecraft:block/dirt"  },
+   *    { "model": "minecraft:block/dirt", "y": 90  },
+   *    { "model": "minecraft:block/dirt", "y": 180  },
+   *    { "model": "minecraft:block/dirt", "y": 270  }  ]
+   * }</pre>
+   */
+  public static JBlockModel[] simpleRandom(JBlockModel basicModel) {
+    final JBlockModel[] multiple = new JBlockModel[4];
+    for (int i = 0; i < 4; i++) {
+      final JBlockModel cloned = basicModel.clone();
+      cloned.y = 90 * i;
+      multiple[i] = cloned;
+    }
+    return multiple;
+  }
+
   @Override
   public JBlockModel clone() {
     try {
@@ -103,31 +106,43 @@ public class JBlockModel implements Cloneable {
   /**
    * Set the model id.
    */
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JBlockModel modelId(Identifier model) {
     this.model = model;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JBlockModel x(int x) {
     this.x = x;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JBlockModel y(int y) {
     this.y = y;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("-> this")
   public JBlockModel uvlock() {
     this.uvlock = true;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JBlockModel uvlock(boolean uvlock) {
     this.uvlock = uvlock;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JBlockModel weight(int weight) {
     this.weight = weight;
     return this;

@@ -37,6 +37,8 @@ public abstract class JResultRecipe extends JRecipe {
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   @Override
   public JResultRecipe group(final String group) {
     return (JResultRecipe) super.group(group);

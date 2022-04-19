@@ -84,6 +84,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       performance = Boolean.parseBoolean(properties.getProperty("debug performance"));
     } catch (Throwable t) {
       LOGGER.warn("Invalid config, creating new one!");
+      //noinspection ResultOfMethodCallIgnored
       file.getParentFile().mkdirs();
       try (FileWriter writer = new FileWriter(file)) {
         properties.store(writer, "number of threads RRP should use for generating resources");

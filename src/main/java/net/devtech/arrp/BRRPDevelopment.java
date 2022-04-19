@@ -5,7 +5,7 @@ import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.generator.*;
 import net.devtech.arrp.json.blockstate.JBlockModel;
 import net.devtech.arrp.json.blockstate.JBlockStates;
-import net.devtech.arrp.json.blockstate.VariantDefinition;
+import net.devtech.arrp.json.blockstate.JVariants;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.models.JElement;
 import net.devtech.arrp.json.models.JFace;
@@ -46,6 +46,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 public class BRRPDevelopment implements ModInitializer {
   public static final BlockSoundGroup WATER_SOUND_GROUP = new BlockSoundGroup(1, 1, SoundEvents.ITEM_BUCKET_EMPTY, SoundEvents.ENTITY_PLAYER_SWIM, SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ENTITY_BOAT_PADDLE_WATER, SoundEvents.BLOCK_POINTED_DRIPSTONE_DRIP_WATER);
@@ -171,7 +173,7 @@ public class BRRPDevelopment implements ModInitializer {
         .blockRespect(LAVA_FENCE_GATE, "熔岩栅栏门")
     );
 
-    final VariantDefinition variants = VariantDefinition
+    final JVariants variants = JVariants
         .of(HARDENED, false, new JBlockModel("minecraft", "block/stone"))
         .addVariant(HARDENED, true, new JBlockModel("minecraft", "block/andesite"));
     PACK.addBlockState(JBlockStates.ofVariants(variants), new Identifier("brrp", "hardenable_block"));
@@ -215,7 +217,7 @@ public class BRRPDevelopment implements ModInitializer {
         (stack, tintIndex) -> {
           final var block = ((BlockItem) stack.getItem()).getBlock();
           final MinecraftClient instance = MinecraftClient.getInstance();
-          return ColorProviderRegistry.BLOCK.get(block).getColor(block.getDefaultState(), instance.world, instance.cameraEntity != null ? instance.cameraEntity.getBlockPos() : null, tintIndex);
+          return Objects.requireNonNull(ColorProviderRegistry.BLOCK.get(block)).getColor(block.getDefaultState(), instance.world, instance.cameraEntity != null ? instance.cameraEntity.getBlockPos() : null, tintIndex);
         },
         WATER_BLOCK, WATER_STAIRS, WATER_SLAB, WATER_FENCE, WATER_FENCE_GATE
     );
