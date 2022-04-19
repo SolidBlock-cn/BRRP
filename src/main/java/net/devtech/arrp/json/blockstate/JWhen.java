@@ -1,201 +1,35 @@
 package net.devtech.arrp.json.blockstate;
 
-import com.google.common.collect.ForwardingMap;
-import com.google.common.collect.Lists;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
+import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.minecraft.data.client.When;
-import net.minecraft.state.property.Property;
+import net.minecraft.state.StateManager;
 import net.minecraft.util.Pair;
-import net.minecraft.util.StringIdentifiable;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
- * <p>The map for property names and values. The key is the property name, and the value is the property value, or joined with {@code "|"} if there are multiple values.</p>
+ * <p>This is an object used to specify the condition of a multipart, and if the condition matches, the part will be used.</p>
+ * <p>However, it has several issues. It does not supported complex situations, or even a simple situation with multiple properties stated. It does not even distinguage property condition and logical condition.</p>
+ * <p>As a result, as you may have seen, this class is deprecated in BRRP. You should use {@link JWhenProperties} or {@link JWhenLogical} instead. As you can see as well, this class as well as several improved classes in BRRP, implements {@link When}, which is a vanilla class.</p>
+ * <p>However, you can directly use {@link #delegate(When)}, which creates an object with vanilla serialization. You can create the delegate with {@link When#create()} , {@link #anyOf(When...)} or {@link #allOf(When...)}. Do not use classes in <i>this</i> mod as parameters of {@link #delegate}.</p>
  *
  * @see net.minecraft.data.client.When
  */
-@SuppressWarnings("unused")
-public class JWhen extends ForwardingMap<String, String> implements Cloneable, JsonSerializable {
-  /**
-   * The alternatives of conditions. If the value is present, this condition will be met if any of the alternative conditions is met.
-   *
-   * @see net.minecraft.data.client.When.LogicalCondition
-   */
-  public final List<JWhen> alternatives;
-  /**
-   * The map storing its actual contents. It <b>can</b> be sometimes <b>immutable</b>, if it is created with {@link #JWhen(List)}.
-   */
-  public final Map<String, String> properties;
-  /**
-   * Field kept for compatibility, considering that some classes still apply mixins to it.
-   *
-   * @deprecated Please use {@link #alternatives}.
-   */
-  @SuppressWarnings({"DeprecatedIsStillUsed"})
-  @Deprecated(forRemoval = true)
+@Deprecated
+public class JWhen implements Cloneable, JsonSerializable, When {
   private final List<Pair<String, String[]>> OR = new ArrayList<>();
 
-  /**
-   * Create a condition <i>without</i> `OR` field, which means a simple condition.
-   */
   public JWhen() {
-    this(new LinkedHashMap<>());
   }
 
-  /**
-   * Create a condition <i>without</i> `OR` field, with properties (represented as string map) initially loaded.
-   *
-   * @param properties The properties, represented as a map for strings. It <i>can</i> be immutable if you like, which means in this case you cannot call methods like {@link #add}.
-   */
-  public JWhen(Map<String, String> properties) {
-    this.properties = properties;
-    this.alternatives = null;
-  }
-
-  /**
-   * Create a condition with an `OR` field. In this case, methods like {@link #add} should not be used, as it throws {@link UnsupportedOperationException}.
-   *
-   * @param alternatives The possible alternative situations, which is the {@link #alternatives "OR"} field. It <i>can</i> be immutable, if you like.
-   */
-  public JWhen(List<JWhen> alternatives) {
-    this.alternatives = alternatives;
-    properties = Collections.emptyMap();
-  }
-
-  public JWhen(String property, String... value) {
-    this();
-    add(property, value);
-  }
-
-  @SafeVarargs
-  public <T extends Comparable<T>> JWhen(Property<T> property, T... value) {
-    this();
-    add(property, value);
-  }
-
-  /**
-   * Create a new {@link JWhen} object with empty alternatives specified, which is mutable.
-   *
-   * @param jWhens Multiple conditions.
-   * @return A new object.
-   */
-  @Contract("_ -> new")
-  public static @NotNull JWhen ofAlternatives(JWhen... jWhens) {
-    return new JWhen(Lists.newArrayList(jWhens));
-  }
-
-  /**
-   * Create a delegated object. It's serialization will be the same as "{@link When}", and any other operations will be ignored.
-   *
-   * @param delegate The delegate object whose serialization will be used.
-   * @return The delegated {@link JWhen} object.
-   */
-  @Contract("_ -> new")
-  private static @NotNull JWhen delegate(When delegate) {
-    return new Delegate(delegate);
-  }
-
-  @Override
-  protected @NotNull Map<String, String> delegate() {
-    return properties;
-  }
-
-  /**
-   * Add a matching property to this object.
-   *
-   * @param property The property of block states. Vanilla properties can be found in {@link Properties}.
-   * @param value    The value of this property.
-   * @return The object itself.
-   * @throws UnsupportedOperationException if it's created with {@link #JWhen(List)}.
-   */
-  @CanIgnoreReturnValue
-  @Contract("_, _ -> this")
-  public <T extends Comparable<T>> JWhen add(Property<T> property, T value) {
-    properties.put(property.getName(), property.name(value));
-    return this;
-  }
-
-  /**
-   * Add a matching property to this object.
-   *
-   * @param property The property of block states. Vanilla properties can be found in {@link Properties}.
-   * @param values   The values of this property, representing that each one of the values will be matched. In this case, they will be joined with {@code "|"}.
-   * @return The object itself.
-   * @throws UnsupportedOperationException if it's created with {@link #JWhen(List)}.
-   */
-  @Contract("_, _ -> this")
-  @SafeVarargs
-  @CanIgnoreReturnValue
-  public final <T extends Comparable<T>> JWhen add(Property<T> property, T... values) {
-    properties.put(property.getName(), Arrays.stream(values).map(property::name).collect(Collectors.joining("|")));
-    return this;
-  }
-
-  /**
-   * Add a matching property to this object.
-   *
-   * @param property The property of block states, represented as string
-   * @param value    The one or multiple values of this property, represented as string.
-   * @return The object itself.
-   * @throws UnsupportedOperationException if it's created with {@link #JWhen(List)}.
-   */
-  @CanIgnoreReturnValue
-  @Contract("_, _->this")
-  public JWhen add(String property, String value) {
-    properties.put(property, value);
-    return this;
-  }
-
-  /**
-   * Add a matching property to this object.
-   *
-   * @param property The property of block states, represented as string
-   * @param value    The value of this property, represented as a {@link StringIdentifiable} object.
-   * @return The object itself.
-   * @throws UnsupportedOperationException if it's created with {@link #JWhen(List)}.
-   */
-  @CanIgnoreReturnValue
-  @Contract("_, _->this")
-  public JWhen add(String property, StringIdentifiable value) {
-    properties.put(property, value.asString());
-    return this;
-  }
-
-  /**
-   * Add a matching property to this object.
-   *
-   * @param property The property of block states, represented as string
-   * @param values   The values of this property, representing that each one of the values will be matched. In this case, they will be joined with {@code "|"}.
-   * @return The object itself.
-   * @throws UnsupportedOperationException if it's created with {@link #JWhen(List)}.
-   */
-  @CanIgnoreReturnValue
-  @Contract("_, _->this")
-  public JWhen add(String property, String... values) {
-    properties.put(property, String.join("|", values));
-    return this;
-  }
-
-  /**
-   * Add a matching property to this object.
-   *
-   * @param property The property of block states, represented as string
-   * @param values   The values of this property, representing that each one of the values will be matched. In this case, they will be joined with {@code "|"}.
-   * @return The object itself.
-   * @throws UnsupportedOperationException if it's created with {@link #JWhen(List)}.
-   */
-  @CanIgnoreReturnValue
-  @Contract("_, _->this")
-  public JWhen add(String property, StringIdentifiable... values) {
-    properties.put(property, Arrays.stream(values).map(StringIdentifiable::asString).collect(Collectors.joining("|")));
+  public JWhen add(String condition, String... states) {
+    this.OR.add(new Pair<>(condition, states));
     return this;
   }
 
@@ -204,24 +38,49 @@ public class JWhen extends ForwardingMap<String, String> implements Cloneable, J
     try {
       return (JWhen) super.clone();
     } catch (CloneNotSupportedException e) {
-      throw new RuntimeException(e);
+      throw new InternalError(e);
     }
   }
 
   @Override
+  public JsonElement get() {
+    return RuntimeResourcePackImpl.GSON.toJsonTree(this);
+  }
+
+  @Override
   public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
-    final JsonObject object = new JsonObject();
-    if (alternatives != null || !OR.isEmpty()) {
-      final JsonArray jsonArray = new JsonArray();
-      if (alternatives != null) for (JWhen alternative : alternatives) {
-        jsonArray.add(context.serialize(alternative));
+    if (this.OR.size() == 1) {
+      JsonObject json = new JsonObject();
+      Pair<String, String[]> val = this.OR.get(0);
+      json.addProperty(val.getLeft(), String.join("|", Arrays.asList(val.getRight())));
+      return json;
+    } else {
+      JsonArray array = new JsonArray();
+      for (Pair<String, String[]> val : this.OR) {
+        JsonObject json = new JsonObject();
+        json.addProperty(val.getLeft(), String.join("|", Arrays.asList(val.getRight())));
+        array.add(json);
       }
-      for (Pair<String, String[]> pair : OR) {
-        jsonArray.add(pair.getLeft() + "=" + String.join("|", pair.getRight()));
-      }
-      object.add("OR", jsonArray);
-    } else forEach(object::addProperty);
-    return object;
+      return array;
+    }
+  }
+
+  @Override
+  public void validate(StateManager<?, ?> stateManager) {
+    // It does not need validation
+  }
+
+  /**
+   * Create a delegated object, whose serialization will be same as the delegate.
+   *
+   * @param delegate The delegate object. It is usually a vanilla {@link When} object ({@link net.minecraft.data.client.When.PropertyCondition} or {@link net.minecraft.data.client.When.LogicalCondition}, which can be generated with {@link When#create()}, {@link When#anyOf(When...)}, or {@link When#allOf(When...)}. Its serialization will be directly used.
+   * @return The delegated object.
+   */
+  public When delegate(When delegate) {
+    if (delegate instanceof JWhen || delegate instanceof JWhenProperties || delegate instanceof JWhenLogical) {
+      throw new IllegalArgumentException("Only vanilla 'When' objects can be delegated.");
+    }
+    return new Delegate(delegate);
   }
 
   /**
@@ -235,7 +94,7 @@ public class JWhen extends ForwardingMap<String, String> implements Cloneable, J
     }
   }
 
-  private static final class Delegate extends JWhen implements JsonSerializable, Supplier<JsonElement> {
+  private static final class Delegate implements JsonSerializable, Supplier<JsonElement>, When {
     public final When delegate;
 
     private Delegate(When delegate) {
@@ -250,6 +109,11 @@ public class JWhen extends ForwardingMap<String, String> implements Cloneable, J
     @Override
     public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
       return delegate.get();
+    }
+
+    @Override
+    public void validate(StateManager<?, ?> stateManager) {
+      delegate.validate(stateManager);
     }
   }
 }

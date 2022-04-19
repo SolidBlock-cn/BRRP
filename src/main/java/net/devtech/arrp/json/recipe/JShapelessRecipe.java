@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.gson.annotations.SerializedName;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -21,7 +22,8 @@ public class JShapelessRecipe extends JResultRecipe {
   private static final String TYPE = "minecraft:crafting_shapeless";
   @SuppressWarnings("DeprecatedIsStillUsed")
   @Deprecated
-  protected final JIngredients ingredients;
+  protected transient final JIngredients ingredients;
+  @SerializedName("ingredients")
   public final List<JIngredient> ingredientList;
 
   public JShapelessRecipe(String result, Collection<String> ingredientList) {
