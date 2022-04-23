@@ -215,11 +215,49 @@ public class JTag {
     return this;
   }
 
+  /**
+   * Add another tags to this tag. Please be warned that the "another tag" identifier does not specify type.
+   *
+   * @param tagIdentifiers The identifiers of the tag you added. They do not contain the type specification.
+   * @return The JTag instance itself, makes it possible to chain-call.
+   */
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
+  public JTag addTagIds(Iterable<Identifier> tagIdentifiers) {
+    tagIdentifiers.forEach(this::addTag);
+    return this;
+  }
+
+  /**
+   * Add another tags to this tag. Please be warned that the "another tag" identifier does not specify type.
+   *
+   * @param tagIdentifiers The identifiers of the tag you added. They do not contain the type specification.
+   * @return The JTag instance itself, makes it possible to chain-call.
+   */
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
+  public JTag addTagIds(Identifier... tagIdentifiers) {
+    return addTagIds(Arrays.asList(tagIdentifiers));
+  }
+
   @CanIgnoreReturnValue
   @Contract("_ -> this")
   public JTag addTag(IdentifiedTag tag) {
     this.values.add("#" + tag.identifier.toString());
     return this;
+  }
+
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
+  public JTag addTags(Iterable<IdentifiedTag> tags) {
+    tags.forEach(this::addTag);
+    return this;
+  }
+
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
+  public JTag addTags(IdentifiedTag... tags) {
+    return addTags(Arrays.asList(tags));
   }
 
   @Override

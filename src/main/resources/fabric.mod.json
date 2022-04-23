@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "better_runtime_resource_pack",
-  "version": "0.6.0-shapshot.3",
+  "version": "0.6.0-shapshot.4",
   "name": "Better Runtime Resource Pack (derived from ARRP mod)",
   "description": "BRRP is derived from ARRP mod, which fixes some issues and some bugs. The mod is trying the best to make it compatible with ARRP. Installing this mod does not require installing ARRP, and other mods depending on ARRP can depend on this mod.",
   "authors": [
