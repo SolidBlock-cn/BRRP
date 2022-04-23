@@ -128,7 +128,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
     } else {
       obj.add("apply", context.serialize(this.apply));
     }
-    obj.add("when", context.serialize(this.when));
+    obj.add("when", context.serialize(this.condition));
     return obj;
   }
 }
