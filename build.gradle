@@ -31,7 +31,7 @@ allprojects {
 }
 
 dependencies {
-    implementation project(path: ":arrp", configuration: 'namedElements')
+    modApi project(path: ":arrp", configuration: 'namedElements')
     include project(path: ":arrp", configuration: 'namedElements')
 }
 

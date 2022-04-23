@@ -241,7 +241,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   void load(Path path) throws IOException;
 
   /**
-   * Write the runtime resource pack as a local file, making you available to directly visit its content.
+   * Write the runtime resource pack as local files, making you available to directly visit its content.
    *
    * @deprecated use {@link #dump(Path)}
    */
@@ -249,7 +249,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   void dump(File file);
 
   /**
-   * Write the runtime resource pack as a local file, making you available to directly visit its content.
+   * Write the runtime resource pack as local files, making you available to directly visit its content.
    *
    * @param path The path to write the resource pack.
    */
@@ -260,6 +260,8 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
+   * Write the runtime resource pack as a local zip file, making you available to directly visit its content.
+   *
    * @see ByteBufOutputStream
    */
   void dump(ZipOutputStream stream) throws IOException;

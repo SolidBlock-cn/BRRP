@@ -54,7 +54,13 @@ import static java.lang.String.valueOf;
 @ApiStatus.Internal
 public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePack {
   public static final ExecutorService EXECUTOR_SERVICE;
+  /**
+   * Whether to dump all resources as local files. It depends on the config file. By default, it is {@code false}.
+   */
   public static final boolean DUMP;
+  /**
+   * Whether to print milliseconds used for data generation. By default, it is {@code false}.
+   */
   public static final boolean DEBUG_PERFORMANCE;
 
   public static final Gson GSON = new GsonBuilder()
@@ -69,8 +75,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   static {
     Properties properties = new Properties();
+    // Number of threads of the executor service. By default, depends on the config of the device. It is used for async resources, and async data generation defined in `rrp:pregen` entrypoint.
     int processors = Math.max(Runtime.getRuntime().availableProcessors() / 2 - 1, 1);
+    // Whether to dump all the resources as local files. By default false.
     boolean dump = false;
+    // Whether to print a notice of milliseconds used for data generation.
     boolean performance = false;
     properties.setProperty("threads", valueOf(processors));
     properties.setProperty("dump assets", "false");
@@ -89,8 +98,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       try (FileWriter writer = new FileWriter(file)) {
         properties.store(writer, "number of threads RRP should use for generating resources");
       } catch (IOException ex) {
-        LOGGER.error("Unable to write to RRP config!");
-        ex.printStackTrace();
+        LOGGER.error("Unable to write to RRP config!", ex);
       }
     }
     EXECUTOR_SERVICE = Executors.newFixedThreadPool(processors, new ThreadFactoryBuilder().setDaemon(true).setNameFormat("ARRP-Workers-%s").build());
@@ -104,7 +112,12 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
   private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
+  /**
+   * @deprecated Wrong spelling
+   */
+  @Deprecated(forRemoval = true)
   private final Map<Identifier, JLang> langMergable = new ConcurrentHashMap<>();
+  private final Map<Identifier, JLang> langMergeable = langMergable;
 
   public RuntimeResourcePackImpl(Identifier id) {
     this(id, 5);
@@ -164,7 +177,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public void mergeLang(Identifier identifier, JLang lang) {
-    this.langMergable.compute(identifier, (identifier1, lang1) -> {
+    this.langMergeable.compute(identifier, (identifier1, lang1) -> {
       if (lang1 == null) {
         lang1 = new JLang();
         this.addLazyResource(ResourceType.CLIENT_RESOURCES, identifier, (pack, identifier2) -> pack.addLang(identifier, lang));
@@ -289,7 +302,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public void dumpDirect(Path output) {
-    LOGGER.info("dumping " + this.id + "'s assets and data");
+    LOGGER.info("Dumping " + this.id + "'s assets and data");
     // data dump time
     try {
       for (Map.Entry<String, Supplier<byte[]>> e : this.root.entrySet()) {
@@ -333,6 +346,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   }
 
   @Override
+  @Deprecated
   public void dump(File output) {
     this.dump(Paths.get(output.toURI()));
   }
@@ -463,12 +477,12 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public String getName() {
-    return "Runtime Resource Pack " + this.id;
+    return "Runtime Resource Pack " + this.id.toString();
   }
 
   @Override
   public void close() {
-    LOGGER.info("closing rrp " + this.id);
+    LOGGER.info("Closing rrp " + this.id);
 
     // lock
     this.lock();
@@ -501,7 +515,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
         long start = System.currentTimeMillis();
         this.waiting.lock();
         long end = System.currentTimeMillis();
-        LOGGER.warn("waited " + (end - start) + "ms for lock in RRP: " + this.id);
+        LOGGER.warn("Waited " + (end - start) + "ms for lock in RRP: " + this.id);
       } else {
         this.waiting.lock();
       }

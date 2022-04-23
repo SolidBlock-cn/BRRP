@@ -24,13 +24,13 @@ public abstract class LifecycledResourceManagerImplMixin {
   private static List<ResourcePack> registerARRPs(List<ResourcePack> packs) throws ExecutionException, InterruptedException {
     ARRP.waitForPregen();
 
-    ARRP_LOGGER.info("ARRP register - before vanilla");
+    ARRP_LOGGER.info("BRRP register - before vanilla");
     List<ResourcePack> before = new ArrayList<>();
     RRPCallback.BEFORE_VANILLA.invoker().insert(before);
 
     before.addAll(packs);
 
-    ARRP_LOGGER.info("ARRP register - after vanilla");
+    ARRP_LOGGER.info("BRRP register - after vanilla");
     List<ResourcePack> after = new ArrayList<>();
     RRPCallback.AFTER_VANILLA.invoker().insert(after);
 

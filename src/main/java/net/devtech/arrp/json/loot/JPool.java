@@ -132,6 +132,7 @@ public class JPool implements Cloneable {
 
   @CanIgnoreReturnValue
   public JPool rolls(int rolls) {
+    this.rolls = rolls;
     this.rollsProvider = ConstantLootNumberProvider.create(rolls);
     return this;
   }
@@ -154,6 +155,7 @@ public class JPool implements Cloneable {
   @Deprecated
   public JPool rolls(JRoll roll) {
     this.roll = roll;
+    this.rollsProvider = roll.asLootNumberProvider();
     return this;
   }
 
@@ -171,6 +173,7 @@ public class JPool implements Cloneable {
 
   @CanIgnoreReturnValue
   public JPool bonus(int bonus_rolls) {
+    this.bonus_rolls = bonus_rolls;
     this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
     return this;
   }
@@ -192,7 +195,8 @@ public class JPool implements Cloneable {
    */
   @Deprecated
   public JPool bonus(JRoll bonus_roll) {
-    this.bonusRollsProvider = (LootNumberProvider) bonus_roll;
+    this.bonus_roll = bonus_roll;
+    this.bonusRollsProvider = bonus_roll.asLootNumberProvider();
     return this;
   }
 
