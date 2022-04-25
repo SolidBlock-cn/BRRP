@@ -1,7 +1,6 @@
 package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingMap;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
@@ -140,7 +139,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param value    The value of this property.
    * @return The object itself.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_, _ -> this")
   public <T extends Comparable<T>> JWhenProperties add(Property<T> property, T value) {
     return add(property.getName(), property.name(value));
@@ -155,7 +154,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    */
   @Contract("_, _ -> this")
   @SafeVarargs
-  @CanIgnoreReturnValue
+
   public final <T extends Comparable<T>> JWhenProperties add(Property<T> property, T... values) {
     return add(property.getName(), Arrays.stream(values).map(property::name).collect(Collectors.joining("|")));
   }
@@ -167,7 +166,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param value    The one or multiple values of this property, represented as string.
    * @return The object itself.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_, _->this")
   public JWhenProperties add(String property, String value) {
     properties.put(property, value);
@@ -181,7 +180,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param value    The one or multiple values of this property, represented as string.
    * @return The object itself.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_, _->this")
   public JWhenProperties addNegated(String property, String value) {
     return add(property, "!" + value);
@@ -194,7 +193,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param value    The value of this property, represented as a {@link StringIdentifiable} object.
    * @return The object itself.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_, _->this")
   public JWhenProperties add(String property, StringIdentifiable value) {
     return add(property, value.asString());
@@ -207,7 +206,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param value    The value of this property, represented as a {@link StringIdentifiable} object.
    * @return The object itself.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_, _->this")
   public JWhenProperties addNegated(String property, StringIdentifiable value) {
     return add(property, "!" + value.asString());
@@ -220,7 +219,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param values   The values of this property, representing that each one of the values will be matched. In this case, they will be joined with {@code "|"}.
    * @return The object itself.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_, _->this")
   public JWhenProperties add(String property, String... values) {
     return add(property, String.join("|", values));
@@ -233,7 +232,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param values   The values of this property, representing that each one of the values will be negated. In this case, they will be joined with {@code "|"}.
    * @return The object itself.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_, _->this")
   public JWhenProperties addNegated(String property, String... values) {
     return add(property, "!" + String.join("|", values));
@@ -246,7 +245,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param values   The values of this property, representing that each one of the values will be matched. In this case, they will be joined with {@code "|"}.
    * @return The object itself.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_, _->this")
   public JWhenProperties add(String property, StringIdentifiable... values) {
     return add(property, Arrays.stream(values).map(StringIdentifiable::asString).collect(Collectors.joining("|")));
@@ -259,7 +258,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param values   The values of this property, representing that each one of the values will be negated. In this case, they will be joined with {@code "|"}.
    * @return The object itself.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_, _->this")
   public JWhenProperties addNegated(String property, StringIdentifiable... values) {
     return add(property, "!" + Arrays.stream(values).map(StringIdentifiable::asString).collect(Collectors.joining("|")));

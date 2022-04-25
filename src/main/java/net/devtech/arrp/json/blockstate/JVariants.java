@@ -1,7 +1,6 @@
 package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingMap;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -276,7 +275,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param modelDefinition The block model definition.
    * @see #of(String, JBlockModel...)
    */
-  @CanIgnoreReturnValue
+
   @Contract("_, _-> this")
   public JVariants addVariant(String variant, JBlockModel... modelDefinition) {
     put(variant, modelDefinition);
@@ -284,7 +283,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
   }
 
   @Override
-  public JBlockModel[] put(String key, JBlockModel... value) {
+  public JBlockModel[] put(@NotNull String key, JBlockModel @NotNull ... value) {
     return super.put(key, value);
   }
 
@@ -296,7 +295,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param modelDefinition The block model definition.
    * @see #of(Property, Comparable, JBlockModel...)
    */
-  @CanIgnoreReturnValue
+
   @Contract("_,_,_ -> this")
   public <T extends Comparable<T>> JVariants addVariant(Property<T> property, T value, JBlockModel... modelDefinition) {
     return addVariant(property.getName() + "=" + property.name(value), modelDefinition);
@@ -310,7 +309,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param modelDefinition The block model definition.
    * @see #of(String, String, JBlockModel...)
    */
-  @CanIgnoreReturnValue
+
   @Contract("_,_,_ -> this")
   public JVariants addVariant(String property, String value, JBlockModel... modelDefinition) {
     return addVariant(property + "=" + value, modelDefinition);
@@ -324,7 +323,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param modelDefinition The block model definition.
    * @see #of(String, String, JBlockModel...)
    */
-  @CanIgnoreReturnValue
+
   @Contract("_,_,_ -> this")
   public JVariants addVariant(String property, StringIdentifiable value, JBlockModel... modelDefinition) {
     return addVariant(property, value.asString(), modelDefinition);

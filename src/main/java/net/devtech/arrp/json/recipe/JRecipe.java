@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.recipe;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
@@ -105,7 +104,7 @@ public abstract class JRecipe implements Cloneable {
   /**
    * Set the recipe group.
    */
-  @CanIgnoreReturnValue
+
   public JRecipe group(final String group) {
     this.group = group;
     return this;

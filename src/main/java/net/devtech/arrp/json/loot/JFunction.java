@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.loot;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.loot.LootGsons;
@@ -43,7 +42,7 @@ public class JFunction implements Cloneable, JsonSerializable {
    *
    * @param function The function name, which is an identifier (as string).
    */
-  @CanIgnoreReturnValue
+
   public JFunction function(String function) {
     this.function = function;
     return this;
@@ -52,39 +51,39 @@ public class JFunction implements Cloneable, JsonSerializable {
   /**
    * Set all properties of the function, overriding existing ones, except {@link #function} and {@link #conditions}.
    */
-  @CanIgnoreReturnValue
+
   public JFunction set(JsonObject properties) {
     this.properties = properties;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JFunction parameter(String key, JsonElement value) {
     this.properties.add(key, value);
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JFunction parameter(String key, String value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
-  @CanIgnoreReturnValue
+
   public JFunction parameter(String key, Number value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
-  @CanIgnoreReturnValue
+
   public JFunction parameter(String key, Boolean value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
-  @CanIgnoreReturnValue
+
   public JFunction parameter(String key, Identifier value) {
     return parameter(key, value.toString());
   }
 
-  @CanIgnoreReturnValue
+
   public JFunction parameter(String key, Character value) {
     return parameter(key, new JsonPrimitive(value));
   }
@@ -94,7 +93,7 @@ public class JFunction implements Cloneable, JsonSerializable {
    *
    * @param condition The loot table condition.
    */
-  @CanIgnoreReturnValue
+
   public JFunction condition(JCondition condition) {
     if (conditions == null) this.conditions = new ArrayList<>();
     this.conditions.add(condition);

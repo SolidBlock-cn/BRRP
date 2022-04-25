@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.blockstate;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -106,42 +105,42 @@ public class JBlockModel implements Cloneable {
   /**
    * Set the model id.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_ -> this")
   public JBlockModel modelId(Identifier model) {
     this.model = model;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   @Contract("_ -> this")
   public JBlockModel x(int x) {
     this.x = x;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   @Contract("_ -> this")
   public JBlockModel y(int y) {
     this.y = y;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   @Contract("-> this")
   public JBlockModel uvlock() {
     this.uvlock = true;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   @Contract("_ -> this")
   public JBlockModel uvlock(boolean uvlock) {
     this.uvlock = uvlock;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   @Contract("_ -> this")
   public JBlockModel weight(int weight) {
     this.weight = weight;

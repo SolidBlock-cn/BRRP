@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.loot;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
@@ -126,26 +125,26 @@ public class JPool implements Cloneable {
    * @deprecated Please use {@link #rolls(int)} or {@link #rolls(float)}.
    */
   @Deprecated
-  @CanIgnoreReturnValue
+
   public JPool rolls(Integer rolls) {
     this.rollsProvider = ConstantLootNumberProvider.create(rolls);
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JPool rolls(int rolls) {
     this.rolls = rolls;
     this.rollsProvider = ConstantLootNumberProvider.create(rolls);
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JPool rolls(float rolls) {
     this.rollsProvider = ConstantLootNumberProvider.create(rolls);
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JPool rolls(LootNumberProvider rolls) {
     this.rollsProvider = rolls;
     return this;
@@ -167,26 +166,26 @@ public class JPool implements Cloneable {
    * @deprecated Please use {@link #bonus(int)} or {@link #bonus(float)}.
    */
   @Deprecated
-  @CanIgnoreReturnValue
+
   public JPool bonus(Integer bonus_rolls) {
     this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JPool bonus(int bonus_rolls) {
     this.bonus_rolls = bonus_rolls;
     this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JPool bonus(float bonus_rolls) {
     this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JPool bonus(LootNumberProvider bonusRollsProvider) {
     this.bonusRollsProvider = bonusRollsProvider;
     return this;

@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.recipe;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
@@ -66,7 +65,7 @@ public class JSmithingRecipe extends JResultRecipe {
     return new Delegate(delegate);
   }
 
-  @CanIgnoreReturnValue
+
   @Contract("_ -> this")
   @Override
   public JSmithingRecipe group(final String group) {

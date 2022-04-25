@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.recipe;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
@@ -31,13 +30,13 @@ public abstract class JResultRecipe extends JRecipe {
   }
 
   @Contract("_ -> this")
-  @CanIgnoreReturnValue
+
   public JResultRecipe resultCount(int count) {
     this.result.count = count;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   @Contract("_ -> this")
   @Override
   public JResultRecipe group(final String group) {

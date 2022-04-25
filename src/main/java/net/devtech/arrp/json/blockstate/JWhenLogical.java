@@ -2,7 +2,6 @@ package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -76,7 +75,7 @@ public class JWhenLogical extends ForwardingList<When> implements When, JsonSeri
   /**
    * Add a condition to its components. Of course, you can also assemble the conditions well when constructing. It is quite similar to {@link List#add(Object)}, but returns the object itself.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_ -> this")
   public JWhenLogical addCondition(When condition) {
     components.add(condition);
@@ -86,7 +85,7 @@ public class JWhenLogical extends ForwardingList<When> implements When, JsonSeri
   /**
    * Add conditions to its components. Of course, you can also assemble the conditions well when constructing. It is similar to {@link List#add(Object)}, but returns the object itself.
    */
-  @CanIgnoreReturnValue
+
   @Contract("_ -> this")
   public JWhenLogical addCondition(When... condition) {
     components.addAll(Arrays.asList(condition));

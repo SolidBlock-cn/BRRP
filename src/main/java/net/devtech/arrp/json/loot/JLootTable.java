@@ -1,7 +1,6 @@
 package net.devtech.arrp.json.loot;
 
 import com.google.common.collect.Lists;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
@@ -114,7 +113,7 @@ public class JLootTable implements Cloneable {
    *
    * @param pool The loot table pool.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_ -> this", mutates = "this")
   public JLootTable pool(JPool pool) {
     if (this.pools == null) {
@@ -129,7 +128,7 @@ public class JLootTable implements Cloneable {
    *
    * @param function The loot table function.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_ -> this", mutates = "this")
   public JLootTable function(JFunction function) {
     if (this.functions == null) {

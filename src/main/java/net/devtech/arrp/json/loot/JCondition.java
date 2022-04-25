@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.loot;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
@@ -50,46 +49,46 @@ public class JCondition implements Cloneable, JsonSerializable {
     return ofAlternative(Arrays.asList(conditions));
   }
 
-  @CanIgnoreReturnValue
+
   public JCondition condition(String condition) {
     this.condition = condition;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JCondition set(JsonObject parameters) {
     parameters.addProperty("condition", this.parameters.get("condition").getAsString());
     this.parameters = parameters;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JCondition parameter(String key, Number value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
-  @CanIgnoreReturnValue
+
   public JCondition parameter(String key, JsonElement value) {
     this.parameters.add(key, value);
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JCondition parameter(String key, Boolean value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
-  @CanIgnoreReturnValue
+
   public JCondition parameter(String key, Character value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
-  @CanIgnoreReturnValue
+
   public JCondition parameter(String key, Identifier value) {
     return parameter(key, value.toString());
   }
 
-  @CanIgnoreReturnValue
+
   public JCondition parameter(String key, String value) {
     return parameter(key, new JsonPrimitive(value));
   }

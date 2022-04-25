@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.recipe;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
@@ -91,19 +90,19 @@ public class JBlastingRecipe extends JCookingRecipe {
     super(TYPE, ingredient, result);
   }
 
-  @CanIgnoreReturnValue
+
   @Override
   public JBlastingRecipe experience(final float experience) {
     return (JBlastingRecipe) super.experience(experience);
   }
 
-  @CanIgnoreReturnValue
+
   @Override
   public JBlastingRecipe cookingTime(final int cookingtime) {
     return (JBlastingRecipe) super.cookingTime(cookingtime);
   }
 
-  @CanIgnoreReturnValue
+
   @Override
   public JBlastingRecipe group(final String group) {
     return (JBlastingRecipe) super.group(group);

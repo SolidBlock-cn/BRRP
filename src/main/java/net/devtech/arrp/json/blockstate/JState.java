@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.blockstate;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -41,7 +40,7 @@ public final class JState implements JsonSerializable {
     return state;
   }
 
-  @CanIgnoreReturnValue
+
   @Contract("_ -> this")
   public JState add(JVariant variant) {
     if (!this.multiparts.isEmpty()) {
@@ -63,7 +62,7 @@ public final class JState implements JsonSerializable {
     return state;
   }
 
-  @CanIgnoreReturnValue
+
   @Contract("_ -> this")
   public JState add(JMultipart multiparts) {
     if (!this.variants.isEmpty()) {

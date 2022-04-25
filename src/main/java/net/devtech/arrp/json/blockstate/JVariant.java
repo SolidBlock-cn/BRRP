@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.blockstate;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -31,7 +30,7 @@ public final class JVariant implements Cloneable, JsonSerializable {
   public JVariant() {
   }
 
-  @CanIgnoreReturnValue
+
   public JVariant put(String key, JBlockModel model) {
     this.models.put(key, model);
     return this;
@@ -40,7 +39,7 @@ public final class JVariant implements Cloneable, JsonSerializable {
   /**
    * boolean block properties
    */
-  @CanIgnoreReturnValue
+
   public JVariant put(String property, boolean value, JBlockModel builder) {
     this.models.put(property + '=' + value, builder);
     return this;
@@ -49,7 +48,7 @@ public final class JVariant implements Cloneable, JsonSerializable {
   /**
    * int block properties
    */
-  @CanIgnoreReturnValue
+
   public JVariant put(String property, int value, JBlockModel builder) {
     this.models.put(property + '=' + value, builder);
     return this;
@@ -60,7 +59,7 @@ public final class JVariant implements Cloneable, JsonSerializable {
    *
    * @see Direction
    */
-  @CanIgnoreReturnValue
+
   public JVariant put(String property, StringIdentifiable value, JBlockModel builder) {
     this.models.put(property + '=' + value.asString(), builder);
     return this;
@@ -69,7 +68,7 @@ public final class JVariant implements Cloneable, JsonSerializable {
   /**
    * everything else
    */
-  @CanIgnoreReturnValue
+
   public JVariant put(String property, String value, JBlockModel builder) {
     this.models.put(property + '=' + value, builder);
     return this;

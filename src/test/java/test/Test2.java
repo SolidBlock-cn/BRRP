@@ -8,7 +8,6 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.storage.RegionFile;
 
 import java.io.*;
-import java.nio.file.Path;
 
 public class Test2 {
   public static void main(String[] args) {
@@ -16,7 +15,7 @@ public class Test2 {
       for (int y = -1; y < 2; y++) {
         try {
           final File file = new File("r.%s.%s.mca".formatted(x, y));
-          final RegionFile regionFile = new RegionFile(Path.of(file.getPath()), Path.of(""), true);
+          final RegionFile regionFile = new RegionFile(new File(file.getPath()), new File(""), true);
           for (int i = 0; i < 32; i++) {
             for (int j = 0; j < 32; j++) {
               removeBiomes(regionFile, new ChunkPos(i, j));

@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.models;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.util.math.Direction;
 
@@ -43,7 +42,7 @@ public class JRotation implements Cloneable {
     angle(angle);
   }
 
-  @CanIgnoreReturnValue
+
   public JRotation origin(float x, float y, float z) {
     this.origin[0] = x;
     this.origin[1] = y;
@@ -51,19 +50,19 @@ public class JRotation implements Cloneable {
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JRotation angle(Float angle) {
     this.angle = angle;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JRotation rescale(boolean rescale) {
     this.rescale = rescale;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JRotation rescale() {
     this.rescale = true;
     return this;

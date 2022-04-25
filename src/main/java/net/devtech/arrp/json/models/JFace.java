@@ -40,7 +40,7 @@ public class JFace implements Cloneable {
   }
 
   public JFace uv(float x1, float y1, float x2, float y2) {
-    this.uvs = FloatArrayList.of(x1, y1, x2, y2);
+    this.uvs = FloatArrayList.wrap(new float[]{x1, y1, x2, y2});
     return this;
   }
 

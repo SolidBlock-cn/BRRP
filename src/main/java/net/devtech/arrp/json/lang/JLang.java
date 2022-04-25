@@ -1,7 +1,6 @@
 package net.devtech.arrp.json.lang;
 
 import com.google.common.base.Suppliers;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
@@ -54,7 +53,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * @return the file with the new entry.
    * @deprecated use {@link #entry(String, String)} instead.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   public JLang translate(String in, String out) {
     put(in, out);
@@ -64,7 +63,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * @deprecated Ambiguous name and parameter name. Please use {@link #registryEntry(Registry, String, Object, String)}.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   private <T> JLang object(Registry<T> registry, String str, T t, String name) {
     return this.object(str,
@@ -78,7 +77,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * @deprecated Ambiguous name and it does not use {@link Util#createTranslationKey}. Please use {@link #registryEntry(String, Identifier, String)}.
    */
   @Contract(value = "_, _, _ -> this", mutates = "this")
-  @CanIgnoreReturnValue
+
   @Deprecated
   private JLang object(String type, Identifier identifier, String translation) {
     put(type + '.' + identifier.getNamespace() + '.' + identifier.getPath(), translation);
@@ -93,7 +92,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * @param translation The translated name, such as {@code "Stone"}.
    * @author SolidBlock
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_,_ -> this", mutates = "this")
   public JLang registryEntry(String type, Identifier identifier, String translation) {
     put(Util.createTranslationKey(type, identifier), translation);
@@ -103,7 +102,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Add a registry entry to this instance, using {@link Registry#getId(Object)}.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_,_,_ -> this", mutates = "this")
   public <T> JLang registryEntry(Registry<T> registry, String type, T t, String translation) {
     final RegistryKey<T> registryKey = registry.getKey(t).orElseThrow(Suppliers.ofInstance(new RuntimeException("Please register it first!")));
@@ -118,7 +117,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * @param translation The translated words.
    * @return The instance itself, making it possible to chain-call.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang entry(String entry, String translation) {
     put(entry, translation);
@@ -128,7 +127,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Adds a translation key for an item, respects {@link Item#getTranslationKey()}. Please ensure that the item has been registered.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang itemRespect(Item item, String translation) {
     put(item.getTranslationKey(), translation);
@@ -138,7 +137,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Adds a translation key for an item stack (usually identical to that item), respected {@link ItemStack#getTranslationKey()}. Typically, you should ensure that the item has been registered.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang item(ItemStack stack, String translation) {
     put(stack.getTranslationKey(), translation);
@@ -150,7 +149,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    *
    * @see #itemRespect(Item, String)
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   @Deprecated
   public JLang item(Item item, String translation) {
@@ -160,7 +159,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Adds a translation key for a block, respects {@link Block#getTranslationKey()}. Please ensure that the block has been registered.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang blockRespect(Block block, String translation) {
     put(block.getTranslationKey(), translation);
@@ -172,7 +171,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    *
    * @see #blockRespect(Block, String)
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   @Deprecated
   public JLang block(Block block, String translation) {
@@ -182,7 +181,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Adds a translation key for a fluid, using simple {@link Registry#getId(Object)}. Please ensure that the fluid has been registered.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang fluid(Fluid fluid, String translation) {
     return this.registryEntry(Registry.FLUID, "fluid", fluid, translation);
@@ -191,7 +190,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Adds a translation key for an entity type, respects {@link EntityType#getTranslationKey()}. Please ensure that the entity has been registered.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang entityRespect(EntityType<?> type, String translation) {
     put(type.getTranslationKey(), translation);
@@ -202,7 +201,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * @see JLang#entityRespect(EntityType, String)
    */
   @Deprecated
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang entity(EntityType<?> type, String translation) {
     return this.object(Registry.ENTITY_TYPE, "entity_type", type, translation);
@@ -211,7 +210,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Adds a translation key for an enchantment, respects {@link Enchantment#getTranslationKey()}.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang enchantmentRespect(Enchantment enchantment, String translation) {
     put(enchantment.getTranslationKey(), translation);
@@ -224,7 +223,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * @see #enchantmentRespect(Enchantment, String)
    */
   @Deprecated
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang enchantment(Enchantment enchantment, String translation) {
     return this.object(Registry.ENCHANTMENT, "enchantment", enchantment, translation);
@@ -233,7 +232,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Add an item entry with the identifier specified.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   @Deprecated
   public JLang item(Identifier item, String translation) {
@@ -245,7 +244,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    *
    * @see #blockRespect(Block, String)
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   @Deprecated
   public JLang block(Identifier block, String translation) {
@@ -257,7 +256,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    *
    * @see #fluid(Fluid, String)
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang fluid(Identifier id, String translation) {
     return this.registryEntry("fluid", id, translation);
@@ -268,7 +267,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    *
    * @see #entityRespect(EntityType, String)
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang entity(Identifier id, String translation) {
     return this.registryEntry("entity_type", id, translation);
@@ -279,7 +278,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    *
    * @see #enchantmentRespect(Enchantment, String)
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang enchantment(Identifier id, String translation) {
     return this.registryEntry("enchantment", id, translation);
@@ -291,7 +290,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * @param id          The identifier of the item group specified in {@link net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder}.
    * @param translation The translated name of the item group.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang itemGroup(Identifier id, String translation) {
     return this.registryEntry("itemGroup", id, translation);
@@ -300,7 +299,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Add a sound event with the identifier specified.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang sound(Identifier id, String translation) {
     return this.registryEntry("sound_event", id, translation);
@@ -309,7 +308,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Add a mob effect with the identifier specified.
    */
-  @CanIgnoreReturnValue
+
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang status(Identifier id, String translation) {
     return this.registryEntry("mob_effect", id, translation);
@@ -320,7 +319,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    *
    * @deprecated Ambiguous translation keys and English-only potion names.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang allPotionOf(Identifier id, String effectTranslation) {
@@ -337,7 +336,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    *
    * @deprecated Ambiguous translation keys.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   @Contract(value = "_,_,_,_,_ -> this", mutates = "this")
   public JLang allPotion(Identifier id,
@@ -352,7 +351,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * @deprecated Ambiguous translation key.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang tippedArrow(Identifier id, String translation) {
@@ -363,7 +362,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * @deprecated Ambiguous translation key.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang lingeringPotion(Identifier id, String name) {
@@ -374,7 +373,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * @deprecated Ambiguous translation key.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang splashPotion(Identifier id, String name) {
@@ -385,7 +384,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * @deprecated Ambiguous translation key and English-only potion names.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang drinkablePotion(Identifier id, String name) {
@@ -397,7 +396,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * @deprecated Ambiguous translation key and English-only potion names.
    * Like {@link JLang#drinkablePotion}, but it adds in the "Potion of" automatically.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang drinkablePotionOf(Identifier id, String effectName) {
@@ -410,7 +409,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * <p>
    * Like {@link JLang#splashPotion}, but it adds in the "Splash Potion of" automatically.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang splashPotionOf(Identifier id, String effectName) {
@@ -423,7 +422,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * <p>
    * Like {@link JLang#lingeringPotion}, but it adds in the "Lingering Potion of" automatically.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang lingeringPotionOf(Identifier id, String effectName) {
@@ -436,7 +435,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * <p>
    * Like {@link JLang#tippedArrow}, but it adds in the "Tipped Arrow of" automatically.
    */
-  @CanIgnoreReturnValue
+
   @Deprecated
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang tippedArrowOf(Identifier id, String effectName) {
@@ -450,7 +449,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * @param id          The identifier of the biome.
    * @param translation The translated name of the biome.
    */
-  @CanIgnoreReturnValue
+
   public JLang biome(Identifier id, String translation) {
     return this.registryEntry("biome", id, translation);
   }

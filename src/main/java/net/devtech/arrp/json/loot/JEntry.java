@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.loot;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
@@ -56,7 +55,7 @@ public class JEntry implements Cloneable {
    *
    * @param type See {@link #type}.
    */
-  @CanIgnoreReturnValue
+
   public JEntry type(String type) {
     this.type = type;
     return this;
@@ -65,7 +64,7 @@ public class JEntry implements Cloneable {
   /**
    * @param name See {@link #name}.
    */
-  @CanIgnoreReturnValue
+
   public JEntry name(String name) {
     this.name = name;
     return this;
@@ -76,7 +75,7 @@ public class JEntry implements Cloneable {
    *
    * @param child Another loot table entry. Cannot be the loot table entry itself.
    */
-  @CanIgnoreReturnValue
+
   public JEntry child(JEntry child) {
     if (this == child) {
       throw new IllegalArgumentException("Can't add entry as its own child!");
@@ -97,7 +96,7 @@ public class JEntry implements Cloneable {
     return child(RuntimeResourcePackImpl.GSON.fromJson(child, JEntry.class));
   }
 
-  @CanIgnoreReturnValue
+
   public JEntry expand(Boolean expand) {
     this.expand = expand;
     return this;
@@ -108,7 +107,7 @@ public class JEntry implements Cloneable {
    *
    * @param function The loot table function.
    */
-  @CanIgnoreReturnValue
+
   public JEntry function(JFunction function) {
     if (this.functions == null) {
       this.functions = new ArrayList<>();
@@ -122,7 +121,7 @@ public class JEntry implements Cloneable {
    *
    * @param function The id (as string) of the loot table function.
    */
-  @CanIgnoreReturnValue
+
   public JEntry function(String function) {
     return function(new JFunction(function));
   }
@@ -132,7 +131,7 @@ public class JEntry implements Cloneable {
    *
    * @param condition The loot table condition.
    */
-  @CanIgnoreReturnValue
+
   public JEntry condition(JCondition condition) {
     if (this.conditions == null) {
       this.conditions = new ArrayList<>();
@@ -146,18 +145,18 @@ public class JEntry implements Cloneable {
    *
    * @param condition The id (as string) of the loot table condition.
    */
-  @CanIgnoreReturnValue
+
   public JEntry condition(String condition) {
     return condition(new JCondition(condition));
   }
 
-  @CanIgnoreReturnValue
+
   public JEntry weight(Integer weight) {
     this.weight = weight;
     return this;
   }
 
-  @CanIgnoreReturnValue
+
   public JEntry quality(Integer quality) {
     this.quality = quality;
     return this;

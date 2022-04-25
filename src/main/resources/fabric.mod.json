@@ -31,7 +31,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.13.0",
-    "minecraft": ">=1.18",
+    "minecraft": ">=1.17",
     "better_runtime_resource_pack": "*"
   },
   "breaks": {
