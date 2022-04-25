@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.api.JsonSerializable;
-import net.minecraft.data.client.When;
+import net.minecraft.data.client.model.When;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -22,7 +22,7 @@ import java.util.List;
  * <li><b>{@code when}</b> - The {@link JWhen condition} that the part will be used. Optional.</li>
  * </ul>
  *
- * @see net.minecraft.data.client.MultipartBlockStateSupplier
+ * @see net.minecraft.data.client.model.MultipartBlockStateSupplier
  * @see net.minecraft.client.render.model.MultipartBakedModel
  * @see net.minecraft.client.render.model.MultipartUnbakedModel
  * @see net.minecraft.client.render.model.json.MultipartModelSelector

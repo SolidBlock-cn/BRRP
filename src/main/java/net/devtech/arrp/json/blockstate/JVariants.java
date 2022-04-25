@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.block.enums.SlabType;
-import net.minecraft.data.client.BlockStateVariant;
+import net.minecraft.data.client.model.BlockStateVariant;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  * }</pre>
  *
  * @author SolidBlock
- * @see net.minecraft.data.client.BlockStateVariant
+ * @see net.minecraft.data.client.model.BlockStateVariant
  */
 @SuppressWarnings("unused")
 public class JVariants extends ForwardingMap<String, JBlockModel[]> implements JsonSerializable {

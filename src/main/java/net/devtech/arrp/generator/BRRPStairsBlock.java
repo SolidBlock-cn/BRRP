@@ -13,9 +13,9 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StairsBlock;
-import net.minecraft.data.client.BlockStateModelGenerator;
-import net.minecraft.data.client.TextureKey;
-import net.minecraft.data.server.RecipeProvider;
+import net.minecraft.data.client.model.BlockStateModelGenerator;
+import net.minecraft.data.client.model.TextureKey;
+import net.minecraft.data.server.RecipesProvider;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
@@ -70,7 +70,7 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
   }
 
   /**
-   * It slightly resembles {@link RecipeProvider#createStairsRecipe(ItemConvertible, Ingredient)}, but bypasses validation so as not to come error.
+   * It slightly resembles {@link RecipesProvider#createStairsRecipe(ItemConvertible, Ingredient)}, but bypasses validation so as not to come error.
    */
   @Override
   public @Nullable JRecipe getCraftingRecipe() {

@@ -1,7 +1,6 @@
 package net.devtech.arrp.json.recipe;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.ShapelessRecipe;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
  * This is the recipe for <b>shapeless crafting</b>.
  *
  * @see ShapelessRecipe
- * @see ShapelessRecipeJsonBuilder
+ * @see net.minecraft.data.server.recipe.ShapelessRecipeJsonFactory
  */
 public class JShapelessRecipe extends JResultRecipe {
   private static final String TYPE = "minecraft:crafting_shapeless";

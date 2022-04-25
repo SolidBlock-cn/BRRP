@@ -31,8 +31,11 @@
   ],
   "depends": {
     "fabricloader": ">=0.13.0",
-    "minecraft": ">=1.18.2",
+    "minecraft": ">=1.18",
     "better_runtime_resource_pack": "*"
+  },
+  "breaks": {
+    "minecraft": ">=1.18.2"
   },
   "custom": {
     "modmenu": {

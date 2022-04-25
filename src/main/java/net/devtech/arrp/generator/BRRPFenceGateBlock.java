@@ -10,8 +10,8 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.FenceGateBlock;
-import net.minecraft.data.client.BlockStateModelGenerator;
-import net.minecraft.data.client.TextureKey;
+import net.minecraft.data.client.model.BlockStateModelGenerator;
+import net.minecraft.data.client.model.TextureKey;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
@@ -70,7 +70,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
   /**
    * This recipe uses the base block and stick as the ingredients.
    *
-   * @see net.minecraft.data.server.RecipeProvider#createFenceGateRecipe(ItemConvertible, Ingredient)
+   * @see net.minecraft.data.server.RecipesProvider#createFenceGateRecipe(ItemConvertible, Ingredient)
    */
   @Override
   public @Nullable JRecipe getCraftingRecipe() {

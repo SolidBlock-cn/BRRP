@@ -3,8 +3,8 @@ package net.devtech.arrp.generator;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
-import net.minecraft.data.client.TextureKey;
-import net.minecraft.data.client.TextureMap;
+import net.minecraft.data.client.model.Texture;
+import net.minecraft.data.client.model.TextureKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ import java.util.Map;
  * <p>Block-based blocks, for example, slabs, may query the texture registry for their base blocks, as defined in {@link BRRPSlabBlock#getTextureId}. This affects all blocks that override {@link BlockResourceGenerator#getBaseBlock()}, but <i>does not affect</i> vanilla blocks because they do not implement that method.</p>
  * <p>The texture key respects their parent keys (for "fallback keys"). For example, {@link TextureKey#EAST} fall backs to {@link TextureKey#SIDE}, which fall backs to {@link TextureKey#ALL}, so when querying the east texture of the block, and that texture key of the block is not registered, side texture will be used; if side texture does not exist as well, its all texture will be used, and if that is still absent, {@code null} value will be returned.</p>
  * <p>To register, you can simple call {@link #register}, and you can call {@link #getTexture} to get the texture.</p>
- * <p><i>Notice that textures of vanilla blocks are not registered</i> by default. It's OK to register vanilla blocks, no problem, but you may have to consider compatibility with other mods. If you're sure to register vanilla blocks to this registry, it's highly recommended to keep consistent with the vanilla texture (see {@link net.minecraft.data.client.BlockStateModelGenerator}).</p>
+ * <p><i>Notice that textures of vanilla blocks are not registered</i> by default. It's OK to register vanilla blocks, no problem, but you may have to consider compatibility with other mods. If you're sure to register vanilla blocks to this registry, it's highly recommended to keep consistent with the vanilla texture (see {@link net.minecraft.data.client.model.BlockStateModelGenerator}).</p>
  * <p>For example, if you register a sandstone block like this:</p>
  * <pre>{@code
  * TextureRegistry.registerAppended(Blocks.SANDSTONE, TextureKey.TOP, "_top");
@@ -41,7 +41,7 @@ public final class TextureRegistry {
   /**
    * The map storing blocks and their texture maps. Keys are blocks, and values are their texture maps.
    */
-  private static final Object2ObjectMap<@NotNull Block, TextureMap> TEXTURE_MAPS = new Object2ObjectOpenHashMap<>();
+  private static final Object2ObjectMap<@NotNull Block, Texture> TEXTURE_MAPS = new Object2ObjectOpenHashMap<>();
 
   /**
    * <p>Register a block texture with a default texture key ({@link TextureKey#ALL}). The texture key {@code TextureKey.ALL} is the fallback texture key of most texture keys, so it is regarded default.</p>
@@ -63,7 +63,7 @@ public final class TextureRegistry {
    * @param texture    The identifier of the texture. It is usually in the form of <code><i>namespace:</i>block/<i>path</i></code>
    */
   public static void register(Block block, TextureKey textureKey, Identifier texture) {
-    TEXTURE_MAPS.computeIfAbsent(block, b -> new TextureMap()).put(textureKey, texture);
+    TEXTURE_MAPS.computeIfAbsent(block, b -> new Texture()).put(textureKey, texture);
   }
 
   /**
@@ -100,10 +100,10 @@ public final class TextureRegistry {
    * @param textureKey The texture key you query.
    * @return The identifier of the corresponding texture, or {@code null} if the texture does not exist.
    * @see #getTexture(Block)
-   * @see TextureMap#getTexture(TextureKey)
+   * @see Texture#getTexture(TextureKey)
    */
   public static Identifier getTexture(@NotNull Block block, @NotNull TextureKey textureKey) {
-    final @Nullable TextureMap textureMap = TEXTURE_MAPS.getOrDefault(block, null);
+    final @Nullable Texture textureMap = TEXTURE_MAPS.getOrDefault(block, null);
     if (textureMap == null) return null;
     try {
       // In textureMap#getTexture, the exception will be thrown if the texture is not found. However, we do not throw any exceptions. We just return null.
@@ -119,7 +119,7 @@ public final class TextureRegistry {
    * @param block The block you query.
    * @return The identifier of the corresponding texture, or {@code null} if the texture does not exist.
    * @see #getTexture(Block, TextureKey)
-   * @see TextureMap#getTexture(TextureKey)
+   * @see Texture#getTexture(TextureKey)
    */
   public static Identifier getTexture(@NotNull Block block) {
     return getTexture(block, TextureKey.ALL);
@@ -129,12 +129,12 @@ public final class TextureRegistry {
    * <p>Get the <i>unmodifiable view</i> of the map storing the blocks and their textures. However, their texture maps are not unmodifiable; they are passes <i>as is</i>.</p>
    * <p>To get the specific texture map, you can, for example:</p>
    * {@code
-   * TextureRegistry.getTextureMap().get(Blocks.STONE)
+   * TextureRegistry.getTexture().get(Blocks.STONE)
    * }
    *
    * @return The unmodifiable view of map of texture map.
    */
-  public static @UnmodifiableView Map<Block, TextureMap> getTextureMaps() {
+  public static @UnmodifiableView Map<Block, Texture> getTextures() {
     return Collections.unmodifiableMap(TEXTURE_MAPS);
   }
 }

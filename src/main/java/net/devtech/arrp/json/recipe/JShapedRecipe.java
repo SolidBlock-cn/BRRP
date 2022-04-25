@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Contract;
  * <p>This is a recipe for <b>shaped crafting</b>.</p>
  *
  * @see net.minecraft.recipe.ShapedRecipe
- * @see net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder
+ * @see net.minecraft.data.server.recipe.ShapedRecipeJsonFactory
  */
 public class JShapedRecipe extends JResultRecipe {
   private static final String TYPE = "minecraft:crafting_shaped";

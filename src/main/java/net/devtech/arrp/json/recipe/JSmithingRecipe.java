@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.json.tags.IdentifiedTag;
-import net.minecraft.data.server.recipe.SmithingRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.SmithingRecipeJsonFactory;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SmithingRecipe;
@@ -18,7 +18,7 @@ import java.lang.reflect.Type;
  * A <b>smithing recipe</b> refers to a recipe used in a smithing table. It's usually the recipe to upgrade diamond armors to netherite armors.
  *
  * @see net.minecraft.recipe.SmithingRecipe
- * @see net.minecraft.data.server.recipe.SmithingRecipeJsonBuilder
+ * @see net.minecraft.data.server.recipe.SmithingRecipeJsonFactory
  */
 public class JSmithingRecipe extends JResultRecipe {
   public final JIngredient base;
@@ -60,9 +60,9 @@ public class JSmithingRecipe extends JResultRecipe {
    *
    * @param delegate The vanilla SmithingRecipeJsonProvider object. When serializing, its serialization will be directly used.
    * @return A "delegated" object.
-   * @see net.minecraft.data.server.recipe.SmithingRecipeJsonBuilder.SmithingRecipeJsonProvider
+   * @see net.minecraft.data.server.recipe.SmithingRecipeJsonFactory
    */
-  public static JSmithingRecipe delegate(SmithingRecipeJsonBuilder.SmithingRecipeJsonProvider delegate) {
+  public static JSmithingRecipe delegate(SmithingRecipeJsonFactory.SmithingRecipeJsonProvider delegate) {
     return new Delegate(delegate);
   }
 
@@ -79,10 +79,10 @@ public class JSmithingRecipe extends JResultRecipe {
   }
 
   private static final class Delegate extends JSmithingRecipe implements JsonSerializable {
-    public final SmithingRecipeJsonBuilder.SmithingRecipeJsonProvider delegate;
+    public final SmithingRecipeJsonFactory.SmithingRecipeJsonProvider delegate;
     public static final RecipeSerializer<SmithingRecipe> SERIALIZER = RecipeSerializer.SMITHING;
 
-    private Delegate(SmithingRecipeJsonBuilder.SmithingRecipeJsonProvider delegate) {
+    private Delegate(SmithingRecipeJsonFactory.SmithingRecipeJsonProvider delegate) {
       super((JIngredient) null, null, null);
       this.delegate = delegate;
     }

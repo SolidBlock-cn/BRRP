@@ -8,6 +8,7 @@ targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version + "-" + project.minecraft_version
+println name
 group = project.maven_group
 
 repositories {

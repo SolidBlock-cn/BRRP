@@ -14,7 +14,7 @@ import java.util.List;
  * <p>This is the class representing the models in resource packs. It includes block models and item models.</p>
  * <p>Don't be confused with {@link net.devtech.arrp.json.blockstate.JBlockModel}, which is used in a block states definition file.</p>
  *
- * @see net.minecraft.data.client.Model
+ * @see net.minecraft.data.client.model.Model
  * @see net.minecraft.client.render.block.BlockModels
  * @see net.minecraft.client.render.model.BakedModel
  * @see net.minecraft.client.render.model.BasicBakedModel

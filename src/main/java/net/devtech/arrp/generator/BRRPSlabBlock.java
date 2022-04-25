@@ -13,9 +13,9 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.SlabBlock;
-import net.minecraft.data.client.TextureKey;
+import net.minecraft.data.client.model.TextureKey;
 import net.minecraft.data.server.BlockLootTableGenerator;
-import net.minecraft.data.server.RecipeProvider;
+import net.minecraft.data.server.RecipesProvider;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
@@ -99,7 +99,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
   }
 
   /**
-   * It slightly resembles {@link RecipeProvider#createSlabRecipe(ItemConvertible, Ingredient)}, but bypasses validation.
+   * It slightly resembles {@link RecipesProvider#createSlabRecipe(ItemConvertible, Ingredient)}, but bypasses validation.
    */
   @Override
   public @Nullable JRecipe getCraftingRecipe() {

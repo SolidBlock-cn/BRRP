@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
-import net.minecraft.data.client.When;
+import net.minecraft.data.client.model.When;
 import net.minecraft.state.StateManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -28,9 +28,9 @@ import java.util.function.Supplier;
  *   <b>{@linkplain  #components}</b> - The multiple conditions, which is a simple list of "{@link When}" objects.
  * </li></ul>
  * <p>This is a simple <i>forwarding list</i> for {@link #components}, so you can call list methods, such as {@link #add}, {@link #addAll}, to directly modify the {@code components}.</p>
- * <p>It quite resembles {@link net.minecraft.data.client.When.LogicalOperator}, as it's just written based on it, with some enhancements.</p>
+ * <p>It quite resembles {@link net.minecraft.data.client.model.When.LogicalOperator}, as it's just written based on it, with some enhancements.</p>
  *
- * @see net.minecraft.data.client.When.LogicalOperator
+ * @see net.minecraft.data.client.model.When.LogicalOperator
  */
 public class JWhenLogical extends ForwardingList<When> implements When, JsonSerializable {
   public final @NotNull LogicalOperator operator;

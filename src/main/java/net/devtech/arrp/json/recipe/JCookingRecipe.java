@@ -9,7 +9,7 @@ import net.minecraft.util.registry.Registry;
  * <p>A <b>cooking recipe</b> is a recipe used in a furnace. It has several types: {@linkplain JBlastingRecipe blasting}, {@linkplain JCampfireRecipe campfire_cooking}, {@linkplain JSmeltingRecipe smelting} and {@linkplain JSmokingRecipe smoking}.</p>
  * <p>A cooking recipe is composed of one or more ingredients, and a result, as well as a time length of cooking. It can have an optional experience.</p>
  *
- * @see net.minecraft.data.server.recipe.CookingRecipeJsonBuilder
+ * @see net.minecraft.data.server.recipe.CookingRecipeJsonFactory
  * @see net.minecraft.recipe.CookingRecipeSerializer
  */
 public abstract class JCookingRecipe extends JRecipe {

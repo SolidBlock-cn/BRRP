@@ -4,7 +4,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
-import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.CraftingRecipeJsonFactory;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @see net.minecraft.recipe.Recipe
  * @see net.minecraft.recipe.RecipeSerializer
- * @see net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder
+ * @see net.minecraft.data.server.recipe.CraftingRecipeJsonFactory
  */
 public abstract class JRecipe implements Cloneable {
   /**
@@ -136,7 +136,7 @@ public abstract class JRecipe implements Cloneable {
    * @param delegate The CraftingRecipeJsonBuilder whose serialization will be directly used.
    * @return The delegated JRecipe.
    */
-  public static JRecipe delegate(final CraftingRecipeJsonBuilder delegate) {
+  public static JRecipe delegate(final CraftingRecipeJsonFactory delegate) {
     AtomicReference<RecipeJsonProvider> jsonProvider = new AtomicReference<>();
     delegate.offerTo(jsonProvider::set);
     return delegate(jsonProvider.get());

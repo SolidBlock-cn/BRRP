@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.JsonSerializable;
-import net.minecraft.data.client.BlockStateSupplier;
+import net.minecraft.data.client.model.BlockStateSupplier;
 import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Type;
@@ -22,7 +22,7 @@ import java.util.List;
  * <p>This class is a simple improved version of {@link JState}. You can "upgrade" the deprecated <code>JState</code> through {@link #of(JState)}.</p>
  *
  * @author SolidBlock
- * @see net.minecraft.data.client.BlockStateModelGenerator
+ * @see net.minecraft.data.client.model.BlockStateModelGenerator
  * @see BlockStateSupplier
  * @since BRRP 0.6.0
  */

@@ -3,7 +3,7 @@ package net.devtech.arrp.mixin;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.RRPCallback;
 import net.devtech.arrp.api.RRPCallbackConditional;
-import net.minecraft.resource.LifecycledResourceManagerImpl;
+import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-@Mixin(LifecycledResourceManagerImpl.class)
+@Mixin(ReloadableResourceManagerImpl.class)
 public abstract class LifecycledResourceManagerImplMixin {
   private static final Logger ARRP_LOGGER = LogManager.getLogger("ARRP/LifecycledResourceManagerImpl");
 
@@ -28,10 +28,10 @@ public abstract class LifecycledResourceManagerImplMixin {
     return type;
   }
 
-  @ModifyVariable(method = "<init>",
+  @ModifyVariable(method = "reload",
       at = @At(value = "HEAD"),
       argsOnly = true)
-  private static List<ResourcePack> registerARRPs(List<ResourcePack> packs) throws ExecutionException, InterruptedException {
+  private List<ResourcePack> registerARRPs(List<ResourcePack> packs) throws ExecutionException, InterruptedException {
     ARRP.waitForPregen();
 
     ARRP_LOGGER.info("BRRP register - before vanilla");

@@ -2,7 +2,7 @@ package net.devtech.arrp.generator;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
-import net.minecraft.data.client.TextureKey;
+import net.minecraft.data.client.model.TextureKey;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
