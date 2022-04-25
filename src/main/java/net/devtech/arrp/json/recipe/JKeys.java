@@ -24,7 +24,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    * @deprecated You do not need it anymore.
    */
   @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated(forRemoval = true)
+  @Deprecated
   @ApiStatus.ScheduledForRemoval(inVersion = "unsure")
   protected final Map<String, List<JIngredient>> acceptableKeys;
 

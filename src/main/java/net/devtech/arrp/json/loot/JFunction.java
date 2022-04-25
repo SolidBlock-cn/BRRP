@@ -27,9 +27,8 @@ public class JFunction implements Cloneable, JsonSerializable {
   }
 
   public static JFunction delegate(LootFunction delegate) {
+    final Gson GSON = LootGsons.getFunctionGsonBuilder().create();
     return new JFunction(null) {
-      private static final Gson GSON = LootGsons.getFunctionGsonBuilder().create();
-
       @Override
       public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
         return GSON.toJsonTree(delegate);

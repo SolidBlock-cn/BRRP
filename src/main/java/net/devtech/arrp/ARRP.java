@@ -4,8 +4,8 @@ import net.devtech.arrp.api.RRPPreGenEntrypoint;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class ARRP implements PreLaunchEntrypoint {
-  public static final Logger LOGGER = LoggerFactory.getLogger("BRRP");
+  public static final Logger LOGGER = LogManager.getLogger("BRRP");
   private static List<Future<?>> futures;
 
   @Override

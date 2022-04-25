@@ -1,5 +1,6 @@
 package test;
 
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtIo;
@@ -14,7 +15,7 @@ public class Test2 {
     for (int x = -1; x < 2; x++)
       for (int y = -1; y < 2; y++) {
         try {
-          final File file = new File("r.%s.%s.mca".formatted(x, y));
+          final File file = new File(String.format("r.%s.%s.mca", x, y));
           final RegionFile regionFile = new RegionFile(new File(file.getPath()), new File(""), true);
           for (int i = 0; i < 32; i++) {
             for (int j = 0; j < 32; j++) {
@@ -45,8 +46,9 @@ public class Test2 {
   }
 
   public static void replaceBiomesField(NbtElement element) {
-    if (element instanceof NbtCompound compound) {
-      if (compound.contains("biomes", NbtCompound.COMPOUND_TYPE)) {
+    if (element instanceof NbtCompound) {
+      NbtCompound compound = (NbtCompound) element;
+      if (compound.contains("biomes", NbtType.COMPOUND)) {
         System.out.printf("Removed compound field 'biomes': %s%n", compound.get("biomes"));
         compound.remove("biomes");
       } else {
@@ -54,7 +56,8 @@ public class Test2 {
           replaceBiomesField(compound.get(key));
         }
       }
-    } else if (element instanceof NbtList list) {
+    } else if (element instanceof NbtList) {
+      NbtList list = (NbtList) element;
       list.forEach(Test2::replaceBiomesField);
     }
   }

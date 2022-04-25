@@ -1,12 +1,12 @@
 package net.devtech.arrp.json.loot;
 
-import net.minecraft.loot.provider.number.LootNumberProvider;
-import net.minecraft.loot.provider.number.UniformLootNumberProvider;
+import net.minecraft.loot.LootTableRange;
+import net.minecraft.loot.UniformLootTableRange;
 
 /**
  * The value provider in the loot table.
  *
- * @deprecated Please use {@link net.minecraft.loot.provider.number.LootNumberProvider}.
+ * @deprecated Please use {@link LootTableRange}.
  */
 @Deprecated
 public class JRoll implements Cloneable {
@@ -21,8 +21,8 @@ public class JRoll implements Cloneable {
   /**
    * Convert this object to the preferred loot number provider.
    */
-  public LootNumberProvider asLootNumberProvider() {
-    return UniformLootNumberProvider.create(min, max);
+  public LootTableRange asLootTableRange() {
+    return UniformLootTableRange.between(min, max);
   }
 
   @Override

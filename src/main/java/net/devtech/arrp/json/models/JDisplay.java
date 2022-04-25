@@ -56,21 +56,21 @@ import java.util.EnumMap;
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class JDisplay extends EnumMap<JDisplay.DisplayPosition, JPosition> implements Cloneable, JsonSerializable {
   // The following fields exist for only compatibility.
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JPosition thirdperson_righthand;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JPosition thirdperson_lefthand;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JPosition firstperson_righthand;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JPosition firstperson_lefthand;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JPosition gui;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JPosition head;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JPosition ground;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JPosition fixed;
 
   public JDisplay() {

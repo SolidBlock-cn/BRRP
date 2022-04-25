@@ -1,10 +1,8 @@
 {
   "required": true,
   "package": "net.devtech.arrp.mixin",
-  "compatibilityLevel": "JAVA_16",
-  "mixins": [
-    "LifecycledResourceManagerImplMixin"
-  ],
+  "compatibilityLevel": "JAVA_8",
+  "mixins": ["BlockLootTableGeneratorAccessor", "BlockStateModelGeneratorAccessor", "LifecycledResourceManagerImplMixin"],
   "injectors": {
     "defaultRequire": 1
   }

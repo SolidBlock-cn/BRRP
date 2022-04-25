@@ -7,17 +7,14 @@ import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.recipe.JResult;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
+import net.devtech.arrp.mixin.BlockStateModelGeneratorAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StairsBlock;
-import net.minecraft.data.client.model.BlockStateModelGenerator;
 import net.minecraft.data.client.model.TextureKey;
-import net.minecraft.data.server.RecipesProvider;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +45,7 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
   @Override
   public @NotNull JBlockStates getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
-    return JBlockStates.delegate(BlockStateModelGenerator.createStairsBlockState(this, blockModelId.brrp_append("_inner"), blockModelId, blockModelId.brrp_append("_outer")));
+    return JBlockStates.delegate(BlockStateModelGeneratorAccessor.createStairsBlockState(this, blockModelId.brrp_append("_inner"), blockModelId, blockModelId.brrp_append("_outer")));
   }
 
   @Environment(EnvType.CLIENT)
@@ -70,7 +67,7 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
   }
 
   /**
-   * It slightly resembles {@link RecipesProvider#createStairsRecipe(ItemConvertible, Ingredient)}, but bypasses validation so as not to come error.
+   * It slightly resembles , but bypasses validation so as not to come error.
    */
   @Override
   public @Nullable JRecipe getCraftingRecipe() {

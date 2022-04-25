@@ -16,8 +16,9 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
-import net.minecraft.loot.provider.number.LootNumberProvider;
-import net.minecraft.loot.provider.number.LootNumberProviderTypes;
+import net.minecraft.loot.BinomialLootTableRange;
+import net.minecraft.loot.ConstantLootTableRange;
+import net.minecraft.loot.UniformLootTableRange;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.PackResourceMetadata;
@@ -25,9 +26,9 @@ import net.minecraft.resource.metadata.PackResourceMetadataReader;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -68,10 +69,12 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       .disableHtmlEscaping()
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, (JsonSerializer<Identifier>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getNamespace() + ":" + src.getPath()))
-      .registerTypeHierarchyAdapter(LootNumberProvider.class, LootNumberProviderTypes.createGsonSerializer())
+      .registerTypeAdapter(BinomialLootTableRange.class, new BinomialLootTableRange.Serializer())
+      .registerTypeAdapter(UniformLootTableRange.class, new UniformLootTableRange.Serializer())
+      .registerTypeAdapter(ConstantLootTableRange.class, new ConstantLootTableRange.Serializer())
       .create();
   // @formatter:on
-  private static final Logger LOGGER = LoggerFactory.getLogger(RuntimeResourcePackImpl.class);
+  private static final Logger LOGGER = LogManager.getLogger(RuntimeResourcePackImpl.class);
 
   static {
     Properties properties = new Properties();
@@ -116,7 +119,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
    * @deprecated Wrong spelling
    */
   @SuppressWarnings({"SpellCheckingInspection", "DeprecatedIsStillUsed"})
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private final Map<Identifier, JLang> langMergable = new ConcurrentHashMap<>();
   private final Map<Identifier, JLang> langMergeable = langMergable;
 

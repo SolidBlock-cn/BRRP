@@ -15,24 +15,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ResourceGeneratorHelper {
   public static Identifier getItemId(@NotNull ItemConvertible item) {
-    return (item instanceof ItemResourceGenerator generator) ? generator.getItemId() : Registry.ITEM.getId(item.asItem());
+    return (item instanceof ItemResourceGenerator) ? ((ItemResourceGenerator) item).getItemId() : Registry.ITEM.getId(item.asItem());
   }
 
   public static Identifier getItemModelId(@NotNull ItemConvertible item) {
-    return (item instanceof ItemResourceGenerator generator) ? generator.getItemModelId() : Registry.ITEM.getId(item.asItem()).brrp_prepend("block/");
+    return (item instanceof ItemResourceGenerator) ? ((ItemResourceGenerator) item).getItemModelId() : Registry.ITEM.getId(item.asItem()).brrp_prepend("block/");
   }
 
   public static Identifier getBlockId(@NotNull Block block) {
-    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockId() : Registry.BLOCK.getId(block);
+    return (block instanceof BlockResourceGenerator) ? ((BlockResourceGenerator) block).getBlockId() : Registry.BLOCK.getId(block);
   }
 
   public static Identifier getBlockModelId(@NotNull Block block) {
-    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockModelId() : Registry.BLOCK.getId(block).brrp_prepend("block/");
+    return (block instanceof BlockResourceGenerator) ? ((BlockResourceGenerator) block).getBlockModelId() : Registry.BLOCK.getId(block).brrp_prepend("block/");
   }
 
   public static String getTextureId(@NotNull Block block, @NotNull TextureKey textureKey) {
-    if (block instanceof BlockResourceGenerator generator) {
-      return generator.getTextureId(textureKey);
+    if (block instanceof BlockResourceGenerator) {
+      return ((BlockResourceGenerator) block).getTextureId(textureKey);
     }
     final Identifier texture = TextureRegistry.getTexture(block, textureKey);
     if (texture != null) return texture.toString();
@@ -40,8 +40,8 @@ public final class ResourceGeneratorHelper {
   }
 
   public static Identifier getLootTableId(@NotNull AbstractBlock block) {
-    if (block instanceof BlockResourceGenerator generator) {
-      return generator.getLootTableId();
+    if (block instanceof BlockResourceGenerator) {
+      return block.getLootTableId();
     } else {
       return block.getLootTableId();
     }

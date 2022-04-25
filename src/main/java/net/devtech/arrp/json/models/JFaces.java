@@ -16,17 +16,17 @@ import java.util.function.Function;
  */
 public class JFaces extends EnumMap<Direction, JFace> implements Cloneable, JsonSerializable {
   // These fields exist for only compatibility.
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JFace up;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JFace down;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JFace north;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JFace south;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JFace east;
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private JFace west;
 
   public JFaces() {

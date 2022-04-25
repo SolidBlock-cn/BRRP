@@ -22,7 +22,7 @@ public class JRotation implements Cloneable {
   /**
    * @deprecated Please use {@link #rotationAxis}.
    */
-  @Deprecated(forRemoval = true)
+  @Deprecated
   private transient final char axis = ' ';
   @SerializedName("axis")
   public final String rotationAxis;

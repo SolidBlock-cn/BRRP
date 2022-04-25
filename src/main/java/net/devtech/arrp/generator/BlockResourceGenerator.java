@@ -95,7 +95,8 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @see TextureRegistry
    */
   default @NotNull String getTextureId(@NotNull TextureKey textureKey) {
-    if (this instanceof Block thisBlock) {
+    if (this instanceof Block) {
+      Block thisBlock = (Block) this;
       final Identifier texture = TextureRegistry.getTexture(thisBlock, textureKey);
       if (texture != null) return texture.toString();
       final @Nullable Block baseBlock = getBaseBlock();

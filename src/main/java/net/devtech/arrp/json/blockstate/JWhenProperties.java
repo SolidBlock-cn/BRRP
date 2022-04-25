@@ -116,7 +116,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    */
   @Override
   public void validate(StateManager<?, ?> stateManager) {
-    List<String> list = this.properties.keySet().stream().filter(property -> stateManager.getProperty(property) != null).toList();
+    List<String> list = this.properties.keySet().stream().filter(property -> stateManager.getProperty(property) != null).collect(Collectors.toList());
     if (!list.isEmpty()) {
       throw new IllegalStateException("Properties " + list + " are missing from " + stateManager);
     }

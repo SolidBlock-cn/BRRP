@@ -7,10 +7,10 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.minecraft.loot.ConstantLootTableRange;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootPool;
-import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
-import net.minecraft.loot.provider.number.LootNumberProvider;
+import net.minecraft.loot.LootTableRange;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class JPool implements Cloneable {
    * The value provider of rolls.
    */
   @SerializedName("rolls")
-  public LootNumberProvider rollsProvider;
+  public LootTableRange rollsProvider;
   /**
    * The exact value of bonus rolls.
    *
@@ -72,7 +72,7 @@ public class JPool implements Cloneable {
    * The value provider of bonus rolls;
    */
   @SerializedName("bonus_rolls")
-  public LootNumberProvider bonusRollsProvider;
+  public LootTableRange bonusRollsProvider;
 
   public JPool() {
   }
@@ -127,36 +127,40 @@ public class JPool implements Cloneable {
   @Deprecated
 
   public JPool rolls(Integer rolls) {
-    this.rollsProvider = ConstantLootNumberProvider.create(rolls);
+    this.rollsProvider = ConstantLootTableRange.create(rolls);
     return this;
   }
 
 
   public JPool rolls(int rolls) {
     this.rolls = rolls;
-    this.rollsProvider = ConstantLootNumberProvider.create(rolls);
+    this.rollsProvider = ConstantLootTableRange.create(rolls);
     return this;
   }
 
 
+  /**
+   * @deprecated Please use {@link #rolls(LootTableRange)}.
+   */
+  @Deprecated
   public JPool rolls(float rolls) {
-    this.rollsProvider = ConstantLootNumberProvider.create(rolls);
+    this.rollsProvider = ConstantLootTableRange.create((int) rolls);
     return this;
   }
 
 
-  public JPool rolls(LootNumberProvider rolls) {
+  public JPool rolls(LootTableRange rolls) {
     this.rollsProvider = rolls;
     return this;
   }
 
   /**
-   * @deprecated Please use {@link #rolls(LootNumberProvider)}.
+   * @deprecated Please use {@link #rolls(LootTableRange)}.
    */
   @Deprecated
   public JPool rolls(JRoll roll) {
     this.roll = roll;
-    this.rollsProvider = roll.asLootNumberProvider();
+    this.rollsProvider = roll.asLootTableRange();
     return this;
   }
 
@@ -168,36 +172,39 @@ public class JPool implements Cloneable {
   @Deprecated
 
   public JPool bonus(Integer bonus_rolls) {
-    this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
+    this.bonusRollsProvider = ConstantLootTableRange.create(bonus_rolls);
     return this;
   }
 
 
   public JPool bonus(int bonus_rolls) {
     this.bonus_rolls = bonus_rolls;
-    this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
+    this.bonusRollsProvider = ConstantLootTableRange.create(bonus_rolls);
     return this;
   }
 
-
+  /**
+   * @deprecated In 1.16.5 and before, constant loot table ranges can be only int.=
+   */
+  @Deprecated
   public JPool bonus(float bonus_rolls) {
-    this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
+    this.bonusRollsProvider = ConstantLootTableRange.create((int) bonus_rolls);
     return this;
   }
 
 
-  public JPool bonus(LootNumberProvider bonusRollsProvider) {
+  public JPool bonus(LootTableRange bonusRollsProvider) {
     this.bonusRollsProvider = bonusRollsProvider;
     return this;
   }
 
   /**
-   * @deprecated Please use {@link #bonus(LootNumberProvider)}.
+   * @deprecated Please use {@link #bonus(LootTableRange)}.
    */
   @Deprecated
   public JPool bonus(JRoll bonus_roll) {
     this.bonus_roll = bonus_roll;
-    this.bonusRollsProvider = bonus_roll.asLootNumberProvider();
+    this.bonusRollsProvider = bonus_roll.asLootTableRange();
     return this;
   }
 
