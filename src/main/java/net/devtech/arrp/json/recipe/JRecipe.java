@@ -1,7 +1,16 @@
 package net.devtech.arrp.json.recipe;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSerializationContext;
+import net.devtech.arrp.api.JsonSerializable;
+import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
+
+import java.lang.reflect.Type;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <p>A <b>recipe</b> defines item conversion rules such as crafting, cooking, smithing or stonecutting. A recipe has a type, which defines which type of the recipe it belongs to, and an optional group, which states that different recipes with the equal group will be displayed together.</p>
@@ -108,6 +117,43 @@ public abstract class JRecipe implements Cloneable {
       return (JRecipe) super.clone();
     } catch (CloneNotSupportedException e) {
       throw new InternalError(e);
+    }
+  }
+
+  /**
+   * Create a delegated JRecipe, whose serialization is identical to the delegate.
+   *
+   * @param delegate The RecipeJsonProvider whose serialization will be directly used.
+   * @return The delegated JRecipe.
+   */
+  public static JRecipe delegate(final RecipeJsonProvider delegate) {
+    return new Delegate(delegate);
+  }
+
+  /**
+   * Create a delegated JRecipe, whose serialization is identical to the delegate.
+   *
+   * @param delegate The CraftingRecipeJsonBuilder whose serialization will be directly used.
+   * @return The delegated JRecipe.
+   */
+  public static JRecipe delegate(final CraftingRecipeJsonBuilder delegate) {
+    AtomicReference<RecipeJsonProvider> jsonProvider = new AtomicReference<>();
+    delegate.offerTo(jsonProvider::set);
+    return delegate(jsonProvider.get());
+  }
+
+  @ApiStatus.Internal
+  private static final class Delegate extends JRecipe implements JsonSerializable {
+    public final RecipeJsonProvider delegate;
+
+    private Delegate(RecipeJsonProvider delegate) {
+      super(null);
+      this.delegate = delegate;
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return delegate.toJson();
     }
   }
 }

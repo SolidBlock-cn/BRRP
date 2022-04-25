@@ -8,7 +8,6 @@ import net.minecraft.loot.provider.number.UniformLootNumberProvider;
  *
  * @deprecated Please use {@link net.minecraft.loot.provider.number.LootNumberProvider}.
  */
-@SuppressWarnings("FieldCanBeLocal")
 @Deprecated
 public class JRoll implements Cloneable {
   private final int min;

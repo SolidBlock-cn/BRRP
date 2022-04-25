@@ -51,7 +51,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
   }
 
   /**
-   * Specify a simplest situation of a part, which will always be used (or always choose a random one from the array). If you want to specify a condition, you can call {@link #when(When)}, or directly use {@link #JMultipart(When, JBlockModel...)}.
+   * Specify the simplest situation of a part, which will always be used (or always choose a random one from the array). If you want to specify a condition, you can call {@link #when(When)}, or directly use {@link #JMultipart(When, JBlockModel...)}.
    */
   public JMultipart(JBlockModel... apply) {
     this.apply = Lists.newArrayList(apply);

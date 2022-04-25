@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * <p>Specifies the model texture variables of the model. The key is the name of the texture variable (not prefixed by {@code #}), and the value is the identifier of the texture (for example, {@code minecraft:block/lava_still}, or another texture variable (prefixed by {@code #}).
+ * <p>Specifies the model texture variables of the model. The key is the name of the texture variable (not prefixed by {@code #}), and the value is the identifier of the texture (for example, {@code minecraft:block/lava_still}, or another texture variable (prefixed by {@code #})).
  * <p>The field {@link #textures} exists only for compatibility. It equals to the JTextures itself.
  * <p>As inherited in {@link Map}, methods like {@code put}, {@code putAll} do not return the object itself. However, new methods like {@code var} and {@code particle} return the object itself, making it possible to chain call.
  * <p>You can simply call {@link #of(String, String)} or {@link #of(String...)} to quickly create an instance with one or several variables defined.

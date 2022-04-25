@@ -4,7 +4,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Contract;
@@ -14,7 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * <p><b>Tag</b>s are used to list block, entity types, functions, etc. The identifier of tag is <code><i>namespace</i>:<i>type</i>/<i>pathContent</i></code>, where the <code><i>type</i></code> determines which object the tag contents refer to, and can be one of the following values: {@code blocks entity_types fluids functions game_events items worldgen}.</p>
+ * <p><b>Tag</b>s are used to list block, entity types, functions, etc. The identifier of tag is <code style=color:maroon><i>namespace</i>:<i>type</i>/<i>pathContent</i></code>, where the <code><i>type</i></code> determines which object the tag contents refer to, and can be one of the following values:</p>
+ * <pre style=color:navy>blocks entity_types fluids functions game_events items worldgen</pre>
+ * <p>A tag itself has an identifier. It is determined when writing the tag into the resource pack. If you needs to predetermine its identifier, please use {@link IdentifiedTag}.</p>
  */
 public class JTag {
   /**
@@ -29,7 +31,41 @@ public class JTag {
    */
   public List<String> values = new ArrayList<>();
 
+  /**
+   * Create an empty tag object.
+   */
   public JTag() {
+  }
+
+  /**
+   * Create a new {@link IdentifiedTag} object with the specified type and identifier, and the same replace and values.
+   *
+   * @param type       The type of the tag.
+   * @param identifier The identifier without type specification.
+   * @return A new {@link IdentifiedTag} object.
+   */
+  @Contract("_, _ -> new")
+  public IdentifiedTag identified(String type, Identifier identifier) {
+    final IdentifiedTag identifiedTag = new IdentifiedTag(type, identifier);
+    identifiedTag.replace = replace;
+    identifiedTag.values = values;
+    return identifiedTag;
+  }
+
+  /**
+   * Create a new {@link IdentifiedTag} object with the specified type, and the namespace and path of the identifier, and the same replace and values.
+   *
+   * @param namespace The namespace of identifier.
+   * @param type      The type of the tag.
+   * @param path      The path without type specification.
+   * @return A new {@link IdentifiedTag} object.
+   */
+  @Contract("_, _, _ -> new")
+  public IdentifiedTag identified(String namespace, String type, String path) {
+    final IdentifiedTag identifiedTag = new IdentifiedTag(namespace, type, path);
+    identifiedTag.replace = replace;
+    identifiedTag.values = values;
+    return identifiedTag;
   }
 
   /**
@@ -127,21 +163,21 @@ public class JTag {
    */
   @CanIgnoreReturnValue
   @Contract("_ -> this")
-  public JTag addItem(Item item) {
-    add(Registry.ITEM.getId(item));
+  public JTag addItem(ItemConvertible item) {
+    add(Registry.ITEM.getId(item.asItem()));
     return this;
   }
 
   @CanIgnoreReturnValue
   @Contract("_ -> this")
-  public JTag addItems(Iterable<Item> items) {
+  public JTag addItems(Iterable<ItemConvertible> items) {
     items.forEach(this::addItem);
     return this;
   }
 
   @CanIgnoreReturnValue
   @Contract("_ -> this")
-  public JTag addItems(Item... items) {
+  public JTag addItems(ItemConvertible... items) {
     return addItems(Arrays.asList(items));
   }
 

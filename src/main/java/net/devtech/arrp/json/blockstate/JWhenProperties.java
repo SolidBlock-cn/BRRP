@@ -111,7 +111,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
   }
 
   /**
-   * Check the validation of this file. If it contains properties that the {@coe stateManager} does not recognized, the validation fails.
+   * Check the validation of this file. If it contains properties that the {@code stateManager} does not recognized, the validation fails.
    *
    * @throws IllegalStateException if it contains unrecognized properties.
    */

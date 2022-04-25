@@ -1,5 +1,7 @@
 BRRP（Better Runtime Resource Pack，更好的运行时资源包），是基于 [ARRP](https://github.com/Devan-Kerman/ARRP) 模组的库模组，并进行了一些增强。本模组提供 ARRP 的所有功能，并修复 ARRP 模组存在的一些问题，同时提供了一系列新的功能。
 
+欢迎加入QQ群**587928350**或开黑啦频道邀请码**KlFS0n**体验本模组的最新更新。
+
 [Read English version of this document.](README-en.md)
 
 ## 什么是运行时资源包？

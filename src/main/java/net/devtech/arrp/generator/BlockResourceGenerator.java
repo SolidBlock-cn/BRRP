@@ -5,10 +5,12 @@ import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
 import net.minecraft.block.Block;
+import net.minecraft.data.client.TextureKey;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +37,8 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @return The base block of this block.
    */
-  default @Nullable Block getBaseBlock() {
+  default @Nullable
+  @Contract(pure = true) Block getBaseBlock() {
     return null;
   }
 
@@ -74,8 +77,8 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * The texture that used in models. It's usually in the format of {@code <i>namespace</i>:block/<i>path</i>}, which <i>mostly</i> equals to the block id. However, sometimes they differ. For example, the texture of {@code minecraft:smooth_sandstone} is not {@code minecraft:block/smooth_sandstone}; it's {@code minecraft:block/sandstone_top}.<p>
-   * Some blocks have different textures in different parts. In this case, the parameter {@code type} is used. For example, a quartz pillar can have the following methods:
+   * <p>The texture used in models. It's usually in the format of {@code <i>namespace</i>:block/<i>path</i>}, which <i>mostly</i> equals to the block id. However, sometimes they differ. For example, the texture of <code style="color:maroon">minecraft:smooth_sandstone</code> is not <code style="color:maroon">minecraft:block/smooth_sandstone</code>; it's <code style="color:maroon">minecraft:block/sandstone_top</code>.</p>
+   * <p>Some blocks have different textures in different parts. In this case, the parameter {@code type} is used. For example, a quartz pillar can have the following methods:</p>
    * <pre>{@code
    *   @Environment(EnvType.CLIENT) @Override
    *   public getTextureId(String type) {
@@ -87,16 +90,17 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *   }
    * }</pre>
    *
-   * @param type The type used to distinguish texture.
+   * @param textureKey The type used to distinguish texture.
    * @return The id of the texture.
+   * @see TextureRegistry
    */
-  default @NotNull String getTextureId(@Nullable String type) {
+  default @NotNull String getTextureId(@NotNull TextureKey textureKey) {
     if (this instanceof Block thisBlock) {
-      final String texture = TextureRegistry.getTexture(thisBlock, type);
-      if (texture != null) return texture;
+      final Identifier texture = TextureRegistry.getTexture(thisBlock, textureKey);
+      if (texture != null) return texture.toString();
       final @Nullable Block baseBlock = getBaseBlock();
       if (baseBlock != null) {
-        return ResourceGeneratorHelper.getTextureId(baseBlock, type);
+        return ResourceGeneratorHelper.getTextureId(baseBlock, textureKey);
       }
     }
     return getBlockId().brrp_prepend("block/").toString();

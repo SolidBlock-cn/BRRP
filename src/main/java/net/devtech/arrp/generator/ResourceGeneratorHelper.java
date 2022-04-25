@@ -2,11 +2,11 @@ package net.devtech.arrp.generator;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.data.client.TextureKey;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>It's similar to {@link ItemResourceGenerator} and {@link BlockResourceGenerator}, but it provides more <i>static</i> methods so that they can be used for blocks and items that do not implement {@link ItemResourceGenerator}.</p>
@@ -30,12 +30,12 @@ public final class ResourceGeneratorHelper {
     return (block instanceof BlockResourceGenerator generator) ? generator.getBlockModelId() : Registry.BLOCK.getId(block).brrp_prepend("block/");
   }
 
-  public static String getTextureId(@NotNull Block block, @Nullable String type) {
+  public static String getTextureId(@NotNull Block block, @NotNull TextureKey textureKey) {
     if (block instanceof BlockResourceGenerator generator) {
-      return generator.getTextureId(type);
+      return generator.getTextureId(textureKey);
     }
-    final String texture = TextureRegistry.getTexture(block, type);
-    if (texture != null) return texture;
+    final Identifier texture = TextureRegistry.getTexture(block, textureKey);
+    if (texture != null) return texture.toString();
     return getBlockId(block).brrp_prepend("block/").toString();
   }
 

@@ -47,9 +47,10 @@ public interface ItemResourceGenerator {
   }
 
   /**
-   * The texture of the item. It is usually the format of {@code <i>namespace</i>:item/<i>path</i>}, which <i>mostly</i> equals to the item id. This is mainly used in {@link #getItemModel()}, but you can also bypass this method when overriding it.
+   * The texture of the item. It is usually the format of <code><i>namespace</i>:item/<i>path</i></code>, which <i>mostly</i> equals to the item id. This is mainly used in {@link #getItemModel()}, but you can also bypass this method when overriding it.
    *
    * @return The id of the item texture.
+   * @see BlockResourceGenerator#getTextureId(net.minecraft.data.client.TextureKey)
    */
   default String getTextureId() {
     return getItemId().brrp_prepend("item/").toString();
@@ -65,7 +66,7 @@ public interface ItemResourceGenerator {
   }
 
   /**
-   * Write the item model (returned in {@link #getItemModel} to the runtime resource pack. It does nothing if the returned model is {@code null}.
+   * Write the item model (returned in {@link #getItemModel}) to the runtime resource pack. It does nothing if the returned model is {@code null}.
    *
    * @param pack The runtime resource pack.
    */

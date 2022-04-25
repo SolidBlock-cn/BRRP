@@ -32,7 +32,7 @@ public abstract class JCookingRecipe extends JRecipe {
   public Integer cookingtime;
 
   /**
-   * Creates a simplest cooking recipe, with the ingredient and result simply specified.
+   * Creates the simplest cooking recipe, with the ingredient and result simply specified.
    *
    * @param type       The type of the cooking recipe.
    * @param ingredient The ingredient, which can be one or more items or item tags.

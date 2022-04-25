@@ -11,7 +11,7 @@ public class JSmeltingRecipe extends JCookingRecipe {
   private static final String TYPE = "smelting";
 
   /**
-   * Creates a simplest smelting recipe, with the ingredient and result simply specified.
+   * Creates the simplest smelting recipe, with the ingredient and result simply specified.
    *
    * @param ingredient The ingredient, which can be one or more items or item tags.
    * @param result     The identifier (as string) of the result.

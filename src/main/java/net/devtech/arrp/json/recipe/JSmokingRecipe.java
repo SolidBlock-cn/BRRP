@@ -11,7 +11,7 @@ public class JSmokingRecipe extends JCookingRecipe {
   private static final String TYPE = "smoking";
 
   /**
-   * Creates a simplest smoking recipe, with the ingredient and result simply specified.
+   * Creates the simplest smoking recipe, with the ingredient and result simply specified.
    *
    * @param ingredient The ingredient, which can be one or more items or item tags.
    * @param result     The identifier (as string) of the result.

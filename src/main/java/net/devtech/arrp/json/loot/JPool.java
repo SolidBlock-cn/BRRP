@@ -39,6 +39,7 @@ public class JPool implements Cloneable {
    *
    * @deprecated Please use {@link #rollsProvider}.
    */
+  @SuppressWarnings("DeprecatedIsStillUsed")
   @Deprecated
   public transient Integer rolls;
   /**
@@ -58,6 +59,7 @@ public class JPool implements Cloneable {
    *
    * @deprecated Please use {@link #bonusRollsProvider}.
    */
+  @SuppressWarnings("DeprecatedIsStillUsed")
   @Deprecated
   public transient Integer bonus_rolls;
   /**

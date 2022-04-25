@@ -56,7 +56,7 @@ public class JBlockStates implements JsonSerializable {
   /**
    * Add a variant to the definition for a block states definition .
    *
-   * @throws IllegalStateException if the block states definition is for multiparts (for example, created from {@link #ofMultiparts(JMultipart...)}.
+   * @throws IllegalStateException if the block states definition is for multiparts (for example, created from {@link #ofMultiparts(JMultipart...)}).
    */
   public JBlockStates addVariant(String variant, JBlockModel... modelDefinition) {
     if (variant == null) throw new IllegalStateException("A block state definition can only have either variants or multiparts, not both");
@@ -67,7 +67,7 @@ public class JBlockStates implements JsonSerializable {
   /**
    * Add a variant definition for a block states definition of variants.
    *
-   * @throws IllegalStateException if the block states definition is for multiples (for example, created from {@link #ofVariants(JVariants)}.
+   * @throws IllegalStateException if the block states definition is for multiples (for example, created from {@link #ofVariants(JVariants)}).
    */
   public JBlockStates add(JMultipart multipart) {
     if (multiparts == null) throw new IllegalStateException("A block state definition can only have either variants or multipart, not both");
@@ -118,7 +118,7 @@ public class JBlockStates implements JsonSerializable {
   }
 
   /**
-   * Quickly create a block states definition for horizontal facing blocks. The result it like this:
+   * Quickly create a block states definition for horizontal facing blocks. The result is like this:
    * <pre>{@code
    * {"variants":
    *   {"facing=south":

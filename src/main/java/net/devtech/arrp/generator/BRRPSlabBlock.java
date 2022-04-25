@@ -6,12 +6,18 @@ import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
+import net.devtech.arrp.json.recipe.JRecipe;
+import net.devtech.arrp.json.recipe.JShapedRecipe;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.SlabBlock;
+import net.minecraft.data.client.TextureKey;
 import net.minecraft.data.server.BlockLootTableGenerator;
+import net.minecraft.data.server.RecipeProvider;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,9 +67,9 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
   @Override
   public @Nullable JModel getBlockModel() {
     return new JModel("block/slab").textures(JTextures.ofSides(
-        getTextureId("top"),
-        getTextureId("side"),
-        getTextureId("bottom")
+        getTextureId(TextureKey.TOP),
+        getTextureId(TextureKey.SIDE),
+        getTextureId(TextureKey.BOTTOM)
     ));
   }
 
@@ -90,5 +96,13 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
   @Override
   public JLootTable getLootTable() {
     return JLootTable.delegate(BlockLootTableGenerator.slabDrops(this).build());
+  }
+
+  /**
+   * It slightly resembles {@link RecipeProvider#createSlabRecipe(ItemConvertible, Ingredient)}, but bypasses validation.
+   */
+  @Override
+  public @Nullable JRecipe getCraftingRecipe() {
+    return baseBlock == null ? null : new JShapedRecipe(this).resultCount(6).pattern("###").addKey("#", baseBlock);
   }
 }

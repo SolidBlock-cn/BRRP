@@ -6,9 +6,10 @@ import net.devtech.arrp.json.models.JTextures;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
+import net.minecraft.data.client.TextureKey;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * This is a simple extension of a cube block. You can specify textures for it.
@@ -70,9 +71,14 @@ public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull String getTextureId(@Nullable String type) {
-    final String texture = TextureRegistry.getTexture(this, type);
-    if (texture != null) return texture;
-    return textures.getOrDefault(type, textures.getOrDefault("side", textures.getOrDefault("all", BlockResourceGenerator.super.getTextureId(type))));
+  public @NotNull String getTextureId(@NotNull TextureKey textureKey) {
+    final Identifier texture = TextureRegistry.getTexture(this, textureKey);
+    if (texture != null) return texture.toString();
+    for (TextureKey textureKey0 = textureKey; textureKey0 != null; textureKey0 = textureKey0.getParent()) {
+      String texture0 = textures.get(textureKey0.getName());
+      if (texture0 == null) continue;
+      return texture0;
+    }
+    return BlockResourceGenerator.super.getTextureId(textureKey);
   }
 }

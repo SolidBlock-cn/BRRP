@@ -31,7 +31,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
- * a resource pack who's assets and data are evaluated at runtime
+ * a resource pack whose assets and data are evaluated at runtime
  * <p>
  * remember to register it!
  *
@@ -123,7 +123,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * adds an async root resource, this is evaluated off-thread, this does not hold all resource retrieval unlike
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default ARRP generates a default mcmeta
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta
    *
    * @see #async(Consumer)
    */
@@ -133,14 +133,14 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * add a root resource that is lazily evaluated.
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default ARRP generates a default mcmeta
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta
    */
   void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data);
 
   /**
    * add a raw resource to the root path
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default ARRP generates a default mcmeta
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta
    */
   @CanIgnoreReturnValue
   byte[] addRootResource(String path, byte[] data);
@@ -223,7 +223,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * are blocked until all async tasks are completed invokes the action on the RRP executor, RRPs are thread-safe you
    * can create expensive assets here, all resources are blocked until all async tasks are completed
    * <p>
-   * calling an this function from itself will result in a infinite loop
+   * calling in this function from itself will result in an infinite loop
    *
    * @see #addAsyncResource(ResourceType, Identifier, CallableFunction)
    */

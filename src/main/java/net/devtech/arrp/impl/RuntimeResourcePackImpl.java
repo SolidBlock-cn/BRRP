@@ -77,7 +77,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     Properties properties = new Properties();
     // Number of threads of the executor service. By default, depends on the config of the device. It is used for async resources, and async data generation defined in `rrp:pregen` entrypoint.
     int processors = Math.max(Runtime.getRuntime().availableProcessors() / 2 - 1, 1);
-    // Whether to dump all the resources as local files. By default false.
+    // Whether to dump all the resources as local files. By default, false.
     boolean dump = false;
     // Whether to print a notice of milliseconds used for data generation.
     boolean performance = false;
@@ -115,6 +115,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   /**
    * @deprecated Wrong spelling
    */
+  @SuppressWarnings({"SpellCheckingInspection", "DeprecatedIsStillUsed"})
   @Deprecated(forRemoval = true)
   private final Map<Identifier, JLang> langMergable = new ConcurrentHashMap<>();
   private final Map<Identifier, JLang> langMergeable = langMergable;
@@ -329,18 +330,19 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public void load(Path dir) throws IOException {
-    Stream<Path> stream = Files.walk(dir);
-    for (Path file : (Iterable<Path>) () -> stream.filter(Files::isRegularFile).map(dir::relativize).iterator()) {
-      String s = file.toString();
-      if (s.startsWith("assets")) {
-        String path = s.substring("assets".length() + 1);
-        this.load(path, this.assets, Files.readAllBytes(file));
-      } else if (s.startsWith("data")) {
-        String path = s.substring("data".length() + 1);
-        this.load(path, this.data, Files.readAllBytes(file));
-      } else {
-        byte[] data = Files.readAllBytes(file);
-        this.root.put(s, () -> data);
+    try (Stream<Path> stream = Files.walk(dir)) {
+      for (Path file : (Iterable<Path>) () -> stream.filter(Files::isRegularFile).map(dir::relativize).iterator()) {
+        String s = file.toString();
+        if (s.startsWith("assets")) {
+          String path = s.substring("assets".length() + 1);
+          this.load(path, this.assets, Files.readAllBytes(file));
+        } else if (s.startsWith("data")) {
+          String path = s.substring("data".length() + 1);
+          this.load(path, this.data, Files.readAllBytes(file));
+        } else {
+          byte[] data = Files.readAllBytes(file);
+          this.root.put(s, () -> data);
+        }
       }
     }
   }
@@ -400,7 +402,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   }
 
   /**
-   * pack.png and that's about it I think/hope
+   * pack.png and that's about it, I think/hope
    *
    * @param fileName the name of the file, can't be a path tho
    * @return the pack.png image as a stream

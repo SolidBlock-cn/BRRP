@@ -15,24 +15,37 @@ public interface IdentifierExtension {
   /**
    * Append the string to the path of the identifier. The namespace will keep unchanged.
    *
-   * @param s The string to be appended.
+   * @param prefix The string to be appended.
    * @return A new identifier.
    */
   @Contract("_ -> new")
-  default Identifier brrp_append(@NotNull String s) {
+  default Identifier brrp_append(@NotNull String prefix) {
     Identifier identifier = (Identifier) this;
-    return new Identifier(identifier.getNamespace(), identifier.getPath() + s);
+    return new Identifier(identifier.getNamespace(), identifier.getPath() + prefix);
   }
 
   /**
    * Prepend the string to the path of the identifier. The namespace will keep unchanged.
    *
-   * @param s The string to be prepended.
+   * @param suffix The string to be prepended.
    * @return A new identifier.
    */
   @Contract("_ -> new")
-  default Identifier brrp_prepend(@NotNull String s) {
+  default Identifier brrp_prepend(@NotNull String suffix) {
     Identifier identifier = (Identifier) this;
-    return new Identifier(identifier.getNamespace(), s + identifier.getPath());
+    return new Identifier(identifier.getNamespace(), suffix + identifier.getPath());
+  }
+
+  /**
+   * Prepend and append to the path of the identifier at the same time. The namespace will keep unchanged.
+   *
+   * @param prefix The string to be prepended.
+   * @param suffix The string to be appended.
+   * @return A new identifier.
+   */
+  @Contract("_, _ -> new")
+  default Identifier brrp_pend(@NotNull String prefix, @NotNull String suffix) {
+    Identifier identifier = (Identifier) this;
+    return new Identifier(identifier.getNamespace(), prefix + identifier.getPath() + suffix);
   }
 }

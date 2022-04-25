@@ -24,7 +24,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.world.BiomeColors;
+import net.minecraft.client.color.world.FoliageColors;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.data.client.TextureKey;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
@@ -123,6 +125,7 @@ public class BRRPDevelopment implements ModInitializer {
   public static final BRRPFenceBlock LAVA_FENCE = register(new BRRPFenceBlock(LAVA_BLOCK), "lava_fence");
   public static final BRRPFenceBlock WATER_FENCE_GATE = register(new BRRPFenceBlock(WATER_BLOCK), "water_fence_gate");
   public static final BRRPFenceGateBlock LAVA_FENCE_GATE = register(new BRRPFenceGateBlock(LAVA_BLOCK), "lava_fence_gate");
+  public static final BRRPWallBlock LAVA_WALL = register(new BRRPWallBlock(LAVA_BLOCK), "lava_wall");
   private static final Logger LOGGER = LoggerFactory.getLogger(BRRPDevelopment.class);
 
   static {
@@ -133,6 +136,7 @@ public class BRRPDevelopment implements ModInitializer {
     blockItem(WATER_SLAB);
     blockItem(WATER_FENCE);
     blockItem(WATER_FENCE_GATE);
+    blockItem(LAVA_WALL);
   }
 
   public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(FabricBlockSettings.copyOf(Blocks.SMOOTH_STONE), "block/smooth_stone", "block/smooth_stone_slab_side", "block/smooth_stone"), "smooth_stone");
@@ -181,7 +185,8 @@ public class BRRPDevelopment implements ModInitializer {
     PACK.addModel(new JModel("block/stone"), new Identifier("brrp", "item/hardenable_block"));
     PACK.addModel(new JModel("block/stone_slab"), new Identifier("brrp", "item/hardenable_slab"));
 
-    TextureRegistry.register(CUSTOM_SLAB, "block/oak_leaves");
+    TextureRegistry.register(CUSTOM_SLAB, new Identifier("block/oak_leaves"));
+    TextureRegistry.register(CUSTOM_SLAB, TextureKey.END, new Identifier("block/spruce_leaves"));
 
     LAVA_BLOCK.writeAll(PACK);
     LAVA_STAIRS.writeAll(PACK);
@@ -195,9 +200,11 @@ public class BRRPDevelopment implements ModInitializer {
     WATER_FENCE_GATE.writeAll(PACK);
     CUSTOM_SLAB.writeAll(PACK);
     SMOOTH_STONE.writeAll(PACK);
+    LAVA_WALL.writeAll(PACK);
 
     ((IdentifiedTag) new IdentifiedTag("blocks", new Identifier("fences")).addBlocks(WATER_FENCE, LAVA_FENCE)).write(PACK);
     ((IdentifiedTag) new IdentifiedTag("blocks", new Identifier("fence_gates")).addBlocks(WATER_FENCE_GATE, LAVA_FENCE_GATE)).write(PACK);
+    ((IdentifiedTag) new IdentifiedTag("blocks", new Identifier("walls")).addBlock(LAVA_WALL)).write(PACK);
 
     return PACK;
   }
@@ -213,15 +220,25 @@ public class BRRPDevelopment implements ModInitializer {
         },
         WATER_BLOCK, WATER_STAIRS, WATER_SLAB, WATER_FENCE, WATER_FENCE_GATE
     );
+    ColorProviderRegistry.BLOCK.register(
+        (state, world, pos, tintIndex) -> {
+          if (world == null || pos == null) {
+            return FoliageColors.getDefaultColor();
+          } else {
+            return BiomeColors.getFoliageColor(world, pos);
+          }
+        }
+    );
     ColorProviderRegistry.ITEM.register(
         (stack, tintIndex) -> {
-          final var block = ((BlockItem) stack.getItem()).getBlock();
+          final Block block = ((BlockItem) stack.getItem()).getBlock();
           final MinecraftClient instance = MinecraftClient.getInstance();
           return Objects.requireNonNull(ColorProviderRegistry.BLOCK.get(block)).getColor(block.getDefaultState(), instance.world, instance.cameraEntity != null ? instance.cameraEntity.getBlockPos() : null, tintIndex);
         },
         WATER_BLOCK, WATER_STAIRS, WATER_SLAB, WATER_FENCE, WATER_FENCE_GATE
     );
     BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getTranslucent(), WATER_BLOCK, WATER_STAIRS, WATER_SLAB, WATER_FENCE, WATER_FENCE_GATE);
+    BlockRenderLayerMap.INSTANCE.putBlock(CUSTOM_SLAB, RenderLayer.getCutout());
   }
 
   @Contract("_,_ -> param1")

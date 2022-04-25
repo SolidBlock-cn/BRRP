@@ -3,12 +3,19 @@ package net.devtech.arrp.generator;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.models.JModel;
+import net.devtech.arrp.json.recipe.JRecipe;
+import net.devtech.arrp.json.recipe.JShapedRecipe;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.FenceBlock;
 import net.minecraft.data.client.BlockStateModelGenerator;
+import net.minecraft.data.client.TextureKey;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.Items;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +54,7 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
   @Environment(EnvType.CLIENT)
   @Override
   public @NotNull JModel getBlockModel() {
-    return new JModel().addTexture("texture", getTextureId("texture"));
+    return new JModel().addTexture("texture", getTextureId(TextureKey.TEXTURE));
   }
 
   @Environment(EnvType.CLIENT)
@@ -63,5 +70,25 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
   @Override
   public @Nullable JModel getItemModel() {
     return getBlockModel().parent("block/fence_inventory");
+  }
+
+  /**
+   * This recipe uses the base block and stick as the ingredients.
+   *
+   * @see net.minecraft.data.server.RecipeProvider#createFenceRecipe(ItemConvertible, Ingredient)
+   */
+  @Override
+  public @Nullable JRecipe getCraftingRecipe() {
+    final Item secondIngredient = getSecondIngredient();
+    return baseBlock == null || secondIngredient == null ? null : new JShapedRecipe(this).resultCount(3).pattern("W#W", "W#W").addKey("W", baseBlock).addKey("#", secondIngredient);
+  }
+
+  /**
+   * The second ingredient used in the crafting recipe. It's by default a stick. In {@link #getCraftingRecipe()}, the crafting recipe is composed of 6 base blocks and 2 second ingredients.
+   *
+   * @return The second ingredient to craft.
+   */
+  public @Nullable Item getSecondIngredient() {
+    return Items.STICK;
   }
 }

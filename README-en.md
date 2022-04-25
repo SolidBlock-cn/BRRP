@@ -1,5 +1,7 @@
 BRRP (Better Runtime Resource Pack), is a library mod base on [ARRP](https://github.com/Devan-Kerman/ARRP) with some enhancements. This mod provides all features of ARRP, fixes some bugs that exist in ARRP, and provides some new features.
 
+Welcome to join Tencent QQ group **587928350** or KaiHeiLa channel invitation code **KlFS0n** to experience latest update of this mod.
+
 [阅读本文档的中文版。](README.md)
 
 ## What is a runtime resource pack?
