@@ -7,6 +7,7 @@ import net.minecraft.util.Identifier;
 /**
  * <p>A <b>campfire recipe</b> is used for a campfire block.</p>
  */
+@SuppressWarnings("unused")
 public class JCampfireRecipe extends JCookingRecipe {
   private static final String TYPE = "campfire_cooking";
 
@@ -67,16 +68,6 @@ public class JCampfireRecipe extends JCookingRecipe {
    * @param result     The identifier of the result.
    */
   public JCampfireRecipe(Identifier ingredient, Identifier result) {
-    super(TYPE, ingredient, result);
-  }
-
-  /**
-   * Creates a simple campfire recipe, with the identifiers of single ingredient and result specified.
-   *
-   * @param ingredient The ingredient item.
-   * @param result     The result item.
-   */
-  public JCampfireRecipe(Item ingredient, Item result) {
     super(TYPE, ingredient, result);
   }
 

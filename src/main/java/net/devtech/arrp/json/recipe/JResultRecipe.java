@@ -1,35 +1,63 @@
 package net.devtech.arrp.json.recipe;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 
+/**
+ * A <b>result recipe</b>, as it literally means, is a recipe with a result, which is a {@link JResult} object.
+ */
 public abstract class JResultRecipe extends JRecipe {
+  /**
+   * The result of the recipe. It is final, so it should be specified when the object is created.
+   */
   public final JResult result;
 
+  /**
+   * Create a new recipe with the specified type and result.
+   *
+   * @param type   The identifier of the type of the recipe, as string.
+   * @param result The result of the recipe.
+   */
   protected JResultRecipe(final String type, final JResult result) {
     super(type);
     this.result = result;
   }
 
+  /**
+   * Create a new recipe with the specified type and result.
+   *
+   * @param type   The identifier of the type of the recipe, as string.
+   * @param result The identifier (as string) of the result item.
+   */
   protected JResultRecipe(String type, String result) {
     this(type, new JResult(result));
   }
 
+  /**
+   * Create a new recipe with the specified type and result.
+   *
+   * @param type   The identifier of the type of the recipe, as string.
+   * @param result The identifier of the result item.
+   */
   protected JResultRecipe(String type, Identifier result) {
     this(type, new JResult(result));
   }
 
-  protected JResultRecipe(String type, Item result) {
-    this(type, new JResult(result));
-  }
-
+  /**
+   * Create a new recipe with the specified type and result.
+   *
+   * @param type   The identifier of the type of the recipe, as string.
+   * @param result The simple the result item.
+   */
   protected JResultRecipe(String type, ItemConvertible result) {
     this(type, new JResult(result));
   }
 
+  /**
+   * Set the count of the result item.
+   */
   @Contract("_ -> this")
   @CanIgnoreReturnValue
   public JResultRecipe resultCount(int count) {

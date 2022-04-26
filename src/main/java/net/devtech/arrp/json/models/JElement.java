@@ -1,6 +1,9 @@
 package net.devtech.arrp.json.models;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.util.math.Direction;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 import java.util.function.Function;
 
@@ -25,6 +28,7 @@ import java.util.function.Function;
  *   .addFace(Direction.EAST, new JFace("cross").uv(0, 0, 16, 16))
  * }</pre>
  */
+@SuppressWarnings("unused")
 public class JElement implements Cloneable {
   /**
    * The [x, y, z] of the position where the cuboid starts.
@@ -39,17 +43,28 @@ public class JElement implements Cloneable {
   public JFaces faces;
 
   /**
-   * Simple instantiate the element.<br>
-   * If you need to specify the two points, you can directly to {@link #of(float, float, float, float, float, float)}.
+   * <p>Create a new object.</p>
+   * <p>If you need to specify the two points, you can directly to {@link #of(float, float, float, float, float, float)}.</p>
+   *
+   * @see #of(float, float, float, float, float, float)
    */
+  @ApiStatus.Internal
   public JElement() {
   }
 
+  /**
+   * Create a new object with the two positions set.
+   *
+   * @return A new object.
+   */
+  @Contract("_,_,_,_,_,_ -> new")
   public static JElement of(float x1, float y1, float z1,
                             float x2, float y2, float z2) {
     return new JElement().from(x1, y1, z1).to(x2, y2, z2);
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_,_,_ -> this")
   public JElement from(float x, float y, float z) {
     this.from[0] = x;
     this.from[1] = y;
@@ -57,6 +72,8 @@ public class JElement implements Cloneable {
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_,_,_ -> this")
   public JElement to(float x, float y, float z) {
     this.to[0] = x;
     this.to[1] = y;
@@ -64,11 +81,15 @@ public class JElement implements Cloneable {
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JElement rotation(JRotation rotation) {
     this.rotation = rotation;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JElement shade(boolean shade) {
     this.shade = shade;
     return this;
@@ -80,16 +101,22 @@ public class JElement implements Cloneable {
    * @deprecated Please use {@link #shade(boolean) shade}{@code (false)}.
    */
   @Deprecated
+  @CanIgnoreReturnValue
+  @Contract("-> this")
   public JElement shade() {
     this.shade = false;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JElement faces(JFaces faces) {
     this.faces = faces;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_, _ -> this")
   public JElement addFace(Direction direction, JFace face) {
     if (this.faces == null) {
       this.faces = new JFaces();
@@ -98,12 +125,16 @@ public class JElement implements Cloneable {
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JElement addAllFaces(JFace face) {
     if (this.faces == null) this.faces = new JFaces();
     this.faces.setAllFaces(face);
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JElement addAllFaces(Function<Direction, JFace> faces) {
     if (this.faces == null) this.faces = new JFaces();
     this.faces.setAllFaces(faces);

@@ -123,7 +123,7 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
   /**
    * <p>Add a texture variable. If you want to create a new textures instance with one variable created, you may call {@link #of(String, String)}. If you want to add multiple texture variables, you can chain call this method, or just call {@link #vars(String...)}.</p>
    * <p>This method is a bit like {@link Map#put(Object, Object)}, but it returns the instance itself.</p>
-   * <p>For convenient, for some frequently used names, you can call their own corresponding methods. For example, {@link #all(String) all}{@code ("block/stone")} can be seen as a simplfied version for {@code var("all", "block/stone")}.</p>
+   * <p>For convenient, for some frequently used names, you can call their own corresponding methods. For example, {@link #all(String) all}{@code ("block/stone")} can be seen as a simplified version for {@code var("all", "block/stone")}.</p>
    *
    * @param name The name of the texture variable.
    * @param val  The identifier of the texture (for example {@code "minecraft:block/lava_still"}) or another texture variable (for example {@code "#top"}).

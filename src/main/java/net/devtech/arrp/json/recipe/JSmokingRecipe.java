@@ -70,15 +70,6 @@ public class JSmokingRecipe extends JCookingRecipe {
     super(TYPE, ingredient, result);
   }
 
-  /**
-   * Creates a simple smoking recipe, with the identifiers of single ingredient and result specified.
-   *
-   * @param ingredient The ingredient item.
-   * @param result     The result item.
-   */
-  public JSmokingRecipe(Item ingredient, Item result) {
-    super(TYPE, ingredient, result);
-  }
 
   /**
    * Creates a simple smoking recipe, with the identifiers of single ingredient and result specified.

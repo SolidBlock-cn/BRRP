@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 /**
  * A <b>blasting recipe</b> is a recipe for blast furnace.
  */
+@SuppressWarnings("unused")
 public class JBlastingRecipe extends JCookingRecipe {
 
   private static final String TYPE = "blasting";
@@ -68,16 +69,6 @@ public class JBlastingRecipe extends JCookingRecipe {
    * @param result     The identifier of the result.
    */
   public JBlastingRecipe(Identifier ingredient, Identifier result) {
-    super(TYPE, ingredient, result);
-  }
-
-  /**
-   * Creates a simple blasting recipe, with the identifiers of single ingredient and result specified.
-   *
-   * @param ingredient The ingredient item.
-   * @param result     The result item.
-   */
-  public JBlastingRecipe(Item ingredient, Item result) {
     super(TYPE, ingredient, result);
   }
 
