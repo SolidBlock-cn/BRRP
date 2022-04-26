@@ -9,7 +9,9 @@ import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -65,7 +67,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    * @param key   The recipe key.
    * @param value The ingredient.
    */
-
+  @Contract("_, _ -> this")
   public JKeys key(final String key, final JIngredient value) {
     this.keys.put(key, value);
     return this;
@@ -77,7 +79,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    * @param key   The recipe key.
    * @param value The identifier (as string) of the ingredient item.
    */
-
+  @Contract("_, _ -> this")
   public JKeys key(final String key, final String value) {
     return key(key, JIngredient.ofItem(value));
   }
@@ -88,7 +90,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    * @param key   The recipe key.
    * @param value The identifier of the ingredient item.
    */
-
+  @Contract("_, _ -> this")
   public JKeys key(final String key, final Identifier value) {
     return key(key, JIngredient.ofItem(value));
   }
@@ -99,7 +101,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    * @param key   The recipe key.
    * @param value The ingredient item. Must be registered when calling this.
    */
-
+  @Contract("_, _ -> this")
   public JKeys key(final String key, final ItemConvertible value) {
     return key(key, JIngredient.ofItem(value));
   }
@@ -110,9 +112,9 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    * @param key   The recipe key.
    * @param value The ingredient item. Must be registered when calling this.
    */
-
+  @Contract("_, _ -> this")
   public JKeys key(final String key, final Item value) {
-    return key(key, JIngredient.ofItem(value));
+    return key(key, JIngredient.ofItem(Registry.ITEM.getId(value)));
   }
 
   @Override

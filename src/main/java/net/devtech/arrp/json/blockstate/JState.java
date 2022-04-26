@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @deprecated Please use {@link JBlockStates}, which is an improved version.
  */
-@SuppressWarnings("DeprecatedIsStillUsed")
+@SuppressWarnings({"DeprecatedIsStillUsed", "unused"})
 @Deprecated
 public final class JState implements JsonSerializable {
   final List<JVariant> variants = new ArrayList<>();

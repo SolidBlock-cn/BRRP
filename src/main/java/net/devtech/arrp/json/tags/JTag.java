@@ -241,7 +241,7 @@ public class JTag {
    * Add another tag to this tag. Please be warned that the "another tag" identifier does not specify type. For example, the block tag can {@code addTag(new Identifier("minecraft", "logs"))} instead of {@code addTag{new Identifier("minecraft", "blocks/logs")}}.
    *
    * @param tagIdentifier The identifier of the tag you added. It does not contain the type specification.
-   * @return The JTag instance itself, makes it possible to chain-call.
+   * @return The JTag instance itself, making it possible to chain-call.
    */
 
   @Contract("_ -> this")
@@ -251,10 +251,10 @@ public class JTag {
   }
 
   /**
-   * Add another tags to this tag. Please be warned that the "another tag" identifier does not specify type.
+   * Add other tags to this tag. Please be warned that the "other tag" identifiers do not specify type.
    *
    * @param tagIdentifiers The identifiers of the tag you added. They do not contain the type specification.
-   * @return The JTag instance itself, makes it possible to chain-call.
+   * @return The JTag instance itself, making it possible to chain-call.
    */
 
   @Contract("_ -> this")
@@ -264,10 +264,10 @@ public class JTag {
   }
 
   /**
-   * Add another tags to this tag. Please be warned that the "another tag" identifier does not specify type.
+   * Add other tags to this tag. Please be warned that the "other tag" identifiers do not specify type.
    *
    * @param tagIdentifiers The identifiers of the tag you added. They do not contain the type specification.
-   * @return The JTag instance itself, makes it possible to chain-call.
+   * @return The JTag instance itself, making it possible to chain-call.
    */
 
   @Contract("_ -> this")
@@ -275,21 +275,36 @@ public class JTag {
     return addTagIds(Arrays.asList(tagIdentifiers));
   }
 
-
+  /**
+   * Add another tag to this tag. In this method, the tag parameter is the tag used for BRRP, and you assume that the type of that tag matches the type of this. The object has already stored an identifier, so its identifier can be directly used.
+   *
+   * @param tag The tag you added. Its {@linkplain IdentifiedTag#identifier identifier without type specification} will be used.
+   * @return The JTag instance itself, making it possible to chain-call.
+   */
   @Contract("_ -> this")
   public JTag addTag(IdentifiedTag tag) {
     this.values.add("#" + tag.identifier.toString());
     return this;
   }
 
-
+  /**
+   * Add other tags to this tag. In this method, the "tags" parameter is the tags used for BRRP, and you assume that the type of these tags matches the type of this. Each of the objects has stored an identifier, so those identifiers can be directly used.
+   *
+   * @param tags The tags you added. Its {@linkplain IdentifiedTag#identifier identifier without type specification} will be used.
+   * @return The JTag instance itself, making it possible to chain-call.
+   */
   @Contract("_ -> this")
   public JTag addTags(Iterable<IdentifiedTag> tags) {
     tags.forEach(this::addTag);
     return this;
   }
 
-
+  /**
+   * Add other tags to this tag. In this method, the "tags" parameter is the tags used for BRRP, and you assume that the type of these tags matches the type of this. Each of the objects has stored an identifier, so those identifiers can be directly used.
+   *
+   * @param tags The tags you added. Its {@linkplain IdentifiedTag#identifier identifier without type specification} will be used.
+   * @return The JTag instance itself, making it possible to chain-call.
+   */
   @Contract("_ -> this")
   public JTag addTags(IdentifiedTag... tags) {
     return addTags(Arrays.asList(tags));
