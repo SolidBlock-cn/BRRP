@@ -67,7 +67,7 @@ public class JStonecuttingRecipe extends JRecipe {
    * @param count      The count of the result.
    */
   public JStonecuttingRecipe(final Item ingredient, final Item result, int count) {
-    this(JIngredient.ofItem(ingredient), Registry.ITEM.getId(result).toString(), count);
+    this(JIngredient.ofItem(Registry.ITEM.getId(ingredient)), Registry.ITEM.getId(result).toString(), count);
   }
 
   /**

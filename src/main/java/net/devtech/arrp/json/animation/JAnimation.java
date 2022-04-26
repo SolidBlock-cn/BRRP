@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * An <b>animation file</b> defines how a texture is animated.
  */
+@SuppressWarnings("unused")
 public class JAnimation implements Cloneable, JsonSerializable {
   private Boolean interpolate;
   private Integer width;

@@ -13,6 +13,7 @@ import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
+import net.minecraft.advancement.Advancement;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -217,6 +218,18 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @CanIgnoreReturnValue
   byte[] addRecipe(Identifier id, JRecipe recipe);
+
+  /**
+   * add an advancement
+   * <p>
+   * ".json" is automatically appended to the path
+   *
+   * @param id          the {@linkplain Identifier} identifier of the advancement and that represents its directory
+   * @param advancement the advancement to add
+   * @return the new resource
+   */
+  @CanIgnoreReturnValue
+  byte[] addAdvancement(Identifier id, Advancement.Task advancement);
 
   /**
    * invokes the action on the RRP executor, RRPs are thread-safe you can create expensive assets here, all resources

@@ -4,10 +4,18 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementRewards;
+import net.minecraft.advancement.CriterionMerger;
+import net.minecraft.advancement.criterion.InventoryChangedCriterion;
+import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonFactory;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public abstract class JRecipe implements Cloneable {
   /**
-   * The type of the recipe. It is in essence in the format of {@link Identifier}, but here it is as string. Possible values include {@code blasting, campfire_cooking, crafting_shaped, crafting_shapeless, smelting, smithing, smoking, stonecutting}, which are defined by those subtypes.
+   * The type of the recipe. It is in essence in the format of {@link Identifier}, but here it is as string. Possible values include <code style=color:navy>blasting, campfire_cooking, crafting_shaped, crafting_shapeless, smelting, smithing, smoking, stonecutting</code>, which are defined by those subtypes.
    */
   public final String type;
 
@@ -30,6 +38,17 @@ public abstract class JRecipe implements Cloneable {
    */
   public String group;
 
+  /**
+   * <p>The advancement of this recipe. It usually triggers when you unlocked the recipe or obtained an ingredient, and rewards you with unlocking this recipe.</p>
+   * <p>For example, for the smelting recipe of glass, when you obtain a sands block, the advancement will be achieved and the recipe of glass will be unlocked.</p>
+   */
+  public final transient Advancement.Task advancementBuilder = Advancement.Task.create().parent(new Identifier("minecraft", "recipes/root")).criteriaMerger(CriterionMerger.OR);
+
+  /**
+   * Create a new simple recipe object.
+   *
+   * @param type The type of the recipe. It is the identifier in the format of string. See {@link #type}.
+   */
   public JRecipe(final String type) {
     this.type = type;
   }
@@ -140,6 +159,42 @@ public abstract class JRecipe implements Cloneable {
     AtomicReference<RecipeJsonProvider> jsonProvider = new AtomicReference<>();
     delegate.offerTo(jsonProvider::set);
     return delegate(jsonProvider.get());
+  }
+
+  /**
+   * The corresponding advancement builder of this recipe. By default, it is an advancement that triggers when the player obtains a specific ingredient or craft an item, and rewards the player with the recipe.
+   *
+   * @return The advancement builder of the recipe advancement.
+   */
+  public @Nullable Advancement.Task asAdvancement() {
+    return advancementBuilder;
+  }
+
+  /**
+   * Add a criterion of obtaining the advancement, that you get an item. The item is usually one of the ingredients. That means, when you gain that item, no matter in which way, you will achieve the advancement and unlock this recipe.
+   *
+   * @param criterionName The name of the advancement criterion. It is usually a short, descriptive name, such as {@code "has_stone"}.
+   * @param item          The item that when obtained, the criterion will be triggered.
+   */
+  @CanIgnoreReturnValue
+  @Contract("_, _ -> this")
+  public JRecipe addInventoryChangedCriterion(String criterionName, ItemConvertible item) {
+    advancementBuilder.criterion(criterionName, InventoryChangedCriterion.Conditions.items(item));
+    return this;
+  }
+
+  /**
+   * Prepare the advancement of the recipe.
+   *
+   * @param recipeId The id of the recipe.
+   */
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
+  public JRecipe prepareAdvancement(Identifier recipeId) {
+    advancementBuilder
+        .rewards(new AdvancementRewards.Builder().addRecipe(recipeId))
+        .criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId));
+    return this;
   }
 
   @ApiStatus.Internal

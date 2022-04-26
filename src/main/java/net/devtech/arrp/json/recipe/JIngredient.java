@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -41,6 +42,15 @@ public class JIngredient implements Cloneable, JsonSerializable {
    */
   protected List<JIngredient> ingredients;
 
+  /**
+   * Create an empty ingredient object.
+   *
+   * @see #ofItem
+   * @see #ofTag
+   * @see #ofItems
+   * @see #ofTags
+   */
+  @ApiStatus.Internal
   public JIngredient() {
   }
 
@@ -55,6 +65,12 @@ public class JIngredient implements Cloneable, JsonSerializable {
     this.tag = tag;
   }
 
+  /**
+   * Create an empty object with the list of ingredients set.
+   *
+   * @param ingredients The list of ingredients. It will be directly used as the field.
+   */
+  @ApiStatus.Internal
   protected JIngredient(List<JIngredient> ingredients) {
     this.ingredients = ingredients;
   }
@@ -71,6 +87,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
    * Set the item identifier of this ingredient. You must ensure that the item has been registered when calling this.
    *
    * @param item The item.
+   * @hidden This method is actually unnecessary, as there is already {@link #item(ItemConvertible)}. However, it is kept for compatibility, and will not be removed.
    */
   @CanIgnoreReturnValue
   public JIngredient item(Item item) {
@@ -113,12 +130,8 @@ public class JIngredient implements Cloneable, JsonSerializable {
     return item(id.toString());
   }
 
-  public static JIngredient ofItem(Item item) {
-    return ofItem(Registry.ITEM.getId(item));
-  }
-
   public static JIngredient ofItem(ItemConvertible itemConvertible) {
-    return ofItem(itemConvertible.asItem());
+    return ofItem(Registry.ITEM.getId(itemConvertible.asItem()));
   }
 
   public static JIngredient ofItem(String id) {
@@ -172,7 +185,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
   }
 
   public static JIngredient ofItems(Item... items) {
-    return new JIngredient(Arrays.stream(items).map(JIngredient::ofItem).collect(Collectors.toList()));
+    return new JIngredient(Arrays.stream(items).map(item1 -> ofItem(Registry.ITEM.getId(item1))).collect(Collectors.toList()));
   }
 
   public static JIngredient ofItems(ItemConvertible... itemConvertibles) {
