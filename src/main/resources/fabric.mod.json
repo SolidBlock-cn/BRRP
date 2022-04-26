@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "better_runtime_resource_pack",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "name": "Better Runtime Resource Pack (derived from ARRP mod)",
   "description": "BRRP is an extension of ARRP mod, which fixes some issues and adds some enhancements. The mod is trying the best to make it compatible with ARRP-dependent mods. Installing this mod does not require installing ARRP, and other mods depending on ARRP can depend on this mod.",
   "authors": [
@@ -12,7 +12,7 @@
     "sources": "https://github.com/Devan-Kerman/RRP"
   },
   "license": "MPLv2",
-  "icon": "assets/arrp/icon.png",
+  "icon": "assets/brrp/icon.png",
   "environment": "*",
   "entrypoints": {
     "preLaunch": [
@@ -31,8 +31,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.13.0",
-    "minecraft": ">=1.16",
-    "advanced_runtime_resource_pack": ">=0.6.0"
+    "minecraft": ">=1.16"
   },
   "breaks": {
     "minecraft": ">=1.17"
