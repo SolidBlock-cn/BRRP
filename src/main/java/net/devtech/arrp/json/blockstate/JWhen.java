@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 /**
  * <p>This is an object used to specify the condition of a multipart, and if the condition matches, the part will be used.</p>
- * <p>However, it has several issues. It does not supported complex situations, or even a simple situation with multiple properties stated. It does not even distinguage property condition and logical condition.</p>
+ * <p>However, it has several issues. It does not supported complex situations, or even a simple situation with multiple properties stated. It does not even distinguish property condition and logical condition.</p>
  * <p>As a result, as you may have seen, this class is deprecated in BRRP. You should use {@link JWhenProperties} or {@link JWhenLogical} instead. As you can see as well, this class as well as several improved classes in BRRP, implements {@link When}, which is a vanilla class.</p>
  * <p>However, you can directly use {@link #delegate(When)}, which creates an object with vanilla serialization. You can create the delegate with {@link When#create()} , {@link #anyOf(When...)} or {@link #allOf(When...)}. Do not use classes in <i>this</i> mod as parameters of {@link #delegate}.</p>
  *

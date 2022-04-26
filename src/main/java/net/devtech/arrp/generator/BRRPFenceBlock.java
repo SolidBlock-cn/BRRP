@@ -80,7 +80,15 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
   @Override
   public @Nullable JRecipe getCraftingRecipe() {
     final Item secondIngredient = getSecondIngredient();
-    return baseBlock == null || secondIngredient == null ? null : new JShapedRecipe(this).resultCount(3).pattern("W#W", "W#W").addKey("W", baseBlock).addKey("#", secondIngredient);
+    return baseBlock == null || secondIngredient == null ? null :
+        new JShapedRecipe(this)
+            .resultCount(3)
+            .pattern("W#W", "W#W")
+            .addKey("W", baseBlock)
+            .addKey("#", secondIngredient)
+            // The second ingredient does not matter for recipe.
+            // Therefore, the recipe is unlocked when you obtain the base block, instead of the second ingredient.
+            .addInventoryChangedCriterion("has_ingredient", baseBlock);
   }
 
   /**

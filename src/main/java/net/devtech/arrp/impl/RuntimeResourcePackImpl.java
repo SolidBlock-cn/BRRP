@@ -16,6 +16,7 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
+import net.minecraft.advancement.Advancement;
 import net.minecraft.loot.provider.number.LootNumberProvider;
 import net.minecraft.loot.provider.number.LootNumberProviderTypes;
 import net.minecraft.resource.ResourcePack;
@@ -69,6 +70,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, (JsonSerializer<Identifier>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getNamespace() + ":" + src.getPath()))
       .registerTypeHierarchyAdapter(LootNumberProvider.class, LootNumberProviderTypes.createGsonSerializer())
+      .registerTypeHierarchyAdapter(Advancement.Builder.class, (JsonSerializer<Advancement.Builder>) (builder, type, jsonSerializationContext) -> builder.toJson())
       .create();
   // @formatter:on
   private static final Logger LOGGER = LoggerFactory.getLogger(RuntimeResourcePackImpl.class);
@@ -290,6 +292,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   @Override
   public byte[] addRecipe(Identifier id, JRecipe recipe) {
     return this.addData(fix(id, "recipes", "json"), serialize(recipe));
+  }
+
+  @Override
+  public byte[] addAdvancement(Identifier id, Advancement.Builder advancement) {
+    return this.addData(fix(id, "advancements", "json"), serialize(advancement));
   }
 
   @Override

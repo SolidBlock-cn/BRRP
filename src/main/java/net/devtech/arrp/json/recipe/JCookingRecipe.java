@@ -12,6 +12,7 @@ import net.minecraft.util.registry.Registry;
  * @see net.minecraft.data.server.recipe.CookingRecipeJsonBuilder
  * @see net.minecraft.recipe.CookingRecipeSerializer
  */
+@SuppressWarnings("unused")
 public abstract class JCookingRecipe extends JRecipe {
   /**
    * The ingredient of the cooking recipe. It can be one or multiple items or item tags.
@@ -97,17 +98,6 @@ public abstract class JCookingRecipe extends JRecipe {
    */
   public JCookingRecipe(final String type, Identifier ingredient, Identifier result) {
     this(type, JIngredient.ofItem(ingredient), result.toString());
-  }
-
-  /**
-   * Creates a simple cooking recipe, with the identifiers of single ingredient and result specified.
-   *
-   * @param type       The type of the cooking recipe.
-   * @param ingredient The ingredient item.
-   * @param result     The result item.
-   */
-  public JCookingRecipe(final String type, Item ingredient, Item result) {
-    this(type, JIngredient.ofItem(ingredient), Registry.ITEM.getId(result).toString());
   }
 
   /**

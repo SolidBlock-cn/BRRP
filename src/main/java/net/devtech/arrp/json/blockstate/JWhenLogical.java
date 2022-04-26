@@ -59,7 +59,7 @@ public class JWhenLogical extends ForwardingList<When> implements When, JsonSeri
    * <pre>{@code
    * {"OR": [
    *   {"direction": "up|down"},
-   *   {"waterlogged": "fase" } ]}
+   *   {"waterlogged": "false" } ]}
    * }</pre>
    */
   public static JWhenLogical anyOf(When... conditions) {

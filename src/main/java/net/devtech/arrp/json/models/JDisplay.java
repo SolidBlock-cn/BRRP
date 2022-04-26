@@ -1,10 +1,12 @@
 package net.devtech.arrp.json.models;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.util.StringIdentifiable;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.EnumMap;
@@ -77,41 +79,57 @@ public class JDisplay extends EnumMap<JDisplay.DisplayPosition, JPosition> imple
     super(DisplayPosition.class);
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JDisplay setThirdperson_righthand(JPosition thirdperson_righthand) {
     put(DisplayPosition.THIRDPERSON_RIGHTHAND, thirdperson_righthand);
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JDisplay setThirdperson_lefthand(JPosition thirdperson_lefthand) {
     put(DisplayPosition.THIRDPERSON_LEFTHAND, thirdperson_lefthand);
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JDisplay setFirstperson_righthand(JPosition firstperson_righthand) {
     put(DisplayPosition.FIRSTPERSON_RIGHTHAND, firstperson_righthand);
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JDisplay setFirstperson_lefthand(JPosition firstperson_lefthand) {
     put(DisplayPosition.FIRSTPERSON_LEFTHAND, firstperson_lefthand);
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JDisplay setGui(JPosition gui) {
     put(DisplayPosition.GUI, gui);
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JDisplay setHead(JPosition head) {
     put(DisplayPosition.HEAD, head);
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JDisplay setGround(JPosition ground) {
     put(DisplayPosition.GROUND, ground);
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JDisplay setFixed(JPosition fixed) {
     put(DisplayPosition.FIXED, fixed);
     return this;
@@ -120,6 +138,8 @@ public class JDisplay extends EnumMap<JDisplay.DisplayPosition, JPosition> imple
   /**
    * This method quite resembles {@link EnumMap#put(Enum, Object)}, but returns the instance itself, making it possible to chain call.
    */
+  @CanIgnoreReturnValue
+  @Contract("_, _ -> this")
   public JDisplay set(DisplayPosition displayPosition, JPosition position) {
     put(displayPosition, position);
     return this;

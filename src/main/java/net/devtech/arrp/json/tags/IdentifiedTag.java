@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Contract;
  *
  * @author SolidBlock
  */
+@SuppressWarnings("unused")
 public class IdentifiedTag extends JTag {
   /**
    * The type of the tag. It is usually one of the following values: {@code blocks entity_types fluids functions game_events items worldgen}, but a customized value is also OK.

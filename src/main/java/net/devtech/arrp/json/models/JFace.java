@@ -1,8 +1,11 @@
 package net.devtech.arrp.json.models;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.annotations.SerializedName;
 import it.unimi.dsi.fastutil.floats.FloatArrayList;
 import net.minecraft.util.math.Direction;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A face on the specified direction of the {@link JElement}.
@@ -24,7 +27,7 @@ public class JFace implements Cloneable {
   public Integer tintindex;
 
   /**
-   * @param textureVarName The variable name of the texture. Not prefixed with {@code "#"}, as it will be auto prefixed.
+   * @param textureVarName The variable name of the texture. <b>Not prefixed with {@code "#"}</b>, as it will be auto prefixed.
    */
   public JFace(String textureVarName) {
     this.texture = '#' + textureVarName;
@@ -34,18 +37,27 @@ public class JFace implements Cloneable {
    * In this case, the {@link #uvs} will be removed, so Minecraft automatically determines the uv according to the "from" and "to" in the {@link JElement}.<br>
    * Usually you needn't call this method, as it is undefined by default.
    */
+  @CanIgnoreReturnValue
+  @Contract("-> this")
   public JFace autoUv() {
     this.uvs = null;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_,_,_,_ -> this")
   public JFace uv(float x1, float y1, float x2, float y2) {
     this.uvs = FloatArrayList.of(x1, y1, x2, y2);
     return this;
   }
 
-  public JFace cullface(Direction direction) {
-    this.cullface = direction.asString();
+  /**
+   * Set the cullface in the specified direction, or {@code null} if there is no cullface.
+   */
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
+  public JFace cullface(@Nullable Direction direction) {
+    this.cullface = direction == null ? null : direction.asString();
     return this;
   }
 
@@ -53,6 +65,8 @@ public class JFace implements Cloneable {
    * Usually the cullface is a direction, so you should use {@link #cullface(Direction)}.
    */
   @Deprecated
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JFace cullface(String cullface) {
     this.cullface = cullface;
     return this;
@@ -62,26 +76,37 @@ public class JFace implements Cloneable {
    * Set the rotation of the texture. It is usually 0, 90, 180 or 270.<br>
    * You can also call {@link #rot90()}, {@link #rot180()} or {@link #rot270()}.
    */
+
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JFace rotation(int rotation) {
     this.rotation = rotation;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("-> this")
   public JFace rot90() {
     this.rotation = 90;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("-> this")
   public JFace rot180() {
     this.rotation = 180;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("-> this")
   public JFace rot270() {
     this.rotation = 270;
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JFace tintIndex(int index) {
     this.tintindex = index;
     return this;
