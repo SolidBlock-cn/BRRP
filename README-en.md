@@ -1,6 +1,6 @@
 BRRP (Better Runtime Resource Pack), is a library mod base on [ARRP](https://github.com/Devan-Kerman/ARRP) with some enhancements. This mod provides all features of ARRP, fixes some bugs that exist in ARRP, and provides some new features.
 
-Welcome to join Tencent QQ group **587928350** or KaiHeiLa channel invitation code **KlFS0n** to experience latest update of this mod.
+Welcome to join Tencent QQ group **587928350** or KaiHeiLa channel invitation code **KlFS0n** to experience the latest update of this mod.
 
 [阅读本文档的中文版。](README.md)
 
@@ -27,7 +27,7 @@ This mod (BRRP) can be seen as an extension to ARRP, supporting all features of 
 
 This mod tries to reduce incompatible changes to ARRP, so no classes, fields or methods are deleted; they are just deprecated. If some mods apply mixins on ARRP, the mod may have some issues when run on BRRP, but the probability of this has been as reduced as possible.
 
-As this mod is still under development, the way of making your mod depend on this mod is not provided, and nor is the download. However, source code is provided and published under the MPL license.
+This mod is open-source and published under the MPLv2 license.
 
 Relations of this mod and ARRP:
 
@@ -35,6 +35,15 @@ Relations of this mod and ARRP:
 |-----------------------|-----------------------|---------------------|
 | only installed ARRP   | can run normally      | cannot run normally |
 | only installed BRRP   | usually runs normally | can run normally    |
+
+Currently, the following mods are compatible with this mod. You can install BRRP without having to install ARRP:
+
+- Extended Block Shapes (1.4.0-1.18.1)
+- Mishang Urban Construction (1.18.2-0.1.7)
+- Minekea (1.18.2-2.4.0)
+- Pannotias Parcels (1.18.2-1.1.0)
+
+Besides, ctft mod may be incompatible with BRRP because it nests ARRP.
 
 ## How to register your runtime resource pack
 

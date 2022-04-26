@@ -3,6 +3,7 @@ package net.devtech.arrp.json.recipe;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -81,7 +82,7 @@ public class JShapedRecipe extends JResultRecipe {
   @Contract("_,_ -> this")
 
   public JShapedRecipe addKey(String key, Item value) {
-    return this.addKey(key, JIngredient.ofItem(value));
+    return this.addKey(key, JIngredient.ofItem(Registry.ITEM.getId(value)));
   }
 
   @Contract("_,_ -> this")
@@ -99,6 +100,7 @@ public class JShapedRecipe extends JResultRecipe {
   public JShapedRecipe group(final String group) {
     return (JShapedRecipe) super.group(group);
   }
+
 
   @Override
   public JShapedRecipe clone() {

@@ -76,16 +76,6 @@ public class JSmeltingRecipe extends JCookingRecipe {
    * @param ingredient The ingredient item.
    * @param result     The result item.
    */
-  public JSmeltingRecipe(Item ingredient, Item result) {
-    super(TYPE, ingredient, result);
-  }
-
-  /**
-   * Creates a simple smelting recipe, with the identifiers of single ingredient and result specified.
-   *
-   * @param ingredient The ingredient item.
-   * @param result     The result item.
-   */
   public JSmeltingRecipe(ItemConvertible ingredient, ItemConvertible result) {
     super(TYPE, ingredient, result);
   }

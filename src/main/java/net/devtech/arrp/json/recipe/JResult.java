@@ -33,19 +33,12 @@ public class JResult implements Cloneable, JsonSerializable {
   /**
    * This method will query the id of the item. You should ensure that the item has been registered.
    */
-  public JResult(final Item item) {
-    this(Registry.ITEM.getId(item));
-  }
-
-  /**
-   * This method will query the id of the item. You should ensure that the item has been registered.
-   */
   public JResult(final ItemConvertible item) {
-    this(item.asItem());
+    this(Registry.ITEM.getId(item.asItem()));
   }
 
   /**
-   * @deprecated Please directly call {@link #JResult(Item)}.
+   * @deprecated Please directly call {@link #JResult(ItemConvertible)}.
    */
   @Deprecated
   public static JResult item(final Item item) {

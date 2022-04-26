@@ -26,6 +26,7 @@ import java.util.List;
  * @see BlockStateSupplier
  * @since BRRP 0.6.0
  */
+@SuppressWarnings("unused")
 public class JBlockStates implements JsonSerializable {
   public final JVariants variants;
   public final List<JMultipart> multiparts;

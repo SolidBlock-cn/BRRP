@@ -16,6 +16,7 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
+import net.minecraft.advancement.Advancement;
 import net.minecraft.loot.BinomialLootTableRange;
 import net.minecraft.loot.ConstantLootTableRange;
 import net.minecraft.loot.UniformLootTableRange;
@@ -72,6 +73,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       .registerTypeAdapter(BinomialLootTableRange.class, new BinomialLootTableRange.Serializer())
       .registerTypeAdapter(UniformLootTableRange.class, new UniformLootTableRange.Serializer())
       .registerTypeAdapter(ConstantLootTableRange.class, new ConstantLootTableRange.Serializer())
+      .registerTypeHierarchyAdapter(Advancement.Task.class, (JsonSerializer<Advancement.Task>) (builder, type, jsonSerializationContext) -> builder.toJson())
       .create();
   // @formatter:on
   private static final Logger LOGGER = LogManager.getLogger(RuntimeResourcePackImpl.class);
@@ -293,6 +295,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   @Override
   public byte[] addRecipe(Identifier id, JRecipe recipe) {
     return this.addData(fix(id, "recipes", "json"), serialize(recipe));
+  }
+
+  @Override
+  public byte[] addAdvancement(Identifier id, Advancement.Task advancement) {
+    return this.addData(fix(id, "advancements", "json"), serialize(advancement));
   }
 
   @Override

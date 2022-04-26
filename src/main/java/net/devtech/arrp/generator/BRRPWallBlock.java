@@ -73,6 +73,10 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
    */
   @Override
   public @Nullable JRecipe getCraftingRecipe() {
-    return baseBlock == null ? null : new JShapedRecipe(this).resultCount(6).pattern("###", "###").addKey("#", baseBlock);
+    return baseBlock == null ? null : new JShapedRecipe(this)
+        .resultCount(6)
+        .pattern("###", "###")
+        .addKey("#", baseBlock)
+        .addInventoryChangedCriterion("has_ingredient", baseBlock);
   }
 }

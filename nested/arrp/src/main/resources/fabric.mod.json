@@ -3,9 +3,8 @@
   "id": "advanced_runtime_resource_pack",
   "version": "0.6.0",
   "name": "Advanced Runtime Resource Pack",
-  "description": "This is a nested mod. More information can be found in BRRP.",
+  "description": "This is a nested mod. It exists for recognition of ARRP-dependent mods. More information see BRRP.",
   "authors": [
-    "HalfOf2"
   ],
   "contact": {
     "sources": "https://github.com/Devan-Kerman/RRP"

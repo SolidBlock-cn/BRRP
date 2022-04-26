@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class JEntry implements Cloneable {
   /**
    * The identifier (as string) of the type of the entry.<br>

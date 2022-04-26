@@ -71,6 +71,11 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
    */
   @Override
   public @Nullable JRecipe getCraftingRecipe() {
-    return baseBlock == null ? null : new JShapedRecipe(new JResult(this).count(4)).pattern("#  ", "## ", "###").addKey("#", baseBlock);
+    return baseBlock == null ? null :
+        new JShapedRecipe(new JResult(this)
+            .count(4))
+            .pattern("#  ", "## ", "###")
+            .addKey("#", baseBlock)
+            .addInventoryChangedCriterion("has_the_ingredient", baseBlock);
   }
 }
