@@ -160,3 +160,5 @@ And then, in your `fabric.mod.json`, add:
   }
 }
 ```
+
+**Note:** If your mod uses features that only exist in some versions (classes, methods or fields annotated `@ApiStatus.AvailableSince`), the version should also be specified in your JSON. For example, if some APIs used in your mod are annotated `@ApiStatus.AvailableSince("0.6.2")`, you're supposed to write `"better_runtime_resource_pack": ">=0.6.2"` in your `fabric.mod.json`, in prevention of some potential unexpected errors when user installed BRRP lower than 0.6.2.

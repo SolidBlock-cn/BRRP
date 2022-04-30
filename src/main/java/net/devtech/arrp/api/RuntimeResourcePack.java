@@ -263,6 +263,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param id                          The identifier of the advancement the corresponds to the recipe, usually prefixed with {@code "recipes/"}. <p>In the convention of vanilla Minecraft, the identifier of the recipe is <code style="color:maroon"><i>namespace</i>:<i>path</i></code>, which is typically the same as the item itself. But the identifier of the advancement is <code style="color:maroon"><i>namespace</i>:recipes/<i>itemGroup</i>/<i>path</i></code>.
    * @param recipeContainingAdvancement The recipe that contains the advancement. If that advancement has no criteria, it will be ignored and {@code null} will be returned.
    */
+  @ApiStatus.AvailableSince("0.6.2")
   @CanIgnoreReturnValue
   default byte[] addRecipeAdvancement(Identifier id, JRecipe recipeContainingAdvancement) {
     final Advancement.Builder advancement = recipeContainingAdvancement.asAdvancement();
