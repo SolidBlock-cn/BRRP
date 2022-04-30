@@ -283,7 +283,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
       if (stonecuttingRecipe != null) {
         final Identifier stonecuttingRecipeId = getStonecuttingRecipeId();
         pack.addRecipe(stonecuttingRecipeId, stonecuttingRecipe);
-        pack.addRecipeAdvancement(getAdvancementIdForRecipe(stonecuttingRecipeId), stonecuttingRecipe);
+        pack.addRecipeAdvancement(stonecuttingRecipeId, getAdvancementIdForRecipe(stonecuttingRecipeId), stonecuttingRecipe);
       }
     }
   }
