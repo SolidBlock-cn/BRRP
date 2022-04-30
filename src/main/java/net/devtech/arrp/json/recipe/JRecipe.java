@@ -192,7 +192,7 @@ public abstract class JRecipe implements Cloneable {
   }
 
   /**
-   * Prepare the advancement of the recipe.
+   * Prepare the advancement of the recipe. It will add a criterion of unlocking the recipe itself, and a rewarding of that recipe. Therefore, you should give the recipe id.
    *
    * @param recipeId The id of the recipe.
    */
