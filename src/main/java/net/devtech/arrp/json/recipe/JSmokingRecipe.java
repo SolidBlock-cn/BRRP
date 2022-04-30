@@ -7,6 +7,7 @@ import net.minecraft.util.Identifier;
 /**
  * <p>A <b>smoking</b> recipe is used for smokers.</p>
  */
+@SuppressWarnings("unused")
 public class JSmokingRecipe extends JCookingRecipe {
   private static final String TYPE = "smoking";
 

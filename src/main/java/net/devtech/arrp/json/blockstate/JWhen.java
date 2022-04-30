@@ -1,11 +1,15 @@
 package net.devtech.arrp.json.blockstate;
 
 import com.google.gson.*;
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.When;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.Pair;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -22,12 +26,14 @@ import java.util.function.Supplier;
  * @see net.minecraft.data.client.When
  */
 @Deprecated
+@PreferredEnvironment(EnvType.CLIENT)
 public class JWhen implements Cloneable, JsonSerializable, When {
   private final List<Pair<String, String[]>> OR = new ArrayList<>();
 
   public JWhen() {
   }
 
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JWhen add(String condition, String... states) {
     this.OR.add(new Pair<>(condition, states));
     return this;
@@ -78,6 +84,7 @@ public class JWhen implements Cloneable, JsonSerializable, When {
    * @param delegate The delegate object. It is usually a vanilla {@link When} object ({@link net.minecraft.data.client.When.PropertyCondition} or {@link net.minecraft.data.client.When.LogicalCondition}, which can be generated with {@link When#create()}, {@link When#anyOf(When...)}, or {@link When#allOf(When...)}. Its serialization will be directly used.
    * @return The delegated object.
    */
+  @Contract("_ -> new")
   public When delegate(When delegate) {
     if (delegate instanceof JWhen || delegate instanceof JWhenProperties || delegate instanceof JWhenLogical) {
       throw new IllegalArgumentException("Only vanilla 'When' objects can be delegated.");
@@ -96,6 +103,7 @@ public class JWhen implements Cloneable, JsonSerializable, When {
     }
   }
 
+  @ApiStatus.Internal
   private static final class Delegate implements JsonSerializable, Supplier<JsonElement>, When {
     public final When delegate;
 

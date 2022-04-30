@@ -1,15 +1,19 @@
 package net.devtech.arrp.json.blockstate;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.devtech.arrp.annotations.PreferredEnvironment;
+import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The simple block model that usually represents as the value in {@link JVariant}.<br>
+ * The simple block model that usually represents as the value in {@link JVariant}. It defines the model id and some simple rotations of that model.
+ * <p>
  * <B>Note: </B>This class is used as a model definition in the block states definition file. To represent a model's content, please use {@link net.devtech.arrp.json.models.JModel}.
  */
 @SuppressWarnings("unused")
+@PreferredEnvironment(EnvType.CLIENT)
 public class JBlockModel implements Cloneable {
   /**
    * The model identifier. Usually compulsory. For example, {@code "minecraft:block/oak_slab_top"}.
@@ -43,6 +47,9 @@ public class JBlockModel implements Cloneable {
     this.weight = weight;
   }
 
+  /**
+   * Create a new, empty model definition. This is usually not recommended, as you can directly assign a model id.
+   */
   public JBlockModel() {
   }
 
@@ -107,42 +114,42 @@ public class JBlockModel implements Cloneable {
    * Set the model id.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JBlockModel modelId(Identifier model) {
     this.model = model;
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JBlockModel x(int x) {
     this.x = x;
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JBlockModel y(int y) {
     this.y = y;
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("-> this")
+  @Contract(value = "-> this", mutates = "this")
   public JBlockModel uvlock() {
     this.uvlock = true;
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JBlockModel uvlock(boolean uvlock) {
     this.uvlock = uvlock;
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JBlockModel weight(int weight) {
     this.weight = weight;
     return this;

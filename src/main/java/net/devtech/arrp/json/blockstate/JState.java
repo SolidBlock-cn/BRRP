@@ -4,7 +4,9 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
+import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 
@@ -17,6 +19,7 @@ import java.util.List;
  */
 @SuppressWarnings({"DeprecatedIsStillUsed", "unused"})
 @Deprecated
+@PreferredEnvironment(EnvType.CLIENT)
 public final class JState implements JsonSerializable {
   final List<JVariant> variants = new ArrayList<>();
   final List<JMultipart> multiparts = new ArrayList<>();
@@ -42,7 +45,7 @@ public final class JState implements JsonSerializable {
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JState add(JVariant variant) {
     if (!this.multiparts.isEmpty()) {
       throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
@@ -64,7 +67,7 @@ public final class JState implements JsonSerializable {
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JState add(JMultipart multiparts) {
     if (!this.variants.isEmpty()) {
       throw new IllegalStateException("BlockStates can only have variants *or* multiparts, not both");
@@ -81,6 +84,7 @@ public final class JState implements JsonSerializable {
     return new JVariant();
   }
 
+  @Deprecated
   public static JVariant variant(JBlockModel model) {
     JVariant variant = new JVariant();
     variant.put("", model);

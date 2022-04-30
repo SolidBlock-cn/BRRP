@@ -1,9 +1,12 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.InlineMe;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import net.devtech.arrp.api.JsonSerializable;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 
@@ -20,6 +23,7 @@ public class JPattern implements Cloneable, JsonSerializable {
    * @deprecated Ambiguous name.
    */
   @Deprecated
+  @InlineMe(replacement = "new JPattern()")
   public static JPattern pattern() {
     return new JPattern("   ", "   ", "   ");
   }
@@ -28,12 +32,9 @@ public class JPattern implements Cloneable, JsonSerializable {
    * @deprecated Please directly cal {@link #JPattern(String...)}.
    */
   @Deprecated
+  @InlineMe(replacement = "new JPattern(rows)")
   public static JPattern pattern(String... rows) {
     return new JPattern(rows);
-  }
-
-  public JPattern row1(String keys) {
-    return this.row(0, keys);
   }
 
   /**
@@ -45,10 +46,20 @@ public class JPattern implements Cloneable, JsonSerializable {
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
+  public JPattern row1(String keys) {
+    return this.row(0, keys);
+  }
+
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JPattern row2(String keys) {
     return this.row(1, keys);
   }
 
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JPattern row3(String keys) {
     return this.row(2, keys);
   }
@@ -67,6 +78,7 @@ public class JPattern implements Cloneable, JsonSerializable {
     return context.serialize(rows);
   }
 
+  @Deprecated
   public static class Serializer implements JsonSerializer<JPattern> {
     @Override
     public JsonElement serialize(final JPattern src, final Type typeOfSrc,

@@ -2,6 +2,7 @@ package net.devtech.arrp.json.lang;
 
 import com.google.common.base.Suppliers;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.InlineMe;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
@@ -42,6 +43,8 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * @deprecated Please directly use the constructor method {@link #JLang()}.
    */
   @Deprecated
+  @Contract("-> new")
+  @InlineMe(replacement = "new JLang()")
   public static JLang lang() {
     return new JLang();
   }

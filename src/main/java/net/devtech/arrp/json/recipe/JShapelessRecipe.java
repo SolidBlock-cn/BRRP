@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
  * @see ShapelessRecipe
  * @see ShapelessRecipeJsonBuilder
  */
+@SuppressWarnings("unused")
 public class JShapelessRecipe extends JResultRecipe {
   private static final String TYPE = "minecraft:crafting_shapeless";
   @SuppressWarnings("DeprecatedIsStillUsed")
@@ -34,10 +35,25 @@ public class JShapelessRecipe extends JResultRecipe {
    *
    * @param result      The identifier (as string) of the result item of this shapeless recipe.
    * @param ingredients The collection of the identifiers (as string) of ingredient items. In this case, it should not contain item tags.
+   * @since 0.6.2 It's not advised to call this method; you may call {@link #JShapelessRecipe(String, String...)} instead, as it uses varargs.
    */
+  @ApiStatus.Internal
   public JShapelessRecipe(String result, Collection<String> ingredients) {
     super(TYPE, result);
     this.ingredientList = ingredients.stream().map(JIngredient::ofItem).collect(Collectors.toList());
+    this.ingredients = null;
+  }
+
+  /**
+   * Create a new object with the specified result, and the list of ingredient.
+   *
+   * @param result      The identifier (as string) of the result item of this shapeless recipe.
+   * @param ingredients The identifiers (as string) of ingredient items. In this case, it should not contain item tags.
+   */
+  @ApiStatus.AvailableSince("0.6.2")
+  public JShapelessRecipe(String result, String... ingredients) {
+    super(TYPE, result);
+    this.ingredientList = Arrays.stream(ingredients).map(JIngredient::ofItem).collect(Collectors.toList());
     this.ingredients = null;
   }
 

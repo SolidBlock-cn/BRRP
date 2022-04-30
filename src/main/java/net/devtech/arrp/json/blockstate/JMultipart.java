@@ -6,7 +6,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.annotations.SerializedName;
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
+import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.When;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -29,6 +31,7 @@ import java.util.List;
  * @see net.minecraft.client.render.model.json.MultipartModelComponent
  */
 @SuppressWarnings("unused")
+@PreferredEnvironment(EnvType.CLIENT)
 public class JMultipart implements Cloneable, JsonSerializable {
   /**
    * The model that will be used, if the condition is met. It can be one of multiple block models.
@@ -90,7 +93,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
    * @deprecated class is kept for compatibility. You should use {@link #when(When)}.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @Deprecated
   public JMultipart when(JWhen when) {
     this.when = when;
@@ -102,7 +105,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
    * Set the condition of the multipart object. If a condition is already specified, it will be overridden.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JMultipart when(When when) {
     this.when = null;
     this.condition = when;
@@ -114,7 +117,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
    * If the list contains multiple elements, Minecraft will choose a random one in it when rendering.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JMultipart addModel(JBlockModel model) {
     this.apply.add(model);
     return this;

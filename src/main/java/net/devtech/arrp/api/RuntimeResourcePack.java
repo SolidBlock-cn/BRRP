@@ -1,6 +1,8 @@
 package net.devtech.arrp.api;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.InlineMe;
+import com.google.gson.Gson;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
@@ -17,6 +19,7 @@ import net.minecraft.advancement.Advancement;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -32,47 +35,68 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
- * a resource pack whose assets and data are evaluated at runtime
+ * A resource pack whose assets and data are evaluated at runtime.
  * <p>
- * remember to register it!
+ * After creating a runtime resource pack, you should register it in {@link RRPCallback} or {@link RRPCallbackConditional} so that it can take effect when loading resources.
  *
  * @see RRPCallback
+ * @see RRPCallbackConditional
  */
+@SuppressWarnings("unused")
 public interface RuntimeResourcePack extends ResourcePack {
+  /**
+   * The default output path to dump resources.
+   */
   Path DEFAULT_OUTPUT = Paths.get("rrp.debug");
+  /**
+   * Equivalent to {@link RuntimeResourcePackImpl#GSON}.
+   */
+  @ApiStatus.AvailableSince("0.6.2")
+  Gson GSON = RuntimeResourcePackImpl.GSON;
 
   /**
-   * create a new runtime resource pack with the default supported resource pack version
+   * Create a new runtime resource pack with the default supported resource pack version
    */
   static RuntimeResourcePack create(String id) {
     return new RuntimeResourcePackImpl(new Identifier(id));
   }
 
+  /**
+   * Create a new runtime resource pack with the specified resource pack version
+   */
   static RuntimeResourcePack create(String id, int version) {
     return new RuntimeResourcePackImpl(new Identifier(id), version);
   }
 
+  /**
+   * Create a new runtime resource pack with the default supported resource pack version
+   */
   static RuntimeResourcePack create(Identifier id) {
     return new RuntimeResourcePackImpl(id);
   }
 
+  /**
+   * Create a new runtime resource pack with the specified resource pack version
+   */
   static RuntimeResourcePack create(Identifier id, int version) {
     return new RuntimeResourcePackImpl(id, version);
   }
 
+  @InlineMe(replacement = "new Identifier(string)")
   static Identifier id(String string) {
     return new Identifier(string);
   }
 
-  static Identifier id(String namespace, String string) {
-    return new Identifier(namespace, string);
+  @InlineMe(replacement = "new Identifier(namespace, path)")
+  static Identifier id(String namespace, String path) {
+    return new Identifier(namespace, path);
   }
 
   /**
-   * reads, clones, and recolors the texture at the given path, and puts the newly created image in the given id.
-   *
-   * <b>if your resource pack is registered at a higher priority than where you expect the texture to be in, mc will
-   * be unable to find the asset you are looking for</b>
+   * Reads, clones, and recolors the texture at the given path, and puts the newly created image in the given id.
+   * <p>
+   * <b>If your resource pack is registered at a higher priority than where you expect the texture to be in, Minecraft will
+   * be unable to find the asset you are looking for.</b>
    *
    * @param identifier the place to put the new texture
    * @param target     the input stream of the original texture
@@ -81,11 +105,9 @@ public interface RuntimeResourcePack extends ResourcePack {
   void addRecoloredImage(Identifier identifier, InputStream target, IntUnaryOperator pixel);
 
   /**
-   * add a lang file for the given language
+   * Add a language file for the given language.
    * <p>
-   * DO **NOT** CALL THIS METHOD MULTIPLE TIMES FOR THE SAME LANGUAGE, THEY WILL OVERRIDE EACH OTHER!
-   * <p>
-   * ex. addLang(MyMod.id("en_us"), lang().translate("something.something", "test"))
+   * <i>Do not</i> call this method multiple times for a same language, as they will override each other!
    */
   @CanIgnoreReturnValue
   byte[] addLang(Identifier identifier, JLang lang);
@@ -96,13 +118,15 @@ public interface RuntimeResourcePack extends ResourcePack {
   void mergeLang(Identifier identifier, JLang lang);
 
   /**
-   * adds a loot table
+   * Add a loot table to the runtime resource pack.
+   *
+   * @param identifier The identifier of the loot table. It is usually in the format of {@code namespace:blocks/path}.
    */
   @CanIgnoreReturnValue
   byte[] addLootTable(Identifier identifier, JLootTable table);
 
   /**
-   * adds an async resource, this is evaluated off-thread, this does not hold all resource retrieval unlike
+   * Add an async resource, which is evaluated off-thread, and does not hold all resource retrieval unlike.
    *
    * @see #async(Consumer)
    */
@@ -111,20 +135,20 @@ public interface RuntimeResourcePack extends ResourcePack {
                                   CallableFunction<Identifier, byte[]> data);
 
   /**
-   * add a resource that is lazily evaluated
+   * Add resource that is lazily evaluated, which is, evaluated only when required to get, and will not be evaluated again if required to get again.
    */
   void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> data);
 
   /**
-   * add a raw resource
+   * Add a raw resource to the runtime resource pack.
    */
   @CanIgnoreReturnValue
   byte[] addResource(ResourceType type, Identifier path, byte[] data);
 
   /**
-   * adds an async root resource, this is evaluated off-thread, this does not hold all resource retrieval unlike
+   * Add an async root resource, which is evaluated off-thread and does not hold all resource retrieval unlike.
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta.
    *
    * @see #async(Consumer)
    */
@@ -132,125 +156,165 @@ public interface RuntimeResourcePack extends ResourcePack {
                                       CallableFunction<String, byte[]> data);
 
   /**
-   * add a root resource that is lazily evaluated.
+   * Add a root resource that is lazily evaluated.
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta.
    */
   void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data);
 
   /**
-   * add a raw resource to the root path
+   * Add a raw resource to the root path
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta.
    */
   @CanIgnoreReturnValue
   byte[] addRootResource(String path, byte[] data);
 
   /**
-   * add a clientside resource
+   * Add a custom client-side resource.
    */
   @CanIgnoreReturnValue
-  byte[] addAsset(Identifier path, byte[] data);
+  byte[] addAsset(Identifier id, byte[] data);
 
   /**
-   * add a serverside resource
+   * Add a custom server data.
    */
   @CanIgnoreReturnValue
-  byte[] addData(Identifier path, byte[] data);
+  byte[] addData(Identifier id, byte[] data);
 
   /**
-   * add a model, Items should go in item/... and Blocks in block/... ex. mymod:items/my_item ".json" is
-   * automatically
-   * appended to the path
+   * Add a model to this runtime resource pack. It is usually the block model or item model. The identifier is mainly in the form of {@code namespace:block/path} or {@code namespace:item/path}.
+   *
+   * @param model The model to be added.
+   * @param id    The identifier of the model.
+   * @see JModel
    */
   @CanIgnoreReturnValue
-  byte[] addModel(JModel model, Identifier path);
+  byte[] addModel(JModel model, Identifier id);
 
   /**
-   * adds a blockstate json
+   * Add a block states file to the runtime resource pack. It defines which model or models will be used and how be used for each variant of the block.
+   *
+   * @param state      The block states file to be added.
+   * @param identifier The identifier of the block states file. It is usually the same as the block id.
+   */
+  @CanIgnoreReturnValue
+  byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier identifier);
+
+  /**
+   * Add a block states file to the runtime resource pack. It defines which model or models will be used and how be used for each variant of the block.
+   *
+   * @param state The block states file to be added.
+   * @param id    The identifier of the block states file. It is usually the same as the block id.
+   * @see JBlockStates
+   */
+  @CanIgnoreReturnValue
+  byte[] addBlockState(JBlockStates state, Identifier id);
+
+
+  /**
+   * Adds a texture png.
    * <p>
-   * ".json" is automatically appended to the path
-   */
-  @CanIgnoreReturnValue
-  byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier path);
-
-  /**
-   * adds a blockstates definition file
-   * <p>
-   * ".json" is automatically appended to the path
-   */
-  @CanIgnoreReturnValue
-  byte[] addBlockState(JBlockStates state, Identifier path);
-
-
-  /**
-   * adds a texture png
-   * <p>
-   * ".png" is automatically appended to the path
+   * {@code ".png"} is automatically appended to the path.
    */
   @CanIgnoreReturnValue
   byte[] addTexture(Identifier id, BufferedImage image);
 
   /**
-   * adds an animation json
+   * Add an animation json for a texture.
    * <p>
-   * ".png.mcmeta" is automatically appended to the path
+   * {@code ".png.mcmeta"} is automatically appended to the path
+   *
+   * @see JAnimation
    */
   @CanIgnoreReturnValue
   byte[] addAnimation(Identifier id, JAnimation animation);
 
   /**
-   * add a tag under the id
+   * Add a tag in the specified id.
    * <p>
-   * ".json" is automatically appended to the path
+   * {@code ".json"} is automatically appended to the path.
+   *
+   * @param id  The identifier of the tag. It contains the specification of the tag type.
+   * @param tag The tag to be added.
+   * @see JTag
+   * @see net.devtech.arrp.json.tags.IdentifiedTag#write(RuntimeResourcePack)
    */
   @CanIgnoreReturnValue
   byte[] addTag(Identifier id, JTag tag);
 
   /**
-   * add a recipe
+   * Add a recipe for an item (including block).
    * <p>
-   * ".json" is automatically appended to the path
+   * {@code ".json"} is automatically appended to the path
    *
-   * @param id     the {@linkplain Identifier} identifier of the recipe and that represents its directory
-   * @param recipe the recipe to add
-   * @return the new resource
+   * @param id     The {@linkplain Identifier} identifier of the recipe, which is usually the same as the item id.
+   * @param recipe The recipe to be added.
+   * @see JRecipe
    */
   @CanIgnoreReturnValue
   byte[] addRecipe(Identifier id, JRecipe recipe);
 
   /**
-   * add an advancement
+   * Add an advancement of that recipe. In BRRP, the advancement is integrated in the recipe. You may have to add common advancement elements with {@link JRecipe#addInventoryChangedCriterion}, or just modify the {@link JRecipe#advancementBuilder}, otherwise the advancement will not be generated.
    * <p>
-   * ".json" is automatically appended to the path
+   * Usually the advancement triggers when you unlock the recipe of obtains the ingredient, and rewards you to unlock that recipe. For example, if you obtain an <i>oak planks</i>, then the advancement {@code minecraft:recipes/building_blocks/oak_planks} is achieved, rewarding you to unlock the recipe of {@code minecraft:oak_planks}. There are some exception situations: For example, the recipe of boat is not obtained when you get their corresponding planks, but when you enter water.
    *
-   * @param id          the {@linkplain Identifier} identifier of the advancement and that represents its directory
-   * @param advancement the advancement to add
-   * @return the new resource
+   * @param id                          The identifier of the advancement the corresponds to the recipe, usually prefixed with {@code "recipes/"}. <p>In the convention of vanilla Minecraft, the identifier of the recipe is <code style="color:maroon"><i>namespace</i>:<i>path</i></code>, which is typically the same as the item itself. But the identifier of the advancement is <code style="color:maroon"><i>namespace</i>:recipes/<i>itemGroup</i>/<i>path</i></code>.
+   * @param recipeContainingAdvancement The recipe that contains the advancement. If that advancement has no criteria, it will be ignored and {@code null} will be returned.
+   */
+  @CanIgnoreReturnValue
+  default byte[] addRecipeAdvancement(Identifier id, JRecipe recipeContainingAdvancement) {
+    final Advancement.Builder advancement = recipeContainingAdvancement.asAdvancement();
+    if (advancement != null && !advancement.getCriteria().isEmpty()) {
+      recipeContainingAdvancement.prepareAdvancement(id);
+      return addAdvancement(id, advancement);
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Add an advancement to the runtime resource pack.
+   * <p>
+   * The extension {@code ".json"} is automatically appended to the path.
+   *
+   * @param id          The {@linkplain Identifier identifier} of the advancement.
+   * @param advancement The advancement to be added.
    */
   @CanIgnoreReturnValue
   byte[] addAdvancement(Identifier id, Advancement.Builder advancement);
 
   /**
-   * invokes the action on the RRP executor, RRPs are thread-safe you can create expensive assets here, all resources
-   * are blocked until all async tasks are completed invokes the action on the RRP executor, RRPs are thread-safe you
-   * can create expensive assets here, all resources are blocked until all async tasks are completed
+   * Invokes the action on the RRP executor. RRPs are thread-safe, so you can create expensive assets here. All resources
+   * are blocked until all async tasks are completed.
    * <p>
-   * calling in this function from itself will result in an infinite loop
+   * Calling in this function from itself will result in an infinite loop
    *
    * @see #addAsyncResource(ResourceType, Identifier, CallableFunction)
    */
   Future<?> async(Consumer<RuntimeResourcePack> action);
 
   /**
-   * Write the runtime resource pack as a local file, making you available to directly visit its content.
+   * Write the runtime resource pack as local files, as if it is a regular resource pack or data pack, making you available to directly visit its content.
    */
   default void dump() {
     this.dump(DEFAULT_OUTPUT);
   }
 
+  /**
+   * Write the runtime resource pack as local files, as if it is a regular resource pack or data pack, making you available to directly visit its content.
+   *
+   * @param path The path to write the resource pack directly.
+   */
   void dumpDirect(Path path);
 
+  /**
+   * Load a regular resource pack or data pack from a local path, and convert into a runtime resource pack.
+   *
+   * @param path The path of the regular resource pack or data pack.
+   * @throws IOException if thrown when reading files.
+   */
   void load(Path path) throws IOException;
 
   /**
@@ -262,9 +326,9 @@ public interface RuntimeResourcePack extends ResourcePack {
   void dump(File file);
 
   /**
-   * Write the runtime resource pack as local files, making you available to directly visit its content.
+   * Write the runtime resource pack as local files, as if it is a regular resource pack or data pack, making you available to directly visit its content.
    *
-   * @param path The path to write the resource pack.
+   * @param path The path to write the resource pack. In the path, the folder named with identifier will be created.
    */
   default void dump(Path path) {
     Identifier id = this.getId();
@@ -280,13 +344,23 @@ public interface RuntimeResourcePack extends ResourcePack {
   void dump(ZipOutputStream stream) throws IOException;
 
   /**
+   * Load a regular resource pack or data pack from a zip file, and convert it to this runtime resource pack.
+   *
    * @see ByteBufInputStream
    */
   void load(ZipInputStream stream) throws IOException;
 
   Identifier getId();
 
+  /**
+   * Clear the resources of the runtime resource pack in the specified side.
+   *
+   * @param side The side (client or server) of resource to be cleared.
+   */
   void clearResources(ResourceType side);
 
+  /**
+   * Clear all resources of this runtime resource pack, including both client and server.
+   */
   void clearResources();
 }

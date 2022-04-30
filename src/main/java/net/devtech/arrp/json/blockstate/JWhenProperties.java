@@ -4,8 +4,10 @@ import com.google.common.collect.ForwardingMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.When;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
@@ -47,6 +49,7 @@ import java.util.stream.Collectors;
  *
  * @see JWhen.PropertyCondition
  */
+@PreferredEnvironment(EnvType.CLIENT)
 public class JWhenProperties extends ForwardingMap<String, String> implements When, JsonSerializable {
   /**
    * The delegate map storing properties and values, both of which represent as strings.
@@ -75,6 +78,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param property The name of the property, representing as string.
    * @param values   The values of the property, representing as strings.
    */
+  @Contract("_, _ -> new")
   public static JWhenProperties of(String property, String... values) {
     return new JWhenProperties().add(property, values);
   }
@@ -85,6 +89,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param property The name of the property, representing as string.
    * @param values   The values of the property, representing as {@code StringIdentifiable}s.
    */
+  @Contract("_, _ -> new")
   public static JWhenProperties of(String property, StringIdentifiable... values) {
     return new JWhenProperties().add(property, values);
   }
@@ -96,6 +101,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param value    The values of the property.
    */
   @SafeVarargs
+  @Contract("_, _ -> new")
   public static <T extends Comparable<T>> JWhenProperties of(Property<T> property, T... value) {
     return new JWhenProperties().add(property, value);
   }
@@ -141,7 +147,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @return The object itself.
    */
   @CanIgnoreReturnValue
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   public <T extends Comparable<T>> JWhenProperties add(Property<T> property, T value) {
     return add(property.getName(), property.name(value));
   }
@@ -153,7 +159,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @param values   The values of this property, representing that each one of the values will be matched. In this case, they will be joined with {@code "|"}.
    * @return The object itself.
    */
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   @SafeVarargs
   @CanIgnoreReturnValue
   public final <T extends Comparable<T>> JWhenProperties add(Property<T> property, T... values) {
@@ -168,7 +174,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @return The object itself.
    */
   @CanIgnoreReturnValue
-  @Contract("_, _->this")
+  @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties add(String property, String value) {
     properties.put(property, value);
     return this;
@@ -182,7 +188,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @return The object itself.
    */
   @CanIgnoreReturnValue
-  @Contract("_, _->this")
+  @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties addNegated(String property, String value) {
     return add(property, "!" + value);
   }
@@ -195,7 +201,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @return The object itself.
    */
   @CanIgnoreReturnValue
-  @Contract("_, _->this")
+  @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties add(String property, StringIdentifiable value) {
     return add(property, value.asString());
   }
@@ -208,7 +214,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @return The object itself.
    */
   @CanIgnoreReturnValue
-  @Contract("_, _->this")
+  @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties addNegated(String property, StringIdentifiable value) {
     return add(property, "!" + value.asString());
   }
@@ -221,7 +227,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @return The object itself.
    */
   @CanIgnoreReturnValue
-  @Contract("_, _->this")
+  @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties add(String property, String... values) {
     return add(property, String.join("|", values));
   }
@@ -234,7 +240,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @return The object itself.
    */
   @CanIgnoreReturnValue
-  @Contract("_, _->this")
+  @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties addNegated(String property, String... values) {
     return add(property, "!" + String.join("|", values));
   }
@@ -247,7 +253,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @return The object itself.
    */
   @CanIgnoreReturnValue
-  @Contract("_, _->this")
+  @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties add(String property, StringIdentifiable... values) {
     return add(property, Arrays.stream(values).map(StringIdentifiable::asString).collect(Collectors.joining("|")));
   }
@@ -260,7 +266,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
    * @return The object itself.
    */
   @CanIgnoreReturnValue
-  @Contract("_, _->this")
+  @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties addNegated(String property, StringIdentifiable... values) {
     return add(property, "!" + Arrays.stream(values).map(StringIdentifiable::asString).collect(Collectors.joining("|")));
   }

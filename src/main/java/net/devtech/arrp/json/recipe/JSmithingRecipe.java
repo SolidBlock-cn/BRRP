@@ -10,6 +10,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SmithingRecipe;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -20,6 +21,7 @@ import java.lang.reflect.Type;
  * @see net.minecraft.recipe.SmithingRecipe
  * @see net.minecraft.data.server.recipe.SmithingRecipeJsonBuilder
  */
+@SuppressWarnings("unused")
 public class JSmithingRecipe extends JResultRecipe {
   public final JIngredient base;
   public final JIngredient addition;
@@ -78,6 +80,7 @@ public class JSmithingRecipe extends JResultRecipe {
     return (JSmithingRecipe) super.clone();
   }
 
+  @ApiStatus.Internal
   private static final class Delegate extends JSmithingRecipe implements JsonSerializable {
     public final SmithingRecipeJsonBuilder.SmithingRecipeJsonProvider delegate;
     public static final RecipeSerializer<SmithingRecipe> SERIALIZER = RecipeSerializer.SMITHING;
