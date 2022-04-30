@@ -57,7 +57,6 @@ public class JResult implements Cloneable, JsonSerializable {
    * Set the count of this result.
    */
   @Contract("_ -> this")
-
   public JResult count(int count) {
     this.count = count;
     return this;

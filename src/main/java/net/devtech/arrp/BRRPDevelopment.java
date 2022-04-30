@@ -41,7 +41,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
@@ -50,8 +49,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeKeys;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 import java.awt.*;
 import java.util.Objects;
@@ -59,6 +60,8 @@ import java.util.Objects;
 /**
  * This class is loaded only in development environment. So it is just for testing, not the real part of this mod.
  */
+@TestOnly
+@ApiStatus.Internal
 public class BRRPDevelopment implements ModInitializer {
   public static final RuntimeResourcePack PACK = RuntimeResourcePack.create(new Identifier("brrp", "test"));
   public static final BlockSoundGroup WATER_SOUND_GROUP = new BlockSoundGroup(1, 1, SoundEvents.ITEM_BUCKET_EMPTY, SoundEvents.ENTITY_PLAYER_SWIM, SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ENTITY_BOAT_PADDLE_WATER, SoundEvents.BLOCK_WATER_AMBIENT);
@@ -207,50 +210,50 @@ public class BRRPDevelopment implements ModInitializer {
     }
 
     PACK.addLang(new Identifier("brrp", "en_us"), new JLang()
-        .blockRespect(HARDENABLE_BLOCK, "Hardenable Block")
-        .blockRespect(HARDENABLE_SLAB, "Hardenable Slab")
-        .blockRespect(LAVA_BLOCK, "Lava Block")
-        .blockRespect(LAVA_STAIRS, "Lava Stairs")
-        .blockRespect(LAVA_SLAB, "Lava Slab")
-        .blockRespect(LAVA_FENCE, "Lava Fence")
-        .blockRespect(LAVA_FENCE_GATE, "Lava Fence Gate")
-        .blockRespect(LAVA_WALL, "Lava Wall")
-        .blockRespect(WATER_BLOCK, "Water Block")
-        .blockRespect(CUSTOM_SLAB, "Custom Slab")
-        .blockRespect(IRON_BLOCK, "Iron Block")
-        .blockRespect(SMOOTH_STONE, "Smooth Stone")
+        .blockRespect(HARDENABLE_BLOCK, "Hardenable Block (Development Environment Only)")
+        .blockRespect(HARDENABLE_SLAB, "Hardenable Slab (Development Environment Only)")
+        .blockRespect(LAVA_BLOCK, "Lava Block (Development Environment Only)")
+        .blockRespect(LAVA_STAIRS, "Lava Stairs (Development Environment Only)")
+        .blockRespect(LAVA_SLAB, "Lava Slab (Development Environment Only)")
+        .blockRespect(LAVA_FENCE, "Lava Fence (Development Environment Only)")
+        .blockRespect(LAVA_FENCE_GATE, "Lava Fence Gate (Development Environment Only)")
+        .blockRespect(LAVA_WALL, "Lava Wall (Development Environment Only)")
+        .blockRespect(WATER_BLOCK, "Water Block (Development Environment Only)")
+        .blockRespect(CUSTOM_SLAB, "Custom Slab (Development Environment Only)")
+        .blockRespect(IRON_BLOCK, "Iron Block (Development Environment Only)")
+        .blockRespect(SMOOTH_STONE, "Smooth Stone (Development Environment Only)")
     );
     PACK.addLang(new Identifier("brrp", "zh_cn"), new JLang()
-        .blockRespect(HARDENABLE_BLOCK, "可硬方块")
-        .blockRespect(HARDENABLE_SLAB, "可硬台阶")
-        .blockRespect(LAVA_BLOCK, "熔岩方块")
-        .blockRespect(LAVA_STAIRS, "熔岩楼梯")
-        .blockRespect(LAVA_SLAB, "熔岩台阶")
-        .blockRespect(LAVA_FENCE, "熔岩栅栏")
-        .blockRespect(LAVA_FENCE_GATE, "熔岩栅栏门")
-        .blockRespect(LAVA_WALL, "熔岩墙")
-        .blockRespect(WATER_BLOCK, "水方块")
-        .blockRespect(CUSTOM_SLAB, "自定义台阶")
-        .blockRespect(IRON_BLOCK, "铁块")
-        .blockRespect(SMOOTH_STONE, "平滑石头")
+        .blockRespect(HARDENABLE_BLOCK, "可硬方块（仅限开发环境）")
+        .blockRespect(HARDENABLE_SLAB, "可硬台阶（仅限开发环境）")
+        .blockRespect(LAVA_BLOCK, "熔岩方块（仅限开发环境）")
+        .blockRespect(LAVA_STAIRS, "熔岩楼梯（仅限开发环境）")
+        .blockRespect(LAVA_SLAB, "熔岩台阶（仅限开发环境）")
+        .blockRespect(LAVA_FENCE, "熔岩栅栏（仅限开发环境）")
+        .blockRespect(LAVA_FENCE_GATE, "熔岩栅栏门（仅限开发环境）")
+        .blockRespect(LAVA_WALL, "熔岩墙（仅限开发环境）")
+        .blockRespect(WATER_BLOCK, "水方块（仅限开发环境）")
+        .blockRespect(CUSTOM_SLAB, "自定义台阶（仅限开发环境）")
+        .blockRespect(IRON_BLOCK, "铁块（仅限开发环境）")
+        .blockRespect(SMOOTH_STONE, "平滑石头（仅限开发环境）")
     );
     final JLang twLang = new JLang()
-        .blockRespect(HARDENABLE_BLOCK, "可硬方塊")
-        .blockRespect(HARDENABLE_SLAB, "可硬台階")
-        .blockRespect(LAVA_BLOCK, "熔岩方塊")
-        .blockRespect(LAVA_STAIRS, "熔岩階梯")
-        .blockRespect(LAVA_SLAB, "熔岩半磚")
-        .blockRespect(LAVA_FENCE, "熔岩柵欄")
-        .blockRespect(LAVA_FENCE_GATE, "熔岩柵欄門")
-        .blockRespect(LAVA_WALL, "熔岩墻")
-        .blockRespect(WATER_BLOCK, "水方塊")
-        .blockRespect(CUSTOM_SLAB, "自訂半磚")
-        .blockRespect(IRON_BLOCK, "鐵塊")
-        .blockRespect(SMOOTH_STONE, "平滑石頭");
+        .blockRespect(HARDENABLE_BLOCK, "可硬方塊（僅限開發環境）")
+        .blockRespect(HARDENABLE_SLAB, "可硬台階（僅限開發環境）")
+        .blockRespect(LAVA_BLOCK, "熔岩方塊（僅限開發環境）")
+        .blockRespect(LAVA_STAIRS, "熔岩階梯（僅限開發環境）")
+        .blockRespect(LAVA_SLAB, "熔岩半磚（僅限開發環境）")
+        .blockRespect(LAVA_FENCE, "熔岩柵欄（僅限開發環境）")
+        .blockRespect(LAVA_FENCE_GATE, "熔岩柵欄門（僅限開發環境）")
+        .blockRespect(LAVA_WALL, "熔岩墻（僅限開發環境）")
+        .blockRespect(WATER_BLOCK, "水方塊（僅限開發環境）")
+        .blockRespect(CUSTOM_SLAB, "自訂半磚（僅限開發環境）")
+        .blockRespect(IRON_BLOCK, "鐵塊（僅限開發環境）")
+        .blockRespect(SMOOTH_STONE, "平滑石頭（僅限開發環境）");
     PACK.addLang(new Identifier("brrp", "zh_tw"), twLang);
     PACK.addLang(new Identifier("brrp", "zh_hk"), twLang
-        .blockRespect(LAVA_FENCE, "熔岩欄杆")
-        .blockRespect(LAVA_FENCE_GATE, "熔岩閘門")
+        .blockRespect(LAVA_FENCE, "熔岩欄杆（僅限開發環境）")
+        .blockRespect(LAVA_FENCE_GATE, "熔岩閘門（僅限開發環境）")
     );
 
     LAVA_BLOCK.writeResources(PACK, resourceType);
@@ -329,34 +332,34 @@ public class BRRPDevelopment implements ModInitializer {
   }
 
   @Environment(EnvType.CLIENT)
-  private static int colorOf(float x, float y, float z) {
-    x += 4 * MathHelper.sin(0.152f * x + 0.08f * y + 0.071f * z + 5.15f);
-    y += 4 * MathHelper.sin(0.152f * x + 0.04f * y + 0.059f * z + 3.55f);
-    z += 4 * MathHelper.sin(0.152f * x + 0.03f * y + 0.082f * z - 4.27f);
-    float i = MathHelper.sin(0.05f * x + 0.05f * y + 0.05f * z - 0.24f);
-    z -= 4 * MathHelper.cos(0.108f * x + 0.07f * y + 0.054f * z + 3.33f);
-    y -= 4 * MathHelper.cos(0.108f * x + 0.06f * y + 0.036f * z + 3.44f);
-    x -= 4 * MathHelper.cos(0.108f * x + 0.07f * y + 0.052f * z - 3.55f);
-    x += 3 * MathHelper.cos(0.1f * x - i + MathHelper.sin(i) + 2.44f);
-    y += 3 * MathHelper.cos(0.1f * y - i + MathHelper.sin(i) + 0.55f);
-    z += 3 * MathHelper.cos(0.1f * z - i + MathHelper.sin(i) - 1.66f);
-    return Color.HSBtoRGB(0f * (x + y + z)
-            + 0.75f * MathHelper.cos(0.0011f * x + 0.0005f * y + -0.007f * z)
-            + 0.75f * MathHelper.cos(0.0005f * x + -0.007f * x + 0.0011f * z - 3)
-            + 0.75f * MathHelper.cos(-0.007f * x + 0.0011f * y + 0.0005f * z - 6)
-            + 0.69f * MathHelper.sin(-0.009f * x + 0.0056f * y + 0.0083f * z - 0.17f)
-            + 0.69f * MathHelper.sin(0.0056f * x + 0.0083f * x + -0.009f * z - 0.19f)
-            + 0.69f * MathHelper.sin(0.0083f * x + -0.009f * y + 0.0056f * z - 0.21f)
-            + -0.85f * MathHelper.sin(0.0087f * x + -0.008f * y + 0.0083f * z - 1.61f)
-            + -0.85f * MathHelper.sin(-0.008f * x + 0.0083f * x + 0.0087f * z - 2.01f)
-            + -0.85f * MathHelper.sin(0.0083f * x + 0.0087f * y + -0.008f * z - 2.71f)
+  private static int colorOf(double x, double y, double z) {
+    x += 4 * Math.sin(0.152d * x + 0.08d * y + 0.071d * z + 5.15d);
+    y += 4 * Math.sin(0.152d * x + 0.04d * y + 0.059d * z + 3.55d);
+    z += 4 * Math.sin(0.152d * x + 0.03d * y + 0.082d * z - 4.27d);
+    double i = Math.sin(0.05d * x + 0.05d * y + 0.05d * z - 0.24d);
+    z -= 4 * Math.cos(0.108d * x + 0.07d * y + 0.054d * z + 3.33d);
+    y -= 4 * Math.cos(0.108d * x + 0.06d * y + 0.036d * z + 3.44d);
+    x -= 4 * Math.cos(0.108d * x + 0.07d * y + 0.052d * z - 3.55d);
+    x += 3 * Math.cos(0.1f * x - i + Math.sin(i) + 2.44f);
+    y += 3 * Math.cos(0.1f * y - i + Math.sin(i) + 0.55f);
+    z += 3 * Math.cos(0.1f * z - i + Math.sin(i) - 1.66f);
+    return Color.HSBtoRGB((float) (0f * (x + y + z)
+            + 0.75d * Math.cos(0.0011d * x + 0.0005d * y + -0.007d * z)
+            + 0.75d * Math.cos(0.0005d * x + -0.007d * x + 0.0011d * z - 3)
+            + 0.75d * Math.cos(-0.007d * x + 0.0011d * y + 0.0005d * z - 6)
+            + 0.69d * Math.sin(-0.009d * x + 0.0056d * y + 0.0083d * z - 0.17d)
+            + 0.69d * Math.sin(0.0056d * x + 0.0083d * x + -0.009d * z - 0.19d)
+            + 0.69d * Math.sin(0.0083d * x + -0.009d * y + 0.0056d * z - 0.21d)
+            + -0.85d * Math.sin(0.0087d * x + -0.008d * y + 0.0083d * z - 1.61d)
+            + -0.85d * Math.sin(-0.008d * x + 0.0083d * x + 0.0087d * z - 2.01d)
+            + -0.85d * Math.sin(0.0083d * x + 0.0087d * y + -0.008d * z - 2.71d))
         ,
-        0.7f
-            + 0.15f * MathHelper.sin(0.225f * x + 0.25f * y + 0.175f * z + 2)
-            + 0.15f * MathHelper.sin(0.175f * x + 0.25f * y + 0.225f * z + 2.14f),
-        0.8f
-            + 0.1f * MathHelper.sin(-0.031f * x + 0.053f * y + 0.062f * z + 3)
-            + 0.1f * MathHelper.sin(0.062f * x + 0.053f * y + -0.031f * z + 3.14f)
+        (float) (0.7d
+            + 0.15d * Math.sin(0.225d * x + 0.25d * y + 0.175d * z + 2)
+            + 0.15d * Math.sin(0.175d * x + 0.25d * y + 0.225d * z + 2.14d)),
+        (float) (0.8f
+            + 0.1d * Math.sin(-0.031d * x + 0.053d * y + 0.062d * z + 3)
+            + 0.1d * Math.sin(0.062d * x + 0.053d * y + -0.031d * z + 3.14d))
     );
   }
 

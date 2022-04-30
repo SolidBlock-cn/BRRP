@@ -1,18 +1,19 @@
 package net.devtech.arrp.generator;
 
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.advancement.Advancement;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -47,6 +48,7 @@ public interface ItemResourceGenerator {
    *
    * @return The id of the item model.
    */
+  @PreferredEnvironment(EnvType.CLIENT)
   default Identifier getItemModelId() {
     return getItemId().brrp_prepend("item/");
   }
@@ -57,6 +59,7 @@ public interface ItemResourceGenerator {
    * @return The id of the item texture.
    * @see BlockResourceGenerator#getTextureId(net.minecraft.data.client.model.TextureKey)
    */
+  @PreferredEnvironment(EnvType.CLIENT)
   default String getTextureId() {
     return getItemId().brrp_prepend("item/").toString();
   }
@@ -66,6 +69,7 @@ public interface ItemResourceGenerator {
    *
    * @return The item model.
    */
+  @PreferredEnvironment(EnvType.CLIENT)
   default @Nullable JModel getItemModel() {
     return new JModel("item/generated").textures(new JTextures().layer0(getTextureId()));
   }
@@ -75,6 +79,7 @@ public interface ItemResourceGenerator {
    *
    * @param pack The runtime resource pack.
    */
+  @PreferredEnvironment(EnvType.CLIENT)
   default void writeItemModel(RuntimeResourcePack pack) {
     final JModel model = getItemModel();
     if (model != null) pack.addModel(model, getItemModelId());
@@ -93,6 +98,7 @@ public interface ItemResourceGenerator {
    * @see #writeData(RuntimeResourcePack)
    * @see #writeAssets(RuntimeResourcePack)
    */
+  @PreferredEnvironment(EnvType.CLIENT)
   default void writeAssets(RuntimeResourcePack pack) {
     writeItemModel(pack);
   }
@@ -109,25 +115,35 @@ public interface ItemResourceGenerator {
   }
 
   /**
-   * <p>Get the identifier of its recipe file. It is usually in the format of <code style=color:maroon><i>namespace</i>:<i>group</i>/<i>path</i></code>. For example, the recipe id for acacia stairs can be <code style=color:maroon>minecraft:building_blocks/acacia_stairs</code>. Considering sometimes the item has no group, in this case the id simply take the same as its item id.</p>
+   * <p>Get the identifier of its recipe file. It is usually the same of the item id.</p>
    * <p>It can be the id for any form of recipe: crafting, smelting, stonecutting, etc. If an item has multiple recipes to make, different ids are distinguished by suffix. For example, a blackstone stairs block can either be crafted or be stone-cut; the crafting recipe id is {@code minecraft:building_blocks/blackstone_stairs} and the stonecutting id is {@code minecraft:building_blocks/blackstone_stairs_from_stonecutting}.</p>
    *
    * @return The id of the recipe.
    */
   default Identifier getRecipeId() {
-    final Identifier itemId = getItemId();
-    if (this instanceof ItemConvertible) {
-      final ItemConvertible itemConvertible = (ItemConvertible) this;
-      final ItemGroup group = itemConvertible.asItem().getGroup();
-      if (group != null) {
-        return itemId.brrp_prepend(group.getName() + "/");
-      }
-    }
     return getItemId();
   }
 
   /**
-   * <p>Write the recipes to the runtime resource pack. By default, it has only crafting recipes, but you can add more recipes, like stone-cutting recipes.</p>
+   * <p>Get the identifier of the advancement that corresponds to the recipe. It is usually in the format of <code style=color:maroon><i>namespace</i>:recipes/<i>group</i>/<i>path</i></code>. For example, the advancement id that corresponds to the recipe id for acacia stairs can be <code style=color:maroon>minecraft:recipe/building_blocks/acacia_stairs</code>.</p>
+   * <p>In this method, the recipe id you input will be appended with {@code "recipes/"} and the item group name, if there is one.</p>
+   *
+   * @return The id of the advancement that corresponds to its recipe.
+   */
+  @ApiStatus.AvailableSince("0.6.2")
+  default Identifier getAdvancementIdForRecipe(Identifier recipeId) {
+    if (this instanceof ItemConvertible) {
+      final ItemConvertible itemConvertible = (ItemConvertible) this;
+      final ItemGroup group = itemConvertible.asItem().getGroup();
+      if (group != null) {
+        return recipeId.brrp_prepend("recipes/" + group.getName() + "/");
+      }
+    }
+    return getItemId().brrp_prepend("recipes/");
+  }
+
+  /**
+   * <p>Write the recipes to the runtime resource pack. By default, it has only crafting recipes, but you can add more recipes.</p>
    * <p>When writing recipes, the corresponding advancement of the recipe will be written as well, as long as the advancement is not null and not empty.</p>
    *
    * @param pack The runtime resource pack.
@@ -137,12 +153,7 @@ public interface ItemResourceGenerator {
     if (craftingRecipe != null) {
       final Identifier recipeId = getRecipeId();
       pack.addRecipe(recipeId, craftingRecipe);
-      // the advancement that corresponds to the advancement
-      final Advancement.Task advancement = craftingRecipe.asAdvancement();
-      if (advancement != null && !advancement.getCriteria().isEmpty()) {
-        craftingRecipe.prepareAdvancement(recipeId);
-        pack.addAdvancement(recipeId.brrp_prepend("recipes/"), advancement);
-      }
+      pack.addRecipeAdvancement(getAdvancementIdForRecipe(recipeId), craftingRecipe);
     }
   }
 

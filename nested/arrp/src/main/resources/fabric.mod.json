@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "advanced_runtime_resource_pack",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "name": "Advanced Runtime Resource Pack",
-  "description": "This is a nested mod. It exists for recognition of ARRP-dependent mods. More information see BRRP.",
+  "description": "This is a nested mod in BRRP. It exists for recognition of ARRP-dependent mods. For more information see BRRP.",
   "authors": [
   ],
   "contact": {

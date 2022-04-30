@@ -2,6 +2,7 @@ package net.devtech.arrp.mixin;
 
 import net.devtech.arrp.IdentifierExtension;
 import net.minecraft.util.Identifier;
+import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,7 +26,7 @@ public abstract class IdentifierMixin implements IdentifierExtension {
    * @return {@inheritDoc}
    */
   @Override
-  public Identifier brrp_append(@NotNull String prefix) {
+  public Identifier brrp_append(@Pattern("[a-z\\d/._-]+") @NotNull String prefix) {
     return new Identifier(namespace, path + prefix);
   }
 
@@ -36,7 +37,7 @@ public abstract class IdentifierMixin implements IdentifierExtension {
    * @return {@inheritDoc}
    */
   @Override
-  public Identifier brrp_prepend(@NotNull String suffix) {
+  public Identifier brrp_prepend(@Pattern("[a-z\\d/._-]+") @NotNull String suffix) {
     return new Identifier(namespace, suffix + path);
   }
 
@@ -48,7 +49,7 @@ public abstract class IdentifierMixin implements IdentifierExtension {
    * @return {@inheritDoc}
    */
   @Override
-  public Identifier brrp_pend(@NotNull String prefix, @NotNull String suffix) {
+  public Identifier brrp_pend(@Pattern("[a-z\\d/._-]+") @NotNull String prefix, @NotNull String suffix) {
     return new Identifier(namespace, prefix + path + suffix);
   }
 }

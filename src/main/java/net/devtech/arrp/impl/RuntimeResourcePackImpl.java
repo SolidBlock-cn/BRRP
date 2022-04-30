@@ -2,7 +2,10 @@ package net.devtech.arrp.impl;
 
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializer;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
@@ -16,6 +19,7 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.loot.BinomialLootTableRange;
 import net.minecraft.loot.ConstantLootTableRange;
@@ -69,7 +73,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       .setPrettyPrinting()
       .disableHtmlEscaping()
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
-      .registerTypeHierarchyAdapter(Identifier.class, (JsonSerializer<Identifier>) (src, typeOfSrc, context) -> new JsonPrimitive(src.getNamespace() + ":" + src.getPath()))
+      .registerTypeHierarchyAdapter(Identifier.class, new Identifier.Serializer())
       .registerTypeAdapter(BinomialLootTableRange.class, new BinomialLootTableRange.Serializer())
       .registerTypeAdapter(UniformLootTableRange.class, new UniformLootTableRange.Serializer())
       .registerTypeAdapter(ConstantLootTableRange.class, new ConstantLootTableRange.Serializer())
@@ -90,7 +94,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     properties.setProperty("dump assets", "false");
     properties.setProperty("debug performance", "false");
 
-    File file = new File("config/rrp.properties");
+    File file = FabricLoader.getInstance().getConfigDir().resolve("rrp.properties").toFile();
     try (FileReader reader = new FileReader(file)) {
       properties.load(reader);
       processors = Integer.parseInt(properties.getProperty("threads"));
@@ -247,28 +251,28 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   }
 
   @Override
-  public byte[] addAsset(Identifier path, byte[] data) {
-    return this.addResource(ResourceType.CLIENT_RESOURCES, path, data);
+  public byte[] addAsset(Identifier id, byte[] data) {
+    return this.addResource(ResourceType.CLIENT_RESOURCES, id, data);
   }
 
   @Override
-  public byte[] addData(Identifier path, byte[] data) {
-    return this.addResource(ResourceType.SERVER_DATA, path, data);
+  public byte[] addData(Identifier id, byte[] data) {
+    return this.addResource(ResourceType.SERVER_DATA, id, data);
   }
 
   @Override
-  public byte[] addModel(JModel model, Identifier path) {
-    return this.addAsset(fix(path, "models", "json"), serialize(model));
+  public byte[] addModel(JModel model, Identifier id) {
+    return this.addAsset(fix(id, "models", "json"), serialize(model));
   }
 
   @Override
-  public byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier path) {
-    return this.addAsset(fix(path, "blockstates", "json"), serialize(state));
+  public byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier identifier) {
+    return this.addAsset(fix(identifier, "blockstates", "json"), serialize(state));
   }
 
   @Override
-  public byte[] addBlockState(JBlockStates state, Identifier path) {
-    return this.addAsset(fix(path, "blockstates", "json"), serialize(state));
+  public byte[] addBlockState(JBlockStates state, Identifier id) {
+    return this.addAsset(fix(id, "blockstates", "json"), serialize(state));
   }
 
   @Override
@@ -313,7 +317,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public void dumpDirect(Path output) {
-    LOGGER.info("Dumping " + this.id + "'s assets and data");
+    LOGGER.info("Dumping {}.", getName());
     // data dump time
     try {
       for (Map.Entry<String, Supplier<byte[]>> e : this.root.entrySet()) {
@@ -333,6 +337,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
         this.write(data, entry.getKey(), entry.getValue().get());
       }
+      LOGGER.info("Dumping {} finished.", getName());
     } catch (IOException exception) {
       throw new RuntimeException(exception);
     }

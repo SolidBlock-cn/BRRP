@@ -5,6 +5,7 @@ import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.function.LootFunction;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class JFunction implements Cloneable, JsonSerializable {
    *
    * @param function The function name, which is an identifier (as string).
    */
-
+  @Contract(value = "_ -> this", mutates = "this")
   public JFunction function(String function) {
     this.function = function;
     return this;
@@ -50,39 +51,39 @@ public class JFunction implements Cloneable, JsonSerializable {
   /**
    * Set all properties of the function, overriding existing ones, except {@link #function} and {@link #conditions}.
    */
-
+  @Contract(value = "_ -> this", mutates = "this")
   public JFunction set(JsonObject properties) {
     this.properties = properties;
     return this;
   }
 
-
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, JsonElement value) {
     this.properties.add(key, value);
     return this;
   }
 
-
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, String value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
-
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, Number value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
-
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, Boolean value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
-
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, Identifier value) {
     return parameter(key, value.toString());
   }
 
-
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, Character value) {
     return parameter(key, new JsonPrimitive(value));
   }
@@ -92,7 +93,7 @@ public class JFunction implements Cloneable, JsonSerializable {
    *
    * @param condition The loot table condition.
    */
-
+  @Contract(value = "_ -> this", mutates = "this")
   public JFunction condition(JCondition condition) {
     if (conditions == null) this.conditions = new ArrayList<>();
     this.conditions.add(condition);

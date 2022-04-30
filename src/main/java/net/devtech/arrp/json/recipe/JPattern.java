@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import net.devtech.arrp.api.JsonSerializable;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 
@@ -32,10 +33,6 @@ public class JPattern implements Cloneable, JsonSerializable {
     return new JPattern(rows);
   }
 
-  public JPattern row1(String keys) {
-    return this.row(0, keys);
-  }
-
   /**
    * Set the row of the pattern.
    */
@@ -45,10 +42,17 @@ public class JPattern implements Cloneable, JsonSerializable {
     return this;
   }
 
+  @Contract("_ -> this")
+  public JPattern row1(String keys) {
+    return this.row(0, keys);
+  }
+
+  @Contract("_ -> this")
   public JPattern row2(String keys) {
     return this.row(1, keys);
   }
 
+  @Contract("_ -> this")
   public JPattern row3(String keys) {
     return this.row(2, keys);
   }
@@ -67,6 +71,7 @@ public class JPattern implements Cloneable, JsonSerializable {
     return context.serialize(rows);
   }
 
+  @Deprecated
   public static class Serializer implements JsonSerializer<JPattern> {
     @Override
     public JsonElement serialize(final JPattern src, final Type typeOfSrc,
