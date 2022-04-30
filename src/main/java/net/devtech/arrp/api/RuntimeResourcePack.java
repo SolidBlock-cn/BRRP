@@ -16,6 +16,7 @@ import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.minecraft.advancement.Advancement;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -260,16 +261,17 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <p>
    * Usually the advancement triggers when you unlock the recipe of obtains the ingredient, and rewards you to unlock that recipe. For example, if you obtain an <i>oak planks</i>, then the advancement {@code minecraft:recipes/building_blocks/oak_planks} is achieved, rewarding you to unlock the recipe of {@code minecraft:oak_planks}. There are some exception situations: For example, the recipe of boat is not obtained when you get their corresponding planks, but when you enter water.
    *
-   * @param id                          The identifier of the advancement the corresponds to the recipe, usually prefixed with {@code "recipes/"}. <p>In the convention of vanilla Minecraft, the identifier of the recipe is <code style="color:maroon"><i>namespace</i>:<i>path</i></code>, which is typically the same as the item itself. But the identifier of the advancement is <code style="color:maroon"><i>namespace</i>:recipes/<i>itemGroup</i>/<i>path</i></code>.
+   * @param recipeId                    The identifier of the recipe. It is used because it is required in {@link JRecipe#prepareAdvancement(Identifier)}, and <i>it is usually not equal to</i> the advancement id.
+   * @param advancementId               The identifier of the advancement the corresponds to the recipe, usually prefixed with {@code "recipes/"}. <p>In the convention of vanilla Minecraft, the identifier of the recipe is <code style="color:maroon"><i>namespace</i>:<i>path</i></code>, which is typically the same as the item itself. But the identifier of the advancement is <code style="color:maroon"><i>namespace</i>:recipes/<i>itemGroup</i>/<i>path</i></code>. You can create advancement id with {@link net.devtech.arrp.generator.ItemResourceGenerator#getAdvancementIdForRecipe(Identifier)} or {@link net.devtech.arrp.generator.ResourceGeneratorHelper#getAdvancementIdForRecipe(ItemConvertible, Identifier)}.
    * @param recipeContainingAdvancement The recipe that contains the advancement. If that advancement has no criteria, it will be ignored and {@code null} will be returned.
    */
   @ApiStatus.AvailableSince("0.6.2")
   @CanIgnoreReturnValue
-  default byte[] addRecipeAdvancement(Identifier id, JRecipe recipeContainingAdvancement) {
+  default byte[] addRecipeAdvancement(Identifier recipeId, Identifier advancementId, JRecipe recipeContainingAdvancement) {
     final Advancement.Builder advancement = recipeContainingAdvancement.asAdvancement();
     if (advancement != null && !advancement.getCriteria().isEmpty()) {
-      recipeContainingAdvancement.prepareAdvancement(id);
-      return addAdvancement(id, advancement);
+      recipeContainingAdvancement.prepareAdvancement(recipeId);
+      return addAdvancement(advancementId, advancement);
     } else {
       return null;
     }

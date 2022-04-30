@@ -152,7 +152,7 @@ public interface ItemResourceGenerator {
     if (craftingRecipe != null) {
       final Identifier recipeId = getRecipeId();
       pack.addRecipe(recipeId, craftingRecipe);
-      pack.addRecipeAdvancement(getAdvancementIdForRecipe(recipeId), craftingRecipe);
+      pack.addRecipeAdvancement(recipeId, getAdvancementIdForRecipe(recipeId), craftingRecipe);
     }
   }
 
