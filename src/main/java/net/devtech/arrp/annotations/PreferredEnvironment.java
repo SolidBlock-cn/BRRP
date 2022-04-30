@@ -2,6 +2,7 @@ package net.devtech.arrp.annotations;
 
 import net.devtech.arrp.generator.BlockResourceGenerator;
 import net.fabricmc.api.EnvType;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.annotation.*;
 
@@ -12,6 +13,7 @@ import java.lang.annotation.*;
  *
  * @see net.fabricmc.api.Environment
  */
+@ApiStatus.AvailableSince("0.6.2")
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.PACKAGE})
 @Documented

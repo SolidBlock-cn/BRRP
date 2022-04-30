@@ -12,6 +12,7 @@ import net.minecraft.data.client.model.TextureKey;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -253,6 +254,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The stonecutting recipe.
    * @see net.devtech.arrp.json.recipe.JStonecuttingRecipe
    */
+  @ApiStatus.AvailableSince("0.6.2")
   default @Nullable JRecipe getStonecuttingRecipe() {
     return null;
   }
@@ -262,6 +264,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @return The boolean value indicating whether to write stonecutting recipes of the block in {@link #writeRecipes(RuntimeResourcePack)}.
    */
+  @ApiStatus.AvailableSince("0.6.2")
   default boolean shouldWriteStonecuttingRecipe() {
     return false;
   }
@@ -271,6 +274,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @param pack The runtime resource pack.
    */
+  @ApiStatus.AvailableSince("0.6.2")
   @Override
   default void writeRecipes(RuntimeResourcePack pack) {
     ItemResourceGenerator.super.writeRecipes(pack);
@@ -288,6 +292,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The id of the stonecutting recipe. It is usually the recipe id appended {@code "_from_stonecutting"}.
    */
   @NotNull
+  @ApiStatus.AvailableSince("0.6.2")
   private Identifier getStonecuttingRecipeId() {
     return getRecipeId().brrp_prepend("_from_stonecutting");
   }
