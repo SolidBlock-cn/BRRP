@@ -4,9 +4,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.ARRP;
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
+import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.model.BlockStateSupplier;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -27,6 +31,7 @@ import java.util.List;
  * @since BRRP 0.6.0
  */
 @SuppressWarnings("unused")
+@PreferredEnvironment(EnvType.CLIENT)
 public class JBlockStates implements JsonSerializable {
   public final JVariants variants;
   public final List<JMultipart> multiparts;
@@ -37,6 +42,7 @@ public class JBlockStates implements JsonSerializable {
    * @param variants   The variant definition. One of these two parameters must be {@code null}.
    * @param multiparts The list of multiparts. One of these two parameters must be {@code null}.
    */
+  @ApiStatus.Internal
   private JBlockStates(JVariants variants, List<JMultipart> multiparts) {
     this.variants = variants;
     this.multiparts = multiparts;
@@ -59,6 +65,7 @@ public class JBlockStates implements JsonSerializable {
    *
    * @throws IllegalStateException if the block states definition is for multiparts (for example, created from {@link #ofMultiparts(JMultipart...)}).
    */
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JBlockStates addVariant(String variant, JBlockModel... modelDefinition) {
     if (variant == null) throw new IllegalStateException("A block state definition can only have either variants or multiparts, not both");
     variants.addVariant(variant, modelDefinition);
@@ -70,6 +77,7 @@ public class JBlockStates implements JsonSerializable {
    *
    * @throws IllegalStateException if the block states definition is for multiples (for example, created from {@link #ofVariants(JVariants)}).
    */
+  @Contract(value = "_ -> this", mutates = "this")
   public JBlockStates add(JMultipart multipart) {
     if (multiparts == null) throw new IllegalStateException("A block state definition can only have either variants or multipart, not both");
     multiparts.add(multipart);
@@ -157,6 +165,13 @@ public class JBlockStates implements JsonSerializable {
     return ofVariants(JVariants.ofSlab(new JBlockModel(baseBlockModelId), bottomSlabModelId, topSlabModelId));
   }
 
+  /**
+   * Create a delegated block states object. The serialization of the delegate will be directly used.
+   *
+   * @param delegate The vanilla block state supplier, whose serialization will be directly used.
+   * @return The delegated object.
+   */
+  @Contract("_ -> new")
   public static JBlockStates delegate(BlockStateSupplier delegate) {
     return new Delegate(delegate);
   }
@@ -173,6 +188,7 @@ public class JBlockStates implements JsonSerializable {
     return object;
   }
 
+  @ApiStatus.Internal
   private static final class Delegate extends JBlockStates {
     private final BlockStateSupplier delegate;
 

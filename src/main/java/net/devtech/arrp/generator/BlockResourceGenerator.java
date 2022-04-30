@@ -1,13 +1,15 @@
 package net.devtech.arrp.generator;
 
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
+import net.devtech.arrp.json.recipe.JRecipe;
+import net.fabricmc.api.EnvType;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.model.TextureKey;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
+import net.minecraft.item.BlockItem;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Contract;
@@ -29,22 +31,22 @@ import org.jetbrains.annotations.Nullable;
  * }
  * }</pre>
  * <p>Also, your custom class can implement this interface. In this case, you <i>must</i> override {@link #getBlockId()} method, as it cannot be casted to {@code Block}.</p>
- * <p>It's highly recommended but not required to annotate methods related to client (block states definitions, block models, item models) as {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code>, as they are only used in the client version mod. The interface itself does not annotate it, in consideration of rare situations that the server really needs. But mostly these client-related methods are not needed in the server side.</p>
+ * <p>It's highly recommended but not required to annotate methods related to client (block states, block models, item models) with {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code>, as they are only used in the client version mod. The interface itself does not annotate it, in consideration of rare situations that the server really needs. But mostly these client-related methods are not needed in the server side.</p>
  */
 public interface BlockResourceGenerator extends ItemResourceGenerator {
   /**
-   * The base block of this block. You should override this method for block-based blocks, like stairs, slab, etc.
+   * The base block of this block. You <i>should override</i> this method for block-based blocks, like stairs, slab, etc.
    *
    * @return The base block of this block.
    */
-  default @Nullable
-  @Contract(pure = true) Block getBaseBlock() {
+  @Contract(pure = true)
+  default @Nullable Block getBaseBlock() {
     return null;
   }
 
   /**
    * Query the id of the block in {@link Registry#BLOCK}.<br>
-   * You <i>must</i> override this method if you're implementing this interface on a non-{@code Block} class.
+   * You <i>must</i> override this method if you're implementing this interface on a non-{@code Block} class, or will use it when it is not yet registered.
    *
    * @return The id of the block.
    */
@@ -54,13 +56,18 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
 
   /**
    * Query the id of the corresponding block item. You can override when needed, but most time there is no need.
+   * <p>
+   * Usually the block id is the same as the item id, but we do not assume that here.
    *
-   * @return The id of the block item, or {@code null} if the block item is air, which indicated that it does not exist (or that block is air itself, but this case this method should not be reached).
+   * @return The id of the block item, or {@code null} if the block has no item.
    */
   @Override
   default Identifier getItemId() {
-    final Item item = ((Block) this).asItem();
-    return item == Items.AIR ? null : Registry.ITEM.getId(item);
+    if (this instanceof Block block && BlockItem.BLOCK_ITEMS.containsKey(block)) {
+      return Registry.ITEM.getId(BlockItem.BLOCK_ITEMS.get(block));
+    } else {
+      return null;
+    }
   }
 
 
@@ -68,10 +75,11 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
 
 
   /**
-   * The id of the block model. It is usually {@code <i>namespace</i>:block/<i>path</i>}. For example, the model id of stone is {@code minecraft:block/stone}.
+   * The id of the block model. It is usually <code style="color: maroon"><i>namespace</i>:block/<i>path</i></code>. For example, the model id of stone is {@code minecraft:block/stone}.
    *
    * @return The id of the block model.
    */
+  @PreferredEnvironment(EnvType.CLIENT)
   default Identifier getBlockModelId() {
     return getBlockId().brrp_prepend("block/");
   }
@@ -94,6 +102,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The id of the texture.
    * @see TextureRegistry
    */
+  @PreferredEnvironment(EnvType.CLIENT)
   default @NotNull String getTextureId(@NotNull TextureKey textureKey) {
     if (this instanceof Block thisBlock) {
       final Identifier texture = TextureRegistry.getTexture(thisBlock, textureKey);
@@ -111,6 +120,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @return The block states definition of the block.
    */
+  @PreferredEnvironment(EnvType.CLIENT)
   default @Nullable JBlockStates getBlockStates() {
     return null;
   }
@@ -120,6 +130,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @param pack The runtime resource pack.
    */
+  @PreferredEnvironment(EnvType.CLIENT)
   default void writeBlockStates(RuntimeResourcePack pack) {
     final JBlockStates blockStates = getBlockStates();
     if (blockStates != null) pack.addBlockState(blockStates, getBlockId());
@@ -130,6 +141,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @return The block model.
    */
+  @PreferredEnvironment(EnvType.CLIENT)
   default @Nullable JModel getBlockModel() {
     return null;
   }
@@ -139,6 +151,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @param pack The runtime resource pack.
    */
+  @PreferredEnvironment(EnvType.CLIENT)
   default void writeBlockModel(RuntimeResourcePack pack) {
     final JModel model = getBlockModel();
     if (model != null) pack.addModel(model, getBlockModelId());
@@ -150,6 +163,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The id of the block item model.
    */
   @Override
+  @PreferredEnvironment(EnvType.CLIENT)
   default Identifier getItemModelId() {
     final Identifier itemId = getItemId();
     if (itemId == null) return null;
@@ -162,6 +176,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @param pack The runtime resource pack.
    */
   @Override
+  @PreferredEnvironment(EnvType.CLIENT)
   default void writeItemModel(RuntimeResourcePack pack) {
     final Identifier itemModelId = getItemModelId();
     if (itemModelId != null) {
@@ -179,6 +194,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The item model.
    */
   @Override
+  @PreferredEnvironment(EnvType.CLIENT)
   default @Nullable JModel getItemModel() {
     return new JModel(getBlockModelId());
   }
@@ -189,6 +205,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @param pack The runtime resource pack.
    */
   @Override
+  @PreferredEnvironment(EnvType.CLIENT)
   default void writeAssets(RuntimeResourcePack pack) {
     writeBlockStates(pack);
     writeBlockModel(pack);
@@ -226,6 +243,53 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
     if (lootTable != null) {
       pack.addLootTable(getLootTableId(), lootTable);
     }
+  }
+
+  /**
+   * Get the stonecutting recipe of the block. This is quite useful for block-based blocks, like stairs, slabs and fences.
+   * <p>
+   * <b>Note:</b> Stonecutting recipes will not be generated unless {@link #shouldWriteStonecuttingRecipe()} returns {@code true}.
+   *
+   * @return The stonecutting recipe.
+   * @see net.devtech.arrp.json.recipe.JStonecuttingRecipe
+   */
+  default @Nullable JRecipe getStonecuttingRecipe() {
+    return null;
+  }
+
+  /**
+   * Whether to write stonecutting recipe. <b>It's by default <code>false</code></b> and you can override this method according to your actual need.
+   *
+   * @return The boolean value indicating whether to write stonecutting recipes of the block in {@link #writeRecipes(RuntimeResourcePack)}.
+   */
+  default boolean shouldWriteStonecuttingRecipe() {
+    return false;
+  }
+
+  /**
+   * For blocks, they may have stonecutting recipes. If you {@link #shouldWriteStonecuttingRecipe()} does not return {@code false} and {@link #getStonecuttingRecipe()} returns not null, the stonecutting recipe will be generated. The id of the stonecutting recipe is by default the crafting id appended with {@code "_from_stonecutting"}, but you can override it in {@link #getStonecuttingRecipeId()}.
+   *
+   * @param pack The runtime resource pack.
+   */
+  @Override
+  default void writeRecipes(RuntimeResourcePack pack) {
+    ItemResourceGenerator.super.writeRecipes(pack);
+    if (shouldWriteStonecuttingRecipe()) {
+      final JRecipe stonecuttingRecipe = getStonecuttingRecipe();
+      if (stonecuttingRecipe != null) {
+        final Identifier stonecuttingRecipeId = getStonecuttingRecipeId();
+        pack.addRecipe(stonecuttingRecipeId, stonecuttingRecipe);
+        pack.addRecipeAdvancement(getAdvancementIdForRecipe(stonecuttingRecipeId), stonecuttingRecipe);
+      }
+    }
+  }
+
+  /**
+   * @return The id of the stonecutting recipe. It is usually the recipe id appended {@code "_from_stonecutting"}.
+   */
+  @NotNull
+  private Identifier getStonecuttingRecipeId() {
+    return getRecipeId().brrp_prepend("_from_stonecutting");
   }
 
   /**

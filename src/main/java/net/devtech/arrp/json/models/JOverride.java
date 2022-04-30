@@ -1,13 +1,16 @@
 package net.devtech.arrp.json.models;
 
 import com.google.gson.annotations.SerializedName;
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.json.loot.JCondition;
+import net.fabricmc.api.EnvType;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
  * <p>An overriding situation. It specifies a condition, which is the {@link #predicate}, and when the condition is met, the {@link #model} will be used, when Minecraft renders the item.</p>
  * <p>It consists of a {@linkplain #modelPredicate predicate} and a {@linkplain #model}. If your predicate consists of one entry, you may simple call {@link #JOverride(String, float, String)} without manually calling the constructor of {@code JPredicate}.</p>
  */
+@PreferredEnvironment(EnvType.CLIENT)
 public class JOverride implements Cloneable {
   /**
    * @deprecated You should not use this field, as {@link JCondition} is used for loot tables, instead of models. Please use {@link #modelPredicate} instead.

@@ -8,6 +8,7 @@ import net.minecraft.util.registry.Registry;
 /**
  * <p>A <b>stonecutting recipe</b> is used for stonecutters. It has a simple one or multiple ingredients and a single result.</p>
  */
+@SuppressWarnings("unused")
 public class JStonecuttingRecipe extends JRecipe {
   private static final String TYPE = "stonecutting";
   /**

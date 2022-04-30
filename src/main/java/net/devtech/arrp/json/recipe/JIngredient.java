@@ -13,6 +13,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
  *
  * @see net.minecraft.recipe.Ingredient
  */
+@SuppressWarnings("unused")
 public class JIngredient implements Cloneable, JsonSerializable {
   /**
    * The identifier of the {@link Item}. It should exist only when {@link #tag} and {@link #ingredients} are null.
@@ -88,7 +90,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
    * @param item The item.
    * @hidden This method is actually unnecessary, as there is already {@link #item(ItemConvertible)}. However, it is kept for compatibility, and will not be removed.
    */
-
+  @Contract(value = "_ -> this", mutates = "this")
   public JIngredient item(Item item) {
     return this.item(Registry.ITEM.getId(item).toString());
   }
@@ -98,7 +100,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
    *
    * @param itemConvertible The item. It can be a block.
    */
-
+  @Contract(value = "_ -> this", mutates = "this")
   public JIngredient item(ItemConvertible itemConvertible) {
     return item(itemConvertible.asItem());
   }
@@ -108,7 +110,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
    *
    * @param id The identifier as string.
    */
-
+  @Contract(value = "_ -> this", mutates = "this")
   public JIngredient item(String id) {
     if (this.isDefined()) {
       return this.add(JIngredient.ofItem(id));
@@ -124,23 +126,27 @@ public class JIngredient implements Cloneable, JsonSerializable {
    *
    * @param id The identifier of the item.
    */
-
+  @Contract(value = "_ -> this", mutates = "this")
   public JIngredient item(Identifier id) {
     return item(id.toString());
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofItem(ItemConvertible itemConvertible) {
     return ofItem(Registry.ITEM.getId(itemConvertible.asItem()));
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofItem(String id) {
     return new JIngredient(id, null);
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofItem(Identifier id) {
     return ofItem(id.toString());
   }
 
+  @Contract(value = "_ -> this", mutates = "this")
   public JIngredient tag(String tagId) {
     if (this.isDefined()) {
       return this.add(JIngredient.ingredient().tag(tagId));
@@ -151,54 +157,67 @@ public class JIngredient implements Cloneable, JsonSerializable {
     return this;
   }
 
+  @Contract(value = "_ -> this", mutates = "this")
   public JIngredient tag(Identifier tagId) {
     return tag(tagId.toString());
   }
 
+  @Contract(value = "_ -> this", mutates = "this")
   public JIngredient tag(IdentifiedTag tag) {
     return tag(tag.identifier);
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofTag(String tagId) {
     return new JIngredient(null, tagId);
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofTag(Identifier tagId) {
     return ofTag(tagId.toString());
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofTag(IdentifiedTag tag) {
     return ofTag(tag.identifier);
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofMultipleIngredients(List<JIngredient> ingredients) {
     return new JIngredient(ingredients);
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofItems(String... ids) {
     return new JIngredient(Arrays.stream(ids).map(JIngredient::ofItem).collect(Collectors.toList()));
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofItems(Identifier... ids) {
     return new JIngredient(Arrays.stream(ids).map(JIngredient::ofItem).collect(Collectors.toList()));
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofItems(Item... items) {
     return new JIngredient(Arrays.stream(items).map(item1 -> ofItem(Registry.ITEM.getId(item1))).collect(Collectors.toList()));
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofItems(ItemConvertible... itemConvertibles) {
     return new JIngredient(Arrays.stream(itemConvertibles).map(JIngredient::ofItem).collect(Collectors.toList()));
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofTags(String... tagIds) {
     return new JIngredient(Arrays.stream(tagIds).map(JIngredient::ofTag).collect(Collectors.toList()));
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofTags(Identifier... tagIds) {
     return new JIngredient(Arrays.stream(tagIds).map(JIngredient::ofTag).collect(Collectors.toList()));
   }
 
+  @Contract("_ -> new")
   public static JIngredient ofTags(IdentifiedTag... tags) {
     return new JIngredient(Arrays.stream(tags).map(JIngredient::ofTag).collect(Collectors.toList()));
   }
@@ -210,6 +229,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
    * @return A "delegated" JIngredient object.
    * @see Ingredient
    */
+  @Contract("_ -> new")
   public static JIngredient delegate(Ingredient delegate) {
     return new Delegate(delegate);
   }
@@ -217,7 +237,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
   /**
    * Add another ingredient to this ingredient. In this case, the {@link #ingredients} field will be non-null, and this object will be serialized to a {@link com.google.gson.JsonArray}.
    */
-
+  @Contract(value = "_ -> this", mutates = "this")
   public JIngredient add(final JIngredient ingredient) {
     if (this.ingredients == null) {
       final List<JIngredient> ingredients = new ArrayList<>();
@@ -234,6 +254,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
     return this;
   }
 
+  @Contract(pure = true)
   private boolean isDefined() {
     return this.item != null || this.tag != null;
   }
@@ -274,6 +295,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
     }
   }
 
+  @ApiStatus.Internal
   private static final class Delegate extends JIngredient implements JsonSerializable, Predicate<ItemStack> {
     public final Ingredient delegate;
 

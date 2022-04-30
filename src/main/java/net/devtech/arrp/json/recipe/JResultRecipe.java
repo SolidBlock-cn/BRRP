@@ -1,6 +1,5 @@
 package net.devtech.arrp.json.recipe;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
@@ -58,13 +57,13 @@ public abstract class JResultRecipe extends JRecipe {
   /**
    * Set the count of the result item.
    */
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JResultRecipe resultCount(int count) {
     this.result.count = count;
     return this;
   }
 
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @Override
   public JResultRecipe group(final String group) {
     return (JResultRecipe) super.group(group);

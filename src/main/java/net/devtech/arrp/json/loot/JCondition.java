@@ -6,6 +6,8 @@ import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -40,23 +42,25 @@ public class JCondition implements Cloneable, JsonSerializable {
     if (parameters.has("condition")) this.condition = parameters.get("condition").getAsString();
   }
 
+  @Contract("_ -> new")
   public static JCondition ofAlternative(Collection<JCondition> conditions) {
     final JCondition result = new JCondition("alternative");
     result.parameters.add("terms", RuntimeResourcePackImpl.GSON.toJsonTree(conditions));
     return result;
   }
 
+  @Contract("_ -> new")
   public static JCondition ofAlternative(JCondition... conditions) {
     return ofAlternative(Arrays.asList(conditions));
   }
 
-
+  @Contract(value = "_ -> new", mutates = "this")
   public JCondition condition(String condition) {
     this.condition = condition;
     return this;
   }
 
-
+  @Contract(value = "_ -> new", mutates = "this")
   public JCondition set(JsonObject parameters) {
     parameters.addProperty("condition", this.parameters.get("condition").getAsString());
     this.parameters = parameters;
@@ -136,6 +140,7 @@ public class JCondition implements Cloneable, JsonSerializable {
     }
   }
 
+  @ApiStatus.Internal
   private static final class Delegate extends JCondition {
     private static final Gson GSON = LootGsons.getConditionGsonBuilder().create();
     private final LootCondition delegate;

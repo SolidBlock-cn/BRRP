@@ -7,6 +7,7 @@ import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootTable;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -113,7 +114,6 @@ public class JLootTable implements Cloneable {
    *
    * @param pool The loot table pool.
    */
-
   @Contract(value = "_ -> this", mutates = "this")
   public JLootTable pool(JPool pool) {
     if (this.pools == null) {
@@ -128,7 +128,6 @@ public class JLootTable implements Cloneable {
    *
    * @param function The loot table function.
    */
-
   @Contract(value = "_ -> this", mutates = "this")
   public JLootTable function(JFunction function) {
     if (this.functions == null) {
@@ -153,28 +152,40 @@ public class JLootTable implements Cloneable {
    * @param blockId The id (as string) of the block.
    * @return The simplest block loot table.
    */
+  @Contract("_ -> new")
   public static JLootTable simple(String blockId) {
     return new JLootTable("minecraft:block").pool(JPool.simple(blockId).condition(new JCondition("survives_explosion")));
   }
 
+  @Contract("_, _ -> new")
   public static JLootTable ofPools(String type, List<JPool> pools) {
     final JLootTable lootTable = new JLootTable(type);
     lootTable.pools = pools;
     return lootTable;
   }
 
+  @Contract("_, _ -> new")
   public static JLootTable ofPools(String type, JPool... pools) {
     return ofPools(type, Arrays.asList(pools));
   }
 
+  @Contract("_, _ -> new")
   public static JLootTable ofEntries(String type, List<JEntry> entries) {
     return ofPools(type, JPool.ofEntries(entries));
   }
 
+  @Contract("_, _ -> new")
   public static JLootTable ofEntries(String type, JEntry... entries) {
     return ofPools(type, JPool.ofEntries(entries));
   }
 
+  /**
+   * Create a delegated loot table object, whose serialization will be directly used.
+   *
+   * @param delegate The vanilla loot table. Its serialization will be directly used when serializing.
+   * @return A new object.
+   */
+  @Contract("_ -> new")
   public static JLootTable delegate(LootTable delegate) {
     return new FromLootTable(delegate);
   }
@@ -188,8 +199,8 @@ public class JLootTable implements Cloneable {
     }
   }
 
+  @ApiStatus.Internal
   private static final class FromLootTable extends JLootTable implements JsonSerializable {
-
     private transient final LootTable delegate;
     private static final Gson GSON = LootGsons.getTableGsonBuilder().create();
 

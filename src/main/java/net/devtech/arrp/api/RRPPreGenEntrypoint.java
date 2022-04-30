@@ -1,13 +1,15 @@
 package net.devtech.arrp.api;
 
 /**
- * an entrypoint called on preLaunch asynchronously
+ * This is the entrypoint called on preLaunch <i>asynchronously</i>.
  */
 public interface RRPPreGenEntrypoint {
-	/**
-	 * pregenerate assets here and put them in a runtime resource pack, don't forget to register a callback
-	 *
-	 * @see RRPCallback
-	 */
-	void pregen();
+  /**
+   * Generate assets in this method and put them in a runtime resource pack. Don't forget to register the runtime resource pack in your {@link RRPCallback} or {@link RRPCallbackConditional}.
+   * <p>
+   * Note that it happens on prelaunch and at that time most classes are not loaded.
+   *
+   * @see RRPCallback
+   */
+  void pregen();
 }
