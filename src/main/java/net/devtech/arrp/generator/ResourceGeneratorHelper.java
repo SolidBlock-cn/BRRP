@@ -61,6 +61,7 @@ public final class ResourceGeneratorHelper {
     }
   }
 
+  @ApiStatus.AvailableSince("0.6.2")
   public static Identifier getAdvancementIdForRecipe(@NotNull ItemConvertible item, Identifier recipeId) {
     if (item instanceof ItemResourceGenerator generator) {
       return generator.getAdvancementIdForRecipe(recipeId);
