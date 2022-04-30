@@ -8,6 +8,8 @@ import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.entry.LootPoolEntry;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -58,6 +60,7 @@ public class JEntry implements Cloneable {
    * @param type See {@link #type}.
    */
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JEntry type(String type) {
     this.type = type;
     return this;
@@ -67,6 +70,7 @@ public class JEntry implements Cloneable {
    * @param name See {@link #name}.
    */
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JEntry name(String name) {
     this.name = name;
     return this;
@@ -78,6 +82,7 @@ public class JEntry implements Cloneable {
    * @param child Another loot table entry. Cannot be the loot table entry itself.
    */
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JEntry child(JEntry child) {
     if (this == child) {
       throw new IllegalArgumentException("Can't add entry as its own child!");
@@ -94,11 +99,13 @@ public class JEntry implements Cloneable {
    * @deprecated unintuitive to use
    */
   @Deprecated
+  @Contract(value = "_ -> this", mutates = "this")
   public JEntry child(String child) {
     return child(RuntimeResourcePackImpl.GSON.fromJson(child, JEntry.class));
   }
 
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JEntry expand(Boolean expand) {
     this.expand = expand;
     return this;
@@ -110,6 +117,7 @@ public class JEntry implements Cloneable {
    * @param function The loot table function.
    */
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JEntry function(JFunction function) {
     if (this.functions == null) {
       this.functions = new ArrayList<>();
@@ -124,6 +132,7 @@ public class JEntry implements Cloneable {
    * @param function The id (as string) of the loot table function.
    */
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JEntry function(String function) {
     return function(new JFunction(function));
   }
@@ -134,6 +143,7 @@ public class JEntry implements Cloneable {
    * @param condition The loot table condition.
    */
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JEntry condition(JCondition condition) {
     if (this.conditions == null) {
       this.conditions = new ArrayList<>();
@@ -148,17 +158,20 @@ public class JEntry implements Cloneable {
    * @param condition The id (as string) of the loot table condition.
    */
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JEntry condition(String condition) {
     return condition(new JCondition(condition));
   }
 
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JEntry weight(Integer weight) {
     this.weight = weight;
     return this;
   }
 
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JEntry quality(Integer quality) {
     this.quality = quality;
     return this;
@@ -173,6 +186,7 @@ public class JEntry implements Cloneable {
     }
   }
 
+  @ApiStatus.Internal
   private static final class Delegate extends JEntry implements JsonSerializable {
     private static final Gson GSON = LootGsons.getTableGsonBuilder().create();
     private final LootPoolEntry delegate;

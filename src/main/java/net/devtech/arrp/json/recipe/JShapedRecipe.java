@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Contract;
  * @see net.minecraft.recipe.ShapedRecipe
  * @see net.minecraft.data.server.recipe.ShapedRecipeJsonFactory
  */
+@SuppressWarnings("unused")
 public class JShapedRecipe extends JResultRecipe {
   private static final String TYPE = "minecraft:crafting_shaped";
   protected JPattern pattern;
@@ -44,21 +45,21 @@ public class JShapedRecipe extends JResultRecipe {
     this.key = keys;
   }
 
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JShapedRecipe pattern(JPattern pattern) {
     this.pattern = pattern;
     return this;
   }
 
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JShapedRecipe pattern(String... pattern) {
     this.pattern = new JPattern(pattern);
     return this;
   }
 
-  @Contract("_,_ -> this")
+  @Contract(value = "_,_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JShapedRecipe addKey(String key, JIngredient value) {
     if (this.key == null) {
@@ -68,25 +69,25 @@ public class JShapedRecipe extends JResultRecipe {
     return this;
   }
 
-  @Contract("_,_ -> this")
+  @Contract(value = "_,_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JShapedRecipe addKey(String key, String value) {
     return this.addKey(key, JIngredient.ofItem(value));
   }
 
-  @Contract("_,_ -> this")
+  @Contract(value = "_,_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JShapedRecipe addKey(String key, Identifier value) {
     return this.addKey(key, JIngredient.ofItem(value));
   }
 
-  @Contract("_,_ -> this")
+  @Contract(value = "_,_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JShapedRecipe addKey(String key, Item value) {
     return this.addKey(key, JIngredient.ofItem(Registry.ITEM.getId(value)));
   }
 
-  @Contract("_,_ -> this")
+  @Contract(value = "_,_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JShapedRecipe addKey(String key, ItemConvertible value) {
     return this.addKey(key, JIngredient.ofItem(value));

@@ -1,10 +1,14 @@
 package net.devtech.arrp.json.models;
 
 import com.google.common.collect.ForwardingMap;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
+import net.fabricmc.api.EnvType;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -18,9 +22,11 @@ import java.util.Map;
  * <p>You can simply call {@link #of(String, String)} or {@link #of(String...)} to quickly create an instance with one or several variables defined.
  */
 @SuppressWarnings("unused")
+@PreferredEnvironment(EnvType.CLIENT)
 public class JTextures extends ForwardingMap<String, String> implements JsonSerializable {
   /**
-   * The map containing the values. It is usually a {@link LinkedHashMap}, as specified in {@link #JTextures()}.
+   * The map containing the values. It is usually a {@link LinkedHashMap}, as specified in {@link #JTextures()}.<p>
+   * This field it private. To get it please use {@link #delegate()}.
    */
   private final Map<String, String> textures;
 
@@ -48,6 +54,7 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
    * <pre>{@code JTextures.of("name", "var)}</pre>
    * <p>If you want to specify multiple texture variables, you can call {@link #var(String, String)} or {@link #vars(String...)} to the instance, or just use {@link #of(String...)}. If the texture variable you add is named {@code "all"}, you can directly call {@link #ofAll(String)}; if named {@code "layer0"}, you can directly call {@link #ofLayer0(String)}.</p>
    */
+  @Contract("_, _ -> new")
   public static JTextures of(String name, String val) {
     return new JTextures().var(name, val);
   }
@@ -56,6 +63,7 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
    * <p>Conveniently create an instance with multiple texture variables defined.</p>
    * <p>If you want to specify {@code "top"}, {@code "side"} and {@code "bottom"} at one time, you can see {@link #ofSides(String, String, String)}.</p>
    */
+  @Contract("_ -> new")
   public static JTextures of(String... strings) {
     return new JTextures().vars(strings);
   }
@@ -74,6 +82,7 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
    * @see #all(String)
    * @see #of(String, String)
    */
+  @Contract("_ -> new")
   public static JTextures ofAll(String all) {
     return new JTextures().all(all);
   }
@@ -102,6 +111,7 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
    *
    * @see #sides(String, String, String)
    */
+  @Contract("_, _, _ -> new")
   public static JTextures ofSides(String top, String side, String bottom) {
     return new JTextures().sides(top, side, bottom);
   }
@@ -111,12 +121,13 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
    *
    * @see #layer0(String)
    */
+  @Contract("_ -> new")
   public static JTextures ofLayer0(String layer0) {
     return new JTextures().layer0(layer0);
   }
 
   @Override
-  protected @NotNull Map<String, String> delegate() {
+  public @NotNull Map<String, String> delegate() {
     return textures;
   }
 
@@ -133,6 +144,8 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
    * @see #layer0(String)
    * @see #vars(String...)
    */
+  @Contract(value = "_, _ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures var(String name, String val) {
     put(name, val);
     return this;
@@ -160,6 +173,8 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
    * @see #sides(String, String, String)
    * @see #of(String...)
    */
+  @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures vars(String... strings) {
     for (int i = 0; i < strings.length; i += 2) {
       final String name = strings[i];
@@ -174,6 +189,8 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
    *
    * @see #ofAll(String)
    */
+  @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures all(String all) {
     return var("all", all);
   }
@@ -183,6 +200,8 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
    *
    * @see #ofSides(String, String, String)
    */
+  @Contract(value = "_, _, _ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures sides(String top, String side, String bottom) {
     return var("top", top).var("side", side).var("bottom", bottom);
   }
@@ -190,6 +209,8 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
   /**
    * Add the {@code "particle"} texture variable. Identical to {@link #var}{@code ("particle", val)}.
    */
+  @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures particle(String val) {
     put("particle", val);
     return this;
@@ -200,26 +221,36 @@ public class JTextures extends ForwardingMap<String, String> implements JsonSeri
    *
    * @see #ofLayer0(String)
    */
+  @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures layer0(String val) {
     put("layer0", val);
     return this;
   }
 
+  @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures layer1(String val) {
     put("layer1", val);
     return this;
   }
 
+  @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures layer2(String val) {
     put("layer2", val);
     return this;
   }
 
+  @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures layer3(String val) {
     put("layer3", val);
     return this;
   }
 
+  @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures layer4(String val) {
     put("layer4", val);
     return this;

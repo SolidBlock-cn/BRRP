@@ -7,9 +7,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.minecraft.data.client.model.When;
+import net.fabricmc.api.EnvType;
 import net.minecraft.state.StateManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -32,6 +34,7 @@ import java.util.function.Supplier;
  *
  * @see net.minecraft.data.client.model.When.LogicalOperator
  */
+@PreferredEnvironment(EnvType.CLIENT)
 public class JWhenLogical extends ForwardingList<When> implements When, JsonSerializable {
   public final @NotNull LogicalOperator operator;
   public final @NotNull List<When> components;
@@ -62,6 +65,7 @@ public class JWhenLogical extends ForwardingList<When> implements When, JsonSeri
    *   {"waterlogged": "false" } ]}
    * }</pre>
    */
+  @Contract("_ -> new")
   public static JWhenLogical anyOf(When... conditions) {
     return new JWhenLogical(LogicalOperator.OR, Lists.newArrayList(conditions));
   }
@@ -69,6 +73,7 @@ public class JWhenLogical extends ForwardingList<When> implements When, JsonSeri
   /**
    * Create a simple JWhenLogical object, which, when used for rendering, passes only if all conditions is met. Note that vanilla Minecraft does not use this type of logical condition, and there is no guarantee that it takes effect.
    */
+  @Contract("_ -> new")
   public static JWhenLogical allOf(When... conditions) {
     return new JWhenLogical(LogicalOperator.AND, Lists.newArrayList(conditions));
   }
@@ -77,7 +82,7 @@ public class JWhenLogical extends ForwardingList<When> implements When, JsonSeri
    * Add a condition to its components. Of course, you can also assemble the conditions well when constructing. It is quite similar to {@link List#add(Object)}, but returns the object itself.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JWhenLogical addCondition(When condition) {
     components.add(condition);
     return this;
@@ -87,7 +92,7 @@ public class JWhenLogical extends ForwardingList<When> implements When, JsonSeri
    * Add conditions to its components. Of course, you can also assemble the conditions well when constructing. It is similar to {@link List#add(Object)}, but returns the object itself.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JWhenLogical addCondition(When... condition) {
     components.addAll(Arrays.asList(condition));
     return this;

@@ -4,6 +4,7 @@ import net.devtech.arrp.api.RRPPreGenEntrypoint;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
+import org.jetbrains.annotations.Blocking;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,7 @@ public class ARRP implements PreLaunchEntrypoint {
     ARRP.futures = futures;
   }
 
+  @Blocking
   public static void waitForPregen() throws ExecutionException, InterruptedException {
     if (futures != null) {
       for (Future<?> future : futures) {

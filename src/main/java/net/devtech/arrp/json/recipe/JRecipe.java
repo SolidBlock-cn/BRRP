@@ -1,6 +1,7 @@
 package net.devtech.arrp.json.recipe;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.InlineMe;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
@@ -57,6 +58,8 @@ public abstract class JRecipe implements Cloneable {
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
   @Deprecated
+  @InlineMe(replacement = "new JStonecuttingRecipe(ingredient, result)")
+  @Contract("_, _, _ -> new")
   public static JSmithingRecipe smithing(final JIngredient base, final JIngredient addition, final JResult result) {
     return new JSmithingRecipe(base, addition, result);
   }
@@ -65,6 +68,8 @@ public abstract class JRecipe implements Cloneable {
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
   @Deprecated
+  @InlineMe(replacement = "new JStonecuttingRecipe(ingredient, result)")
+  @Contract("_, _ -> new")
   public static JStonecuttingRecipe stonecutting(final JIngredient ingredient, final JStackedResult result) {
     return new JStonecuttingRecipe(ingredient, result);
   }
@@ -75,6 +80,8 @@ public abstract class JRecipe implements Cloneable {
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
   @Deprecated
+  @InlineMe(replacement = "new JShapedRecipe(result, pattern, keys)")
+  @Contract("_, _, _ -> new")
   public static JShapedRecipe shaped(final JPattern pattern, final JKeys keys, final JResult result) {
     return new JShapedRecipe(result, pattern, keys);
   }
@@ -83,6 +90,8 @@ public abstract class JRecipe implements Cloneable {
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
   @Deprecated
+  @InlineMe(replacement = "new JShapelessRecipe(result, ingredients)")
+  @Contract("_, _ -> new")
   public static JShapelessRecipe shapeless(final JIngredients ingredients, final JResult result) {
     return new JShapelessRecipe(result, ingredients);
   }
@@ -93,6 +102,8 @@ public abstract class JRecipe implements Cloneable {
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
   @Deprecated
+  @InlineMe(replacement = "new JBlastingRecipe(ingredient, result)")
+  @Contract("_, _ -> new")
   public static JBlastingRecipe blasting(final JIngredient ingredient, final JResult result) {
     return new JBlastingRecipe(ingredient, result);
   }
@@ -101,6 +112,8 @@ public abstract class JRecipe implements Cloneable {
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
   @Deprecated
+  @InlineMe(replacement = "new JSmeltingRecipe(ingredient, result)")
+  @Contract("_, _ -> new")
   public static JSmeltingRecipe smelting(final JIngredient ingredient, final JResult result) {
     return new JSmeltingRecipe(ingredient, result);
   }
@@ -109,6 +122,8 @@ public abstract class JRecipe implements Cloneable {
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
   @Deprecated
+  @InlineMe(replacement = "new JCampfireRecipe(ingredient, result)")
+  @Contract("_, _ -> new")
   public static JCampfireRecipe campfire(final JIngredient ingredient, final JResult result) {
     return new JCampfireRecipe(ingredient, result);
   }
@@ -117,6 +132,8 @@ public abstract class JRecipe implements Cloneable {
    * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
    */
   @Deprecated
+  @InlineMe(replacement = "new JSmokingRecipe(ingredient, result)")
+  @Contract("_, _ -> new")
   public static JSmokingRecipe smoking(final JIngredient ingredient, final JResult result) {
     return new JSmokingRecipe(ingredient, result);
   }
@@ -125,6 +142,7 @@ public abstract class JRecipe implements Cloneable {
    * Set the recipe group.
    */
   @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JRecipe group(final String group) {
     this.group = group;
     return this;
@@ -145,6 +163,7 @@ public abstract class JRecipe implements Cloneable {
    * @param delegate The RecipeJsonProvider whose serialization will be directly used.
    * @return The delegated JRecipe.
    */
+  @Contract("_ -> new")
   public static JRecipe delegate(final RecipeJsonProvider delegate) {
     return new Delegate(delegate);
   }
@@ -155,6 +174,7 @@ public abstract class JRecipe implements Cloneable {
    * @param delegate The CraftingRecipeJsonBuilder whose serialization will be directly used.
    * @return The delegated JRecipe.
    */
+  @Contract("_ -> new")
   public static JRecipe delegate(final CraftingRecipeJsonFactory delegate) {
     AtomicReference<RecipeJsonProvider> jsonProvider = new AtomicReference<>();
     delegate.offerTo(jsonProvider::set);

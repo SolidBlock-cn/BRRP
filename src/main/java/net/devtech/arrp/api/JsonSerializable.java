@@ -7,7 +7,7 @@ import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 
 /**
- * Implement this interface, and in the {@link net.devtech.arrp.impl.RuntimeResourcePackImpl#GSON} will use the method {@link #serialize} to serialize.<br>
+ * Implement this interface, and in the {@link net.devtech.arrp.impl.RuntimeResourcePackImpl#GSON}  the method {@link #serialize} will be used to serialize.<p>
  * To make your GSON able to use the method, do this in your GSONBuilder:
  * <pre>
  *   {@code
@@ -24,5 +24,8 @@ public interface JsonSerializable {
    */
   JsonElement serialize(Type typeOfSrc, JsonSerializationContext context);
 
+  /**
+   * The serializer to be registered in your GSONBuilder.
+   */
   JsonSerializer<JsonSerializable> SERIALIZER = JsonSerializable::serialize;
 }

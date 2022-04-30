@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "better_runtime_resource_pack",
-  "version": "0.6.1",
-  "name": "Better Runtime Resource Pack (derived from ARRP mod)",
-  "description": "BRRP is an extension of ARRP mod, which fixes some issues and adds some enhancements. The mod is trying the best to make it compatible with ARRP-dependent mods. Installing this mod does not require installing ARRP, and other mods depending on ARRP can depend on this mod.",
+  "version": "0.6.2",
+  "name": "Better Runtime Resource Pack",
+  "description": "BRRP is a library mod that can generate resource packs at runtime. It is an extension of ARRP mod, which fixes some issues and adds some enhancements. The mod is trying the best to make it compatible with ARRP-dependent mods. If you have installed BRRP you do not have to install ARRP again.",
   "authors": [
     "HalfOf2",
     "SolidBlock"
@@ -41,7 +41,7 @@
       "badges": ["library"]
     },
     "loom:injected_interfaces": {
-      "net/minecraft/util/Identifier": ["net/devtech/arrp/IdentifierExtension"]
+      "net/minecraft/class_2960": ["net/devtech/arrp/IdentifierExtension"]
     }
   }
 }

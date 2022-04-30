@@ -58,7 +58,7 @@ public abstract class JResultRecipe extends JRecipe {
   /**
    * Set the count of the result item.
    */
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JResultRecipe resultCount(int count) {
     this.result.count = count;
@@ -66,7 +66,7 @@ public abstract class JResultRecipe extends JRecipe {
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   @Override
   public JResultRecipe group(final String group) {
     return (JResultRecipe) super.group(group);

@@ -1,8 +1,10 @@
 package net.devtech.arrp.json.animation;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.InlineMe;
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
+import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class JAnimation implements Cloneable, JsonSerializable {
    * @deprecated Please directly call the constructor {@link #JAnimation()}.
    */
   @Deprecated
+  @InlineMe(replacement = "new JAnimation()")
   public static JAnimation animation() {
     return new JAnimation();
   }
@@ -36,6 +39,7 @@ public class JAnimation implements Cloneable, JsonSerializable {
    * @deprecated Please directly call the constructor {@link JFrame#JFrame(int)}.
    */
   @Deprecated
+  @InlineMe(replacement = "new JFrame(index)")
   public static JFrame frame(int index) {
     return new JFrame(index);
   }
@@ -50,36 +54,42 @@ public class JAnimation implements Cloneable, JsonSerializable {
   }
 
   @CanIgnoreReturnValue
+  @Contract("-> this")
   public JAnimation interpolate() {
     this.interpolate = true;
     return this;
   }
 
   @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JAnimation interpolate(boolean interpolate) {
     this.interpolate = interpolate;
     return this;
   }
 
   @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JAnimation width(int width) {
     this.width = width;
     return this;
   }
 
   @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JAnimation height(int height) {
     this.height = height;
     return this;
   }
 
   @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JAnimation frameTime(int time) {
     this.frametime = time;
     return this;
   }
 
   @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JAnimation add(int frame) {
     if (this.defaultFrames == null) {
       this.defaultFrames = new ArrayList<>();
@@ -89,6 +99,7 @@ public class JAnimation implements Cloneable, JsonSerializable {
   }
 
   @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JAnimation add(JFrame frame) {
     if (this.frames == null) {
       this.frames = new ArrayList<>();
@@ -98,11 +109,13 @@ public class JAnimation implements Cloneable, JsonSerializable {
   }
 
   @CanIgnoreReturnValue
+  @Contract("_ -> this")
   public JAnimation addFrame(int index) {
     return this.add(new JFrame(index));
   }
 
   @CanIgnoreReturnValue
+  @Contract("_, _ -> this")
   public JAnimation addFrame(int index, int time) {
     return this.add(new JFrame(index, time));
   }

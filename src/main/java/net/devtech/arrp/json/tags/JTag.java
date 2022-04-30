@@ -1,6 +1,7 @@
 package net.devtech.arrp.json.tags;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.InlineMe;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
@@ -18,6 +19,7 @@ import java.util.List;
  * <pre style=color:navy>blocks entity_types fluids functions game_events items worldgen</pre>
  * <p>A tag itself has an identifier. It is determined when writing the tag into the resource pack. If you needs to predetermine its identifier, please use {@link IdentifiedTag}.</p>
  */
+@SuppressWarnings("unused")
 public class JTag {
   /**
    * <p>Determines whether the tag content replaces existing contents (if so), instead of appending it.</p>
@@ -72,6 +74,7 @@ public class JTag {
    * @deprecated Please directly use {@code new JTag().replace()}.
    */
   @Deprecated
+  @InlineMe(replacement = "new JTag().replace()")
   public static JTag replacingTag() {
     return tag().replace();
   }
@@ -82,14 +85,14 @@ public class JTag {
    * @see #replace(boolean)
    */
   @CanIgnoreReturnValue
-  @Contract("-> this")
+  @Contract(value = "-> this", mutates = "this")
   public JTag replace() {
     this.replace = true;
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag replace(boolean replace) {
     this.replace = replace;
     return this;
@@ -107,7 +110,7 @@ public class JTag {
    * @implNote Usually you should add the identifier by calling {@link #add(Identifier)} or {@link #tag(Identifier)}.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag add(String identifier) {
     this.values.add(identifier);
     return this;
@@ -117,7 +120,7 @@ public class JTag {
    * Add the identifier of the entry to this tag.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag add(Identifier identifier) {
     this.values.add(identifier.toString());
     return this;
@@ -127,7 +130,7 @@ public class JTag {
    * Add identifiers of entries to this tag.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag add(Identifier... identifiers) {
     for (Identifier identifier : identifiers) {
       add(identifier);
@@ -139,21 +142,21 @@ public class JTag {
    * Assume this tag is a block tag, query the block id and add to the tag. Please confirm that when calling this method, the block is correctly registered. If you haven't registered the block, you can register with {@link Registry#register} at first.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addBlock(Block block) {
     add(Registry.BLOCK.getId(block));
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addBlocks(Iterable<Block> blocks) {
     blocks.forEach(this::addBlock);
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addBlocks(Block... blocks) {
     return addBlocks(Arrays.asList(blocks));
   }
@@ -162,21 +165,21 @@ public class JTag {
    * Assume this tag is an item tag, query the item id and add to the tag. Please confirm that when calling this method, the item is correctly registered. If you haven't registered the item, you can register with {@link Registry#register} at first.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addItem(ItemConvertible item) {
     add(Registry.ITEM.getId(item.asItem()));
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addItems(Iterable<ItemConvertible> items) {
     items.forEach(this::addItem);
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addItems(ItemConvertible... items) {
     return addItems(Arrays.asList(items));
   }
@@ -185,21 +188,21 @@ public class JTag {
    * Assume this tag is a fluid tag, query the fluid id and add to the tag. Please confirm that when calling this method, the fluid is correctly registered. If you haven't registered the fluid, you can register with {@link Registry#register} at first.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addFluid(Fluid fluid) {
     add(Registry.FLUID.getId(fluid));
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addFluids(Iterable<Fluid> fluids) {
     fluids.forEach(this::addFluid);
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addFluids(Fluid... fluids) {
     return this.addFluids(Arrays.asList(fluids));
   }
@@ -208,14 +211,14 @@ public class JTag {
    * Assume this tag is an entity-type tag, query the entity type id and add to the tag. Please confirm that when calling this method, the entity type is correctly registered. If you haven't registered the entity type, you can register with {@link Registry#register} at first.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addEntityType(EntityType<?> entityType) {
     add(Registry.ENTITY_TYPE.getId(entityType));
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addEntityTypes(Iterable<EntityType<?>> entityTypes) {
     entityTypes.forEach(this::addEntityType);
     return this;
@@ -232,7 +235,7 @@ public class JTag {
    */
   @Deprecated
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag tag(Identifier tag) {
     this.values.add('#' + tag.getNamespace() + ':' + tag.getPath());
     return this;
@@ -245,7 +248,7 @@ public class JTag {
    * @return The JTag instance itself, making it possible to chain-call.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addTag(Identifier tagIdentifier) {
     this.values.add("#" + tagIdentifier.toString());
     return this;
@@ -258,7 +261,7 @@ public class JTag {
    * @return The JTag instance itself, making it possible to chain-call.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addTagIds(Iterable<Identifier> tagIdentifiers) {
     tagIdentifiers.forEach(this::addTag);
     return this;
@@ -271,7 +274,7 @@ public class JTag {
    * @return The JTag instance itself, making it possible to chain-call.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addTagIds(Identifier... tagIdentifiers) {
     return addTagIds(Arrays.asList(tagIdentifiers));
   }
@@ -283,7 +286,7 @@ public class JTag {
    * @return The JTag instance itself, making it possible to chain-call.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addTag(IdentifiedTag tag) {
     this.values.add("#" + tag.identifier.toString());
     return this;
@@ -296,7 +299,7 @@ public class JTag {
    * @return The JTag instance itself, making it possible to chain-call.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addTags(Iterable<IdentifiedTag> tags) {
     tags.forEach(this::addTag);
     return this;
@@ -309,7 +312,7 @@ public class JTag {
    * @return The JTag instance itself, making it possible to chain-call.
    */
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addTags(IdentifiedTag... tags) {
     return addTags(Arrays.asList(tags));
   }

@@ -2,12 +2,14 @@ package net.devtech.arrp.json.loot;
 
 import com.google.common.collect.Lists;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.InlineMe;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootTable;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -55,6 +57,7 @@ public class JLootTable implements Cloneable {
    * @deprecated Please directly call the constructor {@link #JLootTable(String)}.
    */
   @Deprecated
+  @InlineMe(replacement = "new LootTable(type)")
   public static JLootTable loot(String type) {
     return new JLootTable(type);
   }
@@ -63,6 +66,7 @@ public class JLootTable implements Cloneable {
    * @deprecated Please directly call {@link JEntry#JEntry() new JEntry()}.
    */
   @Deprecated
+  @InlineMe(replacement = "new JEntry()")
   public static JEntry entry() {
     return new JEntry();
   }
@@ -72,6 +76,7 @@ public class JLootTable implements Cloneable {
    * @deprecated unintuitive name
    */
   @Deprecated
+  @InlineMe(replacement = "new JCondition(condition)")
   public static JCondition condition(String condition) {
     return new JCondition(condition);
   }
@@ -81,6 +86,7 @@ public class JLootTable implements Cloneable {
    * @deprecated Please use {@link JCondition#JCondition()}
    */
   @Deprecated
+  @InlineMe(replacement = "new JCondition(condition)")
   public static JCondition predicate(String condition) {
     return new JCondition(condition);
   }
@@ -89,6 +95,7 @@ public class JLootTable implements Cloneable {
    * @deprecated Please directly call {@link JFunction#JFunction(String)}.
    */
   @Deprecated
+  @InlineMe(replacement = "new JFunction(function)")
   public static JFunction function(String function) {
     return new JFunction(function);
   }
@@ -97,6 +104,7 @@ public class JLootTable implements Cloneable {
    * @deprecated Please directly call {@link JPool#JPool()}.
    */
   @Deprecated
+  @InlineMe(replacement = "new JPool()")
   public static JPool pool() {
     return new JPool();
   }
@@ -105,6 +113,7 @@ public class JLootTable implements Cloneable {
    * @deprecated Please directly call {@link JRoll#JRoll(int, int)}.
    */
   @Deprecated
+  @InlineMe(replacement = "new JRoll(min, max)")
   public static JRoll roll(int min, int max) {
     return new JRoll(min, max);
   }
@@ -154,28 +163,40 @@ public class JLootTable implements Cloneable {
    * @param blockId The id (as string) of the block.
    * @return The simplest block loot table.
    */
+  @Contract("_ -> new")
   public static JLootTable simple(String blockId) {
     return new JLootTable("minecraft:block").pool(JPool.simple(blockId).condition(new JCondition("survives_explosion")));
   }
 
+  @Contract("_, _ -> new")
   public static JLootTable ofPools(String type, List<JPool> pools) {
     final JLootTable lootTable = new JLootTable(type);
     lootTable.pools = pools;
     return lootTable;
   }
 
+  @Contract("_, _ -> new")
   public static JLootTable ofPools(String type, JPool... pools) {
     return ofPools(type, Arrays.asList(pools));
   }
 
+  @Contract("_, _ -> new")
   public static JLootTable ofEntries(String type, List<JEntry> entries) {
     return ofPools(type, JPool.ofEntries(entries));
   }
 
+  @Contract("_, _ -> new")
   public static JLootTable ofEntries(String type, JEntry... entries) {
     return ofPools(type, JPool.ofEntries(entries));
   }
 
+  /**
+   * Create a delegated loot table object, whose serialization will be directly used.
+   *
+   * @param delegate The vanilla loot table. Its serialization will be directly used when serializing.
+   * @return A new object.
+   */
+  @Contract("_ -> new")
   public static JLootTable delegate(LootTable delegate) {
     return new FromLootTable(delegate);
   }
@@ -189,8 +210,8 @@ public class JLootTable implements Cloneable {
     }
   }
 
+  @ApiStatus.Internal
   private static final class FromLootTable extends JLootTable implements JsonSerializable {
-
     private transient final LootTable delegate;
     private static final Gson GSON = LootGsons.getTableGsonBuilder().create();
 

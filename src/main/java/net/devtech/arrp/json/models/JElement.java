@@ -1,6 +1,8 @@
 package net.devtech.arrp.json.models;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.devtech.arrp.annotations.PreferredEnvironment;
+import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -29,6 +31,7 @@ import java.util.function.Function;
  * }</pre>
  */
 @SuppressWarnings("unused")
+@PreferredEnvironment(EnvType.CLIENT)
 public class JElement implements Cloneable {
   /**
    * The [x, y, z] of the position where the cuboid starts.
@@ -64,7 +67,7 @@ public class JElement implements Cloneable {
   }
 
   @CanIgnoreReturnValue
-  @Contract("_,_,_ -> this")
+  @Contract(value = "_,_,_ -> this", mutates = "this")
   public JElement from(float x, float y, float z) {
     this.from[0] = x;
     this.from[1] = y;
@@ -73,7 +76,7 @@ public class JElement implements Cloneable {
   }
 
   @CanIgnoreReturnValue
-  @Contract("_,_,_ -> this")
+  @Contract(value = "_,_,_ -> this", mutates = "this")
   public JElement to(float x, float y, float z) {
     this.to[0] = x;
     this.to[1] = y;
@@ -82,14 +85,14 @@ public class JElement implements Cloneable {
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JElement rotation(JRotation rotation) {
     this.rotation = rotation;
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JElement shade(boolean shade) {
     this.shade = shade;
     return this;
@@ -102,21 +105,21 @@ public class JElement implements Cloneable {
    */
   @Deprecated
   @CanIgnoreReturnValue
-  @Contract("-> this")
+  @Contract(value = "-> this", mutates = "this")
   public JElement shade() {
     this.shade = false;
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JElement faces(JFaces faces) {
     this.faces = faces;
     return this;
   }
 
   @CanIgnoreReturnValue
-  @Contract("_, _ -> this")
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JElement addFace(Direction direction, JFace face) {
     if (this.faces == null) {
       this.faces = new JFaces();
@@ -126,7 +129,7 @@ public class JElement implements Cloneable {
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JElement addAllFaces(JFace face) {
     if (this.faces == null) this.faces = new JFaces();
     this.faces.setAllFaces(face);
@@ -134,7 +137,7 @@ public class JElement implements Cloneable {
   }
 
   @CanIgnoreReturnValue
-  @Contract("_ -> this")
+  @Contract(value = "_ -> this", mutates = "this")
   public JElement addAllFaces(Function<Direction, JFace> faces) {
     if (this.faces == null) this.faces = new JFaces();
     this.faces.setAllFaces(faces);

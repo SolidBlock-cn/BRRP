@@ -1,9 +1,11 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.Contract;
 
 /**
  * <p>A <b>cooking recipe</b> is a recipe used in a furnace. It has several types: {@linkplain JBlastingRecipe blasting}, {@linkplain JCampfireRecipe campfire_cooking}, {@linkplain JSmeltingRecipe smelting} and {@linkplain JSmokingRecipe smoking}.</p>
@@ -119,12 +121,16 @@ public abstract class JCookingRecipe extends JRecipe {
     this.result = result.item;
   }
 
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JCookingRecipe experience(final float experience) {
     this.experience = experience;
 
     return this;
   }
 
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JCookingRecipe cookingTime(final int cookingtime) {
     this.cookingtime = cookingtime;
 

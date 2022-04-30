@@ -29,13 +29,13 @@ import java.util.Map;
  * TextureRegistry.registerWithName(Blocks.SMOOTH_SANDSTONE, "sandstone_top");
  * }</pre>
  * <p>then:</p>
- * <blockquote>
- * <p>{@code TextureRegistry.getTexture(Blocks.SANDSTONE, TextureKey.TOP)} returns <code style="color:maroon">minecraft:block/sandstone_top</code>.</p><p>
- * {@code TextureRegistry.getTexture(Blocks.SANDSTONE)} returns {@code null}.</p><p>
- * And {@code ResourceGeneratorHelper.getTextureId(Blocks.SANDSTONE, null)} may return <code style="color:maroon">minecraft:block/sandstone</code>, as the default behaviour.</p><p>
- * {@code TextureRegistry.getTexture(Blocks.SMOOTH_SANDSTONE)} returns <code style="color:maroon">minecraft:block/sandstone_top</code>, as registered above, and</p><p>
- * {@code TextureRegistry.getTexture(Blocks.SMOOTH_SANDSTONE, TextureKey.TOP)} also returns <code style="color:maroon">minecraft:block/sandstone_top</code>, because it fall backs to general registry.</p>
- * </blockquote>
+ * <ul>
+ * <li>{@code TextureRegistry.getTexture(Blocks.SANDSTONE, TextureKey.TOP)} returns <code style="color:maroon">minecraft:block/sandstone_top</code>.</li><li>
+ * {@code TextureRegistry.getTexture(Blocks.SANDSTONE)} returns {@code null}.</li><li>
+ * And {@code ResourceGeneratorHelper.getTextureId(Blocks.SANDSTONE, null)} may return <code style="color:maroon">minecraft:block/sandstone</code>, as the default behaviour.</li><li>
+ * {@code TextureRegistry.getTexture(Blocks.SMOOTH_SANDSTONE)} returns <code style="color:maroon">minecraft:block/sandstone_top</code>, as registered above, and</li><li>
+ * {@code TextureRegistry.getTexture(Blocks.SMOOTH_SANDSTONE, TextureKey.TOP)} also returns <code style="color:maroon">minecraft:block/sandstone_top</code>, because it fall backs to general registry.</li>
+ * </ul>
  */
 public final class TextureRegistry {
   /**

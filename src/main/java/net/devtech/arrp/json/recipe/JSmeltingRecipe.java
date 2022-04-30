@@ -7,6 +7,7 @@ import net.minecraft.util.Identifier;
 /**
  * The <b>smelting recipe</b>s are used for furnace blocks.
  */
+@SuppressWarnings("unused")
 public class JSmeltingRecipe extends JCookingRecipe {
   private static final String TYPE = "smelting";
 

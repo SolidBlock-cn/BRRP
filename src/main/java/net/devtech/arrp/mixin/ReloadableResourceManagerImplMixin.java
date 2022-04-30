@@ -6,10 +6,10 @@ import net.devtech.arrp.api.RRPCallbackConditional;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.spongepowered.asm.mixin.Final;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -23,7 +23,7 @@ public abstract class ReloadableResourceManagerImplMixin {
   @Shadow
   @Final
   private ResourceType type;
-  private static final Logger ARRP_LOGGER = LogManager.getLogger("ARRP/LifecycledResourceManagerImpl");
+  private static final Logger ARRP_LOGGER = LoggerFactory.getLogger("ARRP/ReloadableResourceManagerImplMixin");
 
   @ModifyVariable(method = "reload",
       at = @At(value = "HEAD"),
