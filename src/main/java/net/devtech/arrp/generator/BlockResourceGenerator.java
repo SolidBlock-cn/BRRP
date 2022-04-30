@@ -290,7 +290,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @NotNull
   default Identifier getStonecuttingRecipeId() {
-    return getRecipeId().brrp_prepend("_from_stonecutting");
+    return getRecipeId().brrp_append("_from_stonecutting");
   }
 
   /**

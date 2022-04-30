@@ -1,4 +1,4 @@
 {
   "modmenu.descriptionTranslation.better_runtime_resource_pack": "BRRP is a library mod that can generate resource packs at runtime. It is an extension of ARRP mod, which fixes some issues and adds some enhancements. The mod is trying the best to make it compatible with ARRP-dependent mods. If you have installed BRRP you do not have to install ARRP again.",
-  "modmenu.summaryTranslation.better_runtime_resource_pack": "Library mod to generate resource packs at runtime."
+  "modmenu.summaryTranslation.better_runtime_resource_pack": "Library mod to generate resource packs at runtime. Extension of ARRP mod."
 }
