@@ -1,4 +1,4 @@
 {
   "modmenu.descriptionTranslation.better_runtime_resource_pack": "BRRP 是用於在運行時生成資源包的庫模組，基於 ARRP 模組進行擴展，同時修復了一些漏洞，增強了一些功能。本模組儘可能兼容依賴 ARRP 的模組。若已安裝了 BRRP，則不再需要單獨安裝 ARRP。",
-  "modmenu.summaryTranslation.better_runtime_resource_pack": "本模組用於在運行時生成資源包。"
+  "modmenu.summaryTranslation.better_runtime_resource_pack": "本模組用於在運行時生成資源包。基於 ARRP 模組進行擴展。"
 }

@@ -293,8 +293,8 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @NotNull
   @ApiStatus.AvailableSince("0.6.2")
-  private Identifier getStonecuttingRecipeId() {
-    return getRecipeId().brrp_prepend("_from_stonecutting");
+  default Identifier getStonecuttingRecipeId() {
+    return getRecipeId().brrp_append("_from_stonecutting");
   }
 
   /**
