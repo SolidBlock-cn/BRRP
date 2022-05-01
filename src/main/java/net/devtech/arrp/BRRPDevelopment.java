@@ -20,6 +20,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricMaterialBuilder;
+import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
+import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.*;
 import net.minecraft.client.MinecraftClient;
@@ -194,6 +197,10 @@ public class BRRPDevelopment implements ModInitializer {
     RRPCallbackConditional.BEFORE_VANILLA.register(
         (resourceType, builder) -> builder.add(refreshPack(resourceType))
     );
+
+    FlammableBlockRegistry.getDefaultInstance().add(IRON_BLOCK, 100, 100);
+    FuelRegistry.INSTANCE.add(IRON_BLOCK, 1);
+    CompostingChanceRegistry.INSTANCE.add(IRON_BLOCK, 1f);
 
     if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
       client();
