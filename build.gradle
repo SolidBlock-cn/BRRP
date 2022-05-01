@@ -39,6 +39,10 @@ dependencies {
 subprojects {
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/fabric-data-generation-api.accesswidener")
+}
+
 processResources {
     inputs.property "version", version
 
