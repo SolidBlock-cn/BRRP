@@ -43,5 +43,6 @@
     "loom:injected_interfaces": {
       "net/minecraft/class_2960": ["net/devtech/arrp/IdentifierExtension"]
     }
-  }
+  },
+  "accessWidener": "fabric-data-generation-api.accesswidener"
 }

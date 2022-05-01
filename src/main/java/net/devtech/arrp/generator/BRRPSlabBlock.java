@@ -8,13 +8,13 @@ import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
-import net.devtech.arrp.mixin.BlockLootTableGeneratorAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.data.client.model.TextureKey;
+import net.minecraft.data.server.BlockLootTableGenerator;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,7 +92,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
 
   @Override
   public JLootTable getLootTable() {
-    return JLootTable.delegate(BlockLootTableGeneratorAccessor.slabDrops(this).build());
+    return JLootTable.delegate(BlockLootTableGenerator.slabDrops(this).build());
   }
 
   /**
