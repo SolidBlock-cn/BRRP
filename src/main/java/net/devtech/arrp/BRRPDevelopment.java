@@ -48,7 +48,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BuiltinBiomes;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -299,7 +298,7 @@ public class BRRPDevelopment implements ModInitializer {
     ColorProviderRegistry.BLOCK.register(
         (state, world, pos, tintIndex) -> {
           if (world == null || pos == null) {
-            return BiomeColors.WATER_COLOR.getColor(BuiltinBiomes.getDefaultBiome().value(), 0.5, 0.5);
+            return -1;
           }
           return BiomeColors.getWaterColor(world, pos);
         },

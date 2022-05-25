@@ -4,7 +4,6 @@ import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
@@ -28,7 +27,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.PackResourceMetadata;
 import net.minecraft.resource.metadata.PackResourceMetadataReader;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
@@ -449,11 +448,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   }
 
   @Override
-  public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, int maxDepth, Predicate<String> pathFilter) {
+  public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, Predicate<Identifier> allowedPathPredicate) {
     this.lock();
     Set<Identifier> identifiers = new HashSet<>();
     for (Identifier identifier : this.getSys(type).keySet()) {
-      if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix) && pathFilter.test(identifier.getPath())) {
+      if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix) && allowedPathPredicate.test(identifier)) {
         identifiers.add(identifier);
       }
     }
@@ -484,9 +483,9 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   @Override
   public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
     if (metaReader instanceof PackResourceMetadataReader) {
-      return (T) new PackResourceMetadata(new LiteralText("Runtime resource pack"), packVersion);
+      return (T) new PackResourceMetadata(Text.literal("Runtime resource pack"), packVersion);
     }
-    return metaReader.fromJson(new JsonObject());
+    return null;
   }
 
   @Override
