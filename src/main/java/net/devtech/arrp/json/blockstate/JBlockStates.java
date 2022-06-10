@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.blockstate;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -13,7 +14,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -48,16 +48,38 @@ public class JBlockStates implements JsonSerializable {
     this.multiparts = multiparts;
   }
 
+  /**
+   * Create a new JBlockStates object with the specified variants. In this case, calling {@link #add} will throw an {@link UnsupportedOperationException}.
+   *
+   * @param variants The variant definition of the block states to be used.
+   * @return A new JBlockStates object.
+   */
+  @Contract(value = "_ -> new", pure = true)
   public static JBlockStates ofVariants(JVariants variants) {
     return new JBlockStates(variants, null);
   }
 
+  /**
+   * Create a new JBlockStates object with the specified multiparts. The parameter {@code multiparts} will be directly used as a field. If it is unmodifiable, you shouldn't call methods like {@link #add}. If it is modifiable, calling {@link #add} will affect this parameter.
+   *
+   * @param multiparts The list of multiparts. In this case, the parameter will be directly used as the field.
+   * @return A new JBlockStates object.
+   */
+  @Contract(value = "_ -> new", pure = true)
   public static JBlockStates ofMultiparts(List<JMultipart> multiparts) {
     return new JBlockStates(null, multiparts);
   }
 
+  /**
+   * Create a new JBlockStates object with varargs. The parameter {@code multiparts} is a vararg, and since 0.7.0 will be converted to an array list through {@link Lists#newArrayList}.<p>However, for BRRP versions before 0.7.0, it will be {@link java.util.Arrays#asList(Object[])}, which means it <i>will throw</i> {@link UnsupportedOperationException} if you call {@link #add}. This bug is fixed in 0.7.0. Therefore, <u>if you use this method and call {@link #add} thereafter, you're supposed to require at least BRRP 0.7.0</u> (which can be defined in {@code fabric.mod.json}).
+   *
+   * @param multiparts The varargs of multiparts.
+   * @return A new JBlockStates object.
+   * @since 0.7.0 The multiparts field is no longer a fixed-length list.
+   */
+  @Contract(value = "_ -> new", pure = true)
   public static JBlockStates ofMultiparts(JMultipart... multiparts) {
-    return ofMultiparts(Arrays.asList(multiparts));
+    return ofMultiparts(Lists.newArrayList(multiparts));
   }
 
   /**
@@ -73,9 +95,9 @@ public class JBlockStates implements JsonSerializable {
   }
 
   /**
-   * Add a variant definition for a block states definition of variants.
+   * Add a multipart definition for a block states definition of multiparts.
    *
-   * @throws IllegalStateException if the block states definition is for multiples (for example, created from {@link #ofVariants(JVariants)}).
+   * @throws IllegalStateException if the block states definition is for variants (for example, created from {@link #ofVariants(JVariants)}).
    */
   @Contract(value = "_ -> this", mutates = "this")
   public JBlockStates add(JMultipart multipart) {
@@ -85,7 +107,7 @@ public class JBlockStates implements JsonSerializable {
   }
 
   /**
-   * Simple "upgrade" the old version jState to the improved version.
+   * Simply "upgrades" the old version {@code JState} object to the improved version.
    */
   public static JBlockStates of(@SuppressWarnings("deprecation") JState jState) {
     final JBlockStates instance;
