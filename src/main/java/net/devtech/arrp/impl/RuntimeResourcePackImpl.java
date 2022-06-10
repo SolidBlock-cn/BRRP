@@ -24,12 +24,10 @@ import net.minecraft.advancement.Advancement;
 import net.minecraft.loot.BinomialLootTableRange;
 import net.minecraft.loot.ConstantLootTableRange;
 import net.minecraft.loot.UniformLootTableRange;
+import net.minecraft.resource.AbstractFileResourcePack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.metadata.PackResourceMetadata;
-import net.minecraft.resource.metadata.PackResourceMetadataReader;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,6 +36,7 @@ import org.jetbrains.annotations.ApiStatus;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -79,6 +78,13 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       .registerTypeAdapter(ConstantLootTableRange.class, new ConstantLootTableRange.Serializer())
       .registerTypeHierarchyAdapter(Advancement.Task.class, (JsonSerializer<Advancement.Task>) (builder, type, jsonSerializationContext) -> builder.toJson())
       .create();
+  // if it works, don't touch it
+  /**
+   * @since BRRP 0.7.0, ARRP 0.6.2
+   * Author: Devan-Kerman
+   */
+  @ApiStatus.AvailableSince("0.7.0")
+  static final Set<String> KEY_WARNINGS = Collections.newSetFromMap(new ConcurrentHashMap<>());
   // @formatter:on
   private static final Logger LOGGER = LogManager.getLogger(RuntimeResourcePackImpl.class);
 
@@ -110,9 +116,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
         LOGGER.error("Unable to write to RRP config!", ex);
       }
     }
-    EXECUTOR_SERVICE = Executors.newFixedThreadPool(processors, new ThreadFactoryBuilder().setDaemon(true).setNameFormat("ARRP-Workers-%s").build());
+    EXECUTOR_SERVICE = Executors.newFixedThreadPool(processors, new ThreadFactoryBuilder().setDaemon(true).setNameFormat("BRRP-Workers-%s").build());
     DUMP = dump;
     DEBUG_PERFORMANCE = performance;
+    KEY_WARNINGS.add("filter");
+    KEY_WARNINGS.add("language");
   }
 
   public final int packVersion;
@@ -128,6 +136,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   @Deprecated
   private final Map<Identifier, JLang> langMergable = new ConcurrentHashMap<>();
   private final Map<Identifier, JLang> langMergeable = langMergable;
+  private boolean forbidsDuplicateResource = false;
 
   public RuntimeResourcePackImpl(Identifier id) {
     this(id, 5);
@@ -140,7 +149,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   private static byte[] serialize(Object object) {
     UnsafeByteArrayOutputStream ubaos = new UnsafeByteArrayOutputStream();
-    OutputStreamWriter writer = new OutputStreamWriter(ubaos);
+    OutputStreamWriter writer = new OutputStreamWriter(ubaos, StandardCharsets.UTF_8);
     GSON.toJson(object, writer);
     try {
       writer.close();
@@ -152,6 +161,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   private static Identifier fix(Identifier identifier, String prefix, String append) {
     return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
+  }
+
+  @Override
+  public void setForbidsDuplicateResource(boolean b) {
+    forbidsDuplicateResource = true;
   }
 
   @Override
@@ -205,7 +219,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   @Override
   public Future<byte[]> addAsyncResource(ResourceType type, Identifier path, CallableFunction<Identifier, byte[]> data) {
     Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.get(path));
-    this.getSys(type).put(path, () -> {
+    final Map<Identifier, Supplier<byte[]>> sys = this.getSys(type);
+    if (forbidsDuplicateResource && sys.containsKey(path)) {
+      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getName()));
+    }
+    sys.put(path, () -> {
       try {
         return future.get();
       } catch (InterruptedException | ExecutionException e) {
@@ -217,17 +235,28 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> func) {
-    this.getSys(type).put(path, new Memoized<>(func, path));
+    final Map<Identifier, Supplier<byte[]>> sys = this.getSys(type);
+    if (forbidsDuplicateResource && sys.containsKey(path)) {
+      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getName()));
+    }
+    sys.put(path, new Memoized<>(func, path));
   }
 
   @Override
   public byte[] addResource(ResourceType type, Identifier path, byte[] data) {
-    this.getSys(type).put(path, Suppliers.ofInstance(data));
+    final Map<Identifier, Supplier<byte[]>> sys = this.getSys(type);
+    if (forbidsDuplicateResource && sys.containsKey(path)) {
+      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getName()));
+    }
+    sys.put(path, Suppliers.ofInstance(data));
     return data;
   }
 
   @Override
   public Future<byte[]> addAsyncRootResource(String path, CallableFunction<String, byte[]> data) {
+    if (forbidsDuplicateResource && root.containsKey(path)) {
+      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getName()));
+    }
     Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.get(path));
     this.root.put(path, () -> {
       try {
@@ -241,23 +270,37 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data) {
+    if (forbidsDuplicateResource && root.containsKey(path)) {
+      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getName()));
+    }
     this.root.put(path, new Memoized<>(data, path));
   }
 
   @Override
   public byte[] addRootResource(String path, byte[] data) {
+    if (forbidsDuplicateResource && root.containsKey(path)) {
+      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getName()));
+    }
     this.root.put(path, () -> data);
     return data;
   }
 
   @Override
   public byte[] addAsset(Identifier id, byte[] data) {
-    return this.addResource(ResourceType.CLIENT_RESOURCES, id, data);
+    if (forbidsDuplicateResource && assets.containsKey(id)) {
+      throw new IllegalArgumentException(String.format("Duplicate asset id %s in runtime resource pack %s!", id, getName()));
+    }
+    assets.put(id, Suppliers.ofInstance(data));
+    return data;
   }
 
   @Override
   public byte[] addData(Identifier id, byte[] data) {
-    return this.addResource(ResourceType.SERVER_DATA, id, data);
+    if (forbidsDuplicateResource && this.data.containsKey(id)) {
+      throw new IllegalArgumentException(String.format("Duplicate data id %s in runtime resource pack %s!", id, getName()));
+    }
+    this.data.put(id, Suppliers.ofInstance(data));
+    return data;
   }
 
   @Override
@@ -483,13 +526,26 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     return namespaces;
   }
 
-  @SuppressWarnings("unchecked")
+  /**
+   * 本方法与 BRRP 0.7.0 版本根据 ARRP 0.6.2 进行了修改，作者 Devan Kerman。
+   */
   @Override
   public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
-    if (metaReader instanceof PackResourceMetadataReader) {
-      return (T) new PackResourceMetadata(new LiteralText("Runtime resource pack"), packVersion);
+    InputStream stream = this.openRoot("pack.mcmeta");
+    if (stream != null) {
+      return AbstractFileResourcePack.parseMetadata(metaReader, stream);
+    } else {
+      if (metaReader.getKey().equals("pack")) {
+        JsonObject object = new JsonObject();
+        object.addProperty("pack_format", this.packVersion);
+        object.addProperty("description", "runtime resource pack");
+        return metaReader.fromJson(object);
+      }
+      if (KEY_WARNINGS.add(metaReader.getKey())) {
+        LOGGER.info("'" + metaReader.getKey() + "' is an unsupported metadata key");
+      }
+      return metaReader.fromJson(new JsonObject());
     }
-    return metaReader.fromJson(new JsonObject());
   }
 
   @Override
@@ -554,12 +610,20 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   @Override
   public void clearResources(ResourceType side) {
     getSys(side).clear();
+    if (side == ResourceType.CLIENT_RESOURCES) langMergeable.clear();
   }
 
   @Override
   public void clearResources() {
     assets.clear();
     data.clear();
+    root.clear();
+    langMergeable.clear();
+  }
+
+  @Override
+  public void clearRootResources() {
+    root.clear();
   }
 
   private Map<Identifier, Supplier<byte[]>> getSys(ResourceType side) {
