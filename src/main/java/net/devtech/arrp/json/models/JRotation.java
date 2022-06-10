@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Contract;
  * new JRotation(Direction.Axis.X, 8, 8, 8, 45).rescale(true);
  * }</pre>
  */
+@SuppressWarnings("unused")
 @PreferredEnvironment(EnvType.CLIENT)
 public class JRotation implements Cloneable {
   public final float[] origin = new float[3];

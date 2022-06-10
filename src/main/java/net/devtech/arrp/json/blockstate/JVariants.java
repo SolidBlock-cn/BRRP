@@ -76,7 +76,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
   @Contract("_ -> new")
   public static JVariants upgrade(@SuppressWarnings("deprecation") JVariant jVariant) {
     final JVariants instance = new JVariants();
-    jVariant.models.forEach((k, v) -> instance.put(k, new JBlockModel[]{v}));
+    jVariant.models.forEach((k, v) -> instance.put(k, v.toArray(JBlockModel[]::new)));
     return instance;
   }
 
