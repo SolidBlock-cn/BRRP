@@ -1,4 +1,4 @@
-BRRP (Better Runtime Resource Pack), is a library mod base on [ARRP](https://github.com/Devan-Kerman/ARRP) with some enhancements. This mod provides all features of ARRP, fixes some bugs that exist in ARRP, and provides some new features.
+BRRP (Better Runtime Resource Pack), is a branch of [ARRP](https://github.com/Devan-Kerman/ARRP) mod. This mod provides all features of ARRP, fixes some bugs that exist in ARRP, and provides some new features.
 
 Welcome to join Tencent QQ group **587928350** or KaiHeiLa channel invitation code **KlFS0n** to experience the latest update of this mod.
 
@@ -155,7 +155,7 @@ And then, in your `fabric.mod.json`, add:
     // [...]
 
     // "*" means "any version"; you can also specify versions, such as ">=0.6.0".
-    // Don't stupidly leave these comment in the JSON
+    // Don't leave these comment in the JSON
     "better_runtime_resource_pack": "*"
   }
 }

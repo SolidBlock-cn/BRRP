@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.loot;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
@@ -16,7 +17,6 @@ import net.minecraft.loot.LootTableRange;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -76,24 +76,46 @@ public class JPool implements Cloneable {
   @SerializedName("bonus_rolls")
   public LootTableRange bonusRollsProvider;
 
+  /**
+   * Create a simple loot table pool with no entry. You may also consider other static methods, such as {@link #simple} or {@link #ofEntries}.
+   */
   public JPool() {
   }
 
-  @Contract("_ -> new")
+  /**
+   * Create a simplest loot pool, with only one roll and a sole entry of item.
+   *
+   * @param itemId The identifier of the item.
+   * @return A new JPool object.
+   */
+  @Contract(value = "_ -> new", pure = true)
   public static JPool simple(String itemId) {
-    return new JPool().rolls(1).bonus(1).entry(new JEntry("item", itemId));
+    return ofEntries(new JEntry("item", itemId));
   }
 
-  @Contract("_ -> new")
+  /**
+   * Create a simple loot pool, with only one roll and the list of entries. The list will be directly used as a field.
+   *
+   * @param entries The list of loot pool entries. If will be directly used as the field. If it is unmodifiable, you should not call methods that modify it, such as {@link #entry}.
+   * @return A new JPool object with the specified entries.
+   */
+  @Contract(value = "_ -> new", pure = true)
   public static JPool ofEntries(List<JEntry> entries) {
     final JPool pool = new JPool().rolls(1).bonus(1);
     pool.entries = entries;
     return pool;
   }
 
-  @Contract("_ -> new")
+  /**
+   * Create a simple loot pool, with only one roll and the specified entries.<p>Please note that parameter {@code entries} is a "varargs", and will be used to create a new array list with {@link Lists#newArrayList}. However, for BRRP versions before 0.7.0, it was a fixed-size list created by {@link java.util.Arrays#asList}, which will throw an {@link UnsupportedOperationException} if you add an element with {@link #entry(JEntry)}, and can be seen as <b>a bug before 0.7.0</b>. Therefore, <u>if you create an object with this method and adds elements to the list of entries thereafter, you'd better demand that the BRRP version is >=0.7.0</u>, which can be defined in your {@code fabric.mod.json}.
+   *
+   * @param entries The loot pool entries.
+   * @return A new JPool object with the specified entries.
+   * @since The {@link #entries} field is no longer fixed-length.
+   */
+  @Contract(value = "_ -> new", pure = true)
   public static JPool ofEntries(JEntry... entries) {
-    return ofEntries(Arrays.asList(entries));
+    return ofEntries(Lists.newArrayList(entries));
   }
 
   /**

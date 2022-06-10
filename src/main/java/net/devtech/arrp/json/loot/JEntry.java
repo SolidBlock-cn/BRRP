@@ -14,6 +14,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @see LootPoolEntry
+ */
 @SuppressWarnings("unused")
 public class JEntry implements Cloneable {
   /**

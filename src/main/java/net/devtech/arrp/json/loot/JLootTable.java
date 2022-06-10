@@ -12,9 +12,11 @@ import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @see LootTable
+ */
 public class JLootTable implements Cloneable {
   /**
    * The type of the loot table. Allowed values: {@code minecraft:empty}, {@code minecraft:entity}, {@code minecraft:block}, {@code minecraft:chest}, {@code minecraft:fishing}, {@code minecraft:advancement_reward}, {@code minecraft:barter}, {@code minecraft:command}, {@code minecraft:selector}, {@code minecraft:advancement_entity}, and {@code minecraft:generic}.
@@ -32,20 +34,41 @@ public class JLootTable implements Cloneable {
   /**
    * Create a simple loot table.
    *
-   * @param type The loot table type. Allowed values: {@code minecraft:empty}, {@code minecraft:entity}, {@code minecraft:block}, {@code minecraft:chest}, {@code minecraft:fishing}, {@code minecraft:advancement_reward}, {@code minecraft:barter}, {@code minecraft:command}, {@code minecraft:selector}, {@code minecraft:advancement_entity}, and {@code minecraft:generic}.
+   * @param type The loot table type. Please refer to {@link #type}.
    */
   public JLootTable(String type) {
     this.type = type;
   }
 
+  /**
+   * Create a simple loot table with the specified type and pool.
+   *
+   * @param type The loot table type. Please refer to {@link #type}.
+   * @param pool The single loot pool of the loot table.
+   */
   public JLootTable(String type, JPool pool) {
     this(type, Lists.newArrayList(pool));
   }
 
+  /**
+   * Create a simple loot table with the specified type and pools.<p>
+   * Please note that parameter {@code pools} is a "varargs", and will be used to create a new array list with {@link Lists#newArrayList}. However, for BRRP versions before 0.7.0, it was a fixed-size list created by {@link java.util.Arrays#asList}, which will throw an {@link UnsupportedOperationException} if you add an element with {@link #pool(JPool)}, and can be seen as <b>a bug before 0.7.0</b>. Therefore, <u>if you create an object with this method and adds elements to the pool list thereafter, you'd better demand that the BRRP version is >=0.7.0</u>, which can be defined in your {@code fabric.mod.json}.
+   *
+   * @param type  The loot table type. Please refer to {@link #type}.
+   * @param pools The loot table pools varargs.
+   * @since 0.7.0 The {@code pools} field is no longer fixed-length.
+   */
   public JLootTable(String type, JPool... pools) {
-    this(type, Arrays.asList(pools));
+    this(type, Lists.newArrayList(pools));
   }
 
+  /**
+   * Create a simple loot table with the specified type and the list of pools.<p>
+   * The parameter {@code pools} is directly used as a field. If it is unmodifiable, you should not call {@link #pool} to modify it.
+   *
+   * @param type  The loot table type. Please refer to {@link #type}.
+   * @param pools The list of loot table pools. It will be directly used as the field.
+   */
   public JLootTable(String type, List<JPool> pools) {
     this(type);
     this.pools = pools;
@@ -152,29 +175,59 @@ public class JLootTable implements Cloneable {
    * @param blockId The id (as string) of the block.
    * @return The simplest block loot table.
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   public static JLootTable simple(String blockId) {
     return new JLootTable("minecraft:block").pool(JPool.simple(blockId).condition(new JCondition("survives_explosion")));
   }
 
-  @Contract("_, _ -> new")
+  /**
+   * Create a simple loot table with the specified type and the list of pools.<p>
+   * The parameter {@code pools} is directly used as a field. If it is unmodifiable, you should not call {@link #pool} to modify it.
+   *
+   * @param type  The loot table type. Please refer to {@link #type}.
+   * @param pools The list of loot table pools. It will be directly used as the field.
+   * @return A new loot table.
+   */
+  @Contract(value = "_, _ -> new", pure = true)
   public static JLootTable ofPools(String type, List<JPool> pools) {
-    final JLootTable lootTable = new JLootTable(type);
-    lootTable.pools = pools;
-    return lootTable;
+    return new JLootTable(type, pools);
   }
 
-  @Contract("_, _ -> new")
+  /**
+   * Create a simple loot table with the specified type and pools.<p>
+   * Please note that parameter {@code pools} is a "varargs", and will be used to create a new array list with {@link Lists#newArrayList}. However, for BRRP versions before 0.7.0, it was a fixed-size list created by {@link java.util.Arrays#asList}, which will throw an {@link UnsupportedOperationException} if you add an element with {@link #pool(JPool)}, and can be seen as <b>a bug before 0.7.0</b>. Therefore, <u>if you create an object with this method and adds elements to the pool list thereafter, you'd better demand that the BRRP version is >=0.7.0</u>, which can be defined in your {@code fabric.mod.json}.
+   *
+   * @param type  The loot table type. Please refer to {@link #type}.
+   * @param pools The loot table pools varargs.
+   * @return A new loot table.
+   * @since 0.7.0 The {@code pools} field is no longer fixed-length.
+   */
+  @Contract(value = "_, _ -> new", pure = true)
   public static JLootTable ofPools(String type, JPool... pools) {
-    return ofPools(type, Arrays.asList(pools));
+    return ofPools(type, Lists.newArrayList(pools));
   }
 
-  @Contract("_, _ -> new")
+  /**
+   * Create a simple loot table with the specified type, and a sole pool with the specified entries.
+   *
+   * @param type    The loot table type.
+   * @param entries The list of entries of the pool.
+   * @return A new JLootTable object which has one pool.
+   */
+  @Contract(value = "_, _ -> new", pure = true)
   public static JLootTable ofEntries(String type, List<JEntry> entries) {
     return ofPools(type, JPool.ofEntries(entries));
   }
 
-  @Contract("_, _ -> new")
+  /**
+   * Create a simple loot table with the specified type, and a sole pool with the specified entries.
+   *
+   * @param type    The loot table type.
+   * @param entries The varargs entries of the pool.
+   * @return A new JLootTable object which has one pool.
+   * @since 0.7.0 The list of entries is no longer fixed-length. See {@link JPool#ofEntries(JEntry...)}.
+   */
+  @Contract(value = "_, _ -> new", pure = true)
   public static JLootTable ofEntries(String type, JEntry... entries) {
     return ofPools(type, JPool.ofEntries(entries));
   }
