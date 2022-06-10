@@ -1,4 +1,4 @@
-BRRP（Better Runtime Resource Pack，更好的运行时资源包），是基于 [ARRP](https://github.com/Devan-Kerman/ARRP) 模组的库模组，并进行了一些增强。本模组提供 ARRP 的所有功能，并修复 ARRP 模组存在的一些问题，同时提供了一系列新的功能。
+BRRP（Better Runtime Resource Pack，更好的运行时资源包），是 [ARRP](https://github.com/Devan-Kerman/ARRP) 模组的一个分支。本模组提供 ARRP 的所有功能，并修复 ARRP 模组存在的一些问题，同时提供了一系列新的功能。
 
 欢迎加入QQ群**587928350**或开黑啦频道邀请码**KlFS0n**体验本模组的最新更新。
 
@@ -122,7 +122,7 @@ Minecraft 和 Fabric API 的数据生成器（data generator）生成的也不�
 
 ## 如何将本模组用作您的项目的依赖
 
-如果需要将本模组作为您的依赖，并使用本模组的 API，您需要先下载 <code>**brrp-版本-游戏版本.jar**</code> 和 <code>**brrp-版本-游戏版本-sources.jar**</code> 这两个文件，并放在您的设备存储的任意地方（建议直接存储在项目文件夹内或者附近，两个文件都应该放在同一个文件夹内，并且，如有需要，将文件加入 `.gitignore`；）。
+如果需要将本模组作为您的依赖，并使用本模组的 API，您需要先下载 <code>**brrp-版本-游戏版本.jar**</code> 和 <code>**brrp-版本-游戏版本-sources.jar**</code> 这两个文件，并放在您的设备存储的任意地方（建议直接存储在项目文件夹内或者附近，两个文件都应该放在同一个文件夹内，并且，如有需要，将文件加入 `.gitignore`）。
 
 然后，在 `build.gradle` 中设置以下内容：
 
@@ -148,14 +148,14 @@ dependencies {
 
 然后，在您的 `fabric.mod.json` 中，加入：
 
-```json lines
+```json5
 {
   // [...]
   "depends": {
     // [...]
 
     // “*”表示“任意版本”。您亦可指定特定版本，如“>=0.6.0”。
-    // 注意不要在 JSON 里面傻乎乎地留下这些注释。
+    // 注意不要在 JSON 里面留下这些注释。
     "better_runtime_resource_pack": "*"
   }
 }

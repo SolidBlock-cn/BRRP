@@ -16,6 +16,8 @@ import java.util.Collection;
 
 /**
  * A condition in a loot table is called "predicate"
+ *
+ * @see LootCondition
  */
 @SuppressWarnings("unused")
 public class JCondition implements Cloneable, JsonSerializable {
