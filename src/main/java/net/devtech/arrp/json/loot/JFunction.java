@@ -16,6 +16,8 @@ import java.util.List;
 /**
  * <p>The loot table function is in essence an "item modifier". The field "function" is the identifier (as string) of the loot table function.</p>
  * <p>The loot table function is quite complicated, so this class directly uses the field {@link #properties} to add any parameter.</p>
+ *
+ * @see LootFunction
  */
 public class JFunction implements Cloneable, JsonSerializable {
   public List<JCondition> conditions;
