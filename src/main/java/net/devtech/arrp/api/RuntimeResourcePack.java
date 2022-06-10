@@ -16,11 +16,12 @@ import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.minecraft.advancement.Advancement;
-import net.minecraft.item.ItemConvertible;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -91,6 +92,14 @@ public interface RuntimeResourcePack extends ResourcePack {
   @InlineMe(replacement = "new Identifier(namespace, path)")
   static Identifier id(String namespace, String path) {
     return new Identifier(namespace, path);
+  }
+
+  /**
+   * Set this to {@code true} will make it throw an exception when a duplicate resource is added.
+   */
+  @ApiStatus.AvailableSince("0.7.0")
+  default void setForbidsDuplicateResource(boolean b) {
+    // subclasses should override this.
   }
 
   /**
@@ -247,9 +256,11 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a recipe for an item (including block).
    * <p>
-   * {@code ".json"} is automatically appended to the path
+   * {@code ".json"} is automatically appended to the path.
+   * <p>
+   * Please note that you often need a corresponding advancement of the recipe, which is unlocked when you have an ingredient, and grants you with the recipe. More information can be seen in {@link #addRecipeAdvancement} and {@link #addRecipeAndAdvancement(Identifier, String, JRecipe)}.
    *
-   * @param id     The {@linkplain Identifier} identifier of the recipe, which is usually the same as the item id.
+   * @param id     The {@linkplain Identifier identifier} of the recipe, which is usually the same as the item id, or the item id suffixed with something like {@code _from_stonecutting}.
    * @param recipe The recipe to be added.
    * @see JRecipe
    */
@@ -257,13 +268,17 @@ public interface RuntimeResourcePack extends ResourcePack {
   byte[] addRecipe(Identifier id, JRecipe recipe);
 
   /**
-   * Add an advancement of that recipe. In BRRP, the advancement is integrated in the recipe. You may have to add common advancement elements with {@link JRecipe#addInventoryChangedCriterion}, or just modify the {@link JRecipe#advancementBuilder}, otherwise the advancement will not be generated.
+   * <p>Add an advancement of that recipe. In BRRP, the advancement builder is integrated in the recipe object. You may have to add common advancement elements with {@link JRecipe#addInventoryChangedCriterion}, or just modify the {@link JRecipe#advancementBuilder}, otherwise the advancement will not be generated.
    * <p>
-   * Usually the advancement triggers when you unlock the recipe of obtains the ingredient, and rewards you to unlock that recipe. For example, if you obtain an <i>oak planks</i>, then the advancement {@code minecraft:recipes/building_blocks/oak_planks} is achieved, rewarding you to unlock the recipe of {@code minecraft:oak_planks}. There are some exception situations: For example, the recipe of boat is not obtained when you get their corresponding planks, but when you enter water.
+   * Usually the advancement is granted when you unlock the recipe or obtains the ingredient, and rewards you to unlock that recipe. For example, if you obtain an <i>oak planks</i>, then the advancement {@code minecraft:recipes/building_blocks/oak_planks} is achieved, rewarding you to unlock the recipe of {@code minecraft:oak_planks}. There are some exception situations: For example, the recipe of boat is not obtained when you get their corresponding planks, but when you enter water.
+   * <p>The parameter <i>recipeId</i> is used because it is required in {@link JRecipe#prepareAdvancement(Identifier)}, and <i>it is usually not equal to</i> the advancement id. You must tell the advancement which recipe will be unlocked to you.
+   * <p>The parameter <i>advancementId</i> is typically prefixed with {@code "recipes/itemGroup"}. In the convention of vanilla Minecraft, the identifier of the recipe is <code style="color:maroon"><i>namespace</i>:<i>path</i></code>, which is typically the same as the item itself. But the identifier of the advancement is <code style="color:maroon"><i>namespace</i>:recipes/<i>itemGroup</i>/<i>path</i></code>.
+   * <p>You can create advancement id with {@link net.devtech.arrp.generator.ItemResourceGenerator#getAdvancementIdForRecipe} or {@link net.devtech.arrp.generator.ResourceGeneratorHelper#getAdvancementIdForRecipe}.
+   * <p>If you feel tired of calling both {@link #addRecipe} and {@code addRecipeAdvancement}, you can consider {@link #addRecipeAndAdvancement(Identifier, String, JRecipe)}.
    *
-   * @param recipeId                    The identifier of the recipe. It is used because it is required in {@link JRecipe#prepareAdvancement(Identifier)}, and <i>it is usually not equal to</i> the advancement id.
-   * @param advancementId               The identifier of the advancement the corresponds to the recipe, usually prefixed with {@code "recipes/"}. <p>In the convention of vanilla Minecraft, the identifier of the recipe is <code style="color:maroon"><i>namespace</i>:<i>path</i></code>, which is typically the same as the item itself. But the identifier of the advancement is <code style="color:maroon"><i>namespace</i>:recipes/<i>itemGroup</i>/<i>path</i></code>. You can create advancement id with {@link net.devtech.arrp.generator.ItemResourceGenerator#getAdvancementIdForRecipe(Identifier)} or {@link net.devtech.arrp.generator.ResourceGeneratorHelper#getAdvancementIdForRecipe(ItemConvertible, Identifier)}.
-   * @param recipeContainingAdvancement The recipe that contains the advancement. If that advancement has no criteria, it will be ignored and {@code null} will be returned.
+   * @param recipeId                    The identifier of the recipe.
+   * @param advancementId               The identifier of the advancement the corresponds to the recipe, usually prefixed with {@code "recipes/"}.
+   * @param recipeContainingAdvancement The recipe that contains the advancement ({@link JRecipe#advancementBuilder}, which can be added through {@link JRecipe#addInventoryChangedCriterion}). If that advancement has no criteria, it will be ignored and {@code null} will be returned.
    */
   @ApiStatus.AvailableSince("0.6.2")
   @CanIgnoreReturnValue
@@ -275,6 +290,21 @@ public interface RuntimeResourcePack extends ResourcePack {
     } else {
       return null;
     }
+  }
+
+  /**
+   * <p>This method will add the recipe <i>as well as</i> the advancement of the recipe to the runtime resource pack. Usually, the identifier of the advancement is the recipe identifier prefixed with <code>recipes/<i>itemGroup</i></code>, for example, the identifier of the <i>recipe</i> or oak_planks is <code style=color:maroon>minecraft:oak_planks</code> and the identifier of the <i>advancement</i> of the oak_planks recipes is <code style=color:maroon>minecraft:recipes/building_blocks/oak_planks</code>. This method just follows the convention of vanilla Minecraft's recipe and advancement, and you should <i>manually</i> specify the group name.
+   * <p>Besides, you can also use {@link net.devtech.arrp.generator.ResourceGeneratorHelper#getAdvancementIdForRecipe} to create the identifier of the advancement. In this case you should specify which item it is, and do not call this method.
+   *
+   * @param recipeId                    The identifier of the recipe. It is commonly the same as the identifier of the item, optionally suffixed with additional expressions like {@code _from_stonecutting}.
+   * @param groupName                   The name of the item group. This is used to specify in the identifier of the advancement. The identifier of the advancement will be the recipeId prefixed with <code>recipes/<i>groupName</i>/</code>. The group name can be null.
+   * @param recipeContainingAdvancement The recipe that contains the advancement ({@link JRecipe#advancementBuilder}, which can be added through {@link JRecipe#addInventoryChangedCriterion}). If that advancement has no criteria, it will be ignored but the recipe will not throw error.
+   * @see net.devtech.arrp.generator.ItemResourceGenerator#writeRecipes(RuntimeResourcePack)
+   */
+  @ApiStatus.AvailableSince("0.7.0")
+  default void addRecipeAndAdvancement(Identifier recipeId, @Nullable String groupName, JRecipe recipeContainingAdvancement) {
+    addRecipe(recipeId, recipeContainingAdvancement);
+    addRecipeAdvancement(recipeId, recipeId.brrp_prepend("recipes/" + (StringUtils.isEmpty(groupName) ? "" : groupName + "/")), recipeContainingAdvancement);
   }
 
   /**
@@ -357,13 +387,21 @@ public interface RuntimeResourcePack extends ResourcePack {
 
   /**
    * Clear the resources of the runtime resource pack in the specified side.
+   * <p>
+   * Root resources will not be cleared. Language file is treated as client resources.
    *
    * @param side The side (client or server) of resource to be cleared.
    */
   void clearResources(ResourceType side);
 
   /**
-   * Clear all resources of this runtime resource pack, including both client and server.
+   * Clear all resources of this runtime resource pack, including both client and server, and as well as root resources.
    */
   void clearResources();
+
+  /**
+   * Clear root resources of this runtime resource pack.
+   */
+  @ApiStatus.AvailableSince("0.7.0")
+  void clearRootResources();
 }

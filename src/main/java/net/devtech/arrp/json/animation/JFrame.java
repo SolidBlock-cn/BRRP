@@ -1,6 +1,9 @@
 package net.devtech.arrp.json.animation;
 
 
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+
 public class JFrame implements Cloneable {
   public final int index;
   public Integer time;
@@ -12,6 +15,16 @@ public class JFrame implements Cloneable {
   public JFrame(int index, int time) {
     this(index);
     this.time = time;
+  }
+
+  /**
+   * Added in BRRP 0.7.0 according to ARRP 0.6.2. Author: Devan Kerman.
+   */
+  @ApiStatus.AvailableSince("0.7.0")
+  @Contract(value = "_ -> this", mutates = "this")
+  public JFrame time(int time) {
+    this.time = time;
+    return this;
   }
 
   @Override
