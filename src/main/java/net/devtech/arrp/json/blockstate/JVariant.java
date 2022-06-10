@@ -11,7 +11,9 @@ import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,14 +31,18 @@ import java.util.Map;
 @Deprecated
 @PreferredEnvironment(EnvType.CLIENT)
 public final class JVariant implements Cloneable, JsonSerializable {
-  public final Map<String, JBlockModel> models = new HashMap<>();
+  public final Map<String, List<JBlockModel>> models = new HashMap<>();
 
   public JVariant() {
   }
 
   @Contract(value = "_, _ -> this", mutates = "this")
   public JVariant put(String key, JBlockModel model) {
-    this.models.put(key, model);
+    List<JBlockModel> models = this.models.getOrDefault(key, new ArrayList<>());
+
+    models.add(model);
+
+    this.models.put(key, models);
     return this;
   }
 
@@ -44,18 +50,16 @@ public final class JVariant implements Cloneable, JsonSerializable {
    * boolean block properties
    */
   @Contract(value = "_, _, _ -> this", mutates = "this")
-  public JVariant put(String property, boolean value, JBlockModel builder) {
-    this.models.put(property + '=' + value, builder);
-    return this;
+  public JVariant put(String property, boolean value, JBlockModel model) {
+    return put(property + '=' + value, model);
   }
 
   /**
    * int block properties
    */
   @Contract(value = "_, _, _ -> this", mutates = "this")
-  public JVariant put(String property, int value, JBlockModel builder) {
-    this.models.put(property + '=' + value, builder);
-    return this;
+  public JVariant put(String property, int value, JBlockModel model) {
+    return put(property + '=' + value, model);
   }
 
   /**
@@ -64,18 +68,16 @@ public final class JVariant implements Cloneable, JsonSerializable {
    * @see Direction
    */
   @Contract(value = "_, _, _ -> this", mutates = "this")
-  public JVariant put(String property, StringIdentifiable value, JBlockModel builder) {
-    this.models.put(property + '=' + value.asString(), builder);
-    return this;
+  public JVariant put(String property, StringIdentifiable value, JBlockModel model) {
+    return put(property + '=' + value.asString(), model);
   }
 
   /**
    * everything else
    */
   @Contract(value = "_, _, _ -> this", mutates = "this")
-  public JVariant put(String property, String value, JBlockModel builder) {
-    this.models.put(property + '=' + value, builder);
-    return this;
+  public JVariant put(String property, String value, JBlockModel model) {
+    return put(property + '=' + value, model);
   }
 
   @Override
@@ -90,7 +92,7 @@ public final class JVariant implements Cloneable, JsonSerializable {
   @Override
   public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
     JsonObject object = new JsonObject();
-    models.forEach((s, m) -> object.add(s, context.serialize(m)));
+    models.forEach((s, m) -> object.add(s, context.serialize(m.size() == 1 ? m.get(0) : m)));
     return object;
   }
 }

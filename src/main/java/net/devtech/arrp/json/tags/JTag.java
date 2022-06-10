@@ -87,6 +87,11 @@ public class JTag {
     return this;
   }
 
+  /**
+   * Set the {@link #replace} of the tag. You can also directly specify it when constructing.
+   *
+   * @param replace Whether the tag is replacing.
+   */
   @Contract(value = "_ -> this", mutates = "this")
   public JTag replace(boolean replace) {
     this.replace = replace;
@@ -139,12 +144,18 @@ public class JTag {
     return this;
   }
 
+  /**
+   * Assume this tag is a block tag, query the identifiers of the blocks and add them to the tag. Please confirm that when calling this method, the blocks are correctly registered. If you haven't registered the blocks, you can register with {@link Registry#register} at first.
+   */
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addBlocks(Iterable<Block> blocks) {
     blocks.forEach(this::addBlock);
     return this;
   }
 
+  /**
+   * Assume this tag is a block tag, query the identifiers of the blocks and add them to the tag. Please confirm that when calling this method, the blocks are correctly registered. If you haven't registered the blocks, you can register with {@link Registry#register} at first.
+   */
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addBlocks(Block... blocks) {
     return addBlocks(Arrays.asList(blocks));
@@ -159,12 +170,18 @@ public class JTag {
     return this;
   }
 
+  /**
+   * Assume this tag is an item tag, query the identifiers of items and add them the tag. Please confirm that when calling this method, the items are correctly registered. If you haven't registered the items, you can register with {@link Registry#register} at first.
+   */
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addItems(Iterable<ItemConvertible> items) {
     items.forEach(this::addItem);
     return this;
   }
 
+  /**
+   * Assume this tag is an item tag, query the identifiers of items and add them the tag. Please confirm that when calling this method, the items are correctly registered. If you haven't registered the items, you can register with {@link Registry#register} at first.
+   */
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addItems(ItemConvertible... items) {
     return addItems(Arrays.asList(items));
@@ -179,12 +196,18 @@ public class JTag {
     return this;
   }
 
+  /**
+   * Assume this tag is a fluid tag, query the identifiers of the fluids and add them to the tag. Please confirm that when calling this method, the fluids are correctly registered. If you haven't registered the fluids, you can register with {@link Registry#register} at first.
+   */
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addFluids(Iterable<Fluid> fluids) {
     fluids.forEach(this::addFluid);
     return this;
   }
 
+  /**
+   * Assume this tag is a fluid tag, query the identifiers of the fluids and add them to the tag. Please confirm that when calling this method, the fluids are correctly registered. If you haven't registered the fluids, you can register with {@link Registry#register} at first.
+   */
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addFluids(Fluid... fluids) {
     return this.addFluids(Arrays.asList(fluids));
@@ -199,12 +222,18 @@ public class JTag {
     return this;
   }
 
+  /**
+   * Assume this tag is an entity-type tag, query the identifiers of the entity types and add to the tag. Please confirm that when calling this method, the entity types are correctly registered. If you haven't registered the entity types, you can register with {@link Registry#register} at first.
+   */
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addEntityTypes(Iterable<EntityType<?>> entityTypes) {
     entityTypes.forEach(this::addEntityType);
     return this;
   }
 
+  /**
+   * Assume this tag is an entity-type tag, query the identifiers of the entity types and add to the tag. Please confirm that when calling this method, the entity types are correctly registered. If you haven't registered the entity types, you can register with {@link Registry#register} at first.
+   */
   public JTag addEntityTypes(EntityType<?>... entityTypes) {
     return this.addEntityTypes(Arrays.asList(entityTypes));
   }

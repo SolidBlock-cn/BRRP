@@ -23,7 +23,7 @@ public abstract class ReloadableResourceManagerImplMixin {
   @Shadow
   @Final
   private ResourceType type;
-  private static final Logger ARRP_LOGGER = LoggerFactory.getLogger("ARRP/ReloadableResourceManagerImplMixin");
+  private static final Logger ARRP_LOGGER = LoggerFactory.getLogger("BRRP/ReloadableResourceManagerImplMixin");
 
   @ModifyVariable(method = "reload",
       at = @At(value = "HEAD"),
