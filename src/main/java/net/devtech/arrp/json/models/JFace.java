@@ -3,15 +3,15 @@ package net.devtech.arrp.json.models;
 import com.google.gson.annotations.SerializedName;
 import it.unimi.dsi.fastutil.floats.FloatArrayList;
 import net.devtech.arrp.annotations.PreferredEnvironment;
-import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.Direction;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * A face on the specified direction of the {@link JElement}.
  */
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JFace implements Cloneable {
   /**
    * This field is deprecated because, it will always exist. The value is by default [0, 0, 0] which definitely cause bugs. Actually, in Minecraft, the uv can be missing, which allows Minecraft to automatically determine. Therefore, {@link #uvs} is used instead, which is a nullable {@link FloatArrayList}.

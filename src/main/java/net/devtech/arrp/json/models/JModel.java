@@ -3,9 +3,9 @@ package net.devtech.arrp.json.models;
 import com.google.common.collect.Lists;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.json.loot.JCondition;
-import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.List;
  * @see net.minecraft.client.render.model.json.JsonUnbakedModel
  */
 @SuppressWarnings("unused")
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JModel implements Cloneable {
   /**
    * The identifier of the model it is based on. It should be an identifier. However, simple string is OK.

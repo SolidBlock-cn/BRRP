@@ -1,8 +1,8 @@
 package net.devtech.arrp.json.models;
 
 import net.devtech.arrp.annotations.PreferredEnvironment;
-import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.Direction;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -30,7 +30,7 @@ import java.util.function.Function;
  * }</pre>
  */
 @SuppressWarnings("unused")
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JElement implements Cloneable {
   /**
    * The [x, y, z] of the position where the cuboid starts.

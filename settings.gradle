@@ -4,11 +4,15 @@ pluginManagement {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
+        maven { url "https://maven.architectury.dev/" }
+
+        boolean usesBmclApi = true
+        maven { url usesBmclApi ? "https://bmclapi2.bangbang93.com/maven/" : "https://files.minecraftforge.net/maven/" }
         gradlePluginPortal()
     }
 }
-include(':arrp')
-project(':arrp').projectDir = new File('nested/arrp')
+//include(':arrp')
+//project(':arrp').projectDir = new File('nested/arrp')
 rootProject.name = 'brrp'
 
 

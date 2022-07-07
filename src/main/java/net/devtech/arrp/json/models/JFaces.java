@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.Direction;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import java.util.function.Function;
  * <p>Specifies the faces in the {@link JElement}.</p>
  * <p>It's essentially a map, in which the key is {@link Direction direction} and value is the {@link JFace face}.</p>
  */
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JFaces extends EnumMap<Direction, JFace> implements Cloneable, JsonSerializable {
   // These fields exist for only compatibility.
   @Deprecated(forRemoval = true)

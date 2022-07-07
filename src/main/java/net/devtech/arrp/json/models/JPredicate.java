@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2FloatLinkedOpenHashMap;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.json.loot.JCondition;
-import net.fabricmc.api.EnvType;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -37,7 +37,7 @@ import java.lang.reflect.Type;
  *
  * @see net.minecraft.client.item.ModelPredicateProviderRegistry
  */
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JPredicate extends Object2FloatLinkedOpenHashMap<String> implements JsonSerializable {
   /**
    * This method quite resembles {@link it.unimi.dsi.fastutil.objects.Object2FloatMap#put(Object, float)}, but returns the object itself, making it possible to chain-call.

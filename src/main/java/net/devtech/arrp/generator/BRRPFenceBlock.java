@@ -5,9 +5,7 @@ import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.FenceBlock;
 import net.minecraft.data.client.model.BlockStateModelGenerator;
@@ -17,6 +15,8 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,10 +37,10 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
   }
 
   public BRRPFenceBlock(@NotNull Block baseBlock) {
-    this(baseBlock, FabricBlockSettings.copyOf(baseBlock));
+    this(baseBlock, AbstractBlock.Settings.copy(baseBlock));
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @NotNull JBlockStates getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
@@ -51,13 +51,13 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
     ));
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @NotNull JModel getBlockModel() {
     return new JModel().addTexture("texture", getTextureId(TextureKey.TEXTURE));
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public void writeBlockModel(RuntimeResourcePack pack) {
     final JModel blockModel = getBlockModel();
@@ -66,7 +66,7 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
     pack.addModel(blockModel.parent("block/fence_side"), blockModelId.brrp_append("_side"));
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @Nullable JModel getItemModel() {
     return getBlockModel().parent("block/fence_inventory");
