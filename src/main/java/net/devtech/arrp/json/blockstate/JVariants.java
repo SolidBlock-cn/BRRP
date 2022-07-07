@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.fabricmc.api.EnvType;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.data.client.model.BlockStateVariant;
 import net.minecraft.state.property.Properties;
@@ -14,6 +13,7 @@ import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,6 @@ import java.util.function.Supplier;
 
 /**
  * <p>A <b>variant definition</b> defines which models and adjust will be used in each block state property.</p>
- * <p>A simple extended version for {@link JVariant}.</p>
  * <p>It's a simple hash map for the key-value pairs. The key is a string specifying the variant conditions, which can be null, a single or multiple property key-value pairs(s). The value is an array of block model definitions, which can be sometimes a singleton.</p>
  * <p>A block states definition is either composed of "variant definition"s, or composed of "multiparts". A block states definition consisting of variant definitions can have codes like the following format:</p>
  * <pre>{@code
@@ -46,7 +45,7 @@ import java.util.function.Supplier;
  * @see net.minecraft.data.client.model.BlockStateVariant
  */
 @SuppressWarnings("unused")
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JVariants extends ForwardingMap<String, JBlockModel[]> implements JsonSerializable {
   /**
    * The real map storing its contents, used for the forwarding map. It is usually a {@link LinkedHashMap} by default, but you can specify other types of maps.
@@ -67,16 +66,6 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    */
   public JVariants(Map<String, JBlockModel[]> variants) {
     this.variants = variants;
-  }
-
-  /**
-   * Simply "upgrades" the deprecated {@code JVariant} object to this improved version.
-   */
-  @Contract("_ -> new")
-  public static JVariants upgrade(@SuppressWarnings("deprecation") JVariant jVariant) {
-    final JVariants instance = new JVariants();
-    jVariant.models.forEach((k, v) -> instance.put(k, v.toArray(new JBlockModel[0])));
-    return instance;
   }
 
   /**

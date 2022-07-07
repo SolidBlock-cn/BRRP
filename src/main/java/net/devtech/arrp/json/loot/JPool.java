@@ -44,32 +44,10 @@ public class JPool implements Cloneable {
   @Deprecated
   public transient Integer rolls;
   /**
-   * The uniform value provider of rolls.
-   *
-   * @deprecated Please use {@link #rollsProvider}.
-   */
-  @Deprecated
-  public transient JRoll roll;
-  /**
    * The value provider of rolls.
    */
   @SerializedName("rolls")
   public LootTableRange rollsProvider;
-  /**
-   * The exact value of bonus rolls.
-   *
-   * @deprecated Please use {@link #bonusRollsProvider}.
-   */
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated
-  public transient Integer bonus_rolls;
-  /**
-   * The uniform value provider of bonus rolls.
-   *
-   * @deprecated Please use {@link #bonusRollsProvider}.
-   */
-  @Deprecated
-  public transient JRoll bonus_roll;
   /**
    * The value provider of bonus rolls;
    */
@@ -209,17 +187,6 @@ public class JPool implements Cloneable {
   }
 
   /**
-   * @deprecated Please use {@link #rolls(LootTableRange)}.
-   */
-  @Deprecated
-  @Contract(value = "_ -> this", mutates = "this")
-  public JPool rolls(JRoll roll) {
-    this.roll = roll;
-    this.rollsProvider = roll.asLootTableRange();
-    return this;
-  }
-
-  /**
    * This method is kept for compatibility.
    *
    * @deprecated Please use {@link #bonus(int)} or {@link #bonus(float)}.
@@ -233,7 +200,6 @@ public class JPool implements Cloneable {
 
   @Contract(value = "_ -> this", mutates = "this")
   public JPool bonus(int bonus_rolls) {
-    this.bonus_rolls = bonus_rolls;
     this.bonusRollsProvider = ConstantLootTableRange.create(bonus_rolls);
     return this;
   }
@@ -252,17 +218,6 @@ public class JPool implements Cloneable {
 
   public JPool bonus(LootTableRange bonusRollsProvider) {
     this.bonusRollsProvider = bonusRollsProvider;
-    return this;
-  }
-
-  /**
-   * @deprecated Please use {@link #bonus(LootTableRange)}.
-   */
-  @Deprecated
-  @Contract(value = "_ -> this", mutates = "this")
-  public JPool bonus(JRoll bonus_roll) {
-    this.bonus_roll = bonus_roll;
-    this.bonusRollsProvider = bonus_roll.asLootTableRange();
     return this;
   }
 

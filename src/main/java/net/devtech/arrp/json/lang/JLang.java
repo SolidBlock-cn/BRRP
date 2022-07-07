@@ -1,5 +1,8 @@
 package net.devtech.arrp.json.lang;
 
+import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.InlineMe;
 import com.google.common.base.Suppliers;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
@@ -10,7 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.Contract;
 
 import java.util.HashMap;
@@ -61,7 +66,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   }
 
   /**
-   * @deprecated Ambiguous name and parameter name. Please use {@link #registryEntry(Registry, String, Object, String)}.
+   * @deprecated Ambiguous name and parameter name. Please use {@link #registryEntry(IForgeRegistry, String, IForgeRegistryEntry, String)}.
    */
   @Deprecated
   private <T> JLang object(Registry<T> registry, String str, T t, String name) {
@@ -100,9 +105,8 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    * Add a registry entry to this instance, using {@link Registry#getId(Object)}.
    */
   @Contract(value = "_,_,_,_ -> this", mutates = "this")
-  public <T> JLang registryEntry(Registry<T> registry, String type, T t, String translation) {
-    final RegistryKey<T> registryKey = registry.getKey(t).orElseThrow(Suppliers.ofInstance(new RuntimeException("Please register it first!")));
-    return registryEntry(type, registryKey.getValue(), translation);
+  public <T extends IForgeRegistryEntry<T>> JLang registryEntry(IForgeRegistry<T> registry, String type, T t, String translation) {
+    return registryEntry(type, Preconditions.checkNotNull(registry.getKey(t), "Please register it first!"), translation);
   }
 
 
@@ -145,7 +149,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   @Contract(value = "_,_ -> this", mutates = "this")
   @Deprecated
   public JLang item(Item item, String translation) {
-    return this.registryEntry(Registry.ITEM, "item", item, translation);
+    return this.registryEntry(ForgeRegistries.ITEMS, "item", item, translation);
   }
 
   /**
@@ -165,7 +169,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   @Contract(value = "_,_ -> this", mutates = "this")
   @Deprecated
   public JLang block(Block block, String translation) {
-    return this.registryEntry(Registry.BLOCK, "block", block, translation);
+    return this.registryEntry(ForgeRegistries.BLOCKS, "block", block, translation);
   }
 
   /**
@@ -173,7 +177,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
    */
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang fluid(Fluid fluid, String translation) {
-    return this.registryEntry(Registry.FLUID, "fluid", fluid, translation);
+    return this.registryEntry(ForgeRegistries.FLUIDS, "fluid", fluid, translation);
   }
 
   /**
@@ -267,7 +271,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Add an item-group entry with the identifier specified.
    *
-   * @param id          The identifier of the item group specified in {@link net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder}.
+   * @param id          The identifier of the item group.
    * @param translation The translated name of the item group.
    */
   @Contract(value = "_,_ -> this", mutates = "this")

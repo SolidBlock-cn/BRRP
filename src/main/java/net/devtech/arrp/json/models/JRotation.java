@@ -2,8 +2,8 @@ package net.devtech.arrp.json.models;
 
 import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.annotations.PreferredEnvironment;
-import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.Direction;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Contract;
  * }</pre>
  */
 @SuppressWarnings("unused")
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JRotation implements Cloneable {
   public final float[] origin = new float[3];
   /**

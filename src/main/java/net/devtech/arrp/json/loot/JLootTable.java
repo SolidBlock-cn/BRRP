@@ -125,14 +125,6 @@ public class JLootTable implements Cloneable {
   }
 
   /**
-   * @deprecated Please directly call {@link JRoll#JRoll(int, int)}.
-   */
-  @Deprecated
-  public static JRoll roll(int min, int max) {
-    return new JRoll(min, max);
-  }
-
-  /**
    * Add a pool to the {@link #pools}.
    *
    * @param pool The loot table pool.

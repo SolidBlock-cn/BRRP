@@ -10,7 +10,6 @@ import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
 import net.devtech.arrp.json.blockstate.JBlockStates;
-import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
@@ -19,7 +18,6 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.loot.BinomialLootTableRange;
 import net.minecraft.loot.ConstantLootTableRange;
@@ -29,6 +27,7 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -100,7 +99,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     properties.setProperty("dump assets", "false");
     properties.setProperty("debug performance", "false");
 
-    File file = FabricLoader.getInstance().getConfigDir().resolve("rrp.properties").toFile();
+    File file = FMLPaths.CONFIGDIR.get().resolve("rrp.properties").toFile();
     try (FileReader reader = new FileReader(file)) {
       properties.load(reader);
       processors = Integer.parseInt(properties.getProperty("threads"));
@@ -129,13 +128,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
   private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
-  /**
-   * @deprecated Wrong spelling
-   */
-  @SuppressWarnings({"SpellCheckingInspection", "DeprecatedIsStillUsed"})
-  @Deprecated
-  private final Map<Identifier, JLang> langMergable = new ConcurrentHashMap<>();
-  private final Map<Identifier, JLang> langMergeable = langMergable;
+  private final Map<Identifier, JLang> langMergeable = new ConcurrentHashMap<>();
   private boolean forbidsDuplicateResource = false;
 
   public RuntimeResourcePackImpl(Identifier id) {
@@ -306,11 +299,6 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   @Override
   public byte[] addModel(JModel model, Identifier id) {
     return this.addAsset(fix(id, "models", "json"), serialize(model));
-  }
-
-  @Override
-  public byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier identifier) {
-    return this.addAsset(fix(identifier, "blockstates", "json"), serialize(state));
   }
 
   @Override

@@ -7,6 +7,8 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
+import net.minecraft.data.client.When;
+import net.minecraftforge.api.distmarker.Dist;
 import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.model.When;
 import org.jetbrains.annotations.ApiStatus;
@@ -20,7 +22,7 @@ import java.util.List;
  * <p>An entry of the {@link JBlockStates#multiparts multipart} field of a {@link JBlockStates}. Note: this class represents an entry, not a list of it.</p>
  * <p>The multipart entry consists of the following fields: </p><ul>
  * <li><b>{@code apply}</b> - The {@link JBlockModel block model definition} that will be used, or a list of it to randomly choose.</li>
- * <li><b>{@code when}</b> - The {@link JWhen condition} that the part will be used. Optional.</li>
+ * <li><b>{@code when}</b> - The {@link When condition} that the part will be used. Optional.</li>
  * </ul>
  *
  * @see net.minecraft.data.client.model.MultipartBlockStateSupplier
@@ -30,18 +32,12 @@ import java.util.List;
  * @see net.minecraft.client.render.model.json.MultipartModelComponent
  */
 @SuppressWarnings("unused")
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JMultipart implements Cloneable, JsonSerializable {
   /**
    * The model that will be used, if the condition is met. It can be one of multiple block models.
    */
   public final List<JBlockModel> apply;
-  /**
-   * @deprecated This field is identical to {@link #condition}, and is used for compatibility.
-   */
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated
-  private transient JWhen when;
   @SerializedName("when")
   public When condition;
 
@@ -87,24 +83,10 @@ public class JMultipart implements Cloneable, JsonSerializable {
   }
 
   /**
-   * Set the condition of the multipart object.
-   *
-   * @deprecated class is kept for compatibility. You should use {@link #when(When)}.
-   */
-  @Contract(value = "_ -> this", mutates = "this")
-  @Deprecated
-  public JMultipart when(JWhen when) {
-    this.when = when;
-    this.condition = when;
-    return this;
-  }
-
-  /**
    * Set the condition of the multipart object. If a condition is already specified, it will be overridden.
    */
   @Contract(value = "_ -> this", mutates = "this")
   public JMultipart when(When when) {
-    this.when = null;
     this.condition = when;
     return this;
   }

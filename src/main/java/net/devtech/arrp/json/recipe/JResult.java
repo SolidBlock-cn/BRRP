@@ -1,5 +1,8 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.InlineMe;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -8,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -34,7 +38,7 @@ public class JResult implements Cloneable, JsonSerializable {
    * This method will query the id of the item. You should ensure that the item has been registered.
    */
   public JResult(final ItemConvertible item) {
-    this(Registry.ITEM.getId(item.asItem()));
+    this(Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(item.asItem()), "Object not registered!"));
   }
 
   /**
@@ -60,20 +64,6 @@ public class JResult implements Cloneable, JsonSerializable {
   public JResult count(int count) {
     this.count = count;
     return this;
-  }
-
-  @Deprecated
-  public static JStackedResult itemStack(final Item item, final int count) {
-    return stackedResult(Registry.ITEM.getId(item).toString(), count);
-  }
-
-  @Deprecated
-  public static JStackedResult stackedResult(final String id, final int count) {
-    final JStackedResult stackedResult = new JStackedResult(id);
-
-    stackedResult.count = count;
-
-    return stackedResult;
   }
 
   @Override

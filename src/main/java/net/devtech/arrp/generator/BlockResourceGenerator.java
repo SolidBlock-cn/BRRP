@@ -6,11 +6,13 @@ import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.recipe.JRecipe;
-import net.fabricmc.api.EnvType;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.model.TextureKey;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
  * <pre>{@code
  * public class MyBlock extends Block implements BlockResourceGenerator {
  *   [...]
- *   @Environment(EnvType.CLIENT)
+ *   @OnlyIn(Dist.CLIENT)
  *   public JModel getBlockModel() {
  *     return [...]
  *   }
@@ -31,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
  * }
  * }</pre>
  * <p>Also, your custom class can implement this interface. In this case, you <i>must</i> override {@link #getBlockId()} method, as it cannot be casted to {@code Block}.</p>
- * <p>It's highly recommended but not required to annotate methods related to client (block states, block models, item models) with {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code>, as they are only used in the client version mod. The interface itself does not annotate it, in consideration of rare situations that the server really needs. But mostly these client-related methods are not needed in the server side.</p>
+ * <p>It's highly recommended but not required to annotate methods related to client (block states, block models, item models) with {@code @}{@link net.minecraftforge.api.distmarker.OnlyIn}<code>({@link Dist#CLIENT})</code>, as they are only used in the client version mod. The interface itself does not annotate it, in consideration of rare situations that the server really needs. But mostly these client-related methods are not needed in the server side.</p>
  */
 public interface BlockResourceGenerator extends ItemResourceGenerator {
   /**
@@ -45,13 +47,13 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * Query the id of the block in {@link Registry#BLOCK}.<br>
+   * Query the id of the block in {@link net.minecraftforge.registries.ForgeRegistries#BLOCKS}.<br>
    * You <i>must</i> override this method if you're implementing this interface on a non-{@code Block} class, or will use it when it is not yet registered.
    *
    * @return The id of the block.
    */
   default Identifier getBlockId() {
-    return Registry.BLOCK.getId((Block) this);
+    return ForgeRegistries.BLOCKS.getKey((Block) this);
   }
 
   /**
@@ -63,8 +65,8 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @Override
   default Identifier getItemId() {
-    if (this instanceof Block && BlockItem.BLOCK_ITEMS.containsKey(this)) {
-      return Registry.ITEM.getId(BlockItem.BLOCK_ITEMS.get(this));
+    if (this instanceof Block block && BlockItem.BLOCK_ITEMS.containsKey(block)) {
+      return ForgeRegistries.ITEMS.getKey(BlockItem.BLOCK_ITEMS.get(block));
     } else {
       return null;
     }
@@ -79,7 +81,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @return The id of the block model.
    */
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default Identifier getBlockModelId() {
     return getBlockId().brrp_prepend("block/");
   }
@@ -88,7 +90,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * <p>The texture used in models. It's usually in the format of {@code <i>namespace</i>:block/<i>path</i>}, which <i>mostly</i> equals to the block id. However, sometimes they differ. For example, the texture of <code style="color:maroon">minecraft:smooth_sandstone</code> is not <code style="color:maroon">minecraft:block/smooth_sandstone</code>; it's <code style="color:maroon">minecraft:block/sandstone_top</code>.</p>
    * <p>Some blocks have different textures in different parts. In this case, the parameter {@code type} is used. For example, a quartz pillar can have the following methods:</p>
    * <pre>{@code
-   *   @Environment(EnvType.CLIENT) @Override
+   *   @OnlyIn(Dist.CLIENT) @Override
    *   public getTextureId(String type) {
    *     if ("end".equals(type)) {
    *       return new Identifier("minecraft", "block/quartz_pillar_top");
@@ -102,7 +104,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The id of the texture.
    * @see TextureRegistry
    */
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default @NotNull String getTextureId(@NotNull TextureKey textureKey) {
     if (this instanceof Block) {
       Block thisBlock = (Block) this;
@@ -121,7 +123,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @return The block states definition of the block.
    */
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default @Nullable JBlockStates getBlockStates() {
     return null;
   }
@@ -131,7 +133,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @param pack The runtime resource pack.
    */
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default void writeBlockStates(RuntimeResourcePack pack) {
     final JBlockStates blockStates = getBlockStates();
     if (blockStates != null) pack.addBlockState(blockStates, getBlockId());
@@ -142,7 +144,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @return The block model.
    */
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default @Nullable JModel getBlockModel() {
     return null;
   }
@@ -152,7 +154,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @param pack The runtime resource pack.
    */
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default void writeBlockModel(RuntimeResourcePack pack) {
     final JModel model = getBlockModel();
     if (model != null) pack.addModel(model, getBlockModelId());
@@ -164,7 +166,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The id of the block item model.
    */
   @Override
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default Identifier getItemModelId() {
     final Identifier itemId = getItemId();
     if (itemId == null) return null;
@@ -177,7 +179,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @param pack The runtime resource pack.
    */
   @Override
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default void writeItemModel(RuntimeResourcePack pack) {
     final Identifier itemModelId = getItemModelId();
     if (itemModelId != null) {
@@ -195,7 +197,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The item model.
    */
   @Override
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default @Nullable JModel getItemModel() {
     return new JModel(getBlockModelId());
   }
@@ -206,7 +208,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @param pack The runtime resource pack.
    */
   @Override
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default void writeAssets(RuntimeResourcePack pack) {
     writeBlockStates(pack);
     writeBlockModel(pack);

@@ -1,5 +1,7 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -11,7 +13,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -91,7 +93,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
    */
   @Contract(value = "_ -> this", mutates = "this")
   public JIngredient item(Item item) {
-    return this.item(Registry.ITEM.getId(item).toString());
+    return this.item(Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(item)).toString());
   }
 
   /**
@@ -132,7 +134,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
 
   @Contract("_ -> new")
   public static JIngredient ofItem(ItemConvertible itemConvertible) {
-    return ofItem(Registry.ITEM.getId(itemConvertible.asItem()));
+    return ofItem(Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(itemConvertible.asItem())));
   }
 
   @Contract("_ -> new")
@@ -198,7 +200,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
 
   @Contract("_ -> new")
   public static JIngredient ofItems(Item... items) {
-    return new JIngredient(Arrays.stream(items).map(item1 -> ofItem(Registry.ITEM.getId(item1))).collect(Collectors.toList()));
+    return new JIngredient(Arrays.stream(items).map(item1 -> ofItem(Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(item1)))).collect(Collectors.toList()));
   }
 
   @Contract("_ -> new")

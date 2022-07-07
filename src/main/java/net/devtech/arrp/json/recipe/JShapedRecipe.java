@@ -1,9 +1,11 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -77,7 +79,7 @@ public class JShapedRecipe extends JResultRecipe {
 
   @Contract(value = "_,_ -> this", mutates = "this")
   public JShapedRecipe addKey(String key, Item value) {
-    return this.addKey(key, JIngredient.ofItem(Registry.ITEM.getId(value)));
+    return this.addKey(key, JIngredient.ofItem(Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(value), "Please register the object at first.")));
   }
 
   @Contract(value = "_,_ -> this", mutates = "this")
