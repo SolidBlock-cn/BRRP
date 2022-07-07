@@ -1,10 +1,11 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -66,7 +67,7 @@ public abstract class JCookingRecipe extends JRecipe {
    * @param result     The resulting item. You must ensure that it has been registered.
    */
   protected JCookingRecipe(final String type, final JIngredient ingredient, final Item result) {
-    this(type, ingredient, Registry.ITEM.getId(result));
+    this(type, ingredient, Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(result), "Object not registered."));
   }
 
   /**
@@ -77,7 +78,7 @@ public abstract class JCookingRecipe extends JRecipe {
    * @param result     The resulting item or block. You must ensure that its item has been registered.
    */
   protected JCookingRecipe(final String type, final JIngredient ingredient, final ItemConvertible result) {
-    this(type, ingredient, Registry.ITEM.getId(result.asItem()));
+    this(type, ingredient, Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(result.asItem()), "Object not registered."));
   }
 
   /**
@@ -110,7 +111,7 @@ public abstract class JCookingRecipe extends JRecipe {
    * @param result     The result item.
    */
   public JCookingRecipe(final String type, ItemConvertible ingredient, ItemConvertible result) {
-    this(type, JIngredient.ofItem(ingredient), Registry.ITEM.getId(result.asItem()).toString());
+    this(type, JIngredient.ofItem(ingredient), Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(result.asItem()), "Object not registered.").toString());
   }
 
   @Deprecated

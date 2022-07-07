@@ -45,32 +45,10 @@ public class JPool implements Cloneable {
   @Deprecated
   public transient Integer rolls;
   /**
-   * The uniform value provider of rolls.
-   *
-   * @deprecated Please use {@link #rollsProvider}.
-   */
-  @Deprecated
-  public transient JRoll roll;
-  /**
    * The value provider of rolls.
    */
   @SerializedName("rolls")
   public LootNumberProvider rollsProvider;
-  /**
-   * The exact value of bonus rolls.
-   *
-   * @deprecated Please use {@link #bonusRollsProvider}.
-   */
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated
-  public transient Integer bonus_rolls;
-  /**
-   * The uniform value provider of bonus rolls.
-   *
-   * @deprecated Please use {@link #bonusRollsProvider}.
-   */
-  @Deprecated
-  public transient JRoll bonus_roll;
   /**
    * The value provider of bonus rolls;
    */
@@ -211,18 +189,6 @@ public class JPool implements Cloneable {
   }
 
   /**
-   * @deprecated Please use {@link #rolls(LootNumberProvider)}.
-   */
-  @Deprecated
-  @Contract(value = "_ -> this", mutates = "this")
-  @CanIgnoreReturnValue
-  public JPool rolls(JRoll roll) {
-    this.roll = roll;
-    this.rollsProvider = roll.asLootNumberProvider();
-    return this;
-  }
-
-  /**
    * This method is kept for compatibility.
    *
    * @deprecated Please use {@link #bonus(int)} or {@link #bonus(float)}.
@@ -238,7 +204,6 @@ public class JPool implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool bonus(int bonus_rolls) {
-    this.bonus_rolls = bonus_rolls;
     this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
     return this;
   }
@@ -254,18 +219,6 @@ public class JPool implements Cloneable {
   @CanIgnoreReturnValue
   public JPool bonus(LootNumberProvider bonusRollsProvider) {
     this.bonusRollsProvider = bonusRollsProvider;
-    return this;
-  }
-
-  /**
-   * @deprecated Please use {@link #bonus(LootNumberProvider)}.
-   */
-  @Deprecated
-  @Contract(value = "_ -> this", mutates = "this")
-  @CanIgnoreReturnValue
-  public JPool bonus(JRoll bonus_roll) {
-    this.bonus_roll = bonus_roll;
-    this.bonusRollsProvider = bonus_roll.asLootNumberProvider();
     return this;
   }
 

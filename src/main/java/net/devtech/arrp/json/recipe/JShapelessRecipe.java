@@ -21,9 +21,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class JShapelessRecipe extends JResultRecipe {
   private static final String TYPE = "minecraft:crafting_shapeless";
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated
-  protected transient final JIngredients ingredients;
+
   /**
    * The ingredient list of this recipe.
    */
@@ -41,7 +39,6 @@ public class JShapelessRecipe extends JResultRecipe {
   public JShapelessRecipe(String result, Collection<String> ingredients) {
     super(TYPE, result);
     this.ingredientList = ingredients.stream().map(JIngredient::ofItem).collect(Collectors.toList());
-    this.ingredients = null;
   }
 
   /**
@@ -54,7 +51,6 @@ public class JShapelessRecipe extends JResultRecipe {
   public JShapelessRecipe(String result, String... ingredients) {
     super(TYPE, result);
     this.ingredientList = Arrays.stream(ingredients).map(JIngredient::ofItem).collect(Collectors.toList());
-    this.ingredients = null;
   }
 
   /**
@@ -66,7 +62,6 @@ public class JShapelessRecipe extends JResultRecipe {
   public JShapelessRecipe(Identifier result, Identifier... ingredients) {
     super(TYPE, result);
     this.ingredientList = Arrays.stream(ingredients).map(JIngredient::ofItem).collect(Collectors.toList());
-    this.ingredients = null;
   }
 
   /**
@@ -78,7 +73,6 @@ public class JShapelessRecipe extends JResultRecipe {
   public JShapelessRecipe(ItemConvertible result, ItemConvertible... ingredients) {
     super(TYPE, result);
     this.ingredientList = Arrays.stream(ingredients).map(JIngredient::ofItem).collect(Collectors.toList());
-    this.ingredients = null;
   }
 
   /**
@@ -91,18 +85,8 @@ public class JShapelessRecipe extends JResultRecipe {
   public JShapelessRecipe(final JResult result, List<JIngredient> ingredientList) {
     super(TYPE, result);
     this.ingredientList = ingredientList;
-    this.ingredients = null;
   }
 
-  /**
-   * @deprecated Please use {@link #JShapelessRecipe(JResult, List)}.
-   */
-  @Deprecated
-  public JShapelessRecipe(final JResult result, final JIngredients ingredients) {
-    super("minecraft:crafting_shapeless", result);
-    this.ingredients = ingredients;
-    this.ingredientList = ingredients.ingredients;
-  }
 
   /**
    * {@inheritDoc}

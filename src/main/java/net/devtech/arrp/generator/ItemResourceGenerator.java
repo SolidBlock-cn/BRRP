@@ -1,18 +1,19 @@
 package net.devtech.arrp.generator;
 
 import net.devtech.arrp.annotations.PreferredEnvironment;
+import net.devtech.arrp.api.RRPCallbackForge;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.json.recipe.JRecipe;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>This interface is divided into three parts:</p>
  * <ul>
  *   <li>general part: to get the identifier of this instance.</li>
- *   <li>client part: methods related to generating and writing client assets. It's <i>highly recommended but not required</i> to annotate the methods as {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code>, because they are only used in client distribution. When running on a dedicated server, they should be ignored.</li>
+ *   <li>client part: methods related to generating and writing client assets. It's <i>highly recommended but not required</i> to annotate the methods as {@code @}{@link net.minecraftforge.api.distmarker.OnlyIn}<code>({@link Dist#CLIENT})</code>, because they are only used in client distribution. When running on a dedicated server, they should be ignored.</li>
  *   <li>server part: methods related to generating and writing server data. Please do not annotate them with {@code @Environment{EnvType.SERVER}}, unless you're sure to do so, as they will be used in client distribution.</li>
  * </ul>
  * <p>Most "get" methods are @Nullable, which means, when writing (in those "write" methods), these null values will be ignored. When overriding these "get" methods, you can annotate @NotNull if you're sure that the values are not null.</p>
@@ -36,19 +37,19 @@ public interface ItemResourceGenerator {
    * @return The id of the item.
    */
   default Identifier getItemId() {
-    return Registry.ITEM.getId((Item) this);
+    return ForgeRegistries.ITEMS.getKey((Item) this);
   }
 
 
   // CLIENT PART
-  // It's recommended to annotate @Environment(EnvType.CLIENT) when overriding following methods.
+  // It's recommended to annotate @OnlyIn(Dist.CLIENT) when overriding following methods.
 
   /**
    * The id of the model of its block item. It is usually {@code <i>namespace</i>:item/<i>path</i>}.
    *
    * @return The id of the item model.
    */
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default Identifier getItemModelId() {
     return getItemId().brrp_prepend("item/");
   }
@@ -59,7 +60,7 @@ public interface ItemResourceGenerator {
    * @return The id of the item texture.
    * @see BlockResourceGenerator#getTextureId(net.minecraft.data.client.TextureKey)
    */
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default String getTextureId() {
     return getItemId().brrp_prepend("item/").toString();
   }
@@ -69,7 +70,7 @@ public interface ItemResourceGenerator {
    *
    * @return The item model.
    */
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default @Nullable JModel getItemModel() {
     return new JModel("item/generated").textures(new JTextures().layer0(getTextureId()));
   }
@@ -79,7 +80,7 @@ public interface ItemResourceGenerator {
    *
    * @param pack The runtime resource pack.
    */
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default void writeItemModel(RuntimeResourcePack pack) {
     final JModel model = getItemModel();
     if (model != null) pack.addModel(model, getItemModelId());
@@ -98,7 +99,7 @@ public interface ItemResourceGenerator {
    * @see #writeData(RuntimeResourcePack)
    * @see #writeAssets(RuntimeResourcePack)
    */
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   default void writeAssets(RuntimeResourcePack pack) {
     writeItemModel(pack);
   }
@@ -175,14 +176,14 @@ public interface ItemResourceGenerator {
    * @see #writeData(RuntimeResourcePack)
    */
   default void writeAll(RuntimeResourcePack pack) {
-    if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+    if (FMLEnvironment.dist == Dist.CLIENT) {
       writeAssets(pack);
     }
     writeData(pack);
   }
 
   /**
-   * Write resources in the specified environment. It is usually used for {@link net.devtech.arrp.api.RRPCallbackConditional}. It's not recommended to override this method.
+   * Write resources in the specified environment. It is usually used for {@link RRPCallbackForge}. It's not recommended to override this method.
    *
    * @param pack         The runtime resource pack.
    * @param resourceType The resource type to write. If it is null, both resource types will be used, regardless of the instance environment.

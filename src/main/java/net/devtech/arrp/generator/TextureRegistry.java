@@ -1,18 +1,20 @@
 package net.devtech.arrp.generator;
 
+import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.data.client.TextureMap;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>This is used for recording textures. Sometimes you created a block, and wants the {@link BlockResourceGenerator#getTextureId} use textures that differ from the block id. You do not need to override the method. You can directly use this registry to specify the textures used.</p>
@@ -76,7 +78,7 @@ public final class TextureRegistry {
    * @param suffix     The suffix to append to the block id.
    */
   public static void registerAppended(Block block, TextureKey textureKey, String suffix) {
-    register(block, textureKey, Registry.BLOCK.getId(block).brrp_pend("blocks/", suffix));
+    register(block, textureKey, Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block), "The block is not registered.").brrp_pend("blocks/", suffix));
   }
 
   /**
@@ -89,7 +91,8 @@ public final class TextureRegistry {
    * @param path       The path of the identifier (not including {@code "blocks/"}).
    */
   public static void registerWithName(Block block, TextureKey textureKey, String path) {
-    final Identifier id = Registry.BLOCK.getId(block);
+    final Identifier id = ForgeRegistries.BLOCKS.getKey(block);
+    Preconditions.checkNotNull(id, "The block is not registered");
     register(block, textureKey, new Identifier(id.getNamespace(), "blocks/" + path));
   }
 

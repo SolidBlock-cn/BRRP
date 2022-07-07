@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.tags;
 
+import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.InlineMe;
 import net.minecraft.block.Block;
@@ -8,6 +9,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -149,7 +151,7 @@ public class JTag {
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addBlock(Block block) {
-    add(Registry.BLOCK.getId(block));
+    add(Preconditions.checkNotNull(ForgeRegistries.BLOCKS.getKey(block)));
     return this;
   }
 
@@ -178,7 +180,7 @@ public class JTag {
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addItem(ItemConvertible item) {
-    add(Registry.ITEM.getId(item.asItem()));
+    add(Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(item.asItem())));
     return this;
   }
 
@@ -207,7 +209,7 @@ public class JTag {
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addFluid(Fluid fluid) {
-    add(Registry.FLUID.getId(fluid));
+    add(Preconditions.checkNotNull(ForgeRegistries.FLUIDS.getKey(fluid)));
     return this;
   }
 
@@ -236,7 +238,7 @@ public class JTag {
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addEntityType(EntityType<?> entityType) {
-    add(Registry.ENTITY_TYPE.getId(entityType));
+    add(Preconditions.checkNotNull(ForgeRegistries.ENTITIES.getKey(entityType)));
     return this;
   }
 

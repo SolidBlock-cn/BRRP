@@ -4,12 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.devtech.arrp.ARRP;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -20,10 +19,9 @@ import java.util.List;
  * <p>A <b>"block states"</b> is the file in the {@code assets/<i>namespace</i>/blockstates} folder, which defines which models should be used when rendering a block state. It has two types:</p>
  * <ul>
  *   <li><b>variants</b> - Each block state corresponds to a block model definition ({@link JBlockModel}). You can create a variant definition through {@link #variants}.</li>
- *   <li><b>multipart</b> - Each part has a block model, and an optional condition ({@link JWhen}). If the condition is met (which means the actual block states matches to the condition), the part will be used. In this case, it's possible that one part, multiple parts or no parts will be used. You can create a multipart definition through {@link #ofMultiparts}.</li>
+ *   <li><b>multipart</b> - Each part has a block model, and an optional condition ({@link net.minecraft.data.client.When}). If the condition is met (which means the actual block states matches to the condition), the part will be used. In this case, it's possible that one part, multiple parts or no parts will be used. You can create a multipart definition through {@link #ofMultiparts}.</li>
  * </ul>
  * <p>When adding the block states file to the resource pack, the identifier is equal to the block identifier.</p>
- * <p>This class is a simple improved version of {@link JState}. You can "upgrade" the deprecated <code>JState</code> through {@link #of(JState)}.</p>
  *
  * @author SolidBlock
  * @see net.minecraft.data.client.BlockStateModelGenerator
@@ -31,7 +29,7 @@ import java.util.List;
  * @since BRRP 0.6.0
  */
 @SuppressWarnings("unused")
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JBlockStates implements JsonSerializable {
   public final JVariants variants;
   public final List<JMultipart> multiparts;
@@ -104,24 +102,6 @@ public class JBlockStates implements JsonSerializable {
     if (multiparts == null) throw new IllegalStateException("A block state definition can only have either variants or multipart, not both");
     multiparts.add(multipart);
     return this;
-  }
-
-  /**
-   * Simply "upgrades" the old version {@code JState} object to the improved version.
-   */
-  public static JBlockStates of(@SuppressWarnings("deprecation") JState jState) {
-    final JBlockStates instance;
-    if (jState.variants.isEmpty()) {
-      // As 'variants' is empty, it's regarded as a 'multipart'.
-      instance = ofMultiparts(jState.multiparts);
-    } else {
-      // It's regarded a 'variants'.
-      instance = ofVariants(JVariants.upgrade(jState.variants.get(0)));
-      if (jState.variants.size() > 1) {
-        ARRP.LOGGER.warn("Only one variant definition is allowed, but provided multiple. Only the first one will be used.");
-      }
-    }
-    return instance;
   }
 
   /**

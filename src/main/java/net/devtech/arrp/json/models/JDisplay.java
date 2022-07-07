@@ -6,8 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.fabricmc.api.EnvType;
 import net.minecraft.util.StringIdentifiable;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -58,7 +58,7 @@ import java.util.EnumMap;
  * }</pre>
  */
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JDisplay extends EnumMap<JDisplay.DisplayPosition, JPosition> implements Cloneable, JsonSerializable {
   // The following fields exist for only compatibility.
   @Deprecated(forRemoval = true)

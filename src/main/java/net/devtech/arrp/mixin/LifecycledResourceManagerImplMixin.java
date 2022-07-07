@@ -1,8 +1,7 @@
 package net.devtech.arrp.mixin;
 
 import net.devtech.arrp.ARRP;
-import net.devtech.arrp.api.RRPCallback;
-import net.devtech.arrp.api.RRPCallbackConditional;
+import net.devtech.arrp.api.RRPCallbackForge;
 import net.minecraft.resource.LifecycledResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
@@ -14,11 +13,12 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @Mixin(LifecycledResourceManagerImpl.class)
 public abstract class LifecycledResourceManagerImplMixin {
-  private static final Logger ARRP_LOGGER = LoggerFactory.getLogger("BRRP/LifecycledResourceManagerImplMixin");
+  private static final Logger BRRP_LOGGER = LoggerFactory.getLogger("BRRP/LifecycledResourceManagerImplMixin");
 
   private static ResourceType resourceType;
 
@@ -34,20 +34,14 @@ public abstract class LifecycledResourceManagerImplMixin {
   private static List<ResourcePack> registerARRPs(List<ResourcePack> packs) throws ExecutionException, InterruptedException {
     ARRP.waitForPregen();
 
-    ARRP_LOGGER.info("BRRP register - before vanilla");
+    BRRP_LOGGER.info("BRRP register - before vanilla");
     List<ResourcePack> before = new ArrayList<>();
-    RRPCallback.BEFORE_VANILLA.invoker().insert(before);
-    RRPCallbackConditional.BEFORE_VANILLA.invoker().insertTo(resourceType, before);
+    RRPCallbackForge.BEFORE_VANILLA.build().stream().map(f -> f.apply(resourceType)).filter(Objects::nonNull).forEach(before::add);
 
     before.addAll(packs);
 
-    ARRP_LOGGER.info("BRRP register - after vanilla");
-    List<ResourcePack> after = new ArrayList<>();
-    RRPCallback.AFTER_VANILLA.invoker().insert(after);
-    RRPCallbackConditional.AFTER_VANILLA.invoker().insertTo(resourceType, after);
-
-    before.addAll(after);
-
+    BRRP_LOGGER.info("BRRP register - after vanilla");
+    RRPCallbackForge.AFTER_VANILLA.build().stream().map(f -> f.apply(resourceType)).filter(Objects::nonNull).forEach(before::add);
     return before;
   }
 }

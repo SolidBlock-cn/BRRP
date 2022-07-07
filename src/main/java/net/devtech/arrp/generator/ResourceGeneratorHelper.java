@@ -1,14 +1,15 @@
 package net.devtech.arrp.generator;
 
+import com.google.common.base.Preconditions;
 import net.devtech.arrp.annotations.PreferredEnvironment;
-import net.fabricmc.api.EnvType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,25 +22,25 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ResourceGeneratorHelper {
   public static Identifier getItemId(@NotNull ItemConvertible item) {
-    return (item instanceof ItemResourceGenerator generator) ? generator.getItemId() : Registry.ITEM.getId(item.asItem());
+    return (item instanceof ItemResourceGenerator generator) ? generator.getItemId() : ForgeRegistries.ITEMS.getKey(item.asItem());
   }
 
   /**
    * @since 0.6.2 Fixed the issue that the item model id is not correct.
    */
   public static Identifier getItemModelId(@NotNull ItemConvertible item) {
-    return (item instanceof ItemResourceGenerator generator) ? generator.getItemModelId() : Registry.ITEM.getId(item.asItem()).brrp_prepend("item/");
+    return (item instanceof ItemResourceGenerator generator) ? generator.getItemModelId() : Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(item.asItem()), "The item is not registered.").brrp_prepend("item/");
   }
 
   public static Identifier getBlockId(@NotNull Block block) {
-    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockId() : Registry.BLOCK.getId(block);
+    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockId() : ForgeRegistries.BLOCKS.getKey(block);
   }
 
   public static Identifier getBlockModelId(@NotNull Block block) {
-    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockModelId() : Registry.BLOCK.getId(block).brrp_prepend("block/");
+    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockModelId() : Preconditions.checkNotNull(ForgeRegistries.BLOCKS.getKey(block), "The block is not registered.").brrp_prepend("block/");
   }
 
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   public static String getTextureId(@NotNull Block block, @NotNull TextureKey textureKey) {
     if (block instanceof BlockResourceGenerator generator) {
       return generator.getTextureId(textureKey);

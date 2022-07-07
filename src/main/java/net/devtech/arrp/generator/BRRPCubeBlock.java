@@ -3,11 +3,11 @@ package net.devtech.arrp.generator;
 import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,20 +56,20 @@ public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
     return new BRRPCubeBlock(settings, "block/cube_bottom_top", JTextures.ofSides(topTexture, sideTexture, bottomTexture));
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @NotNull JBlockStates getBlockStates() {
     return JBlockStates.simple(getBlockModelId());
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @NotNull JModel getBlockModel() {
     return new JModel(parent).textures(textures);
   }
 
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @NotNull String getTextureId(@NotNull TextureKey textureKey) {
     final Identifier texture = TextureRegistry.getTexture(this, textureKey);

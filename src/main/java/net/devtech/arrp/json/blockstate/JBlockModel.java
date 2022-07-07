@@ -2,18 +2,18 @@ package net.devtech.arrp.json.blockstate;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.devtech.arrp.annotations.PreferredEnvironment;
-import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The simple block model that usually represents as the value in {@link JVariant}. It defines the model id and some simple rotations of that model.
+ * The simple block model that usually represents as the value in {@link JVariants}. It defines the model id and some simple rotations of that model.
  * <p>
  * <B>Note: </B>This class is used as a model definition in the block states definition file. To represent a model's content, please use {@link net.devtech.arrp.json.models.JModel}.
  */
 @SuppressWarnings("unused")
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JBlockModel implements Cloneable {
   /**
    * The model identifier. Usually compulsory. For example, {@code "minecraft:block/oak_slab_top"}.

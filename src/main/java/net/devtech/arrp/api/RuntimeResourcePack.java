@@ -8,7 +8,6 @@ import io.netty.buffer.ByteBufOutputStream;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.devtech.arrp.json.animation.JAnimation;
 import net.devtech.arrp.json.blockstate.JBlockStates;
-import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
@@ -39,10 +38,9 @@ import java.util.zip.ZipOutputStream;
 /**
  * A resource pack whose assets and data are evaluated at runtime.
  * <p>
- * After creating a runtime resource pack, you should register it in {@link RRPCallback} or {@link RRPCallbackConditional} so that it can take effect when loading resources.
+ * After creating a runtime resource pack, you should register it in {@link RRPCallbackForge} so that it can take effect when loading resources.
  *
- * @see RRPCallback
- * @see RRPCallbackConditional
+ * @see RRPCallbackForge
  */
 @SuppressWarnings("unused")
 public interface RuntimeResourcePack extends ResourcePack {
@@ -201,15 +199,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @CanIgnoreReturnValue
   byte[] addModel(JModel model, Identifier id);
-
-  /**
-   * Add a block states file to the runtime resource pack. It defines which model or models will be used and how be used for each variant of the block.
-   *
-   * @param state      The block states file to be added.
-   * @param identifier The identifier of the block states file. It is usually the same as the block id.
-   */
-  @CanIgnoreReturnValue
-  byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier identifier);
 
   /**
    * Add a block states file to the runtime resource pack. It defines which model or models will be used and how be used for each variant of the block.

@@ -1,9 +1,8 @@
 package net.devtech.arrp;
 
-import net.devtech.arrp.api.RRPPreGenEntrypoint;
+import net.devtech.arrp.api.RRPPreGenEvent;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.Blocking;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,18 +12,14 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class ARRP implements PreLaunchEntrypoint {
+public final class ARRP {
   public static final Logger LOGGER = LoggerFactory.getLogger("BRRP");
   private static List<Future<?>> futures;
 
-  @Override
   public void onPreLaunch() {
     LOGGER.info("BRRP data generation: PreLaunch");
-    FabricLoader loader = FabricLoader.getInstance();
     List<Future<?>> futures = new ArrayList<>();
-    for (RRPPreGenEntrypoint entrypoint : loader.getEntrypoints("rrp:pregen", RRPPreGenEntrypoint.class)) {
-      futures.add(RuntimeResourcePackImpl.EXECUTOR_SERVICE.submit(entrypoint::pregen));
-    }
+    MinecraftForge.EVENT_BUS.post(new RRPPreGenEvent(), (listener, event) -> futures.add(RuntimeResourcePackImpl.EXECUTOR_SERVICE.submit(() -> listener.invoke(event))));
     ARRP.futures = futures;
   }
 

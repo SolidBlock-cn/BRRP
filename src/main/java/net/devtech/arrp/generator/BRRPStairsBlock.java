@@ -1,5 +1,6 @@
 package net.devtech.arrp.generator;
 
+import com.google.common.base.Suppliers;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.models.JModel;
@@ -7,9 +8,7 @@ import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.recipe.JResult;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StairsBlock;
@@ -19,39 +18,43 @@ import net.minecraft.data.server.RecipeProvider;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerator {
-  public final Block baseBlock;
+import java.util.function.Supplier;
 
-  private BRRPStairsBlock(BlockState baseBlockState, Settings settings) {
-    super(baseBlockState, settings);
-    this.baseBlock = baseBlockState.getBlock();
+public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerator {
+  public final Supplier<Block> baseBlockSupplier;
+
+  private BRRPStairsBlock(Settings settings, Supplier<BlockState> stateSupplier) {
+    super(stateSupplier, settings);
+    this.baseBlockSupplier = () -> stateSupplier.get().getBlock();
   }
 
-  public BRRPStairsBlock(Block baseBlock, Settings settings) {
-    super(baseBlock.getDefaultState(), settings);
-    this.baseBlock = baseBlock;
+  public BRRPStairsBlock(Supplier<Block> baseBlockSupplier, Settings settings) {
+    super(() -> baseBlockSupplier.get().getDefaultState(), settings);
+    this.baseBlockSupplier = baseBlockSupplier;
   }
 
   public BRRPStairsBlock(Block baseBlock) {
-    this(baseBlock, FabricBlockSettings.copyOf(baseBlock));
+    this(Suppliers.ofInstance(baseBlock), AbstractBlock.Settings.copy(baseBlock));
   }
 
   @Override
   public @Nullable Block getBaseBlock() {
-    return baseBlock;
+    return baseBlockSupplier.get();
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @NotNull JBlockStates getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return JBlockStates.delegate(BlockStateModelGenerator.createStairsBlockState(this, blockModelId.brrp_append("_inner"), blockModelId, blockModelId.brrp_append("_outer")));
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @NotNull JModel getBlockModel() {
     return new JModel("block/stairs").textures(JTextures.ofSides(getTextureId(TextureKey.TOP),
@@ -59,7 +62,7 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
         getTextureId(TextureKey.BOTTOM)));
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public void writeBlockModel(RuntimeResourcePack pack) {
     final JModel blockModel = getBlockModel();
@@ -74,6 +77,7 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
    */
   @Override
   public @Nullable JRecipe getCraftingRecipe() {
+    final Block baseBlock = getBaseBlock();
     return baseBlock == null ? null :
         new JShapedRecipe(new JResult(this)
             .count(4))
