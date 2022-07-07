@@ -1,29 +1,27 @@
 package net.devtech.arrp;
 
-import net.devtech.arrp.api.RRPCallbackConditional;
+import com.google.common.base.Suppliers;
+import net.devtech.arrp.api.RRPCallbackForge;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.generator.*;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
 import net.devtech.arrp.json.recipe.JStonecuttingRecipe;
 import net.devtech.arrp.json.tags.IdentifiedTag;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricMaterialBuilder;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.MapColor;
+import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.ForgeSoundType;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.TestOnly;
@@ -35,24 +33,25 @@ import org.slf4j.LoggerFactory;
  */
 @TestOnly
 @ApiStatus.Internal
-public class BRRPDevelopment implements ModInitializer {
+public class BRRPDevelopment {
   static {
-    if (!FabricLoader.getInstance().isDevelopmentEnvironment()) {
+    if (FMLEnvironment.production) {
       throw new RuntimeException("This code can only exist in the development environment!");
     }
   }
 
+
   public static final RuntimeResourcePack PACK = RuntimeResourcePack.create(new Identifier("brrp", "test"));
-  public static final BlockSoundGroup LAVA_SOUND_GROUP = new BlockSoundGroup(1, 1, SoundEvents.ITEM_BUCKET_EMPTY_LAVA, SoundEvents.BLOCK_LAVA_POP, SoundEvents.ITEM_BUCKET_FILL_LAVA, SoundEvents.BLOCK_LAVA_POP, SoundEvents.BLOCK_POINTED_DRIPSTONE_DRIP_LAVA);
+  public static final BlockSoundGroup LAVA_SOUND_GROUP = new ForgeSoundType(1, 1, Suppliers.ofInstance(SoundEvents.ITEM_BUCKET_EMPTY_LAVA), Suppliers.ofInstance(SoundEvents.BLOCK_LAVA_POP), Suppliers.ofInstance(SoundEvents.ITEM_BUCKET_FILL_LAVA), Suppliers.ofInstance(SoundEvents.BLOCK_LAVA_POP), Suppliers.ofInstance(SoundEvents.BLOCK_POINTED_DRIPSTONE_DRIP_LAVA));
   private static final Logger LOGGER = LoggerFactory.getLogger(BRRPDevelopment.class);
-  public static final BRRPCubeBlock LAVA_BLOCK = register(BRRPCubeBlock.cubeAll(FabricBlockSettings.of(new FabricMaterialBuilder(MapColor.BRIGHT_RED).allowsMovement().lightPassesThrough().notSolid().liquid().build()).luminance(15).sounds(LAVA_SOUND_GROUP), "block/lava_still"), "lava_block");
+  public static final BRRPCubeBlock LAVA_BLOCK = register(BRRPCubeBlock.cubeAll(AbstractBlock.Settings.of(new Material.Builder(MapColor.BRIGHT_RED).allowsMovement().notSolid().liquid().build()).luminance(state -> 15).sounds(LAVA_SOUND_GROUP), "block/lava_still"), "lava_block");
 
   public static final BRRPStairsBlock LAVA_STAIRS = register(new BRRPStairsBlock(LAVA_BLOCK), "lava_stairs");
   public static final BRRPSlabBlock LAVA_SLAB = register(new BRRPSlabBlock(LAVA_BLOCK), "lava_slab");
   public static final BRRPFenceBlock LAVA_FENCE = register(new BRRPFenceBlock(LAVA_BLOCK), "lava_fence");
   public static final BRRPFenceGateBlock LAVA_FENCE_GATE = register(new BRRPFenceGateBlock(LAVA_BLOCK), "lava_fence_gate");
   public static final BRRPWallBlock LAVA_WALL = register(new BRRPWallBlock(LAVA_BLOCK), "lava_wall");
-  public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(FabricBlockSettings.copyOf(Blocks.SMOOTH_STONE), "block/smooth_stone", "block/smooth_stone_slab_side", "block/smooth_stone"), "smooth_stone");
+  public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE), "block/smooth_stone", "block/smooth_stone_slab_side", "block/smooth_stone"), "smooth_stone");
 
   static {
     blockItem(LAVA_BLOCK);
@@ -66,18 +65,14 @@ public class BRRPDevelopment implements ModInitializer {
 
   @SuppressWarnings("UnusedReturnValue")
   private static BlockItem blockItem(Block block) {
-    return Registry.register(Registry.ITEM, Registry.BLOCK.getId(block), new BlockItem(block, new FabricItemSettings().group(ItemGroup.TRANSPORTATION)));
+    final BlockItem blockItem = new BlockItem(block, new Item.Settings().group(ItemGroup.TRANSPORTATION));
+    ForgeRegistries.ITEMS.register(ForgeRegistries.BLOCKS.getKey(block), blockItem);
+    return blockItem;
   }
 
-  @Override
-  public void onInitialize() {
-    RRPCallbackConditional.BEFORE_VANILLA.register(
-        (resourceType, builder) -> builder.add(refreshPack(resourceType))
-    );
-
-    if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-      client();
-    }
+  public static void onInitialize() {
+    RRPCallbackForge.BEFORE_VANILLA.add(BRRPDevelopment::refreshPack);
+    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> BRRPDevelopment::client);
   }
 
   private static RuntimeResourcePack refreshPack(ResourceType resourceType) {
@@ -138,12 +133,13 @@ public class BRRPDevelopment implements ModInitializer {
     return PACK;
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   private static void client() {
   }
 
   @Contract("_,_ -> param1")
   private static <T extends Block> T register(T block, String name) {
-    return Registry.register(Registry.BLOCK, new Identifier("brrp", name), block);
+    ForgeRegistries.BLOCKS.register(new Identifier("brrp", name), block);
+    return block;
   }
 }

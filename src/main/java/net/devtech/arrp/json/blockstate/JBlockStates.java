@@ -7,9 +7,9 @@ import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -31,7 +31,7 @@ import java.util.List;
  * @since BRRP 0.6.0
  */
 @SuppressWarnings("unused")
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JBlockStates implements JsonSerializable {
   public final JVariants variants;
   public final List<JMultipart> multiparts;

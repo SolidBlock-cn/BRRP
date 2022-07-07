@@ -19,7 +19,6 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.loot.provider.number.LootNumberProvider;
 import net.minecraft.loot.provider.number.LootNumberProviderTypes;
@@ -28,6 +27,7 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +97,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     properties.setProperty("dump assets", "false");
     properties.setProperty("debug performance", "false");
 
-    File file = FabricLoader.getInstance().getConfigDir().resolve("rrp.properties").toFile();
+    File file = FMLPaths.CONFIGDIR.get().resolve("rrp.properties").toFile();
     try (FileReader reader = new FileReader(file)) {
       properties.load(reader);
       processors = Integer.parseInt(properties.getProperty("threads"));

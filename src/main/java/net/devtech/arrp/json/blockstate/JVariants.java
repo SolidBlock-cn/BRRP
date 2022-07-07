@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.fabricmc.api.EnvType;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.data.client.BlockStateVariant;
 import net.minecraft.state.property.Properties;
@@ -15,6 +14,7 @@ import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +47,7 @@ import java.util.function.Supplier;
  * @see net.minecraft.data.client.BlockStateVariant
  */
 @SuppressWarnings("unused")
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JVariants extends ForwardingMap<String, JBlockModel[]> implements JsonSerializable {
   /**
    * The real map storing its contents, used for the forwarding map. It is usually a {@link LinkedHashMap} by default, but you can specify other types of maps.

@@ -1,7 +1,6 @@
 package net.devtech.arrp.generator;
 
 import net.devtech.arrp.annotations.PreferredEnvironment;
-import net.fabricmc.api.EnvType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.TextureKey;
@@ -9,6 +8,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +39,7 @@ public final class ResourceGeneratorHelper {
     return (block instanceof BlockResourceGenerator generator) ? generator.getBlockModelId() : Registry.BLOCK.getId(block).brrp_prepend("block/");
   }
 
-  @PreferredEnvironment(EnvType.CLIENT)
+  @PreferredEnvironment(Dist.CLIENT)
   public static String getTextureId(@NotNull Block block, @NotNull TextureKey textureKey) {
     if (block instanceof BlockResourceGenerator generator) {
       return generator.getTextureId(textureKey);

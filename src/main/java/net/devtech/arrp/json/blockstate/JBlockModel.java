@@ -2,8 +2,8 @@ package net.devtech.arrp.json.blockstate;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.devtech.arrp.annotations.PreferredEnvironment;
-import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * <B>Note: </B>This class is used as a model definition in the block states definition file. To represent a model's content, please use {@link net.devtech.arrp.json.models.JModel}.
  */
 @SuppressWarnings("unused")
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JBlockModel implements Cloneable {
   /**
    * The model identifier. Usually compulsory. For example, {@code "minecraft:block/oak_slab_top"}.

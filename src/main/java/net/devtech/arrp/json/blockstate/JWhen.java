@@ -4,10 +4,10 @@ import com.google.gson.*;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
-import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.When;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.Pair;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  * @see net.minecraft.data.client.When
  */
 @Deprecated
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JWhen implements Cloneable, JsonSerializable, When {
   private final List<Pair<String, String[]>> OR = new ArrayList<>();
 

@@ -7,9 +7,7 @@ import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.recipe.JResult;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StairsBlock;
@@ -19,6 +17,8 @@ import net.minecraft.data.server.RecipeProvider;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +36,7 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
   }
 
   public BRRPStairsBlock(Block baseBlock) {
-    this(baseBlock, FabricBlockSettings.copyOf(baseBlock));
+    this(baseBlock, AbstractBlock.Settings.copy(baseBlock));
   }
 
   @Override
@@ -44,14 +44,14 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
     return baseBlock;
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @NotNull JBlockStates getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return JBlockStates.delegate(BlockStateModelGenerator.createStairsBlockState(this, blockModelId.brrp_append("_inner"), blockModelId, blockModelId.brrp_append("_outer")));
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @NotNull JModel getBlockModel() {
     return new JModel("block/stairs").textures(JTextures.ofSides(getTextureId(TextureKey.TOP),
@@ -59,7 +59,7 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
         getTextureId(TextureKey.BOTTOM)));
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public void writeBlockModel(RuntimeResourcePack pack) {
     final JModel blockModel = getBlockModel();

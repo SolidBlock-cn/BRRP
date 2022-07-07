@@ -39,10 +39,9 @@ import java.util.zip.ZipOutputStream;
 /**
  * A resource pack whose assets and data are evaluated at runtime.
  * <p>
- * After creating a runtime resource pack, you should register it in {@link RRPCallback} or {@link RRPCallbackConditional} so that it can take effect when loading resources.
+ * After creating a runtime resource pack, you should register it in {@link RRPCallbackForge} so that it can take effect when loading resources.
  *
- * @see RRPCallback
- * @see RRPCallbackConditional
+ * @see RRPCallbackForge
  */
 @SuppressWarnings("unused")
 public interface RuntimeResourcePack extends ResourcePack {

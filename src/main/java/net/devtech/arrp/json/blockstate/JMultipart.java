@@ -8,8 +8,8 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.When;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -31,7 +31,7 @@ import java.util.List;
  * @see net.minecraft.client.render.model.json.MultipartModelComponent
  */
 @SuppressWarnings("unused")
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JMultipart implements Cloneable, JsonSerializable {
   /**
    * The model that will be used, if the condition is met. It can be one of multiple block models.

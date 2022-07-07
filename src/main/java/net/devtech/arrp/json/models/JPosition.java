@@ -1,7 +1,7 @@
 package net.devtech.arrp.json.models;
 
 import net.devtech.arrp.annotations.PreferredEnvironment;
-import net.fabricmc.api.EnvType;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Contract;
  * JPosition.ofRotation(-90, 0, 0).translation(0, 1, -3).scale(0.55, 0.55, 0.55);
  * }</pre>
  */
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JPosition implements Cloneable {
   /**
    * The rotation of the model, in the format of [x, y, z]. Rotation degrees will be applied around the corresponding axis. For example, a rotation of [0, 45, 0] will rotate the model around Y axis.

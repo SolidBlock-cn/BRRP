@@ -6,8 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 @SuppressWarnings({"DeprecatedIsStillUsed", "unused"})
 @Deprecated
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public final class JState implements JsonSerializable {
   final List<JVariant> variants = new ArrayList<>();
   final List<JMultipart> multiparts = new ArrayList<>();

@@ -6,9 +6,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.fabricmc.api.EnvType;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -30,7 +30,7 @@ import java.util.Map;
  */
 @SuppressWarnings("DeprecatedIsStillUsed")
 @Deprecated
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public final class JVariant implements Cloneable, JsonSerializable {
   public final Map<String, List<JBlockModel>> models = new HashMap<>();
 

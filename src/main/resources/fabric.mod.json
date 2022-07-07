@@ -19,7 +19,7 @@
       "net.devtech.arrp.ARRP"
     ],
     "main": [
-      "net.devtech.arrp.BRRPInitialize"
+      "net.devtech.arrp.BRRPInitializeForge"
     ],
     "brrp:develop": [
       "net.devtech.arrp.BRRPDevelopment"

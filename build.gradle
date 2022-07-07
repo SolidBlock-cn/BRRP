@@ -1,12 +1,12 @@
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'dev.architectury.loom' version '0.12.0-SNAPSHOT'
     id 'maven-publish'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = project.archives_base_name
+archivesBaseName = project.archives_base_name + '-forge'
 version = project.mod_version + "-" + project.minecraft_version
 group = project.maven_group
 
@@ -24,35 +24,61 @@ repositories {
     }
 }
 allprojects {
-    apply plugin: 'fabric-loom'
+    apply plugin: 'dev.architectury.loom'
     dependencies {
         // To change the versions see the gradle.properties file
         minecraft "com.mojang:minecraft:${project.minecraft_version}"
-        mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-        modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+        boolean usesYarn = true;
+        if (usesYarn) mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+        else mappings loom.officialMojangMappings()
+        forge "net.minecraftforge:forge:${project.minecraft_version}-${forge_version}"
     }
 }
 
-dependencies {
-    // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+loom {
+    // since loom 0.10, you are **required** to use the
+    // "forge" block to configure forge-specific features,
+    // such as the mixinConfigs array or datagen
+    forge {
+        // specify the mixin configs used in this mod
+        // this will be added to the jar manifest as well!
+        mixinConfigs = [
+                "brrp.mixins.json",
+                "arrp.mixins.json"
+        ]
 
-    implementation project(path: ":arrp", configuration: 'namedElements')
-    include project(path: ":arrp", configuration: 'namedElements')
+        // missing access transformers?
+        // don't worry, you can still use them!
+        // note that your AT *MUST* be located at
+        // src/main/resources/META-INF/accesstransformer.cfg
+        // to work as there is currently no config option to change this.
+        // also, any names used in your access transformer will need to be
+        // in SRG mapped ("func_" / "field_" with MCP class names) to work!
+        // (both of these things may be subject to change in the future)
+    }
+
+    // This allows you to modify your launch configurations,
+    // for example to add custom arguments. In this case, we want
+    // the data generator to check our resources directory for
+    // existing files. (see Forge's ExistingFileHelper for more info)
+    launches {
+        data {
+            arg "--existing", file("src/main/resources").absolutePath
+        }
+    }
 }
 
 subprojects {
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/fabric-data-generation-api.accesswidener")
-}
-
 processResources {
-    inputs.property "version", version
+    // define properties that can be used during resource processing
+    inputs.property "version", project.version
 
-    filesMatching("fabric.mod.json") {
-        expand "version": version
+    // this will replace the property "${version}" in your mods.toml
+    // with the version you've defined in your gradle.properties
+    filesMatching("META-INF/mods.toml") {
+        expand "version": project.version
     }
 }
 
@@ -63,6 +89,7 @@ remapJar {
 tasks.withType(JavaCompile).configureEach {
     // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
     it.options.release = 17
+    it.options.encoding = "UTF-8"
 }
 
 java {
@@ -73,8 +100,17 @@ java {
 }
 
 jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
+    // add some additional metadata to the jar manifest
+    manifest {
+        attributes([
+                "Specification-Title"     : "better runtime resource pack",
+                "Specification-Vendor"    : "SolidBlock",
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Vendor"   : "SolidBlock",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
     }
 }
 
@@ -82,7 +118,13 @@ jar {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
         }
     }
 

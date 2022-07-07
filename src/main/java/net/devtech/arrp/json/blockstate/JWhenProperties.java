@@ -7,11 +7,11 @@ import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
-import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.When;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.StringIdentifiable;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  *
  * @see JWhen.PropertyCondition
  */
-@PreferredEnvironment(EnvType.CLIENT)
+@PreferredEnvironment(Dist.CLIENT)
 public class JWhenProperties extends ForwardingMap<String, String> implements When, JsonSerializable {
   /**
    * The delegate map storing properties and values, both of which represent as strings.
