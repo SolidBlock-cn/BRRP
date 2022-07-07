@@ -8,9 +8,7 @@ import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.data.client.model.TextureKey;
@@ -19,6 +17,8 @@ import net.minecraft.data.server.RecipesProvider;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +41,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
    * Simply creates an instance with a given base block. The block settings of the base block will be used, so you do not need to provide it.
    */
   public BRRPSlabBlock(@NotNull Block baseBlock) {
-    this(baseBlock, FabricBlockSettings.copyOf(baseBlock));
+    this(baseBlock, AbstractBlock.Settings.copy(baseBlock));
   }
 
   public BRRPSlabBlock(@Nullable Block baseBlock, Settings settings) {
@@ -56,14 +56,14 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
     this(null, settings);
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @Nullable JBlockStates getBlockStates() {
     final Identifier id = getBlockModelId();
     return JBlockStates.simpleSlab(baseBlock != null ? ResourceGeneratorHelper.getBlockModelId(baseBlock) : id.brrp_append("_double"), id, id.brrp_append("_top"));
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public @Nullable JModel getBlockModel() {
     return new JModel("block/slab").textures(JTextures.ofSides(
@@ -73,7 +73,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
     ));
   }
 
-  @Environment(EnvType.CLIENT)
+  @OnlyIn(Dist.CLIENT)
   @Override
   public void writeBlockModel(RuntimeResourcePack pack) {
     final JModel model = getBlockModel();

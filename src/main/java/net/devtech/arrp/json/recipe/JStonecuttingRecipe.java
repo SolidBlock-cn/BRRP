@@ -1,9 +1,10 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * <p>A <b>stonecutting recipe</b> is used for stonecutters. It has a simple one or multiple ingredients and a single result.</p>
@@ -68,7 +69,7 @@ public class JStonecuttingRecipe extends JRecipe {
    * @param count      The count of the result.
    */
   public JStonecuttingRecipe(final Item ingredient, final Item result, int count) {
-    this(JIngredient.ofItem(Registry.ITEM.getId(ingredient)), Registry.ITEM.getId(result).toString(), count);
+    this(JIngredient.ofItem(Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(ingredient), "Please register the ingredient item at first.")), Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(result), "Please register the result item at first.").toString(), count);
   }
 
   /**
@@ -79,16 +80,11 @@ public class JStonecuttingRecipe extends JRecipe {
    * @param count      The count of the result.
    */
   public JStonecuttingRecipe(final ItemConvertible ingredient, final ItemConvertible result, int count) {
-    this(JIngredient.ofItem(ingredient), Registry.ITEM.getId(result.asItem()).toString(), count);
+    this(JIngredient.ofItem(ingredient), Preconditions.checkNotNull(ForgeRegistries.ITEMS.getKey(result.asItem()), "Please register the result item at first.").toString(), count);
   }
 
   @Deprecated
   public JStonecuttingRecipe(final JIngredient ingredient, final JResult result) {
-    this(ingredient, result.item, result.count);
-  }
-
-  @Deprecated
-  public JStonecuttingRecipe(final JIngredient ingredient, final JStackedResult result) {
     this(ingredient, result.item, result.count);
   }
 

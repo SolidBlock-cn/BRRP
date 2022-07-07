@@ -64,16 +64,6 @@ public abstract class JRecipe implements Cloneable {
     return new JSmithingRecipe(base, addition, result);
   }
 
-  /**
-   * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
-   */
-  @Deprecated
-  @InlineMe(replacement = "new JStonecuttingRecipe(ingredient, result)")
-  @Contract("_, _ -> new")
-  public static JStonecuttingRecipe stonecutting(final JIngredient ingredient, final JStackedResult result) {
-    return new JStonecuttingRecipe(ingredient, result);
-  }
-
   // crafting
 
   /**
@@ -84,16 +74,6 @@ public abstract class JRecipe implements Cloneable {
   @Contract("_, _, _ -> new")
   public static JShapedRecipe shaped(final JPattern pattern, final JKeys keys, final JResult result) {
     return new JShapedRecipe(result, pattern, keys);
-  }
-
-  /**
-   * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
-   */
-  @Deprecated
-  @InlineMe(replacement = "new JShapelessRecipe(result, ingredients)")
-  @Contract("_, _ -> new")
-  public static JShapelessRecipe shapeless(final JIngredients ingredients, final JResult result) {
-    return new JShapelessRecipe(result, ingredients);
   }
 
   // cooking
