@@ -24,15 +24,15 @@ public class JPosition implements Cloneable {
   /**
    * The rotation of the model, in the format of [x, y, z]. Rotation degrees will be applied around the corresponding axis. For example, a rotation of [0, 45, 0] will rotate the model around Y axis.
    */
-  public float[] rotation = new float[3];
+  public final float[] rotation = new float[3];
   /**
    * The translation of the model, in the format of [x, y, z]. Model will be offset at the corresponding axis. Each value should be between -80 and 80. However, this class dos not inspect it.
    */
-  public float[] translation = new float[3];
+  public final float[] translation = new float[3];
   /**
    * The scale of the model, in the format of [x, y, z]. Each value should be no larger than 4. However, this class does not inspect it.
    */
-  public float[] scale = new float[3];
+  public final float[] scale = new float[3];
 
   public JPosition() {
   }

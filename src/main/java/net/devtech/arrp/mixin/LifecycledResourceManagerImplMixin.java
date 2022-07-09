@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 
 @Mixin(LifecycledResourceManagerImpl.class)
 public abstract class LifecycledResourceManagerImplMixin {
-  private static final Logger ARRP_LOGGER = LoggerFactory.getLogger("BRRP/LifecycledResourceManagerImplMixin");
+  private static final Logger BRRP_LOGGER = LoggerFactory.getLogger("BRRP/LifecycledResourceManagerImplMixin");
 
   private static ResourceType resourceType;
 
@@ -34,16 +34,14 @@ public abstract class LifecycledResourceManagerImplMixin {
   private static List<ResourcePack> registerARRPs(List<ResourcePack> packs) throws ExecutionException, InterruptedException {
     ARRP.waitForPregen();
 
-    ARRP_LOGGER.info("BRRP register - before vanilla");
+    BRRP_LOGGER.info("BRRP register - before vanilla");
     List<ResourcePack> before = new ArrayList<>();
     RRPCallbackForge.BEFORE_VANILLA.build().stream().map(f -> f.apply(resourceType)).filter(Objects::nonNull).forEach(before::add);
 
     before.addAll(packs);
 
-    ARRP_LOGGER.info("BRRP register - after vanilla");
-    List<ResourcePack> after = new ArrayList<>();
+    BRRP_LOGGER.info("BRRP register - after vanilla");
     RRPCallbackForge.AFTER_VANILLA.build().stream().map(f -> f.apply(resourceType)).filter(Objects::nonNull).forEach(before::add);
-
     return before;
   }
 }

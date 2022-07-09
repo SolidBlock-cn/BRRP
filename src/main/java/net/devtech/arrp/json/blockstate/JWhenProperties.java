@@ -46,8 +46,6 @@ import java.util.stream.Collectors;
  *  .addNegated(Properties.AXIS, Direction.Axis.X, Direction.Axis.Y);
  * }</pre>
  * <p>The negation is defined in {@link PropertyCondition} for data generation but is actually not used. There is no guarantee that the usage of negation can take effect.</p>
- *
- * @see JWhen.PropertyCondition
  */
 @PreferredEnvironment(Dist.CLIENT)
 public class JWhenProperties extends ForwardingMap<String, String> implements When, JsonSerializable {

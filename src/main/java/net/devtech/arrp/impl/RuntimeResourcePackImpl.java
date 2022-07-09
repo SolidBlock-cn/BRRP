@@ -10,7 +10,6 @@ import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
 import net.devtech.arrp.json.blockstate.JBlockStates;
-import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
@@ -126,13 +125,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
   private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
-  /**
-   * @deprecated Wrong spelling
-   */
-  @SuppressWarnings({"SpellCheckingInspection", "DeprecatedIsStillUsed"})
-  @Deprecated(forRemoval = true)
-  private final Map<Identifier, JLang> langMergable = new ConcurrentHashMap<>();
-  private final Map<Identifier, JLang> langMergeable = langMergable;
+  private final Map<Identifier, JLang> langMergeable = new ConcurrentHashMap<>();
   private boolean forbidsDuplicateResource = false;
 
   public RuntimeResourcePackImpl(Identifier id) {
@@ -303,11 +296,6 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   @Override
   public byte[] addModel(JModel model, Identifier id) {
     return this.addAsset(fix(id, "models", "json"), serialize(model));
-  }
-
-  @Override
-  public byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier identifier) {
-    return this.addAsset(fix(identifier, "blockstates", "json"), serialize(state));
   }
 
   @Override
