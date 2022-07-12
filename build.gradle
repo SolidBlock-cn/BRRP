@@ -21,6 +21,9 @@ loom {
                 "brrp.mixins.json",
                 "arrp.mixins.json"
         ]
+        convertAccessWideners = true
+        accessWidenerPath = file("src/main/resources/fabric-data-generation-api.accesswidener")
+        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
         // missing access transformers?
         // don't worry, you can still use them!
@@ -60,21 +63,21 @@ repositories {
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    boolean usesYarn = true;
-    if (usesYarn) mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    else mappings loom.officialMojangMappings()
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     forge "net.minecraftforge:forge:${project.minecraft_version}-${forge_version}"
 }
 
 processResources {
     // define properties that can be used during resource processing
-    inputs.property "version", project.version
+    inputs.property "version", project.mod_version
 
     // this will replace the property "${version}" in your mods.toml
     // with the version you've defined in your gradle.properties
     filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
+        expand "version": project.mod_version
     }
+
+    exclude "fabric.mod.json"
 }
 
 remapJar {

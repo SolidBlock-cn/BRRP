@@ -28,7 +28,7 @@ displayName = "Better Runtime Resource Pack"
 # authors="Me!" #optional
 # A multi-line description for your mod. This has no minimum length, but it *is* required!
 description = '''
-BRRP is a library mod that can generate resource packs at runtime. It is an extension of ARRP mod, which fixes some issues and adds some enhancements. The mod is trying the best to make it compatible with ARRP-dependent mods. If you have installed BRRP you do not have to install ARRP again.
+BRRP is a library mod that can generate resource packs at runtime. It is an branch of ARRP mod, which fixes some issues and adds some enhancements, which supports Forge now.
 '''
 
 # An (optional) dependency for your mod. Though technically not required,

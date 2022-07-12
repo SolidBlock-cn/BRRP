@@ -238,7 +238,7 @@ public class JTag {
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addEntityType(EntityType<?> entityType) {
-    add(Preconditions.checkNotNull(ForgeRegistries.ENTITIES.getKey(entityType)));
+    add(Preconditions.checkNotNull(ForgeRegistries.ENTITY_TYPES.getKey(entityType)));
     return this;
   }
 
