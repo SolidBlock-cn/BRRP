@@ -5,9 +5,9 @@ pluginManagement {
             url = 'https://maven.fabricmc.net/'
         }
         maven { url "https://maven.architectury.dev/" }
-        
-        boolean usesBmclApi = false
-        maven { url usesBmclApi ? "https://bmclapi2.bangbang93.com/maven" : "https://files.minecraftforge.net/maven/" }
+
+        boolean usesBmclApi = true
+        maven { url usesBmclApi ? "https://bmclapi2.bangbang93.com/maven/" : "https://files.minecraftforge.net/maven/" }
         gradlePluginPortal()
     }
 }
