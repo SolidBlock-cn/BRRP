@@ -4,6 +4,7 @@ import net.devtech.arrp.api.RRPPreGenEvent;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Blocking;
 
 import java.util.ArrayList;

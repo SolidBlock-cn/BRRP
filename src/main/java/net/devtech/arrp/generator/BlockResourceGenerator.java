@@ -12,8 +12,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.ApiStatus;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,8 +63,8 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @Override
   default Identifier getItemId() {
-    if (this instanceof Block block && BlockItem.BLOCK_ITEMS.containsKey(block)) {
-      return ForgeRegistries.ITEMS.getKey(BlockItem.BLOCK_ITEMS.get(block));
+    if (this instanceof Block && BlockItem.BLOCK_ITEMS.containsKey(this)) {
+      return ForgeRegistries.ITEMS.getKey(BlockItem.BLOCK_ITEMS.get(this));
     } else {
       return null;
     }

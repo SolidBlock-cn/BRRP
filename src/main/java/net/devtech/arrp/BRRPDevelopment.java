@@ -23,7 +23,6 @@ import net.minecraftforge.common.util.ForgeSoundType;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -44,7 +43,7 @@ public class BRRPDevelopment {
 
 
   public static final RuntimeResourcePack PACK = RuntimeResourcePack.create(new Identifier("brrp", "test"));
-  public static final BlockSoundGroup LAVA_SOUND_GROUP = new ForgeSoundType(1, 1, Suppliers.ofInstance(SoundEvents.ITEM_BUCKET_EMPTY_LAVA), Suppliers.ofInstance(SoundEvents.BLOCK_LAVA_POP), Suppliers.ofInstance(SoundEvents.ITEM_BUCKET_FILL_LAVA), Suppliers.ofInstance(SoundEvents.BLOCK_LAVA_POP), Suppliers.ofInstance(SoundEvents.BLOCK_POINTED_DRIPSTONE_DRIP_LAVA));
+  public static final BlockSoundGroup LAVA_SOUND_GROUP = new ForgeSoundType(1, 1, Suppliers.ofInstance(SoundEvents.ITEM_BUCKET_EMPTY_LAVA), Suppliers.ofInstance(SoundEvents.BLOCK_LAVA_POP), Suppliers.ofInstance(SoundEvents.ITEM_BUCKET_FILL_LAVA), Suppliers.ofInstance(SoundEvents.BLOCK_LAVA_POP), Suppliers.ofInstance(SoundEvents.BLOCK_LAVA_AMBIENT));
   private static final Logger LOGGER = LogManager.getLogger(BRRPDevelopment.class);
   public static final BRRPCubeBlock LAVA_BLOCK = register(BRRPCubeBlock.cubeAll(AbstractBlock.Settings.of(new Material.Builder(MapColor.BRIGHT_RED).allowsMovement().notSolid().liquid().build()).luminance(state -> 15).sounds(LAVA_SOUND_GROUP), "block/lava_still"), "lava_block");
 
