@@ -8,7 +8,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.minecraft.data.client.When;
+import net.minecraft.data.client.model.When;
 import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;

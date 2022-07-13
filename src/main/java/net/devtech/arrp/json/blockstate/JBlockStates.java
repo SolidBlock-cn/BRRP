@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.minecraft.data.client.BlockStateSupplier;
+import net.minecraft.data.client.model.BlockStateSupplier;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.ApiStatus;
@@ -19,7 +19,7 @@ import java.util.List;
  * <p>A <b>"block states"</b> is the file in the {@code assets/<i>namespace</i>/blockstates} folder, which defines which models should be used when rendering a block state. It has two types:</p>
  * <ul>
  *   <li><b>variants</b> - Each block state corresponds to a block model definition ({@link JBlockModel}). You can create a variant definition through {@link #variants}.</li>
- *   <li><b>multipart</b> - Each part has a block model, and an optional condition ({@link net.minecraft.data.client.When}). If the condition is met (which means the actual block states matches to the condition), the part will be used. In this case, it's possible that one part, multiple parts or no parts will be used. You can create a multipart definition through {@link #ofMultiparts}.</li>
+ *   <li><b>multipart</b> - Each part has a block model, and an optional condition ({@link net.minecraft.data.client.model.When}). If the condition is met (which means the actual block states matches to the condition), the part will be used. In this case, it's possible that one part, multiple parts or no parts will be used. You can create a multipart definition through {@link #ofMultiparts}.</li>
  * </ul>
  * <p>When adding the block states file to the resource pack, the identifier is equal to the block identifier.</p>
  *
