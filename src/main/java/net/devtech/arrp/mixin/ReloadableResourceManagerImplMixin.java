@@ -2,11 +2,13 @@ package net.devtech.arrp.mixin;
 
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.RRPCallbackForge;
-import net.minecraft.resource.LifecycledResourceManagerImpl;
+import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
