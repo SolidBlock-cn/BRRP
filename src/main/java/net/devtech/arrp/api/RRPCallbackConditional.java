@@ -17,11 +17,9 @@ import java.util.List;
  * @deprecated Please use {@link SidedRRPCallback}.
  */
 @SuppressWarnings("DeprecatedIsStillUsed")
-@Deprecated(since = "0.6.4")
+@Deprecated
 public interface RRPCallbackConditional {
   /**
-   * Register your type-specific resource pack at a higher priority than minecraft and mod resources.
-   *
    * @deprecated Please use {@link SidedRRPCallback#BEFORE_VANILLA}.
    */
   @Deprecated
@@ -33,8 +31,6 @@ public interface RRPCallbackConditional {
     }
   });
   /**
-   * Register your type-specific resource pack at a lower priority than minecraft and mod resources.
-   *
    * @deprecated Please use {@link SidedRRPCallback#AFTER_VANILLA}.
    */
   @Deprecated

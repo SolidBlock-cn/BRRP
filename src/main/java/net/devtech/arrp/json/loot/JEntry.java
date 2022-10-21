@@ -1,10 +1,12 @@
 package net.devtech.arrp.json.loot;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.entry.LeafEntry;
@@ -277,8 +279,8 @@ public class JEntry implements Cloneable {
     @Override
     public JEntry weight(Integer weight) {
       Preconditions.checkNotNull(weight, "The weight must not be null");
-      if (delegate instanceof LeafEntry.Builder<?> leafEntryBuilder) {
-        leafEntryBuilder.weight(weight);
+      if (delegate instanceof LeafEntry.Builder<?>) {
+        ((LeafEntry.Builder<?>) delegate).weight(weight);
       } else {
         throw new UnsupportedOperationException("Only LeafEntry.Builder can set weight!");
       }
@@ -288,8 +290,8 @@ public class JEntry implements Cloneable {
     @Override
     public JEntry quality(Integer quality) {
       Preconditions.checkNotNull(weight, "The quality must not be null");
-      if (delegate instanceof LeafEntry.Builder<?> leafEntryBuilder) {
-        leafEntryBuilder.quality(quality);
+      if (delegate instanceof LeafEntry.Builder<?>) {
+        ((LeafEntry.Builder<?>) delegate).quality(quality);
       } else {
         throw new UnsupportedOperationException("Only LeafEntry.Builder can set quality!");
       }

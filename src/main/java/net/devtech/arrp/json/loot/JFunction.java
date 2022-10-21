@@ -2,7 +2,6 @@ package net.devtech.arrp.json.loot;
 
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.function.LootFunction;
 import net.minecraft.util.Identifier;

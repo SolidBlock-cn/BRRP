@@ -1,11 +1,12 @@
 package net.devtech.arrp.json.blockstate;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
-import net.minecraft.data.client.model.When;
 import net.fabricmc.api.EnvType;
+import net.minecraft.data.client.model.When;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Pair;
@@ -50,7 +51,7 @@ public class JWhen implements Cloneable, JsonSerializable, When {
 
   @Contract(value = "_, _ -> this", mutates = "this")
   public JWhen add(String condition, String... states) {
-    this.state.add(List.of(new Pair<>(condition, states)));
+    this.state.add(ImmutableList.of(new Pair<>(condition, states)));
     return this;
   }
 
@@ -59,7 +60,7 @@ public class JWhen implements Cloneable, JsonSerializable, When {
    * @author Devan Kerman
    */
   public JWhen add(StateBuilder builder) {
-    this.state.add(List.copyOf(builder.state));
+    this.state.add(ImmutableList.copyOf(builder.state));
     return this;
   }
 

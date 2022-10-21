@@ -1,7 +1,7 @@
 package net.devtech.arrp.json.tags;
 
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.devtech.arrp.api.RuntimeResourcePack;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 
@@ -78,7 +78,8 @@ public class IdentifiedTag extends JTag {
    *
    * @param pack The runtime resource pack.
    */
-
+  @CanIgnoreReturnValue
+  @Contract(mutates = "param1")
   public byte[] write(RuntimeResourcePack pack) {
     return pack.addTag(fullIdentifier, this);
   }

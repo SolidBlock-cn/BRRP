@@ -9,16 +9,15 @@ import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.devtech.arrp.util.CanIgnoreReturnValue;
+import net.minecraft.loot.ConstantLootTableRange;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTableRange;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.function.LootFunction;
-import net.minecraft.loot.provider.number.ConstantLootTableRange;
-import net.minecraft.loot.provider.number.LootTableRange;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
-import net.minecraft.loot.LootTableRange;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -238,7 +237,7 @@ public class JPool implements Cloneable {
   /**
    * This method is kept for compatibility.
    *
-   * @deprecated Please use {@link #rolls(int)} or {@link #rolls(float)}.
+   * @deprecated Please use {@link #rolls(int)}.
    */
   @Deprecated
   @Contract(value = "_ -> this", mutates = "this")
@@ -248,16 +247,6 @@ public class JPool implements Cloneable {
 
   @Contract(value = "_ -> this", mutates = "this")
   public JPool rolls(int rolls) {
-    return rolls(ConstantLootTableRange.create(rolls));
-  }
-
-
-  /**
-   * @deprecated Please use {@link #rolls(LootTableRange)}.
-   */
-  @Deprecated
-  @Contract(value = "_ -> this", mutates = "this")
-  public JPool rolls(float rolls) {
     return rolls(ConstantLootTableRange.create(rolls));
   }
 
@@ -274,13 +263,13 @@ public class JPool implements Cloneable {
   @Deprecated
   @Contract(value = "_ -> this", mutates = "this")
   public JPool rolls(JRoll roll) {
-    return rolls(roll.asLootNumberRange());
+    return rolls(roll.asLootTableRange());
   }
 
   /**
    * This method is kept for compatibility.
    *
-   * @deprecated Please use {@link #bonus(int)} or {@link #bonus(float)}.
+   * @deprecated Please use {@link #bonus(int)}.
    */
   @Deprecated
   @Contract(value = "_ -> this", mutates = "this")
@@ -290,15 +279,6 @@ public class JPool implements Cloneable {
 
   @Contract(value = "_ -> this", mutates = "this")
   public JPool bonus(int bonus_rolls) {
-    return bonus(ConstantLootTableRange.create(bonus_rolls));
-  }
-
-  /**
-   * @deprecated In 1.16.5 and before, constant loot table ranges can be only int.=
-   */
-  @Contract(value = "_ -> this", mutates = "this")
-  @Deprecated
-  public JPool bonus(float bonus_rolls) {
     return bonus(ConstantLootTableRange.create(bonus_rolls));
   }
 
@@ -314,7 +294,7 @@ public class JPool implements Cloneable {
   @Deprecated
   @Contract(value = "_ -> this", mutates = "this")
   public JPool bonus(JRoll bonus_roll) {
-    return bonus(bonus_roll.asLootNumberRange());
+    return bonus(bonus_roll.asLootTableRange());
   }
 
   @Override
@@ -372,14 +352,8 @@ public class JPool implements Cloneable {
     }
 
     @Override
-    public JPool bonus(LootTableRange bonusRollsProvider) {
-      delegate.bonusRolls(bonusRollsProvider);
-      return this;
-    }
-
-    @Override
     public JPool condition(LootCondition condition) {
-      delegate.conditionally(condition);
+      delegate.conditionally(() -> condition);
       return this;
     }
 
@@ -389,9 +363,20 @@ public class JPool implements Cloneable {
       return this;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public JPool entry(LootPoolEntry entry) {
-      delegate.with(entry);
+      delegate.with(new LootPoolEntry.Builder() {
+        @Override
+        protected LootPoolEntry.Builder getThisBuilder() {
+          return this;
+        }
+
+        @Override
+        public LootPoolEntry build() {
+          return entry;
+        }
+      });
       return this;
     }
 
@@ -403,7 +388,7 @@ public class JPool implements Cloneable {
 
     @Override
     public JPool function(LootFunction function) {
-      delegate.apply(function);
+      delegate.apply(() -> function);
       return this;
     }
 

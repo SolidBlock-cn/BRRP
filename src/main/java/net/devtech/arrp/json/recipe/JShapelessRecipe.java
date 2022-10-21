@@ -1,7 +1,5 @@
 package net.devtech.arrp.json.recipe;
 
-import com.google.gson.annotations.SerializedName;
-import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.util.Identifier;

@@ -360,7 +360,7 @@ public class JLootTable implements Cloneable {
 
     @Override
     public JLootTable function(LootFunction function) {
-      delegate.apply(function);
+      delegate.apply(() -> function);
       return this;
     }
 
@@ -372,7 +372,12 @@ public class JLootTable implements Cloneable {
 
     @Override
     public JLootTable pool(LootPool pool) {
-      delegate.pool(pool);
+      delegate.pool(new LootPool.Builder() {
+        @Override
+        public LootPool build() {
+          return pool;
+        }
+      });
       return this;
     }
 
