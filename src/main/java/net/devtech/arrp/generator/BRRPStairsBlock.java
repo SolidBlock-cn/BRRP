@@ -20,17 +20,20 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerator {
-  public final Block baseBlock;
+  public final @NotNull Block baseBlock;
 
-  private BRRPStairsBlock(BlockState baseBlockState, Settings settings) {
+  /**
+   * @since 0.8.0 public. However, it is still not recommended.
+   */
+  public BRRPStairsBlock(BlockState baseBlockState, Settings settings) {
     super(baseBlockState, settings);
     this.baseBlock = baseBlockState.getBlock();
   }
 
-  public BRRPStairsBlock(Block baseBlock, Settings settings) {
+  public BRRPStairsBlock(@NotNull Block baseBlock, Settings settings) {
     super(baseBlock.getDefaultState(), settings);
     this.baseBlock = baseBlock;
   }
@@ -40,20 +43,20 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
   }
 
   @Override
-  public @Nullable Block getBaseBlock() {
+  public @NotNull Block getBaseBlock() {
     return baseBlock;
   }
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JBlockStates getBlockStates() {
+  public @UnknownNullability JBlockStates getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return JBlockStates.delegate(BlockStateModelGenerator.createStairsBlockState(this, blockModelId.brrp_append("_inner"), blockModelId, blockModelId.brrp_append("_outer")));
   }
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JModel getBlockModel() {
+  public @UnknownNullability JModel getBlockModel() {
     return new JModel("block/stairs").textures(JTextures.ofSides(getTextureId(TextureKey.TOP),
         getTextureId(TextureKey.SIDE),
         getTextureId(TextureKey.BOTTOM)));
@@ -73,12 +76,11 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
    * It slightly resembles {@link RecipesProvider#createStairsRecipe(ItemConvertible, Ingredient)}, but bypasses validation so as not to come error.
    */
   @Override
-  public @Nullable JRecipe getCraftingRecipe() {
-    return baseBlock == null ? null :
-        new JShapedRecipe(new JResult(this)
-            .count(4))
-            .pattern("#  ", "## ", "###")
-            .addKey("#", baseBlock)
-            .addInventoryChangedCriterion("has_the_ingredient", baseBlock);
+  public @UnknownNullability JRecipe getCraftingRecipe() {
+    return new JShapedRecipe(new JResult(this)
+        .count(4))
+        .pattern("#  ", "## ", "###")
+        .addKey("#", baseBlock)
+        .addInventoryChangedCriterion("has_the_ingredient", baseBlock);
   }
 }

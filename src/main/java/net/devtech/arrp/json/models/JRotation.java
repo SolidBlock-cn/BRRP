@@ -1,10 +1,10 @@
 package net.devtech.arrp.json.models;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.google.gson.annotations.SerializedName;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.Direction;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -25,13 +25,8 @@ import org.jetbrains.annotations.Contract;
 @PreferredEnvironment(EnvType.CLIENT)
 public class JRotation implements Cloneable {
   public final float[] origin = new float[3];
-  /**
-   * @deprecated Please use {@link #rotationAxis}.
-   */
-  @Deprecated(forRemoval = true)
-  private transient final char axis = ' ';
-  @SerializedName("axis")
-  public final String rotationAxis;
+  @ApiStatus.AvailableSince("0.8.0")
+  public final String axis;
   /**
    * The rotation angle. It is usually in the increment of 22.5.
    */
@@ -39,7 +34,7 @@ public class JRotation implements Cloneable {
   public Boolean rescale;
 
   public JRotation(Direction.Axis axis) {
-    this.rotationAxis = axis.asString();
+    this.axis = axis.asString();
   }
 
   public JRotation(Direction.Axis axis, float x, float y, float z, float angle) {

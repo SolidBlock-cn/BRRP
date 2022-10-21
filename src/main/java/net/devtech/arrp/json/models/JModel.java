@@ -1,13 +1,13 @@
 package net.devtech.arrp.json.models;
 
 import com.google.common.collect.Lists;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.google.errorprone.annotations.InlineMe;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.json.loot.JCondition;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -66,12 +66,35 @@ public class JModel implements Cloneable {
   }
 
   /**
+   * Create a new JModel with parent {@code "item/generated"} and a specified layer0.
+   *
+   * @param layer0 The {@code layer0} texture id.
+   * @return A new JModel object.
+   */
+  @ApiStatus.AvailableSince("0.8.0")
+  @Contract(value = "_ -> new", pure = true)
+  public static JModel ofGenerated(String layer0) {
+    return new JModel("item/generated").textures(JTextures.ofLayer0(layer0));
+  }
+
+  /**
+   * Create a new JModel with parent {@code "item/handheld"} and a specified layer0.
+   *
+   * @param layer0 The {@code layer0} texture id.
+   * @return A new JModel object.
+   */
+  @ApiStatus.AvailableSince("0.8.0")
+  @Contract(value = "_ -> new", pure = true)
+  public static JModel ofHandheld(String layer0) {
+    return new JModel("item/handheld").textures(JTextures.ofLayer0(layer0));
+  }
+
+  /**
    * @return a new model that does not override it's parent's elements
    * @deprecated Please directly use the constructor {@link #JModel()}.
    */
   @Deprecated
   @Contract("-> new")
-  @InlineMe(replacement = "new JModel()")
   public static JModel modelKeepElements() {
     JModel model = new JModel();
     model.elements = null;
@@ -83,7 +106,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link #JModel(String)}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JModel(parent)")
   @Contract("_ -> new")
   public static JModel modelKeepElements(String parent) {
     JModel model = new JModel();
@@ -96,7 +118,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link #JModel(Identifier)}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JModel(identifier)")
   @Contract("_ -> new")
   public static JModel modelKeepElements(Identifier identifier) {
     return modelKeepElements(identifier.toString());
@@ -106,7 +127,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link #JModel()}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JModel()")
   @Contract("-> new")
   public static JModel model() {
     return new JModel();
@@ -116,7 +136,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link #JModel(String)}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JModel(parent)")
   @Contract("_ -> new")
   public static JModel model(String parent) {
     JModel model = new JModel();
@@ -128,7 +147,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link JOverride#JOverride(JCondition, String)}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JOverride(predicate, model)")
   public static JOverride override(JCondition predicate, Identifier model) {
     return new JOverride(predicate, model.toString());
   }
@@ -137,7 +155,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link JCondition#JCondition()}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JCondition(condition)")
   @Contract("-> new")
   public static JCondition condition() {
     return new JCondition((String) null);
@@ -147,7 +164,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link #JModel(Identifier)}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JModel(identifier)")
   @Contract("_ -> new")
   public static JModel model(Identifier identifier) {
     return model(identifier.toString());
@@ -157,7 +173,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link JDisplay#JDisplay()}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JDisplay()")
   @Contract("-> new")
   public static JDisplay display() {
     return new JDisplay();
@@ -167,7 +182,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link JElement#JElement()}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JElement()")
   @Contract("-> new")
   public static JElement element() {
     return new JElement();
@@ -177,7 +191,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link JFace#JFace(String)}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JFace(texture)")
   @Contract("_ -> new")
   public static JFace face(String texture) {
     return new JFace(texture);
@@ -187,7 +200,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link JFaces#JFaces()}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JFaces()")
   @Contract("-> new")
   public static JFaces faces() {
     return new JFaces();
@@ -197,7 +209,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link JPosition#JPosition()}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JPosition")
   @Contract("-> new")
   public static JPosition position() {
     return new JPosition();
@@ -207,7 +218,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link JRotation#JRotation(Direction.Axis)}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JRotation(axis)")
   @Contract("_ -> new")
   public static JRotation rotation(Direction.Axis axis) {
     return new JRotation(axis);
@@ -217,7 +227,6 @@ public class JModel implements Cloneable {
    * @deprecated Please directly use the constructor {@link JTextures#JTextures()}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JTextures()")
   @Contract("-> new")
   public static JTextures textures() {
     return new JTextures();

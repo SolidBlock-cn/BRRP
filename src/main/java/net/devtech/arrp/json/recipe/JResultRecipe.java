@@ -1,6 +1,6 @@
 package net.devtech.arrp.json.recipe;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;

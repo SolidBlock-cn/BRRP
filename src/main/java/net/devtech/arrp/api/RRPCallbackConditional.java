@@ -14,11 +14,17 @@ import java.util.List;
  * @author SolidBlock
  * @since 0.6.0-snapshot.4
  * @since RRPCallback
+ * @deprecated Please use {@link SidedRRPCallback}.
  */
+@SuppressWarnings("DeprecatedIsStillUsed")
+@Deprecated(since = "0.6.4")
 public interface RRPCallbackConditional {
   /**
    * Register your type-specific resource pack at a higher priority than minecraft and mod resources.
+   *
+   * @deprecated Please use {@link SidedRRPCallback#BEFORE_VANILLA}.
    */
+  @Deprecated
   Event<RRPCallbackConditional> BEFORE_VANILLA = EventFactory.createArrayBacked(RRPCallbackConditional.class, r -> (resourceType, rs) -> {
     IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, $ -> {
     });
@@ -28,7 +34,10 @@ public interface RRPCallbackConditional {
   });
   /**
    * Register your type-specific resource pack at a lower priority than minecraft and mod resources.
+   *
+   * @deprecated Please use {@link SidedRRPCallback#AFTER_VANILLA}.
    */
+  @Deprecated
   Event<RRPCallbackConditional> AFTER_VANILLA = EventFactory.createArrayBacked(RRPCallbackConditional.class, r -> (resourceType, rs) -> {
     IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, $ -> {
     });

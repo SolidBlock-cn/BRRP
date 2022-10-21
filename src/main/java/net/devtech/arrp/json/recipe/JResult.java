@@ -1,11 +1,11 @@
 package net.devtech.arrp.json.recipe;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.google.errorprone.annotations.InlineMe;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
@@ -43,7 +43,6 @@ public class JResult implements Cloneable, JsonSerializable {
    * @deprecated Please directly call {@link #JResult(ItemConvertible)}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JResult(item)")
   public static JResult item(final Item item) {
     return result(Registry.ITEM.getId(item).toString());
   }
@@ -52,7 +51,6 @@ public class JResult implements Cloneable, JsonSerializable {
    * @deprecated Please directly call {@link #JResult(String)} .
    */
   @Deprecated
-  @InlineMe(replacement = "new JResult(id)")
   public static JResult result(final String id) {
     return new JResult(id);
   }

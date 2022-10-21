@@ -1,7 +1,6 @@
 package net.devtech.arrp.json.loot;
 
 import com.google.common.collect.Lists;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
@@ -9,8 +8,12 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootPool;
+import net.minecraft.loot.condition.LootCondition;
+import net.minecraft.loot.entry.LootPoolEntry;
+import net.minecraft.loot.function.LootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.LootNumberProvider;
 import org.jetbrains.annotations.ApiStatus;
@@ -37,45 +40,15 @@ public class JPool implements Cloneable {
    */
   public List<JEntry> entries;
   /**
-   * The exact value of rolls.
-   *
-   * @deprecated Please use {@link #rollsProvider}.
-   */
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated
-  public transient Integer rolls;
-  /**
-   * The uniform value provider of rolls.
-   *
-   * @deprecated Please use {@link #rollsProvider}.
-   */
-  @Deprecated
-  public transient JRoll roll;
-  /**
    * The value provider of rolls.
    */
   @SerializedName("rolls")
-  public LootNumberProvider rollsProvider;
-  /**
-   * The exact value of bonus rolls.
-   *
-   * @deprecated Please use {@link #bonusRollsProvider}.
-   */
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated
-  public transient Integer bonus_rolls;
-  /**
-   * The uniform value provider of bonus rolls.
-   *
-   * @deprecated Please use {@link #bonusRollsProvider}.
-   */
-  @Deprecated
-  public transient JRoll bonus_roll;
+  public LootNumberProvider rolls;
   /**
    * The value provider of bonus rolls;
    */
   @SerializedName("bonus_rolls")
-  public LootNumberProvider bonusRollsProvider;
+  public LootNumberProvider bonusRolls;
 
   /**
    * Create a simple loot table pool with no entry. You may also consider other static methods, such as {@link #simple} or {@link #ofEntries}.
@@ -121,10 +94,21 @@ public class JPool implements Cloneable {
 
   /**
    * Create a pool object, using the serialization of a vanilla LootPool object.
+   *
+   * @see #delegate(LootPool.Builder).
    */
   @Contract("_ -> new")
   public static JPool delegate(LootPool delegate) {
     return new Delegate(delegate);
+  }
+
+  /**
+   * Create a pool object, using the serialization of a vanilla LootPool object.
+   */
+  @Contract("_ -> new")
+  @ApiStatus.AvailableSince("0.8.0")
+  public static JPool delegate(LootPool.Builder delegate) {
+    return new DelegateFromBuilder(delegate);
   }
 
   /**
@@ -137,10 +121,36 @@ public class JPool implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   public JPool entry(JEntry entry) {
     if (this.entries == null) {
-      this.entries = new ArrayList<>(1);
+      this.entries = new ArrayList<>(4);
     }
     this.entries.add(entry);
     return this;
+  }
+
+  /**
+   * Add an entry to the loot table. If {@link #entries} is null, it will be created as a new array list. This method can be called by objects returned by {@link #delegate(LootPool.Builder)} (not {@link #delegate(LootPool)}).
+   *
+   * @param entry The vanilla-type loot table entry.
+   * @return The loot table itself, allowing chained call.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.0")
+  public JPool entry(LootPoolEntry entry) {
+    return entry(JEntry.delegate(entry));
+  }
+
+  /**
+   * Add an entry to the loot table. If {@link #entries} is null, it will be created as a new array list. This method can be called by objects returned by {@link #delegate(LootPool.Builder)} (not {@link #delegate(LootPool)}).
+   *
+   * @param entry The vanilla-type loot table entry.
+   * @return The loot table itself, allowing chained call.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.0")
+  public <T extends LootPoolEntry.Builder<T>> JPool entry(LootPoolEntry.Builder<T> entry) {
+    return entry(JEntry.delegate(entry));
   }
 
   /**
@@ -153,10 +163,36 @@ public class JPool implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   public JPool condition(JCondition condition) {
     if (this.conditions == null) {
-      this.conditions = new ArrayList<>(1);
+      this.conditions = new ArrayList<>(4);
     }
     this.conditions.add(condition);
     return this;
+  }
+
+  /**
+   * Add a condition to the loot table itself. If {@link #conditions} is null, it will be created as a new array list. This method can be called by objects returned by {@link #delegate(LootPool.Builder)} (not {@link #delegate(LootPool)}).
+   *
+   * @param condition The vanilla-type loot table condition.
+   * @return The loot table itself, allowing chained call.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.0")
+  public JPool condition(LootCondition condition) {
+    return condition(JCondition.delegate(condition));
+  }
+
+  /**
+   * Add a condition to the loot table itself. If {@link #conditions} is null, it will be created as a new array list. This method can be called by objects returned by {@link #delegate(LootPool.Builder)} (not {@link #delegate(LootPool)}).
+   *
+   * @param condition The vanilla-type loot table condition.
+   * @return The loot table itself, allowing chained call.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.0")
+  public JPool condition(LootCondition.Builder condition) {
+    return condition(JCondition.delegate(condition));
   }
 
   /**
@@ -169,10 +205,36 @@ public class JPool implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   public JPool function(JFunction function) {
     if (this.functions == null) {
-      this.functions = new ArrayList<>(1);
+      this.functions = new ArrayList<>(4);
     }
     this.functions.add(function);
     return this;
+  }
+
+  /**
+   * Add a function to the loot table itself. If {@link #functions} is null, it will be created as a new array list. This method can be called by objects returned by {@link #delegate(LootPool.Builder)} (not {@link #delegate(LootPool)}).
+   *
+   * @param function The vanilla-type loot table function.
+   * @return The loot table itself, allowing chained call.
+   */
+  @CanIgnoreReturnValue
+  @ApiStatus.AvailableSince("0.8.0")
+  @Contract(value = "_ -> this", mutates = "this")
+  public JPool function(LootFunction function) {
+    return function(JFunction.delegate(function));
+  }
+
+  /**
+   * Add a function to the loot table itself. If {@link #functions} is null, it will be created as a new array list. This method can be called by objects returned by {@link #delegate(LootPool.Builder)} (not {@link #delegate(LootPool)}).
+   *
+   * @param function The vanilla-type loot table function.
+   * @return The loot table itself, allowing chained call.
+   */
+  @CanIgnoreReturnValue
+  @ApiStatus.AvailableSince("0.8.0")
+  @Contract(value = "_ -> this", mutates = "this")
+  public JPool function(LootFunction.Builder function) {
+    return function(JFunction.delegate(function));
   }
 
   /**
@@ -184,29 +246,25 @@ public class JPool implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool rolls(Integer rolls) {
-    this.rollsProvider = ConstantLootNumberProvider.create(rolls);
-    return this;
+    return rolls(ConstantLootNumberProvider.create(rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool rolls(int rolls) {
-    this.rolls = rolls;
-    this.rollsProvider = ConstantLootNumberProvider.create(rolls);
-    return this;
+    return rolls(ConstantLootNumberProvider.create(rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool rolls(float rolls) {
-    this.rollsProvider = ConstantLootNumberProvider.create(rolls);
-    return this;
+    return rolls(ConstantLootNumberProvider.create(rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool rolls(LootNumberProvider rolls) {
-    this.rollsProvider = rolls;
+    this.rolls = rolls;
     return this;
   }
 
@@ -217,9 +275,7 @@ public class JPool implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool rolls(JRoll roll) {
-    this.roll = roll;
-    this.rollsProvider = roll.asLootNumberProvider();
-    return this;
+    return rolls(roll.asLootNumberProvider());
   }
 
   /**
@@ -231,29 +287,25 @@ public class JPool implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool bonus(Integer bonus_rolls) {
-    this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
-    return this;
+    return bonus(ConstantLootNumberProvider.create(bonus_rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool bonus(int bonus_rolls) {
-    this.bonus_rolls = bonus_rolls;
-    this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
-    return this;
+    return bonus(ConstantLootNumberProvider.create(bonus_rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool bonus(float bonus_rolls) {
-    this.bonusRollsProvider = ConstantLootNumberProvider.create(bonus_rolls);
-    return this;
+    return bonus(ConstantLootNumberProvider.create(bonus_rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool bonus(LootNumberProvider bonusRollsProvider) {
-    this.bonusRollsProvider = bonusRollsProvider;
+    this.bonusRolls = bonusRollsProvider;
     return this;
   }
 
@@ -264,9 +316,7 @@ public class JPool implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool bonus(JRoll bonus_roll) {
-    this.bonus_roll = bonus_roll;
-    this.bonusRollsProvider = bonus_roll.asLootNumberProvider();
-    return this;
+    return bonus(bonus_roll.asLootNumberProvider());
   }
 
   @Override
@@ -301,6 +351,68 @@ public class JPool implements Cloneable {
     @Override
     public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
       return GSON.toJsonTree(delegate);
+    }
+  }
+
+  @ApiStatus.Internal
+  private static final class DelegateFromBuilder extends JPool implements JsonSerializable {
+    private final LootPool.Builder delegate;
+
+    private DelegateFromBuilder(LootPool.Builder delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return Delegate.GSON.toJsonTree(delegate.build());
+    }
+
+    @Override
+    public JPool rolls(LootNumberProvider rolls) {
+      delegate.rolls(rolls);
+      return this;
+    }
+
+    @Override
+    public JPool bonus(LootNumberProvider bonusRollsProvider) {
+      delegate.bonusRolls(bonusRollsProvider);
+      return this;
+    }
+
+    @Override
+    public JPool condition(LootCondition condition) {
+      delegate.conditionally(condition);
+      return this;
+    }
+
+    @Override
+    public JPool condition(LootCondition.Builder condition) {
+      delegate.conditionally(condition);
+      return this;
+    }
+
+    @Override
+    public JPool entry(LootPoolEntry entry) {
+      delegate.with(entry);
+      return this;
+    }
+
+    @Override
+    public <T extends LootPoolEntry.Builder<T>> JPool entry(LootPoolEntry.Builder<T> entry) {
+      delegate.with(entry);
+      return this;
+    }
+
+    @Override
+    public JPool function(LootFunction function) {
+      delegate.apply(function);
+      return this;
+    }
+
+    @Override
+    public JPool function(LootFunction.Builder function) {
+      delegate.apply(function);
+      return this;
     }
   }
 }

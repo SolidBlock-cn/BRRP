@@ -1,8 +1,6 @@
 package net.devtech.arrp.json.models;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.google.gson.annotations.SerializedName;
-import it.unimi.dsi.fastutil.floats.FloatArrayList;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.Direction;
@@ -15,12 +13,9 @@ import org.jetbrains.annotations.Nullable;
 @PreferredEnvironment(EnvType.CLIENT)
 public class JFace implements Cloneable {
   /**
-   * This field is deprecated because, it will always exist. The value is by default [0, 0, 0] which definitely cause bugs. Actually, in Minecraft, the uv can be missing, which allows Minecraft to automatically determine. Therefore, {@link #uvs} is used instead, which is a nullable {@link FloatArrayList}.
+   * @since 0.8 not deprecated, not final, nullable
    */
-  @Deprecated(forRemoval = true)
-  private transient final float[] uv = new float[4];
-  @SerializedName("uv")
-  public FloatArrayList uvs;
+  public float @Nullable [] uv = null;
   public final String texture;
   public String cullface;
   /**
@@ -37,20 +32,20 @@ public class JFace implements Cloneable {
   }
 
   /**
-   * In this case, the {@link #uvs} will be removed, so Minecraft automatically determines the uv according to the "from" and "to" in the {@link JElement}.<br>
+   * In this case, the {@link #uv} will be removed, so Minecraft automatically determines the uv according to the "from" and "to" in the {@link JElement}.<br>
    * Usually you needn't call this method, as it is undefined by default.
    */
   @CanIgnoreReturnValue
   @Contract(value = "-> this", mutates = "this")
   public JFace autoUv() {
-    this.uvs = null;
+    this.uv = null;
     return this;
   }
 
   @CanIgnoreReturnValue
   @Contract(value = "_,_,_,_ -> this", mutates = "this")
   public JFace uv(float x1, float y1, float x2, float y2) {
-    this.uvs = FloatArrayList.of(x1, y1, x2, y2);
+    this.uv = new float[]{x1, y1, x2, y2};
     return this;
   }
 

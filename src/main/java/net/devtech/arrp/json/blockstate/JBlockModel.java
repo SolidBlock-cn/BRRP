@@ -1,8 +1,10 @@
 package net.devtech.arrp.json.blockstate;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.fabricmc.api.EnvType;
+import net.minecraft.block.Block;
+import net.minecraft.data.client.TexturedModel;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -90,7 +92,10 @@ public class JBlockModel implements Cloneable {
    *    { "model": "minecraft:block/dirt", "y": 180  },
    *    { "model": "minecraft:block/dirt", "y": 270  }  ]
    * }</pre>
+   *
+   * @see net.minecraft.data.client.BlockStateModelGenerator#registerRandomHorizontalRotations(TexturedModel.Factory, Block...)
    */
+  @Contract(value = "_ -> new", pure = true)
   public static JBlockModel[] simpleRandom(JBlockModel basicModel) {
     final JBlockModel[] multiple = new JBlockModel[4];
     for (int i = 0; i < 4; i++) {

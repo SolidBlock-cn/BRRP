@@ -2,7 +2,7 @@ package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -35,7 +35,7 @@ import java.util.function.Supplier;
  * @see net.minecraft.data.client.model.When.LogicalOperator
  */
 @PreferredEnvironment(EnvType.CLIENT)
-public class JWhenLogical extends ForwardingList<When> implements When, JsonSerializable {
+public class JWhenLogical extends ForwardingList<When> implements Cloneable, When, JsonSerializable {
   public final @NotNull LogicalOperator operator;
   public final @NotNull List<When> components;
 
@@ -120,5 +120,15 @@ public class JWhenLogical extends ForwardingList<When> implements When, JsonSeri
   @Override
   public JsonElement get() {
     return RuntimeResourcePackImpl.GSON.toJsonTree(this);
+  }
+
+  @ApiStatus.AvailableSince("0.8.0")
+  @Override
+  public JWhenLogical clone() {
+    try {
+      return (JWhenLogical) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError();
+    }
   }
 }

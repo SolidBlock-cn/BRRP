@@ -1,7 +1,8 @@
 package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingMap;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.common.collect.Maps;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -349,6 +350,11 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
     final JsonObject object = new JsonObject();
     this.forEach((key, value) -> object.add(key, context.serialize(value.length == 1 ? value[0] : value)));
     return object;
+  }
+
+  @Override
+  public JVariants clone() {
+    return new JVariants(Maps.newLinkedHashMap(variants));
   }
 
   @ApiStatus.Internal
