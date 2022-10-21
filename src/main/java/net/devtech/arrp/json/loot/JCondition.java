@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * A condition in a loot table is called "predicate"
+ * A <b>loot table condition</b> is also called a "predicate". It is complicated so <b>it is highly recommended to directly use {@link #delegate(LootCondition.Builder)} to use vanilla-type loot table conditions</b>.
  *
  * @see LootCondition
  */
@@ -44,13 +44,26 @@ public class JCondition implements Cloneable, JsonSerializable {
     if (parameters.has("condition")) this.condition = parameters.get("condition").getAsString();
   }
 
+  /**
+   * @see LootCondition.Builder#or(LootCondition.Builder)
+   */
   @Contract("_ -> new")
-  public static JCondition ofAlternative(Collection<JCondition> conditions) {
+  public static JCondition ofAlternative(Iterable<JCondition> conditions) {
     final JCondition result = new JCondition("alternative");
     result.parameters.add("terms", RuntimeResourcePackImpl.GSON.toJsonTree(conditions));
     return result;
   }
 
+  /**
+   * This method is kept just for compatibility.
+   */
+  public static JCondition ofAlternative(Collection<JCondition> conditions) {
+    return ofAlternative((Iterable<JCondition>) conditions);
+  }
+
+  /**
+   * @see LootCondition.Builder#or(LootCondition.Builder)
+   */
   @Contract("_ -> new")
   public static JCondition ofAlternative(JCondition... conditions) {
     return ofAlternative(Arrays.asList(conditions));
@@ -142,12 +155,37 @@ public class JCondition implements Cloneable, JsonSerializable {
     }
   }
 
+  /**
+   * Create an object directly from vanilla loot condition. In this case, methods such as {@link #parameter} should <i>not</i> be used.
+   *
+   * @param vanillaCondition A vanilla loot condition object.
+   * @return A new JCondition object that directly uses the serialization of vanilla loot condition.
+   */
+  @ApiStatus.AvailableSince("0.8.0")
+  @Contract(value = "_ -> new", pure = true)
+  public static JCondition delegate(LootCondition vanillaCondition) {
+    return new Delegate(vanillaCondition);
+  }
+
+  /**
+   * Create an object directly from vanilla loot condition. In this case, methods such as {@link #parameter} should <i>not</i> be used.
+   *
+   * @param vanillaCondition A vanilla loot condition object.
+   * @return A new JCondition object that directly uses the serialization of vanilla loot condition.
+   */
+  @ApiStatus.AvailableSince("0.8.0")
+  @Contract(value = "_ -> new", pure = true)
+  public static JCondition delegate(LootCondition.Builder vanillaCondition) {
+    return new Delegate(vanillaCondition.build());
+  }
+
   @ApiStatus.Internal
   private static final class Delegate extends JCondition {
     private static final Gson GSON = LootGsons.getConditionGsonBuilder().create();
     private final LootCondition delegate;
 
     private Delegate(LootCondition delegate) {
+      super(null, null);
       this.delegate = delegate;
     }
 

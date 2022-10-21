@@ -1,7 +1,7 @@
 package net.devtech.arrp.mixin;
 
+import com.google.common.collect.Lists;
 import net.devtech.arrp.ARRP;
-import net.devtech.arrp.api.RRPCallback;
 import net.devtech.arrp.api.RRPCallbackConditional;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
@@ -23,7 +23,7 @@ public abstract class ReloadableResourceManagerImplMixin {
   @Shadow
   @Final
   private ResourceType type;
-  private static final Logger ARRP_LOGGER = LogManager.getLogger("BRRP/ReloadableResourceManagerImplMixin");
+  private static final Logger BRRP_LOGGER = LogManager.getLogger("BRRP/ReloadableResourceManagerImplMixin");
 
   @ModifyVariable(method = "reload",
       at = @At(value = "HEAD"),
@@ -31,20 +31,21 @@ public abstract class ReloadableResourceManagerImplMixin {
   private List<ResourcePack> registerARRPs(List<ResourcePack> packs) throws ExecutionException, InterruptedException {
     ARRP.waitForPregen();
 
-    ARRP_LOGGER.info("BRRP register - before vanilla");
+    BRRP_LOGGER.info("BRRP register - before vanilla");
     List<ResourcePack> before = new ArrayList<>();
     RRPCallback.BEFORE_VANILLA.invoker().insert(before);
-    RRPCallbackConditional.BEFORE_VANILLA.invoker().insertTo(type, before);
+    RRPCallbackConditional.BEFORE_VANILLA.invoker().insertTo(resourceType, before);
 
     before.addAll(packs);
 
-    ARRP_LOGGER.info("BRRP register - after vanilla");
+    BRRP_LOGGER.info("BRRP register - after vanilla");
     List<ResourcePack> after = new ArrayList<>();
     RRPCallback.AFTER_VANILLA.invoker().insert(after);
-    RRPCallbackConditional.AFTER_VANILLA.invoker().insertTo(type, after);
+    RRPCallbackConditional.AFTER_VANILLA.invoker().insertTo(resourceType, after);
 
-    before.addAll(after);
-
-    return before;
+    BRRP_LOGGER.info("BRRP register - after vanilla");
+    SidedRRPCallback.AFTER_VANILLA.invoker().insert(type, copy);
+    RRPCallbackConditional.AFTER_VANILLA.invoker().insertTo(type, copy);
+    return copy;
   }
 }

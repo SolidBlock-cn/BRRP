@@ -5,8 +5,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.loot.LootGsons;
+import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.function.LootFunction;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -147,6 +151,38 @@ public class JLootTable implements Cloneable {
   }
 
   /**
+   * Add a pool to the {@link #pools}. The method can be use for objects returned by {@link #delegate(LootTable.Builder)}.
+   *
+   * @param pool The loot table pool.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.0")
+  public JLootTable pool(LootPool pool) {
+    if (this.pools == null) {
+      this.pools = new ArrayList<>(1);
+    }
+    this.pools.add(JPool.delegate(pool));
+    return this;
+  }
+
+  /**
+   * Add a pool builder to the {@link #pools} and build it. The method can be use for objects returned by {@link #delegate(LootTable.Builder)}.
+   *
+   * @param pool The loot table pool.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.0")
+  public JLootTable pool(LootPool.Builder pool) {
+    if (this.pools == null) {
+      this.pools = new ArrayList<>(1);
+    }
+    this.pools.add(JPool.delegate(pool.build()));
+    return this;
+  }
+
+  /**
    * Add a function to the {@link #functions}.
    *
    * @param function The loot table function.
@@ -158,6 +194,30 @@ public class JLootTable implements Cloneable {
     }
     this.functions.add(function);
     return this;
+  }
+
+  /**
+   * Add a vanilla-type function to the loot table.
+   *
+   * @param function The loot table function.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.0")
+  public JLootTable function(LootFunction function) {
+    return function(JFunction.delegate(function));
+  }
+
+  /**
+   * Add a vanilla-type function to the loot table.
+   *
+   * @param function The loot table function.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.0")
+  public JLootTable function(LootFunction.Builder function) {
+    return function(JFunction.delegate(function));
   }
 
   /**
@@ -174,6 +234,7 @@ public class JLootTable implements Cloneable {
    *
    * @param blockId The id (as string) of the block.
    * @return The simplest block loot table.
+   * @see net.minecraft.data.server.BlockLootTableGenerator#drops(ItemConvertible)
    */
   @Contract(value = "_ -> new", pure = true)
   public static JLootTable simple(String blockId) {
@@ -237,10 +298,24 @@ public class JLootTable implements Cloneable {
    *
    * @param delegate The vanilla loot table. Its serialization will be directly used when serializing.
    * @return A new object.
+   * @deprecated Please use {@link #delegate(LootTable.Builder)}.
    */
+  @Deprecated
   @Contract("_ -> new")
   public static JLootTable delegate(LootTable delegate) {
     return new FromLootTable(delegate);
+  }
+
+  /**
+   * Create a delegated loot table object, whose serialization will be directly used. Methods like {@link #function(LootFunction)}, {@link #pool(LootPool)} will directly apply to that loot table object.
+   *
+   * @param delegate The vanilla loot table. Its serialization will be directly used when serializing.
+   * @return A new object.
+   */
+  @Contract("_ -> new")
+  @ApiStatus.AvailableSince("0.8.0")
+  public static JLootTable delegate(LootTable.Builder delegate) {
+    return new FromLootTableBuilder(delegate);
   }
 
   @Override
@@ -265,6 +340,51 @@ public class JLootTable implements Cloneable {
     @Override
     public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
       return GSON.toJsonTree(delegate);
+    }
+  }
+
+  @ApiStatus.Internal
+  @ApiStatus.AvailableSince("0.8.0")
+  private static final class FromLootTableBuilder extends JLootTable implements JsonSerializable {
+    private transient final LootTable.Builder delegate;
+
+    private FromLootTableBuilder(LootTable.Builder delegate) {
+      super(null);
+      this.delegate = delegate;
+    }
+
+    @Override
+    public JLootTable function(JFunction function) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public JLootTable function(LootFunction function) {
+      delegate.apply(function);
+      return this;
+    }
+
+    @Override
+    public JLootTable function(LootFunction.Builder function) {
+      delegate.apply(function);
+      return this;
+    }
+
+    @Override
+    public JLootTable pool(LootPool pool) {
+      delegate.pool(pool);
+      return this;
+    }
+
+    @Override
+    public JLootTable pool(LootPool.Builder pool) {
+      delegate.pool(pool);
+      return this;
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return FromLootTable.GSON.toJsonTree(delegate.build());
     }
   }
 }

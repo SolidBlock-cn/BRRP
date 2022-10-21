@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
 import net.fabricmc.api.EnvType;
@@ -20,7 +19,7 @@ import java.util.List;
  * <p>An entry of the {@link JBlockStates#multiparts multipart} field of a {@link JBlockStates}. Note: this class represents an entry, not a list of it.</p>
  * <p>The multipart entry consists of the following fields: </p><ul>
  * <li><b>{@code apply}</b> - The {@link JBlockModel block model definition} that will be used, or a list of it to randomly choose.</li>
- * <li><b>{@code when}</b> - The {@link JWhen condition} that the part will be used. Optional.</li>
+ * <li><b>{@code when}</b> - The {@link When condition} that the part will be used. Optional.</li>
  * </ul>
  *
  * @see net.minecraft.data.client.model.MultipartBlockStateSupplier
@@ -36,14 +35,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
    * The model that will be used, if the condition is met. It can be one of multiple block models.
    */
   public final List<JBlockModel> apply;
-  /**
-   * @deprecated This field is identical to {@link #condition}, and is used for compatibility.
-   */
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated
-  private transient JWhen when;
-  @SerializedName("when")
-  public When condition;
+  public When when;
 
   /**
    * Create an empty multipart object, whose models are empty and condition is null. If you have some models to be initialized, you can use {@link #JMultipart(JBlockModel...)}, or {@link #JMultipart(When, JBlockModel...)} with condition specified.
@@ -60,11 +52,10 @@ public class JMultipart implements Cloneable, JsonSerializable {
   }
 
   /**
-   * Create a simple multipart object. The parameter {@code apply} will be directly used. It's usually not recommended to call this method, unless in some specific situations, for example you want multiple objects share a same one, or make it immutable.
+   * Create a simple multipart object. The parameter {@code apply} will be directly used. <b>It's usually not recommended to call this method, unless in some specific situations, for example you want multiple objects share a same one, or make it immutable.</b>
    *
    * @param apply The list of block models. If you're just initializing it without other specifications, you should use {@link #JMultipart()} or {@link #JMultipart(JBlockModel...)}.
    */
-  @ApiStatus.Internal
   public JMultipart(List<JBlockModel> apply) {
     this.apply = apply;
   }
@@ -74,7 +65,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
    */
   public JMultipart(When when, JBlockModel... apply) {
     this(apply);
-    this.condition = when;
+    this.when = when;
   }
 
   @Override
@@ -94,9 +85,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
   @Contract(value = "_ -> this", mutates = "this")
   @Deprecated
   public JMultipart when(JWhen when) {
-    this.when = when;
-    this.condition = when;
-    return this;
+    return when(((When) when));
   }
 
   /**
@@ -104,8 +93,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
    */
   @Contract(value = "_ -> this", mutates = "this")
   public JMultipart when(When when) {
-    this.when = null;
-    this.condition = when;
+    this.when = when;
     return this;
   }
 
@@ -127,7 +115,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
     } else {
       obj.add("apply", context.serialize(this.apply));
     }
-    obj.add("when", context.serialize(this.condition));
+    obj.add("when", context.serialize(this.when));
     return obj;
   }
 }

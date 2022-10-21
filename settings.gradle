@@ -1,14 +1,16 @@
 pluginManagement {
     repositories {
         maven {
+            name 'Quilt'
+            url 'https://maven.quiltmc.org/repository/release'
+        }
+        maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
         gradlePluginPortal()
     }
 }
-include(':arrp')
-project(':arrp').projectDir = new File('nested/arrp')
 rootProject.name = 'brrp'
 
 

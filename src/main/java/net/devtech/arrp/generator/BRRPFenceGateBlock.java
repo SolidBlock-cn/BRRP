@@ -17,6 +17,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceGenerator {
   public final @Nullable Block baseBlock;
@@ -37,7 +38,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JBlockStates getBlockStates() {
+  public @UnknownNullability JBlockStates getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return JBlockStates.delegate(BlockStateModelGenerator.createFenceGateBlockState(
         this,
@@ -50,7 +51,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JModel getBlockModel() {
+  public @UnknownNullability JModel getBlockModel() {
     return new JModel("block/template_fence_gate").addTexture("texture", getTextureId(TextureKey.TEXTURE));
   }
 
@@ -69,7 +70,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
    * This recipe uses the base block and stick as the ingredients.
    */
   @Override
-  public @Nullable JRecipe getCraftingRecipe() {
+  public @UnknownNullability("It will be null if the base block is null.") JRecipe getCraftingRecipe() {
     final Item secondIngredient = getSecondIngredient();
     return baseBlock == null || secondIngredient == null ? null :
         new JShapedRecipe(this)

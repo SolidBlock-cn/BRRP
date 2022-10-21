@@ -1,6 +1,7 @@
 package net.devtech.arrp.json.recipe;
 
 import com.google.gson.annotations.SerializedName;
+import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.util.Identifier;
@@ -20,14 +21,11 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class JShapelessRecipe extends JResultRecipe {
   private static final String TYPE = "minecraft:crafting_shapeless";
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated
-  protected transient final JIngredients ingredients;
   /**
    * The ingredient list of this recipe.
    */
-  @SerializedName("ingredients")
-  public final List<JIngredient> ingredientList;
+  @ApiStatus.AvailableSince("0.8.0")
+  public final List<JIngredient> ingredients;
 
   /**
    * Create a new object with the specified result, and the list of ingredient.
@@ -39,8 +37,7 @@ public class JShapelessRecipe extends JResultRecipe {
   @ApiStatus.Internal
   public JShapelessRecipe(String result, Collection<String> ingredients) {
     super(TYPE, result);
-    this.ingredientList = ingredients.stream().map(JIngredient::ofItem).collect(Collectors.toList());
-    this.ingredients = null;
+    this.ingredients = ingredients.stream().map(JIngredient::ofItem).collect(Collectors.toList());
   }
 
   /**
@@ -52,8 +49,7 @@ public class JShapelessRecipe extends JResultRecipe {
   @ApiStatus.AvailableSince("0.6.2")
   public JShapelessRecipe(String result, String... ingredients) {
     super(TYPE, result);
-    this.ingredientList = Arrays.stream(ingredients).map(JIngredient::ofItem).collect(Collectors.toList());
-    this.ingredients = null;
+    this.ingredients = Arrays.stream(ingredients).map(JIngredient::ofItem).collect(Collectors.toList());
   }
 
   /**
@@ -64,8 +60,7 @@ public class JShapelessRecipe extends JResultRecipe {
    */
   public JShapelessRecipe(Identifier result, Identifier... ingredients) {
     super(TYPE, result);
-    this.ingredientList = Arrays.stream(ingredients).map(JIngredient::ofItem).collect(Collectors.toList());
-    this.ingredients = null;
+    this.ingredients = Arrays.stream(ingredients).map(JIngredient::ofItem).collect(Collectors.toList());
   }
 
   /**
@@ -76,21 +71,19 @@ public class JShapelessRecipe extends JResultRecipe {
    */
   public JShapelessRecipe(ItemConvertible result, ItemConvertible... ingredients) {
     super(TYPE, result);
-    this.ingredientList = Arrays.stream(ingredients).map(JIngredient::ofItem).collect(Collectors.toList());
-    this.ingredients = null;
+    this.ingredients = Arrays.stream(ingredients).map(JIngredient::ofItem).collect(Collectors.toList());
   }
 
   /**
    * Create a new shapeless recipe object, with the specified result and ingredient list. The two parameters will be directly used.
    *
-   * @param result         The result of the recipe.
-   * @param ingredientList The list of ingredients. It will be directly used as the field.
+   * @param result      The result of the recipe.
+   * @param ingredients The list of ingredients. It will be directly used as the field.
    */
   @ApiStatus.Internal
-  public JShapelessRecipe(final JResult result, List<JIngredient> ingredientList) {
+  public JShapelessRecipe(final JResult result, List<JIngredient> ingredients) {
     super(TYPE, result);
-    this.ingredientList = ingredientList;
-    this.ingredients = null;
+    this.ingredients = ingredients;
   }
 
   /**
@@ -99,8 +92,7 @@ public class JShapelessRecipe extends JResultRecipe {
   @Deprecated
   public JShapelessRecipe(final JResult result, final JIngredients ingredients) {
     super("minecraft:crafting_shapeless", result);
-    this.ingredients = ingredients;
-    this.ingredientList = ingredients.ingredients;
+    this.ingredients = ingredients.ingredients;
   }
 
   /**

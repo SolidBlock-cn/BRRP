@@ -124,6 +124,13 @@ public final class JState implements JsonSerializable {
     return new JWhen();
   }
 
+  /**
+   * @author Devan Kerman
+   */
+  public static JWhen.StateBuilder whenStateBuilder() {
+    return new JWhen.StateBuilder();
+  }
+
   @Deprecated
   @Override
   public JState clone() {

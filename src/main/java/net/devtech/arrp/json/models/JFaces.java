@@ -21,20 +21,6 @@ import java.util.function.Function;
  */
 @PreferredEnvironment(EnvType.CLIENT)
 public class JFaces extends EnumMap<Direction, JFace> implements Cloneable, JsonSerializable {
-  // These fields exist for only compatibility.
-  @Deprecated
-  private JFace up;
-  @Deprecated
-  private JFace down;
-  @Deprecated
-  private JFace north;
-  @Deprecated
-  private JFace south;
-  @Deprecated
-  private JFace east;
-  @Deprecated
-  private JFace west;
-
   public JFaces() {
     super(Direction.class);
   }

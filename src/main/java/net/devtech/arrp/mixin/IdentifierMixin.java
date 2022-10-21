@@ -22,23 +22,23 @@ public abstract class IdentifierMixin implements IdentifierExtension {
   /**
    * {@inheritDoc}
    *
-   * @param prefix {@inheritDoc}
+   * @param suffix {@inheritDoc}
    * @return {@inheritDoc}
    */
   @Override
-  public Identifier brrp_append(@Pattern("[a-z\\d/._-]+") @NotNull String prefix) {
-    return new Identifier(namespace, path + prefix);
+  public Identifier brrp_append(@Pattern("[a-z\\d/._-]+") @NotNull String suffix) {
+    return new Identifier(namespace, path + suffix);
   }
 
   /**
    * {@inheritDoc}
    *
-   * @param suffix {@inheritDoc}
+   * @param prefix {@inheritDoc}
    * @return {@inheritDoc}
    */
   @Override
-  public Identifier brrp_prepend(@Pattern("[a-z\\d/._-]+") @NotNull String suffix) {
-    return new Identifier(namespace, suffix + path);
+  public Identifier brrp_prepend(@Pattern("[a-z\\d/._-]+") @NotNull String prefix) {
+    return new Identifier(namespace, prefix + path);
   }
 
   /**
