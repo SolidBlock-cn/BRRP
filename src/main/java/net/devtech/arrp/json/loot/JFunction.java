@@ -2,9 +2,11 @@ package net.devtech.arrp.json.loot;
 
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.function.LootFunction;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -12,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>The loot table function is in essence an "item modifier". The field "function" is the identifier (as string) of the loot table function.</p>
- * <p>The loot table function is quite complicated, so this class directly uses the field {@link #properties} to add any parameter.</p>
+ * <p>The <b>loot table function</b> is in essence an "item modifier". The field "function" is the identifier (as string) of the loot table function.</p>
+ * <p>The loot table function is quite complicated, so <b>it is highly recommended to directly use {@link #delegate(LootFunction.Builder)} or {@link #delegate(LootFunction)} to use vanilla loot functions</b>.</p>
  *
  * @see LootFunction
  */
@@ -29,15 +31,21 @@ public class JFunction implements Cloneable, JsonSerializable {
     function(function);
   }
 
+  /**
+   * Create an object that directly uses the serialization of a vanilla-type {@link LootFunction} object.
+   */
+  @Contract("_ -> new")
   public static JFunction delegate(LootFunction delegate) {
-    return new JFunction(null) {
-      private static final Gson GSON = LootGsons.getFunctionGsonBuilder().create();
+    return new FromLootFunction(delegate);
+  }
 
-      @Override
-      public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
-        return GSON.toJsonTree(delegate);
-      }
-    };
+  /**
+   * Create an object that directly uses the serialization of a vanilla-type {@link LootFunction.Builder} object.
+   */
+  @Contract("_ -> new")
+  @ApiStatus.AvailableSince("0.8.0")
+  public static JFunction delegate(LootFunction.Builder delegate) {
+    return new FromLootFunctionBuilder(delegate);
   }
 
   /**
@@ -144,6 +152,43 @@ public class JFunction implements Cloneable, JsonSerializable {
     @Override
     public JsonElement serialize(JFunction src, Type typeOfSrc, JsonSerializationContext context) {
       return src.serialize(typeOfSrc, context);
+    }
+  }
+
+  /**
+   * @author SolidBlock
+   * @since 0.8.0 converted from an anonymous class to an internal class, avoiding absence with GSON serialization.
+   */
+  @ApiStatus.AvailableSince("0.8.0")
+  @ApiStatus.Internal
+  private static class FromLootFunction extends JFunction {
+    private static final Gson GSON = LootGsons.getFunctionGsonBuilder().create();
+    private final LootFunction delegate;
+
+    public FromLootFunction(LootFunction delegate) {
+      super(null);
+      this.delegate = delegate;
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return GSON.toJsonTree(delegate);
+    }
+  }
+
+  @ApiStatus.AvailableSince("0.8.0")
+  @ApiStatus.Internal
+  private static class FromLootFunctionBuilder extends JFunction {
+    private final LootFunction.Builder delegate;
+
+    public FromLootFunctionBuilder(LootFunction.Builder delegate) {
+      super(null);
+      this.delegate = delegate;
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return FromLootFunction.GSON.toJsonTree(delegate.build());
     }
   }
 }

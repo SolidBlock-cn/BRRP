@@ -15,25 +15,27 @@ public interface IdentifierExtension {
   /**
    * Append the string to the path of the identifier. The namespace will keep unchanged.
    *
-   * @param prefix The string to be appended.
+   * @param suffix The string to be appended.
    * @return A new identifier.
+   * @since 0.8.0 Fixed the wrong parameter name.
    */
   @Contract("_ -> new")
-  default Identifier brrp_append(@NotNull String prefix) {
+  default Identifier brrp_append(@NotNull String suffix) {
     Identifier identifier = (Identifier) this;
-    return new Identifier(identifier.getNamespace(), identifier.getPath() + prefix);
+    return new Identifier(identifier.getNamespace(), identifier.getPath() + suffix);
   }
 
   /**
    * Prepend the string to the path of the identifier. The namespace will keep unchanged.
    *
-   * @param suffix The string to be prepended.
+   * @param prefix The string to be prepended.
    * @return A new identifier.
+   * @since 0.8.0 Fixed the wrong parameter name.
    */
   @Contract("_ -> new")
-  default Identifier brrp_prepend(@NotNull String suffix) {
+  default Identifier brrp_prepend(@NotNull String prefix) {
     Identifier identifier = (Identifier) this;
-    return new Identifier(identifier.getNamespace(), suffix + identifier.getPath());
+    return new Identifier(identifier.getNamespace(), prefix + identifier.getPath());
   }
 
   /**

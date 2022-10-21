@@ -1,7 +1,10 @@
 package net.devtech.arrp.json.animation;
 
 import com.google.gson.*;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.devtech.arrp.api.JsonSerializable;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -22,7 +25,10 @@ public class JAnimation implements Cloneable, JsonSerializable {
   public JAnimation() {
   }
 
-  private List<Integer> defaultFrames;
+  /**
+   * @since 0.8.0 由 List<Integer> 改为 IntList。
+   */
+  private IntList defaultFrames;
 
   /**
    * @deprecated Please directly call the constructor {@link #JAnimation()}.
@@ -49,46 +55,61 @@ public class JAnimation implements Cloneable, JsonSerializable {
     }
   }
 
-  @Contract("-> this")
+  /**
+   * Enable the interpolation of the animation.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "-> this", mutates = "this")
   public JAnimation interpolate() {
     this.interpolate = true;
     return this;
   }
 
-  @Contract("_ -> this")
+  /**
+   * Set whether to interpolate the animation.
+   *
+   * @param interpolate Whether there is interpolation
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JAnimation interpolate(boolean interpolate) {
     this.interpolate = interpolate;
     return this;
   }
 
-  @Contract("_ -> this")
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JAnimation width(int width) {
     this.width = width;
     return this;
   }
 
-  @Contract("_ -> this")
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JAnimation height(int height) {
     this.height = height;
     return this;
   }
 
-  @Contract("_ -> this")
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JAnimation frameTime(int time) {
     this.frametime = time;
     return this;
   }
 
-  @Contract("_ -> this")
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JAnimation add(int frame) {
     if (this.defaultFrames == null) {
-      this.defaultFrames = new ArrayList<>();
+      this.defaultFrames = new IntArrayList();
     }
     this.defaultFrames.add(frame);
     return this;
   }
 
-  @Contract("_ -> this")
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JAnimation add(JFrame frame) {
     if (this.frames == null) {
       this.frames = new ArrayList<>();
@@ -97,12 +118,14 @@ public class JAnimation implements Cloneable, JsonSerializable {
     return this;
   }
 
-  @Contract("_ -> this")
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
   public JAnimation addFrame(int index) {
     return this.add(new JFrame(index));
   }
 
-  @Contract("_, _ -> this")
+  @CanIgnoreReturnValue
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JAnimation addFrame(int index, int time) {
     return this.add(new JFrame(index, time));
   }
@@ -131,7 +154,7 @@ public class JAnimation implements Cloneable, JsonSerializable {
         }
       }
       if (this.defaultFrames != null) {
-        for (Integer frame : this.defaultFrames) {
+        for (int frame : this.defaultFrames) {
           frames.add(frame);
         }
       }

@@ -13,8 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * <p><b>Tag</b>s are used to list block, entity types, functions, etc. The identifier of tag is <code style=color:maroon><i>namespace</i>:<i>type</i>/<i>pathContent</i></code>, where the <code><i>type</i></code> determines which object the tag contents refer to, and can be one of the following values:</p>
- * <pre style=color:navy>blocks entity_types fluids functions game_events items worldgen</pre>
+ * <p><b>Tag</b>s are used to list block, entity types, functions, etc. The identifier of tag is <code style=color:maroon><i>namespace</i>:<i>type</i>/<i>pathContent</i></code>, where the <code><i>type</i></code> determines which object the tag contents refer to.</p>
  * <p>A tag itself has an identifier. It is determined when writing the tag into the resource pack. If you needs to predetermine its identifier, please use {@link IdentifiedTag}.</p>
  */
 @SuppressWarnings("unused")

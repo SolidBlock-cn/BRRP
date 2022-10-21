@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.tags;
 
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;

@@ -350,6 +350,11 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
     return object;
   }
 
+  @Override
+  public JVariants clone() {
+    return new JVariants(Maps.newLinkedHashMap(variants));
+  }
+
   @ApiStatus.Internal
   private static final class Delegate extends JVariants implements JsonSerializable, Supplier<JsonElement> {
     private final BlockStateVariant delegate;

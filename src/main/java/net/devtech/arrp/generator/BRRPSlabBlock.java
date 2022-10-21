@@ -1,6 +1,5 @@
 package net.devtech.arrp.generator;
 
-import com.google.gson.JsonObject;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.blockstate.JBlockStates;
 import net.devtech.arrp.json.loot.JLootTable;
@@ -21,6 +20,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 /**
  * This is a simple extension of {@link SlabBlock} with the resource generation provided.
@@ -58,14 +58,14 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @Nullable JBlockStates getBlockStates() {
+  public @UnknownNullability JBlockStates getBlockStates() {
     final Identifier id = getBlockModelId();
     return JBlockStates.simpleSlab(baseBlock != null ? ResourceGeneratorHelper.getBlockModelId(baseBlock) : id.brrp_append("_double"), id, id.brrp_append("_top"));
   }
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @Nullable JModel getBlockModel() {
+  public @UnknownNullability JModel getBlockModel() {
     return new JModel("block/slab").textures(JTextures.ofSides(
         getTextureId(TextureKey.TOP),
         getTextureId(TextureKey.SIDE),
@@ -77,32 +77,24 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
   @Override
   public void writeBlockModel(RuntimeResourcePack pack) {
     final JModel model = getBlockModel();
-    if (model != null) {
-      final Identifier id = getBlockModelId();
-      pack.addModel(model, id);
-      pack.addModel(model.clone().parent("block/slab_top"), id.brrp_append("_top"));
-      if (baseBlock == null) {
-        pack.addModel(model.clone().parent("block/cube_bottom_top"), id.brrp_append("_double"));
-      }
+    final Identifier id = getBlockModelId();
+    pack.addModel(model, id);
+    pack.addModel(model.clone().parent("block/slab_top"), id.brrp_append("_top"));
+    if (baseBlock == null) {
+      pack.addModel(model.clone().parent("block/cube_bottom_top"), id.brrp_append("_double"));
     }
-  }
-
-  private static final JsonObject BLOCK_STATE_PROPERTY = new JsonObject();
-
-  static {
-    BLOCK_STATE_PROPERTY.addProperty("type", "double");
   }
 
   @Override
   public JLootTable getLootTable() {
-    return JLootTable.delegate(BlockLootTableGenerator.slabDrops(this).build());
+    return JLootTable.delegate(BlockLootTableGenerator.slabDrops(this));
   }
 
   /**
    * It slightly resembles {@link RecipesProvider#createSlabRecipe(ItemConvertible, Ingredient)}, but bypasses validation.
    */
   @Override
-  public @Nullable JRecipe getCraftingRecipe() {
+  public @UnknownNullability("Null if the base block is null.") JRecipe getCraftingRecipe() {
     return baseBlock == null ? null : new JShapedRecipe(this)
         .resultCount(6)
         .pattern("###")

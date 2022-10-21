@@ -34,7 +34,7 @@ import java.util.function.Supplier;
  * @see net.minecraft.data.client.model.When.LogicalOperator
  */
 @PreferredEnvironment(EnvType.CLIENT)
-public class JWhenLogical extends ForwardingList<When> implements When, JsonSerializable {
+public class JWhenLogical extends ForwardingList<When> implements Cloneable, When, JsonSerializable {
   public final @NotNull LogicalOperator operator;
   public final @NotNull List<When> components;
 
@@ -117,5 +117,15 @@ public class JWhenLogical extends ForwardingList<When> implements When, JsonSeri
   @Override
   public JsonElement get() {
     return RuntimeResourcePackImpl.GSON.toJsonTree(this);
+  }
+
+  @ApiStatus.AvailableSince("0.8.0")
+  @Override
+  public JWhenLogical clone() {
+    try {
+      return (JWhenLogical) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError();
+    }
   }
 }

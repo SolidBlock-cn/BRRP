@@ -13,7 +13,11 @@ import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.advancement.Advancement;
+import net.minecraft.data.client.BlockStateSupplier;
+import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.loot.LootTable;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -131,6 +135,10 @@ public interface RuntimeResourcePack extends ResourcePack {
 
   byte[] addLootTable(Identifier identifier, JLootTable table);
 
+  @CanIgnoreReturnValue
+  @ApiStatus.AvailableSince("0.8.0")
+  byte[] addLootTable(Identifier identifier, LootTable lootTable);
+
   /**
    * Add an async resource, which is evaluated off-thread, and does not hold all resource retrieval unlike.
    *
@@ -212,6 +220,10 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   byte[] addBlockState(JBlockStates state, Identifier id);
 
+
+  @ApiStatus.AvailableSince("0.8.0")
+  @CanIgnoreReturnValue
+  byte[] addBlockState(BlockStateSupplier state, Identifier id);
 
   /**
    * Adds a texture png.
@@ -296,6 +308,10 @@ public interface RuntimeResourcePack extends ResourcePack {
     addRecipe(recipeId, recipeContainingAdvancement);
     addRecipeAdvancement(recipeId, recipeId.brrp_prepend("recipes/" + (StringUtils.isEmpty(groupName) ? "" : groupName + "/")), recipeContainingAdvancement);
   }
+
+  @ApiStatus.AvailableSince("0.8.0")
+  @CanIgnoreReturnValue
+  byte[] addRecipe(Identifier id, RecipeJsonProvider recipe);
 
   /**
    * Add an advancement to the runtime resource pack.

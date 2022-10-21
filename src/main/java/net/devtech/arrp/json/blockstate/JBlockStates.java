@@ -8,6 +8,8 @@ import net.devtech.arrp.ARRP;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
 import net.fabricmc.api.EnvType;
+import net.minecraft.block.Block;
+import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.model.BlockStateSupplier;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
@@ -17,7 +19,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * <p>A <b>"block states"</b> is the file in the {@code assets/<i>namespace</i>/blockstates} folder, which defines which models should be used when rendering a block state. It has two types:</p>
+ * <p>A <b>"block states"</b> is the file in the <code>assets/<i>namespace</i>/blockstates</code> folder, which defines which models should be used when rendering a block state. It has two types:</p>
  * <ul>
  *   <li><b>variants</b> - Each block state corresponds to a block model definition ({@link JBlockModel}). You can create a variant definition through {@link #variants}.</li>
  *   <li><b>multipart</b> - Each part has a block model, and an optional condition ({@link JWhen}). If the condition is met (which means the actual block states matches to the condition), the part will be used. In this case, it's possible that one part, multiple parts or no parts will be used. You can create a multipart definition through {@link #ofMultiparts}.</li>
@@ -26,7 +28,7 @@ import java.util.List;
  * <p>This class is a simple improved version of {@link JState}. You can "upgrade" the deprecated <code>JState</code> through {@link #of(JState)}.</p>
  *
  * @author SolidBlock
- * @see net.minecraft.data.client.model.BlockStateModelGenerator
+ * @see BlockStateModelGenerator
  * @see BlockStateSupplier
  * @since BRRP 0.6.0
  */
@@ -129,6 +131,8 @@ public class JBlockStates implements JsonSerializable {
    * <pre>{@code
    * { "variants": {"": {"model": "<blockModelId>"}}}
    * }</pre>
+   *
+   * @see BlockStateModelGenerator#createSingletonBlockState(Block, Identifier)
    */
   public static JBlockStates simple(Identifier blockModelId) {
     return ofVariants(JVariants.ofNoVariants(new JBlockModel(blockModelId)));
@@ -143,6 +147,8 @@ public class JBlockStates implements JsonSerializable {
    *     {"model": "<blockModelId>", "y": 180},
    *     {"model": "<blockModelId>", "y": 270} ] }
    * }</pre>
+   *
+   * @see BlockStateModelGenerator#createBlockStateWithRandomHorizontalRotations(Block, Identifier)
    */
   public static JBlockStates simpleRandomRotation(Identifier blockModelId) {
     return ofVariants(JVariants.ofNoVariants(JVariants.ofRandomRotation(new JBlockModel(blockModelId))));
@@ -165,6 +171,7 @@ public class JBlockStates implements JsonSerializable {
    * @param blockModelId The identifier of the block model.
    * @param uvlock       The uvlock of the model. For blocks that can be identified rotation through their textures (for example, dispenser), it should be <code>false</code>. For blocks that can be identified rotation through shapes, and the texture of which does not matter (for example, stairs, vertical slab, button), it can be <code>true</code>.
    * @return The block states definition for the horizontal facing block.
+   * @see BlockStateModelGenerator#createSouthDefaultHorizontalRotationStates()
    */
   public static JBlockStates simpleHorizontalFacing(Identifier blockModelId, boolean uvlock) {
     return ofVariants(JVariants.ofHorizontalFacing(new JBlockModel(blockModelId).uvlock(uvlock)));
@@ -182,6 +189,7 @@ public class JBlockStates implements JsonSerializable {
    * @param bottomSlabModelId The identifier of the bottom block model.
    * @param topSlabModelId    The identifier of the top block model
    * @return The block states definition for the slab block.
+   * @see BlockStateModelGenerator#createSlabBlockState(Block, Identifier, Identifier, Identifier)
    */
   public static JBlockStates simpleSlab(Identifier baseBlockModelId, Identifier bottomSlabModelId, Identifier topSlabModelId) {
     return ofVariants(JVariants.ofSlab(new JBlockModel(baseBlockModelId), bottomSlabModelId, topSlabModelId));

@@ -3,9 +3,11 @@ package net.devtech.arrp.json.models;
 import com.google.common.collect.Lists;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.json.loot.JCondition;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -61,6 +63,30 @@ public class JModel implements Cloneable {
   public JModel(Identifier parent) {
     this();
     this.parent = parent.toString();
+  }
+
+  /**
+   * Create a new JModel with parent {@code "item/generated"} and a specified layer0.
+   *
+   * @param layer0 The {@code layer0} texture id.
+   * @return A new JModel object.
+   */
+  @ApiStatus.AvailableSince("0.8.0")
+  @Contract(value = "_ -> new", pure = true)
+  public static JModel ofGenerated(String layer0) {
+    return new JModel("item/generated").textures(JTextures.ofLayer0(layer0));
+  }
+
+  /**
+   * Create a new JModel with parent {@code "item/handheld"} and a specified layer0.
+   *
+   * @param layer0 The {@code layer0} texture id.
+   * @return A new JModel object.
+   */
+  @ApiStatus.AvailableSince("0.8.0")
+  @Contract(value = "_ -> new", pure = true)
+  public static JModel ofHandheld(String layer0) {
+    return new JModel("item/handheld").textures(JTextures.ofLayer0(layer0));
   }
 
   /**
