@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class ARRP implements PreLaunchEntrypoint {
-  public static final Logger LOGGER = LoggerFactory.getLogger("BRRP");
+  public static final Logger LOGGER = LoggerFactory.getLogger("BRRP (branch of ARRP)");
   private static List<Future<?>> futures;
 
   @Override

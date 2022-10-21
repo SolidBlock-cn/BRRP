@@ -43,9 +43,11 @@ public class JBlockStates implements JsonSerializable {
    *
    * @param variants   The variant definition. One of these two parameters must be {@code null}.
    * @param multiparts The list of multiparts. One of these two parameters must be {@code null}.
+   * @see #ofVariants
+   * @see #ofMultiparts
    */
   @ApiStatus.Internal
-  private JBlockStates(JVariants variants, List<JMultipart> multiparts) {
+  protected JBlockStates(JVariants variants, List<JMultipart> multiparts) {
     this.variants = variants;
     this.multiparts = multiparts;
   }

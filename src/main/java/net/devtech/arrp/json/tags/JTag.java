@@ -251,6 +251,7 @@ public class JTag {
   /**
    * Assume this tag is an entity-type tag, query the identifiers of the entity types and add to the tag. Please confirm that when calling this method, the entity types are correctly registered. If you haven't registered the entity types, you can register with {@link Registry#register} at first.
    */
+  @Contract(value = "_ -> this", mutates = "this")
   public JTag addEntityTypes(EntityType<?>... entityTypes) {
     return this.addEntityTypes(Arrays.asList(entityTypes));
   }
