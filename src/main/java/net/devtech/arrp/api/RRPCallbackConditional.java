@@ -20,8 +20,6 @@ import java.util.List;
 @Deprecated(since = "0.6.4")
 public interface RRPCallbackConditional {
   /**
-   * Register your type-specific resource pack at a higher priority than minecraft and mod resources.
-   *
    * @deprecated Please use {@link SidedRRPCallback#BEFORE_VANILLA}.
    */
   @Deprecated
@@ -33,8 +31,6 @@ public interface RRPCallbackConditional {
     }
   });
   /**
-   * Register your type-specific resource pack at a lower priority than minecraft and mod resources.
-   *
    * @deprecated Please use {@link SidedRRPCallback#AFTER_VANILLA}.
    */
   @Deprecated
