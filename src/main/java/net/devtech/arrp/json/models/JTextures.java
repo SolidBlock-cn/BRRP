@@ -1,7 +1,7 @@
 package net.devtech.arrp.json.models;
 
 import com.google.common.collect.ForwardingMap;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -20,10 +20,12 @@ import java.util.Map;
  * <p>The field {@link #textures} exists only for compatibility. It equals to the JTextures itself.
  * <p>As inherited in {@link Map}, methods like {@code put}, {@code putAll} do not return the object itself. However, new methods like {@code var} and {@code particle} return the object itself, making it possible to chain call.
  * <p>You can simply call {@link #of(String, String)} or {@link #of(String...)} to quickly create an instance with one or several variables defined.
+ *
+ * @since 0.8.0 It is cloneable now.
  */
 @SuppressWarnings("unused")
 @PreferredEnvironment(EnvType.CLIENT)
-public class JTextures extends ForwardingMap<String, String> implements JsonSerializable {
+public class JTextures extends ForwardingMap<String, String> implements Cloneable, JsonSerializable {
   /**
    * The map containing the values. It is usually a {@link LinkedHashMap}, as specified in {@link #JTextures()}.<p>
    * This field it private. To get it please use {@link #delegate()}.

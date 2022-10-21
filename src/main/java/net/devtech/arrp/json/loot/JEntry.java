@@ -1,21 +1,29 @@
 package net.devtech.arrp.json.loot;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.common.base.Preconditions;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.minecraft.loot.LootGsons;
+import net.minecraft.loot.condition.LootCondition;
+import net.minecraft.loot.entry.LeafEntry;
 import net.minecraft.loot.entry.LootPoolEntry;
+import net.minecraft.loot.entry.LootPoolEntryType;
+import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
+ * This represents an <b>entry of a loot pool</b>. You may also directly use {@link LootPoolEntry}, converting from "{@link #delegate}" method.
+ *
  * @see LootPoolEntry
  */
 @SuppressWarnings("unused")
@@ -66,6 +74,19 @@ public class JEntry implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   public JEntry type(String type) {
     this.type = type;
+    return this;
+  }
+
+  /**
+   * Set the type of loot table from a vanilla-typed {@link LootPoolEntryType} object.
+   *
+   * @param type See {@link #type}.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.0")
+  public JEntry type(LootPoolEntryType type) {
+    this.type = Objects.requireNonNull(Registry.LOOT_POOL_ENTRY_TYPE.getId(type), "The loot pool entry type seems not registered yet!").toString();
     return this;
   }
 
@@ -156,6 +177,36 @@ public class JEntry implements Cloneable {
   }
 
   /**
+   * Add a condition to the loot table entry.
+   *
+   * @param condition The loot table condition.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  public JEntry condition(LootCondition condition) {
+    if (this.conditions == null) {
+      this.conditions = new ArrayList<>();
+    }
+    this.conditions.add(JCondition.delegate(condition));
+    return this;
+  }
+
+  /**
+   * Add a condition to the loot table entry. This method can be called for objects return by {@link #delegate(LootPoolEntry.Builder)} (not {@link #delegate(LootPoolEntry)}).
+   *
+   * @param condition The loot table condition.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  public JEntry condition(LootCondition.Builder condition) {
+    if (this.conditions == null) {
+      this.conditions = new ArrayList<>();
+    }
+    this.conditions.add(JCondition.delegate(condition));
+    return this;
+  }
+
+  /**
    * Add a simple condition to the loot table entry.
    *
    * @param condition The id (as string) of the loot table condition.
@@ -204,7 +255,66 @@ public class JEntry implements Cloneable {
     }
   }
 
+  /**
+   * Create a special object that directly uses the serialization of vanilla-type {@link LootPoolEntry} object.
+   *
+   * @see #delegate(LootPoolEntry.Builder)}
+   */
+  @ApiStatus.AvailableSince("0.8.0")
+  @Contract("_ -> new")
   public static JEntry delegate(LootPoolEntry delegate) {
     return new Delegate(delegate);
+  }
+
+  @ApiStatus.Internal
+  @ApiStatus.AvailableSince("0.8.0")
+  private static final class DelegateFromBuilder<T extends LootPoolEntry.Builder<T>> extends JEntry implements JsonSerializable {
+    private final LootPoolEntry.Builder<T> delegate;
+
+    private DelegateFromBuilder(LootPoolEntry.Builder<T> delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public JEntry condition(LootCondition.Builder condition) {
+      delegate.conditionally(condition);
+      return this;
+    }
+
+    @Override
+    public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
+      return Delegate.GSON.toJsonTree(delegate.build());
+    }
+
+    @Override
+    public JEntry weight(Integer weight) {
+      Preconditions.checkNotNull(weight, "The weight must not be null");
+      if (delegate instanceof LeafEntry.Builder<?> leafEntryBuilder) {
+        leafEntryBuilder.weight(weight);
+      } else {
+        throw new UnsupportedOperationException("Only LeafEntry.Builder can set weight!");
+      }
+      return this;
+    }
+
+    @Override
+    public JEntry quality(Integer quality) {
+      Preconditions.checkNotNull(weight, "The quality must not be null");
+      if (delegate instanceof LeafEntry.Builder<?> leafEntryBuilder) {
+        leafEntryBuilder.quality(quality);
+      } else {
+        throw new UnsupportedOperationException("Only LeafEntry.Builder can set quality!");
+      }
+      return this;
+    }
+  }
+
+  /**
+   * Create a special object that directly uses the serialization of vanilla-type {@link LootPoolEntry.Builder} object.
+   */
+  @ApiStatus.AvailableSince("0.8.0")
+  @Contract("_ -> new")
+  public static <T extends LootPoolEntry.Builder<T>> JEntry delegate(LootPoolEntry.Builder<T> delegate) {
+    return new DelegateFromBuilder<>(delegate);
   }
 }

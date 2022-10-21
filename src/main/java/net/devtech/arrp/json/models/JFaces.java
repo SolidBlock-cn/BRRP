@@ -1,6 +1,6 @@
 package net.devtech.arrp.json.models;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -22,20 +22,6 @@ import java.util.function.Function;
  */
 @PreferredEnvironment(EnvType.CLIENT)
 public class JFaces extends EnumMap<Direction, JFace> implements Cloneable, JsonSerializable {
-  // These fields exist for only compatibility.
-  @Deprecated(forRemoval = true)
-  private JFace up;
-  @Deprecated(forRemoval = true)
-  private JFace down;
-  @Deprecated(forRemoval = true)
-  private JFace north;
-  @Deprecated(forRemoval = true)
-  private JFace south;
-  @Deprecated(forRemoval = true)
-  private JFace east;
-  @Deprecated(forRemoval = true)
-  private JFace west;
-
   public JFaces() {
     super(Direction.class);
   }

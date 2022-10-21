@@ -1,7 +1,8 @@
 package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingMap;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.common.collect.Maps;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
@@ -12,6 +13,7 @@ import net.minecraft.data.client.When;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.StringIdentifiable;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +52,7 @@ import java.util.stream.Collectors;
  * @see JWhen.PropertyCondition
  */
 @PreferredEnvironment(EnvType.CLIENT)
-public class JWhenProperties extends ForwardingMap<String, String> implements When, JsonSerializable {
+public class JWhenProperties extends ForwardingMap<String, String> implements Cloneable, When, JsonSerializable {
   /**
    * The delegate map storing properties and values, both of which represent as strings.
    */
@@ -66,7 +68,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
   /**
    * Create a new empty JWhenProperties with a map for properties explicitly defined.
    *
-   * @param properties The map storing properties. It will be directly used as the {@link #properties} field. It <i>can</i> be <i>immutable</i>, which means in this case methods like {@link #add} do not take effect.
+   * @param properties The map storing properties. <b>It will be directly used as the {@link #properties} field. It <i>can</i> be <i>immutable</i>, which means in this case methods like {@link #add} do not take effect.</b>
    */
   public JWhenProperties(@NotNull Map<String, String> properties) {
     this.properties = properties;
@@ -269,5 +271,11 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Wh
   @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties addNegated(String property, StringIdentifiable... values) {
     return add(property, "!" + Arrays.stream(values).map(StringIdentifiable::asString).collect(Collectors.joining("|")));
+  }
+
+  @ApiStatus.AvailableSince("0.8.0")
+  @Override
+  public JWhenProperties clone() {
+    return new JWhenProperties(Maps.newLinkedHashMap(properties));
   }
 }

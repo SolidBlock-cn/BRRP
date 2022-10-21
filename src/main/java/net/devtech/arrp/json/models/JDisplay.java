@@ -1,6 +1,6 @@
 package net.devtech.arrp.json.models;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -60,23 +60,6 @@ import java.util.EnumMap;
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
 @PreferredEnvironment(EnvType.CLIENT)
 public class JDisplay extends EnumMap<JDisplay.DisplayPosition, JPosition> implements Cloneable, JsonSerializable {
-  // The following fields exist for only compatibility.
-  @Deprecated(forRemoval = true)
-  private JPosition thirdperson_righthand;
-  @Deprecated(forRemoval = true)
-  private JPosition thirdperson_lefthand;
-  @Deprecated(forRemoval = true)
-  private JPosition firstperson_righthand;
-  @Deprecated(forRemoval = true)
-  private JPosition firstperson_lefthand;
-  @Deprecated(forRemoval = true)
-  private JPosition gui;
-  @Deprecated(forRemoval = true)
-  private JPosition head;
-  @Deprecated(forRemoval = true)
-  private JPosition ground;
-  @Deprecated(forRemoval = true)
-  private JPosition fixed;
 
   public JDisplay() {
     super(DisplayPosition.class);
@@ -160,6 +143,9 @@ public class JDisplay extends EnumMap<JDisplay.DisplayPosition, JPosition> imple
     return object;
   }
 
+  /**
+   * @see net.minecraft.client.render.model.json.ModelTransformation.Mode
+   */
   public enum DisplayPosition implements StringIdentifiable {
     THIRDPERSON_RIGHTHAND("thirdperson_righthand"),
     THIRDPERSON_LEFTHAND("thirdperson_lefthand"),

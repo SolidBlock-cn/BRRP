@@ -1,11 +1,11 @@
 package net.devtech.arrp.json.recipe;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.google.errorprone.annotations.InlineMe;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import net.devtech.arrp.api.JsonSerializable;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -23,7 +23,6 @@ public class JPattern implements Cloneable, JsonSerializable {
    * @deprecated Ambiguous name.
    */
   @Deprecated
-  @InlineMe(replacement = "new JPattern()")
   public static JPattern pattern() {
     return new JPattern("   ", "   ", "   ");
   }
@@ -32,7 +31,6 @@ public class JPattern implements Cloneable, JsonSerializable {
    * @deprecated Please directly cal {@link #JPattern(String...)}.
    */
   @Deprecated
-  @InlineMe(replacement = "new JPattern(rows)")
   public static JPattern pattern(String... rows) {
     return new JPattern(rows);
   }

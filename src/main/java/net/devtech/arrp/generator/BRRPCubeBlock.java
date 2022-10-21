@@ -8,8 +8,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
 /**
  * This is a simple extension of a cube block. You can specify textures for it.
@@ -25,7 +25,6 @@ public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
    * @param parent   The id of the parent model. For example, {@code "block/cube_all"}.
    * @param textures Texture definitions of the model.
    */
-  @ApiStatus.Internal
   public BRRPCubeBlock(Settings settings, String parent, JTextures textures) {
     super(settings);
     this.parent = parent;
@@ -58,13 +57,13 @@ public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JBlockStates getBlockStates() {
+  public @UnknownNullability JBlockStates getBlockStates() {
     return JBlockStates.simple(getBlockModelId());
   }
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JModel getBlockModel() {
+  public @UnknownNullability JModel getBlockModel() {
     return new JModel(parent).textures(textures);
   }
 

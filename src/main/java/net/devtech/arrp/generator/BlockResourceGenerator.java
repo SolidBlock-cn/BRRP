@@ -10,6 +10,8 @@ import net.fabricmc.api.EnvType;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
@@ -61,11 +63,22 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * Usually the block id is the same as the item id, but we do not assume that here.
    *
    * @return The id of the block item, or {@code null} if the block has no item.
+   * @since 0.8.0 It respects {@link Block#asItem()} now.
    */
   @Override
   default Identifier getItemId() {
-    if (this instanceof Block block && BlockItem.BLOCK_ITEMS.containsKey(block)) {
-      return Registry.ITEM.getId(BlockItem.BLOCK_ITEMS.get(block));
+    if (this instanceof Block block) {
+      final Item item = block.asItem();
+      if (item == Items.AIR) {
+        if (BlockItem.BLOCK_ITEMS.containsKey(block)) {
+          // 考虑到方块自身是空气的情况，虽然这种情况不太可能。
+          return Registry.ITEM.getId(BlockItem.BLOCK_ITEMS.get(block));
+        } else {
+          // 方块没有物品。
+          return null;
+        }
+      }
+      return Registry.ITEM.getId(item);
     } else {
       return null;
     }
