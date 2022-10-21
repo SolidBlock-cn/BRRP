@@ -1,6 +1,6 @@
 package net.devtech.arrp.json.blockstate;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -125,6 +125,13 @@ public final class JState implements JsonSerializable {
   @Deprecated
   public static JWhen when() {
     return new JWhen();
+  }
+
+  /**
+   * @author Devan Kerman
+   */
+  public static JWhen.StateBuilder whenStateBuilder() {
+    return new JWhen.StateBuilder();
   }
 
   @Deprecated

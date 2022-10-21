@@ -1,7 +1,7 @@
 package net.devtech.arrp;
 
-import net.devtech.arrp.api.RRPCallbackConditional;
 import net.devtech.arrp.api.RuntimeResourcePack;
+import net.devtech.arrp.api.SidedRRPCallback;
 import net.devtech.arrp.generator.*;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
@@ -74,7 +74,7 @@ public class BRRPDevelopment implements ModInitializer {
 
   @Override
   public void onInitialize() {
-    RRPCallbackConditional.BEFORE_VANILLA.register(
+    SidedRRPCallback.BEFORE_VANILLA.register(
         (resourceType, builder) -> builder.add(refreshPack(resourceType))
     );
 

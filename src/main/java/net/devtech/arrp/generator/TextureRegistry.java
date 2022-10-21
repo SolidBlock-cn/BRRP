@@ -20,7 +20,7 @@ import java.util.Map;
  * <p>Block-based blocks, for example, slabs, may query the texture registry for their base blocks, as defined in {@link BRRPSlabBlock#getTextureId}. This affects all blocks that override {@link BlockResourceGenerator#getBaseBlock()}, but <i>does not affect</i> vanilla blocks because they do not implement that method.</p>
  * <p>The texture key respects their parent keys (for "fallback keys"). For example, {@link TextureKey#EAST} fall backs to {@link TextureKey#SIDE}, which fall backs to {@link TextureKey#ALL}, so when querying the east texture of the block, and that texture key of the block is not registered, side texture will be used; if side texture does not exist as well, its all texture will be used, and if that is still absent, {@code null} value will be returned.</p>
  * <p>To register, you can simple call {@link #register}, and you can call {@link #getTexture} to get the texture.</p>
- * <p><i>Notice that textures of vanilla blocks are not registered</i> by default. It's OK to register vanilla blocks, no problem, but you may have to consider compatibility with other mods. If you're sure to register vanilla blocks to this registry, it's highly recommended to keep consistent with the vanilla texture (see {@link net.minecraft.data.client.BlockStateModelGenerator}).</p>
+ * <p><i>Notice that textures of vanilla blocks are not registered</i> by default. It's OK to register vanilla blocks, no problem, but you may have to consider compatibility with other mods. If you're sure to register vanilla block textures to this registry, it's highly recommended to keep it identical to what the vanilla textures use (see {@link net.minecraft.data.client.BlockStateModelGenerator}).</p>
  * <p>For example, if you register a sandstone block like this:</p>
  * <pre>{@code
  * TextureRegistry.registerAppended(Blocks.SANDSTONE, TextureKey.TOP, "_top");
@@ -68,29 +68,31 @@ public final class TextureRegistry {
 
   /**
    * <p>Register a block texture with the specified texture key. The identifier is created by the block identifier with the specified suffix.</p>
-   * <p>In this case, the block id will be used, so please make sure that the block has been registered. This is a convenient way.</p>
-   * <p>The block with id {@code minecraft:sandstone} with the suffix {@code "_top"} parameter will use the following texture identifier: {@code minecraft:blocks/sandstone_top}.</p>
+   * <p>In this case, the block id will be used, so please make sure that the block has been registered in {@link Registry#BLOCK}. This is a convenient way.</p>
+   * <p>The block with id {@code minecraft:sandstone} with the suffix {@code "_top"} parameter will use the following texture identifier: {@code minecraft:block/sandstone_top}.</p>
    *
    * @param block      The block you register.
    * @param textureKey The texture key. Vanilla texture keys can be found in {@link TextureKey}.
    * @param suffix     The suffix to append to the block id.
+   * @since 0.8.0 Fixed the incorrect identifier.
    */
   public static void registerAppended(Block block, TextureKey textureKey, String suffix) {
-    register(block, textureKey, Registry.BLOCK.getId(block).brrp_pend("blocks/", suffix));
+    register(block, textureKey, Registry.BLOCK.getId(block).brrp_pend("block/", suffix));
   }
 
   /**
-   * <p>Register {@code null} a block texture with the specified texture key. The identifier is created with the same namespace of the block id and the specified path.</p>
-   * <p>In this case, the namespace of block id will be used, so please make sure that the block has been registered.</p>
+   * <p>Register a block texture with the specified texture key. The identifier is created with the same namespace of the block id and the specified path.</p>
+   * <p>In this case, the namespace of block id will be used, so please make sure that the block has been registered in {@link Registry#BLOCK}.</p>
    * <p>For example, the block with id {@code minecraft:smooth_sandstone} with the path {@code "sandstone_top"} parameter will use the following texture identifier: {@code minecraft:block/sandstone_top}.</p>
    *
    * @param block      The block you register.
    * @param textureKey The texture key. Vanilla texture keys can be found in {@link TextureKey}.
    * @param path       The path of the identifier (not including {@code "blocks/"}).
+   * @since 0.8.0 Fixed the incorrect identifier.
    */
   public static void registerWithName(Block block, TextureKey textureKey, String path) {
     final Identifier id = Registry.BLOCK.getId(block);
-    register(block, textureKey, new Identifier(id.getNamespace(), "blocks/" + path));
+    register(block, textureKey, new Identifier(id.getNamespace(), "block/" + path));
   }
 
   /**

@@ -17,6 +17,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
   public final @Nullable Block baseBlock;
@@ -38,7 +39,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JBlockStates getBlockStates() {
+  public @UnknownNullability JBlockStates getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return JBlockStates.delegate(BlockStateModelGenerator.createWallBlockState(
         this,
@@ -50,7 +51,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JModel getBlockModel() {
+  public @UnknownNullability JModel getBlockModel() {
     return new JModel("block/template_wall_post").addTexture("wall", getTextureId(TextureKey.WALL));
   }
 
@@ -66,7 +67,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @NotNull JModel getItemModel() {
+  public @UnknownNullability JModel getItemModel() {
     return new JModel("block/wall_inventory").addTexture("wall", getTextureId(TextureKey.WALL));
   }
 
@@ -74,7 +75,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
    * @see net.minecraft.data.server.RecipeProvider#getWallRecipe(ItemConvertible, Ingredient)
    */
   @Override
-  public @Nullable JRecipe getCraftingRecipe() {
+  public @UnknownNullability("Null if the base block is null.") JRecipe getCraftingRecipe() {
     return baseBlock == null ? null : new JShapedRecipe(this)
         .resultCount(6)
         .pattern("###", "###")

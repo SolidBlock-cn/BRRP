@@ -1,7 +1,5 @@
 package net.devtech.arrp.api;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.google.errorprone.annotations.InlineMe;
 import com.google.gson.Gson;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
@@ -15,7 +13,11 @@ import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.advancement.Advancement;
+import net.minecraft.data.client.BlockStateSupplier;
+import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.loot.LootTable;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -84,12 +86,10 @@ public interface RuntimeResourcePack extends ResourcePack {
     return new RuntimeResourcePackImpl(id, version);
   }
 
-  @InlineMe(replacement = "new Identifier(string)")
   static Identifier id(String string) {
     return new Identifier(string);
   }
 
-  @InlineMe(replacement = "new Identifier(namespace, path)")
   static Identifier id(String namespace, String path) {
     return new Identifier(namespace, path);
   }
@@ -134,6 +134,10 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @CanIgnoreReturnValue
   byte[] addLootTable(Identifier identifier, JLootTable table);
+
+  @CanIgnoreReturnValue
+  @ApiStatus.AvailableSince("0.8.0")
+  byte[] addLootTable(Identifier identifier, LootTable lootTable);
 
   /**
    * Add an async resource, which is evaluated off-thread, and does not hold all resource retrieval unlike.
@@ -222,6 +226,10 @@ public interface RuntimeResourcePack extends ResourcePack {
   byte[] addBlockState(JBlockStates state, Identifier id);
 
 
+  @ApiStatus.AvailableSince("0.8.0")
+  @CanIgnoreReturnValue
+  byte[] addBlockState(BlockStateSupplier state, Identifier id);
+
   /**
    * Adds a texture png.
    * <p>
@@ -306,6 +314,10 @@ public interface RuntimeResourcePack extends ResourcePack {
     addRecipe(recipeId, recipeContainingAdvancement);
     addRecipeAdvancement(recipeId, recipeId.brrp_prepend("recipes/" + (StringUtils.isEmpty(groupName) ? "" : groupName + "/")), recipeContainingAdvancement);
   }
+
+  @ApiStatus.AvailableSince("0.8.0")
+  @CanIgnoreReturnValue
+  byte[] addRecipe(Identifier id, RecipeJsonProvider recipe);
 
   /**
    * Add an advancement to the runtime resource pack.

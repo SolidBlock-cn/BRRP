@@ -21,6 +21,9 @@ import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.Advancement;
+import net.minecraft.data.client.BlockStateSupplier;
+import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.loot.LootTable;
 import net.minecraft.loot.provider.number.LootNumberProvider;
 import net.minecraft.loot.provider.number.LootNumberProviderTypes;
 import net.minecraft.resource.AbstractFileResourcePack;
@@ -73,6 +76,9 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, new Identifier.Serializer())
       .registerTypeHierarchyAdapter(LootNumberProvider.class, LootNumberProviderTypes.createGsonSerializer())
+      .registerTypeHierarchyAdapter(LootTable.class, new LootTable.Serializer())
+      .registerTypeHierarchyAdapter(BlockStateSupplier.class, (JsonSerializer<BlockStateSupplier>) (builder, type, jsonSerializationContext) -> builder.get())
+      .registerTypeHierarchyAdapter(RecipeJsonProvider.class, ((JsonSerializer<RecipeJsonProvider>) (recipe, typeOrSrc, context) -> recipe.toJson()))
       .registerTypeHierarchyAdapter(Advancement.Builder.class, (JsonSerializer<Advancement.Builder>) (builder, type, jsonSerializationContext) -> builder.toJson())
       .create();
   // if it works, don't touch it
@@ -125,14 +131,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   private final Lock waiting = new ReentrantLock();
   private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
+  private final Map<Identifier, JLang> langMergeable = new ConcurrentHashMap<>();
   private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
-  /**
-   * @deprecated Wrong spelling
-   */
-  @SuppressWarnings({"SpellCheckingInspection", "DeprecatedIsStillUsed"})
-  @Deprecated(forRemoval = true)
-  private final Map<Identifier, JLang> langMergable = new ConcurrentHashMap<>();
-  private final Map<Identifier, JLang> langMergeable = langMergable;
   private boolean forbidsDuplicateResource = false;
 
   public RuntimeResourcePackImpl(Identifier id) {
@@ -201,7 +201,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     this.langMergeable.compute(identifier, (identifier1, lang1) -> {
       if (lang1 == null) {
         lang1 = new JLang();
-        this.addLazyResource(ResourceType.CLIENT_RESOURCES, identifier, (pack, identifier2) -> pack.addLang(identifier, lang));
+        JLang finalLang = lang1;
+        this.addLazyResource(ResourceType.CLIENT_RESOURCES, identifier, (pack, identifier2) -> pack.addLang(identifier, finalLang));
       }
       lang1.putAll(lang);
       return lang1;
@@ -211,6 +212,12 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   @Override
   public byte[] addLootTable(Identifier identifier, JLootTable table) {
     return this.addData(fix(identifier, "loot_tables", "json"), serialize(table));
+  }
+
+  @ApiStatus.AvailableSince("0.8.0")
+  @Override
+  public byte[] addLootTable(Identifier identifier, LootTable lootTable) {
+    return this.addData(fix(identifier, "loot_tables", "json"), serialize(lootTable));
   }
 
   @Override
@@ -315,6 +322,12 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     return this.addAsset(fix(id, "blockstates", "json"), serialize(state));
   }
 
+  @ApiStatus.AvailableSince("0.8.0")
+  @Override
+  public byte[] addBlockState(BlockStateSupplier state, Identifier id) {
+    return this.addAsset(fix(id, "blockstates", "json"), serialize(state));
+  }
+
   @Override
   public byte[] addTexture(Identifier id, BufferedImage image) {
     UnsafeByteArrayOutputStream ubaos = new UnsafeByteArrayOutputStream();
@@ -338,6 +351,12 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public byte[] addRecipe(Identifier id, JRecipe recipe) {
+    return this.addData(fix(id, "recipes", "json"), serialize(recipe));
+  }
+
+  @ApiStatus.AvailableSince("0.8.0")
+  @Override
+  public byte[] addRecipe(Identifier id, RecipeJsonProvider recipe) {
     return this.addData(fix(id, "recipes", "json"), serialize(recipe));
   }
 
