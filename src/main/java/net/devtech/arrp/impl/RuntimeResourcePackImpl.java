@@ -21,7 +21,7 @@ import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.Advancement;
-import net.minecraft.data.client.BlockStateSupplier;
+import net.minecraft.data.client.model.BlockStateSupplier;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.provider.number.LootNumberProvider;

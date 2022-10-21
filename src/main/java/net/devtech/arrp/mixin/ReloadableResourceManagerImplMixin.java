@@ -2,14 +2,16 @@ package net.devtech.arrp.mixin;
 
 import com.google.common.collect.Lists;
 import net.devtech.arrp.ARRP;
+import net.devtech.arrp.api.RRPCallback;
 import net.devtech.arrp.api.RRPCallbackConditional;
+import net.devtech.arrp.api.SidedRRPCallback;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.spongepowered.asm.mixin.Mixin;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -23,8 +25,9 @@ public abstract class ReloadableResourceManagerImplMixin {
   @Shadow
   @Final
   private ResourceType type;
-  private static final Logger BRRP_LOGGER = LoggerFactory.getLogger("BRRP/ReloadableResourceManagerImplMixin");
+  private static final Logger BRRP_LOGGER = LogManager.getLogger("BRRP/ReloadableResourceManagerImplMixin");
 
+  @SuppressWarnings("deprecation")
   @ModifyVariable(method = "reload",
       at = @At(value = "HEAD"),
       argsOnly = true)
@@ -32,16 +35,10 @@ public abstract class ReloadableResourceManagerImplMixin {
     ARRP.waitForPregen();
 
     BRRP_LOGGER.info("BRRP register - before vanilla");
-    List<ResourcePack> before = new ArrayList<>();
-    RRPCallback.BEFORE_VANILLA.invoker().insert(before);
-    RRPCallbackConditional.BEFORE_VANILLA.invoker().insertTo(resourceType, before);
-
-    before.addAll(packs);
-
-    BRRP_LOGGER.info("BRRP register - after vanilla");
-    List<ResourcePack> after = new ArrayList<>();
-    RRPCallback.AFTER_VANILLA.invoker().insert(after);
-    RRPCallbackConditional.AFTER_VANILLA.invoker().insertTo(resourceType, after);
+    List<ResourcePack> copy = new ArrayList<>(packs);
+    RRPCallback.BEFORE_VANILLA.invoker().insert(Lists.reverse(copy));
+    RRPCallbackConditional.BEFORE_VANILLA.invoker().insertTo(type, Lists.reverse(copy));
+    SidedRRPCallback.BEFORE_VANILLA.invoker().insert(type, Lists.reverse(copy));
 
     BRRP_LOGGER.info("BRRP register - after vanilla");
     SidedRRPCallback.AFTER_VANILLA.invoker().insert(type, copy);

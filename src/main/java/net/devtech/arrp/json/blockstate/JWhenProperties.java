@@ -1,6 +1,7 @@
 package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingMap;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;

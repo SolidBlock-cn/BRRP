@@ -43,7 +43,7 @@ public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
   }
 
   /**
-   * The block is a simple "cube_bottom_top".
+   * The block is a simple "cube_bottom_top", but is not a column that has an "axis" property.
    *
    * @param settings      The block settings.
    * @param topTexture    Texture for top side.

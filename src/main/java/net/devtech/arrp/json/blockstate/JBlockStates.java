@@ -9,7 +9,7 @@ import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
 import net.fabricmc.api.EnvType;
 import net.minecraft.block.Block;
-import net.minecraft.data.client.BlockStateModelGenerator;
+import net.minecraft.data.client.model.BlockStateModelGenerator;
 import net.minecraft.data.client.model.BlockStateSupplier;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
@@ -43,9 +43,11 @@ public class JBlockStates implements JsonSerializable {
    *
    * @param variants   The variant definition. One of these two parameters must be {@code null}.
    * @param multiparts The list of multiparts. One of these two parameters must be {@code null}.
+   * @see #ofVariants
+   * @see #ofMultiparts
    */
   @ApiStatus.Internal
-  private JBlockStates(JVariants variants, List<JMultipart> multiparts) {
+  protected JBlockStates(JVariants variants, List<JMultipart> multiparts) {
     this.variants = variants;
     this.multiparts = multiparts;
   }
