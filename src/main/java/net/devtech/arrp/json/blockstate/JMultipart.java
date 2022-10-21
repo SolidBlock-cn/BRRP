@@ -1,16 +1,14 @@
 package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.Lists;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.minecraft.data.client.model.When;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.fabricmc.api.EnvType;
-import net.minecraft.data.client.When;
-import org.jetbrains.annotations.ApiStatus;
+import net.minecraft.data.client.model.When;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;

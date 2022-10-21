@@ -15,7 +15,7 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.advancement.Advancement;
-import net.minecraft.data.client.BlockStateSupplier;
+import net.minecraft.data.client.model.BlockStateSupplier;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.loot.LootTable;
 import net.minecraft.resource.ResourcePack;
@@ -23,6 +23,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
@@ -39,12 +40,12 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
- * A resource pack whose assets and data are evaluated at runtime.
- * <p>
- * After creating a runtime resource pack, you should register it in {@link RRPCallback} or {@link RRPCallbackConditional} so that it can take effect when loading resources.
+ * <p>A resource pack whose assets and data are evaluated at runtime.
+ *
+ * <p>After creating a runtime resource pack, you should register it in {@link RRPCallback} or {@link SidedRRPCallback} so that it can take effect when loading resources.
  *
  * @see RRPCallback
- * @see RRPCallbackConditional
+ * @see SidedRRPCallback
  */
 @SuppressWarnings("unused")
 public interface RuntimeResourcePack extends ResourcePack {
@@ -61,6 +62,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Create a new runtime resource pack with the default supported resource pack version
    */
+  @Contract("_ -> new")
   static RuntimeResourcePack create(String id) {
     return new RuntimeResourcePackImpl(new Identifier(id));
   }
@@ -68,6 +70,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Create a new runtime resource pack with the specified resource pack version
    */
+  @Contract("_ -> new")
   static RuntimeResourcePack create(String id, int version) {
     return new RuntimeResourcePackImpl(new Identifier(id), version);
   }
@@ -75,6 +78,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Create a new runtime resource pack with the default supported resource pack version
    */
+  @Contract("_ -> new")
   static RuntimeResourcePack create(Identifier id) {
     return new RuntimeResourcePackImpl(id);
   }
@@ -82,6 +86,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Create a new runtime resource pack with the specified resource pack version
    */
+  @Contract("_, _ -> new")
   static RuntimeResourcePack create(Identifier id, int version) {
     return new RuntimeResourcePackImpl(id, version);
   }
@@ -98,6 +103,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * Set this to {@code true} will make it throw an exception when a duplicate resource is added.
    */
   @ApiStatus.AvailableSince("0.7.0")
+  @Contract(mutates = "this")
   default void setForbidsDuplicateResource(boolean b) {
     // subclasses should override this.
   }
@@ -112,6 +118,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param target     the input stream of the original texture
    * @param pixel      the pixel recolorer
    */
+  @Contract(mutates = "this")
   void addRecoloredImage(Identifier identifier, InputStream target, IntUnaryOperator pixel);
 
   /**
@@ -120,11 +127,13 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <i>Do not</i> call this method multiple times for a same language, as they will override each other!
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addLang(Identifier identifier, JLang lang);
 
   /**
    * Multiple calls to this method with the same identifier will merge them into one lang file
    */
+  @Contract(mutates = "this")
   void mergeLang(Identifier identifier, JLang lang);
 
   /**
@@ -133,10 +142,12 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param identifier The identifier of the loot table. It is usually in the format of {@code namespace:blocks/path}.
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addLootTable(Identifier identifier, JLootTable table);
 
   @CanIgnoreReturnValue
   @ApiStatus.AvailableSince("0.8.0")
+  @Contract(mutates = "this")
   byte[] addLootTable(Identifier identifier, LootTable lootTable);
 
   /**
@@ -144,6 +155,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @see #async(Consumer)
    */
+  @Contract(mutates = "this")
   Future<byte[]> addAsyncResource(ResourceType type,
                                   Identifier identifier,
                                   CallableFunction<Identifier, byte[]> data);
@@ -151,12 +163,14 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add resource that is lazily evaluated, which is, evaluated only when required to get, and will not be evaluated again if required to get again.
    */
+  @Contract(mutates = "this")
   void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> data);
 
   /**
    * Add a raw resource to the runtime resource pack.
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addResource(ResourceType type, Identifier path, byte[] data);
 
   /**
@@ -166,6 +180,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @see #async(Consumer)
    */
+  @Contract(mutates = "this")
   Future<byte[]> addAsyncRootResource(String path,
                                       CallableFunction<String, byte[]> data);
 
@@ -174,6 +189,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <p>
    * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta.
    */
+  @Contract(mutates = "this")
   void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data);
 
   /**
@@ -182,18 +198,21 @@ public interface RuntimeResourcePack extends ResourcePack {
    * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta.
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addRootResource(String path, byte[] data);
 
   /**
    * Add a custom client-side resource.
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addAsset(Identifier id, byte[] data);
 
   /**
    * Add a custom server data.
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addData(Identifier id, byte[] data);
 
   /**
@@ -204,6 +223,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @see JModel
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addModel(JModel model, Identifier id);
 
   /**
@@ -213,6 +233,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param identifier The identifier of the block states file. It is usually the same as the block id.
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier identifier);
 
   /**
@@ -223,11 +244,13 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @see JBlockStates
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addBlockState(JBlockStates state, Identifier id);
 
 
   @ApiStatus.AvailableSince("0.8.0")
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addBlockState(BlockStateSupplier state, Identifier id);
 
   /**
@@ -236,6 +259,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * {@code ".png"} is automatically appended to the path.
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addTexture(Identifier id, BufferedImage image);
 
   /**
@@ -246,6 +270,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @see JAnimation
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addAnimation(Identifier id, JAnimation animation);
 
   /**
@@ -259,6 +284,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @see net.devtech.arrp.json.tags.IdentifiedTag#write(RuntimeResourcePack)
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addTag(Identifier id, JTag tag);
 
   /**
@@ -273,6 +299,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @see JRecipe
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addRecipe(Identifier id, JRecipe recipe);
 
   /**
@@ -290,6 +317,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @ApiStatus.AvailableSince("0.6.2")
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   default byte[] addRecipeAdvancement(Identifier recipeId, Identifier advancementId, JRecipe recipeContainingAdvancement) {
     final Advancement.Task advancement = recipeContainingAdvancement.asAdvancement();
     if (advancement != null && !advancement.getCriteria().isEmpty()) {
@@ -310,6 +338,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @see net.devtech.arrp.generator.ItemResourceGenerator#writeRecipes(RuntimeResourcePack)
    */
   @ApiStatus.AvailableSince("0.7.0")
+  @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @Nullable String groupName, JRecipe recipeContainingAdvancement) {
     addRecipe(recipeId, recipeContainingAdvancement);
     addRecipeAdvancement(recipeId, recipeId.brrp_prepend("recipes/" + (StringUtils.isEmpty(groupName) ? "" : groupName + "/")), recipeContainingAdvancement);
@@ -317,6 +346,7 @@ public interface RuntimeResourcePack extends ResourcePack {
 
   @ApiStatus.AvailableSince("0.8.0")
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addRecipe(Identifier id, RecipeJsonProvider recipe);
 
   /**
@@ -328,6 +358,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param advancement The advancement to be added.
    */
   @CanIgnoreReturnValue
+  @Contract(mutates = "this")
   byte[] addAdvancement(Identifier id, Advancement.Task advancement);
 
   /**
@@ -395,6 +426,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   void load(ZipInputStream stream) throws IOException;
 
+  @Contract(pure = true)
   Identifier getId();
 
   /**
@@ -404,16 +436,19 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @param side The side (client or server) of resource to be cleared.
    */
+  @Contract(mutates = "this")
   void clearResources(ResourceType side);
 
   /**
    * Clear all resources of this runtime resource pack, including both client and server, and as well as root resources.
    */
+  @Contract(mutates = "this")
   void clearResources();
 
   /**
    * Clear root resources of this runtime resource pack.
    */
   @ApiStatus.AvailableSince("0.7.0")
+  @Contract(mutates = "this")
   void clearRootResources();
 }
