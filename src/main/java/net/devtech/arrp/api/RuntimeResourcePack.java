@@ -70,7 +70,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Create a new runtime resource pack with the specified resource pack version
    */
-  @Contract("_ -> new")
+  @Contract("_, _ -> new")
   static RuntimeResourcePack create(String id, int version) {
     return new RuntimeResourcePackImpl(new Identifier(id), version);
   }
