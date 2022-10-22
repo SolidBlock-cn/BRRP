@@ -1,12 +1,12 @@
 package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.Lists;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.When;
 import org.jetbrains.annotations.Contract;
@@ -86,7 +86,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
   @Contract(value = "_ -> this", mutates = "this")
   @Deprecated
   public JMultipart when(JWhen when) {
-    return when(((When) when));
+    return when((When) when);
   }
 
   /**
