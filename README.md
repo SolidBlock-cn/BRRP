@@ -99,6 +99,8 @@ public class MyClass implements ModInitializer {
     RRPCallback.BEFORE_VANILLA.register(a -> {
       pack.clearResources();
       pack.addXXX('...');
+
+      a.add(pack);
     });
   }
 }
@@ -160,3 +162,5 @@ dependencies {
   }
 }
 ```
+
+注意：如果您的模组使用了本模组中仅限于特定版本的内容（注解了 `@ApiStatus.AvailableSince` 的类、方法或字段），那么就应该在 JSON 中也指定版本。例如，如果您的模组中使用的部分 API 被注解了 `@ApiStatus.AvailableSince("0.8.0")`，那么 `fabric.mod.json` 中就应该写 `"better_runtime_resource_pack": ">=0.8.0"`，以免用户装了 0.8.0 以下版本的模组而导致未预料的错误。

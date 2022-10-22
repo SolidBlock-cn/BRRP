@@ -8,7 +8,6 @@ import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
 import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.model.When;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -85,7 +84,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
   @Contract(value = "_ -> this", mutates = "this")
   @Deprecated
   public JMultipart when(JWhen when) {
-    return when(((When) when));
+    return when((When) when);
   }
 
   /**
