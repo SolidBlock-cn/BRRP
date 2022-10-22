@@ -86,7 +86,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
   @Contract(value = "_ -> this", mutates = "this")
   @Deprecated
   public JMultipart when(JWhen when) {
-    return when(((When) when));
+    return when((When) when);
   }
 
   /**

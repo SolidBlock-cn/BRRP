@@ -31,9 +31,9 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -89,7 +89,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   @ApiStatus.AvailableSince("0.7.0")
   static final Set<String> KEY_WARNINGS = Collections.newSetFromMap(new ConcurrentHashMap<>());
   // @formatter:on
-  private static final Logger LOGGER = LoggerFactory.getLogger(RuntimeResourcePackImpl.class);
+  private static final Logger LOGGER = LogManager.getLogger(RuntimeResourcePackImpl.class);
 
   static {
     Properties properties = new Properties();
