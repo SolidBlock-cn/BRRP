@@ -12,10 +12,10 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.data.client.TextureKey;
-import net.minecraft.data.server.BlockLootTableGenerator;
-import net.minecraft.data.server.RecipeProvider;
+import net.minecraft.data.server.recipe.RecipeProvider;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,11 +86,12 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
 
   @Override
   public JLootTable getLootTable() {
-    return JLootTable.delegate(BlockLootTableGenerator.slabDrops(this));
+    return null;
+//    return JLootTable.delegate(BlockLootTableGenerator.slabDrops(this));
   }
 
   /**
-   * It slightly resembles {@link RecipeProvider#createSlabRecipe(ItemConvertible, Ingredient)}, but bypasses validation.
+   * It slightly resembles {@link RecipeProvider#createSlabRecipe(RecipeCategory, ItemConvertible, Ingredient)}, but bypasses validation.
    */
   @Override
   public @UnknownNullability("Null if the base block is null.") JRecipe getCraftingRecipe() {

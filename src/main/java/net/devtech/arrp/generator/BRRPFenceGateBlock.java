@@ -11,10 +11,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.FenceGateBlock;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.TextureKey;
+import net.minecraft.data.server.recipe.RecipeProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,13 +25,13 @@ import org.jetbrains.annotations.UnknownNullability;
 public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceGenerator {
   public final @Nullable Block baseBlock;
 
-  public BRRPFenceGateBlock(@Nullable Block baseBlock, Settings settings) {
-    super(settings);
+  public BRRPFenceGateBlock(@Nullable Block baseBlock, Settings settings, SoundEvent soundEvent, SoundEvent soundEvent2) {
+    super(settings, soundEvent, soundEvent2);
     this.baseBlock = baseBlock;
   }
 
-  public BRRPFenceGateBlock(@NotNull Block baseBlock) {
-    this(baseBlock, Settings.copy(baseBlock));
+  public BRRPFenceGateBlock(@NotNull Block baseBlock, SoundEvent soundEvent, SoundEvent soundEvent2) {
+    this(baseBlock, Settings.copy(baseBlock), soundEvent, soundEvent2);
   }
 
   @Override
@@ -46,7 +48,8 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
         blockModelId.brrp_append("_open"),
         blockModelId,
         blockModelId.brrp_append("_wall_open"),
-        blockModelId.brrp_append("_wall")
+        blockModelId.brrp_append("_wall"),
+        true
     ));
   }
 
@@ -70,7 +73,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
   /**
    * This recipe uses the base block and stick as the ingredients.
    *
-   * @see net.minecraft.data.server.RecipeProvider#createFenceGateRecipe(ItemConvertible, Ingredient)
+   * @see RecipeProvider#createFenceGateRecipe(ItemConvertible, Ingredient)
    */
   @Override
   public @UnknownNullability("It will be null if the base block is null.") JRecipe getCraftingRecipe() {

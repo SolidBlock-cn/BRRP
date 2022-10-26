@@ -13,11 +13,11 @@ public abstract class IdentifierMixin implements IdentifierExtension {
 
   @Shadow
   @Final
-  protected String namespace;
+  private String namespace;
 
   @Shadow
   @Final
-  protected String path;
+  private String path;
 
   /**
    * {@inheritDoc}

@@ -6,7 +6,6 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
@@ -66,10 +65,10 @@ public final class ResourceGeneratorHelper {
     if (item instanceof ItemResourceGenerator generator) {
       return generator.getAdvancementIdForRecipe(recipeId);
     } else {
-      final ItemGroup group = item.asItem().getGroup();
-      if (group != null) {
-        return recipeId.brrp_prepend("recipes/" + group.getName() + "/");
-      }
+//      final ItemGroup group = item.asItem().getGroup();
+//      if (group != null) {
+//        return recipeId.brrp_prepend("recipes/" + group.getName() + "/");
+//      }
       return getItemId(item).brrp_prepend("recipes/");
     }
   }

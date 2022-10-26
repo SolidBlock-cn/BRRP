@@ -2,12 +2,12 @@ package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.Maps;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.fabricmc.api.EnvType;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.data.client.BlockStateVariant;
@@ -367,12 +367,12 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
 
     @Override
     public JsonElement get() {
-      return delegate.get();
+      return ((Supplier<JsonElement>) delegate).get();
     }
 
     @Override
     public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
-      return delegate.get();
+      return ((Supplier<JsonElement>) delegate).get();
     }
   }
 }

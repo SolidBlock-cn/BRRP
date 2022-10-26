@@ -8,7 +8,6 @@ import net.devtech.arrp.json.recipe.JRecipe;
 import net.fabricmc.api.EnvType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -143,10 +142,10 @@ public interface ItemResourceGenerator {
   @Contract(pure = true)
   default Identifier getAdvancementIdForRecipe(Identifier recipeId) {
     if (this instanceof ItemConvertible itemConvertible) {
-      final ItemGroup group = itemConvertible.asItem().getGroup();
-      if (group != null) {
-        return recipeId.brrp_prepend("recipes/" + group.getName() + "/");
-      }
+//      final ItemGroup group = itemConvertible.asItem().getGroup();
+//      if (group != null) {
+//        return recipeId.brrp_prepend("recipes/" + group.getName() + "/");
+//      }
     }
     return getItemId().brrp_prepend("recipes/");
   }

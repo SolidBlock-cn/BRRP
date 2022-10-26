@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
+import joptsimple.internal.Strings;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
@@ -26,6 +27,7 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.loot.provider.number.LootNumberProvider;
 import net.minecraft.loot.provider.number.LootNumberProviderTypes;
 import net.minecraft.resource.AbstractFileResourcePack;
+import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
@@ -46,7 +48,10 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.*;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.IntUnaryOperator;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -478,27 +483,27 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   /**
    * pack.png and that's about it, I think/hope
    *
-   * @param fileName the name of the file, can't be a path tho
+   * @param segments the segments of the file
    * @return the pack.png image as a stream
    */
   @Override
-  public InputStream openRoot(String fileName) {
-    if (!fileName.contains("/") && !fileName.contains("\\")) {
+  public InputSupplier<InputStream> openRoot(String... segments) {
+    if (segments.length == 1) {
       this.lock();
-      Supplier<byte[]> supplier = this.root.get(fileName);
+      Supplier<byte[]> supplier = this.root.get(Strings.join(segments, "/"));
       if (supplier == null) {
         this.waiting.unlock();
-        return null;
+        return () -> null;
       }
       this.waiting.unlock();
-      return new ByteArrayInputStream(supplier.get());
+      return () -> new ByteArrayInputStream(supplier.get());
     } else {
       throw new IllegalArgumentException("File name can't be a path");
     }
   }
 
   @Override
-  public InputStream open(ResourceType type, Identifier id) {
+  public InputSupplier<InputStream> open(ResourceType type, Identifier id) {
     this.lock();
     Supplier<byte[]> supplier = this.getSys(type).get(id);
     if (supplier == null) {
@@ -507,23 +512,21 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       return null;
     }
     this.waiting.unlock();
-    return new ByteArrayInputStream(supplier.get());
+    return () -> new ByteArrayInputStream(supplier.get());
   }
 
   @Override
-  public Collection<Identifier> findResources(ResourceType type, String namespace, String prefix, Predicate<Identifier> allowedPathPredicate) {
+  public void findResources(ResourceType type, String namespace, String prefix, ResultConsumer consumer) {
     this.lock();
-    Set<Identifier> identifiers = new HashSet<>();
     for (Identifier identifier : this.getSys(type).keySet()) {
-      if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix) && allowedPathPredicate.test(identifier)) {
-        identifiers.add(identifier);
+      if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix)) {
+        consumer.accept(identifier, open(type, identifier));
       }
     }
     this.waiting.unlock();
-    return identifiers;
   }
 
-  @Override
+  //  @Override
   public boolean contains(ResourceType type, Identifier id) {
     this.lock();
     boolean contains = this.getSys(type).containsKey(id);
@@ -546,8 +549,9 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
    * 本方法与 BRRP 0.7.0 版本根据 ARRP 0.6.2 进行了修改，作者 Devan Kerman。
    */
   @Override
-  public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
-    InputStream stream = this.openRoot("pack.mcmeta");
+  public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
+    final InputSupplier<InputStream> supplier = this.openRoot("pack.mcmeta");
+    InputStream stream = supplier == null ? null : supplier.get();
     if (stream != null) {
       return AbstractFileResourcePack.parseMetadata(metaReader, stream);
     } else {

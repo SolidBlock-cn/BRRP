@@ -4,7 +4,7 @@
   "package": "net.devtech.arrp.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "IdentifierMixin"
+    "IdentifierMixin", "NbtListMixin_temporary"
   ],
   "injectors": {
     "defaultRequire": 1
