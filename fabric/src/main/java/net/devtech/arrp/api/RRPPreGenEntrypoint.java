@@ -1,7 +1,7 @@
 package net.devtech.arrp.api;
 
 /**
- * This is the entrypoint called on preLaunch <i>asynchronously</i>.
+ * This is the Fabric entrypoint called on preLaunch <i>asynchronously</i>.
  */
 public interface RRPPreGenEntrypoint {
   /**

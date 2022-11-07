@@ -1,6 +1,6 @@
 BRRP (Better Runtime Resource Pack), is a branch of [ARRP](https://github.com/Devan-Kerman/ARRP) mod. This mod provides all features of ARRP, fixes some bugs that exist in ARRP, and provides some new features.
 
-Welcome to join Tencent QQ group **587928350** or KaiHeiLa channel invitation code **KlFS0n** to experience the latest update of this mod.
+Welcome to join Tencent QQ group **587928350** or KOOK (KaiHeiLa) channel invitation code **KlFS0n** to experience the latest update of this mod.
 
 [阅读本文档的中文版。](README.md)
 
@@ -23,7 +23,7 @@ It's considered to directly use objects generated in game in future versions, wi
 
 ## About this mod
 
-This mod (BRRP) can be seen as an extension to ARRP, supporting all features of ARRP. If you installed BRRP mod, and installed mods that depend on ARRP (not BRRP), the game can launch. Therefore, please *do not* install BRRP and ARRP simultaneously. But if some mods nest ARRP in their mod JARs, some issues may happen, so it's not recommended to nest this mod into your mod JAR.
+This mod (BRRP) can be seen as a branch of ARRP, supporting all features of ARRP. If you installed BRRP mod, and installed mods that depend on ARRP (not BRRP), the game can launch. Therefore, please *do not* install BRRP and ARRP simultaneously. But if some mods nest ARRP in their mod JARs, some issues may happen, so it's not recommended to nest this mod into your mod JAR.
 
 This mod tries to reduce incompatible changes to ARRP, so no classes, fields or methods are deleted; they are just deprecated. If some mods apply mixins on ARRP, the mod may have some issues when run on BRRP, but the probability of this has been as reduced as possible.
 
@@ -36,26 +36,20 @@ Relations of this mod and ARRP:
 | only installed ARRP   | can run normally      | cannot run normally |
 | only installed BRRP   | usually runs normally | can run normally    |
 
-Currently, the following mods are compatible with this mod. You can install BRRP without having to install ARRP:
-
-- Extended Block Shapes (1.4.0-1.18.1)
-- Mishang Urban Construction (1.18.2-0.1.7)
-- Minekea (1.18.2-2.4.0)
-- Pannotias Parcels (1.18.2-1.1.0)
-
-Besides, ctft mod may be incompatible with BRRP because it nests ARRP.
-
 ## How to register your runtime resource pack
 
 Runtime resource packs, after created and written, take effect only after registration. Registration is as follows:
+
+### Fabric:
 
 ```java
 public class MyClass implements ModInitializer {
   public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
 
   public void onInitialize() {
-    pack.writeXXX('...');
-    RRPCallback.BEFORE_VANILLA.register(a -> a.add(PACK));
+    // you may invoke 'write' methods for 'pack' here to write something into it.
+
+    RRPCallback.BEFORE_VANILLA.register(a -> a.add(pack));
   }
 }
 ```
@@ -63,6 +57,40 @@ public class MyClass implements ModInitializer {
 You can generate resource and register your resource pack at any time. In the example above, the registration takes place at the `main` entrypoint at the end of initialization of Minecraft. You can also generate resources at `preLaunch` or `rrp:pregen` (implement `RRPPreGenEntryPoint`), but in this case you cannot use some contents of Minecraft, such as game registries.
 
 Apart from adding normal resource, you can also add async resource, allowing adding required contents in `rrp:pregen`. In `rrp:pregen`, resource packs are generated in the form of multiple-thread.
+
+### Forge
+
+For Forge versions, you may use RRPEvent to register resource packs on your mod's event bus, as following:
+
+```java
+
+@Mod("my_mod_id")
+public class MyClass {
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
+
+  public MyClass() {
+    // you may invoke 'write' methods for 'pack' here to write something into it.
+
+    FMLJavaModLoadingContext.get().getModEventBus().addListener((RRPEvent.BeforeVanilla event) -> event.addPack(pack));
+  }
+}
+```
+
+### Supporting both Forge and Fabric
+
+The mod supports a `RRPEventHelper` that supports both Forge and Fabric. For example:
+
+```java
+public class MyClass implements ModInitializer {
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
+
+  public void onInitialize() {
+    // you may invoke 'write' methods for 'pack' here to write something into it.
+
+    RRPEventHelper.BEFORE_VANILLA.registerPack(pack);
+  }
+}
+```
 
 ## Runtime resource packs and data generation
 
@@ -148,7 +176,7 @@ dependencies {
 
 Refresh the project, and check if this library is normally loaded. For example, in IntelliJ IDEA, you can double-click Shift, input `RuntimeResourcePack`. If you can find this class, and codes and comments are correctly loaded, you can conclude that the project is correctly loaded.
 
-And then, in your `fabric.mod.json`, add:
+And then, in your `fabric.mod.json` of your Fabric project, add:
 
 ```json lines
 {
@@ -161,6 +189,17 @@ And then, in your `fabric.mod.json`, add:
     "better_runtime_resource_pack": "*"
   }
 }
+```
+
+Or add into `mods.toml` in your Forge project:
+
+```toml
+[[dependencies.'the id of your mod']]
+modId = "better_runtime_resource_pack"
+mandatory = true
+versionRange = "[0.8.1,)"
+ordering = "NONE"
+side = "BOTH"
 ```
 
 **Note:** If your mod uses features that only exist in some versions (classes, methods or fields annotated `@ApiStatus.AvailableSince`), the version should also be specified in your JSON. For example, if some APIs used in your mod are annotated `@ApiStatus.AvailableSince("0.8.0")`, you're supposed to write `"better_runtime_resource_pack": ">=0.8.0"` in your `fabric.mod.json`, in prevention of some potential unexpected errors when user installed BRRP lower than 0.8.0.

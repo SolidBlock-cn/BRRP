@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "pers.solid.brrp.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ARRPMixin",
+    "BRRPDevelopmentMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

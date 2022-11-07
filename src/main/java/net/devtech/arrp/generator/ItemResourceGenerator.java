@@ -6,7 +6,6 @@ import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;
@@ -16,6 +15,7 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import pers.solid.brrp.PlatformBridge;
 
 /**
  * <p>This interface is used for items.</p>
@@ -188,14 +188,14 @@ public interface ItemResourceGenerator {
    */
   @Contract(mutates = "param1")
   default void writeAll(RuntimeResourcePack pack) {
-    if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+    if (PlatformBridge.getInstance().isClientEnvironment()) {
       writeAssets(pack);
     }
     writeData(pack);
   }
 
   /**
-   * Write resources in the specified environment. It is usually used for {@link net.devtech.arrp.api.RRPCallbackConditional}. It's not recommended to override this method.
+   * Write resources in the specified environment. It's not recommended to override this method.
    *
    * @param pack         The runtime resource pack.
    * @param resourceType The resource type to write. If it is null, both resource types will be used, regardless of the instance environment.

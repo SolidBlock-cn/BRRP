@@ -9,7 +9,6 @@ import net.devtech.arrp.json.recipe.JResult;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StairsBlock;
@@ -39,7 +38,7 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
   }
 
   public BRRPStairsBlock(Block baseBlock) {
-    this(baseBlock, FabricBlockSettings.copyOf(baseBlock));
+    this(baseBlock, Settings.copy(baseBlock));
   }
 
   @Override

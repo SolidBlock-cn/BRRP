@@ -1,6 +1,6 @@
 BRRP（Better Runtime Resource Pack，更好的运行时资源包），是 [ARRP](https://github.com/Devan-Kerman/ARRP) 模组的一个分支。本模组提供 ARRP 的所有功能，并修复 ARRP 模组存在的一些问题，同时提供了一系列新的功能。
 
-欢迎加入QQ群**587928350**或开黑啦频道邀请码**KlFS0n**体验本模组的最新更新。
+欢迎加入QQ群**587928350**或 KOOK（开黑啦）频道邀请码**KlFS0n**体验本模组的最新更新。
 
 [Read English version of this document.](README-en.md)
 
@@ -23,7 +23,7 @@ BRRP（Better Runtime Resource Pack，更好的运行时资源包），是 [ARRP
 
 ## 关于本模组
 
-本模组（BRRP）可以视为 ARRP 的扩展，支持 ARRP 的所有功能。如果您安装了 BRRP 模组，又安装了依赖 ARRP（但不依赖 BRRP）的模组，游戏可以正常启动，因此请*不要*同时安装 BRRP 和 ARRP 两个模组。但是，如果有模组将 ARRP 嵌入在这些模组的 JAR 文件中，可能会存在一些问题，因此并不建议将本模组嵌入在您的模组 JAR 中。
+本模组（BRRP）可以视为 ARRP 的分支，支持 ARRP 的所有功能。如果您安装了 BRRP 模组，又安装了依赖 ARRP（但不依赖 BRRP）的模组，游戏可以正常启动，因此请*不要*同时安装 BRRP 和 ARRP 两个模组。但是，如果有模组将 ARRP 嵌入在这些模组的 JAR 文件中，可能会存在一些问题，因此并不建议将本模组嵌入在您的模组 JAR 中。
 
 本模组尽可能避免对 ARRP 进行不兼容的更改，因此并没有删除不需要的类、字段或方法，而是将其弃用。如果有模组对 ARRP 进行了 mixin，则该模组在有 BRRP 时运行则有可能发生一些问题，但这种情况的概率已经尽可能降低。
 
@@ -36,26 +36,20 @@ BRRP（Better Runtime Resource Pack，更好的运行时资源包），是 [ARRP
 | 仅安装了 ARRP | 可以正常运行   | 不能正常运行    |
 | 仅安装了 BRRP | 通常可以正常运行 | 可以正常运行    |
 
-目前以下模组与本模组兼容，您可安装 BRRP 而无需再单独安装 ARRP：
-
-- 扩展方块形状（1.4.0-1.18.1）
-- 迷上城建（1.18.2-0.1.7）
-- Minekea（1.18.2-2.4.0）
-- Pannotias Parcels（1.18.2-1.1.0）
-
-此外，ctft 模组因内嵌 ARRP 而无法保证与 BRRP 的兼容性。
-
 ## 如何注册运行时资源包
 
 运行时资源包在创建和写入内容后，需要注册才能在加载时生效。注册方法如下：
+
+### Fabric
 
 ```java
 public class MyClass implements ModInitializer {
   public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
 
   public void onInitialize() {
-    pack.writeXXX('...');
-    RRPCallback.BEFORE_VANILLA.register(a -> a.add(PACK));
+    // 你可以在此处调用 pack 的 write 方法以向资源包中写入内容。
+
+    RRPCallback.BEFORE_VANILLA.register(a -> a.add(pack));
   }
 }
 ```
@@ -63,6 +57,40 @@ public class MyClass implements ModInitializer {
 您可以在游戏运行的任何时候生成资源并注册您的资源包。上述示例使用的是游戏初始化末期的 `main` 入口点。您亦可在 `preLaunch` 或 `rrp:pregen`（需实现 `RRPPreGenEntryPoint` 接口）生成资源，但这种情况不能使用 Minecraft 的某些内容，例如游戏注册表。
 
 除了添加常规资源外，您也可以添加异步资源，以允许在 `rrp:pregen` 的时候就加入游戏内需要的内容。`rrp:pregen` 中注册的运行时资源包会采用多线程的模式生成。
+
+### Forge
+
+对于 Forge 版本，你可以使用 RRPEvent 来在模组的事件总线上注册资源包，方法如下：
+
+```java
+
+@Mod("my_mod_id")
+public class MyClass {
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
+
+  public MyClass() {
+    // 你可以在此处调用 pack 的 write 方法以向资源包中写入内容。
+
+    FMLJavaModLoadingContext.get().getModEventBus().addListener((RRPEvent.BeforeVanilla event) -> event.addPack(pack));
+  }
+}
+```
+
+### 同时支持 Forge 和 Fabric
+
+本模组提供的 `RRPEventHelper` 可以同时支持 Forge 和 Fabric。例如：
+
+```java
+public class MyClass implements ModInitializer {
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
+
+  public void onInitialize() {
+    // 你可以在此处调用 pack 的 write 方法以向资源包中写入内容。
+
+    RRPEventHelper.BEFORE_VANILLA.registerPack(pack);
+  }
+}
+```
 
 ## 运行时资源包与数据生成
 
@@ -148,7 +176,7 @@ dependencies {
 
 刷新项目，然后检查该库是否被正常加载。例如，在 IntelliJ IDEA 中，您可以双击 Shift，输入 `RuntimeResourcePack`，如果找到了这个类，并且类的代码和注释都能够正常加载，说明项目加载正常了。
 
-然后，在您的 `fabric.mod.json` 中，加入：
+然后，在您的 Fabric 项目的 `fabric.mod.json` 中，加入：
 
 ```json5
 {
@@ -161,6 +189,17 @@ dependencies {
     "better_runtime_resource_pack": "*"
   }
 }
+```
+
+或者，在 Forge 项目的 `mods.toml` 中，加入：
+
+```toml
+[[dependencies.'你的模组的id']]
+modId = "better_runtime_resource_pack"
+mandatory = true
+versionRange = "[0.8.1,)"
+ordering = "NONE"
+side = "BOTH"
 ```
 
 注意：如果您的模组使用了本模组中仅限于特定版本的内容（注解了 `@ApiStatus.AvailableSince` 的类、方法或字段），那么就应该在 JSON 中也指定版本。例如，如果您的模组中使用的部分 API 被注解了 `@ApiStatus.AvailableSince("0.8.0")`，那么 `fabric.mod.json` 中就应该写 `"better_runtime_resource_pack": ">=0.8.0"`，以免用户装了 0.8.0 以下版本的模组而导致未预料的错误。
