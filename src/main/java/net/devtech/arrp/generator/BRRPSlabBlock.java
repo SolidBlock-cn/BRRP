@@ -9,7 +9,6 @@ import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.data.client.model.TextureKey;
@@ -38,7 +37,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
    * Simply creates an instance with a given base block. The block settings of the base block will be used, so you do not need to provide it.
    */
   public BRRPSlabBlock(@NotNull Block baseBlock) {
-    this(baseBlock, FabricBlockSettings.copyOf(baseBlock));
+    this(baseBlock, Settings.copy(baseBlock));
   }
 
   public BRRPSlabBlock(@Nullable Block baseBlock, Settings settings) {

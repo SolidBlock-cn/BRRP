@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 @Deprecated
 @PreferredEnvironment(EnvType.CLIENT)
 public class JWhen implements Cloneable, JsonSerializable, When {
-  private final List<Pair<String, String[]>> OR = new ArrayList<>();
+  //  private final List<Pair<String, String[]>> OR = new ArrayList<>();
   private final List<List<Pair<String, String[]>>> state = new ArrayList<>();
 
   public JWhen() {
@@ -114,8 +114,9 @@ public class JWhen implements Cloneable, JsonSerializable, When {
   public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
     if (state.size() == 1) {
       JsonObject json = new JsonObject();
-      Pair<String, String[]> val = this.OR.get(0);
-      json.addProperty(val.getLeft(), String.join("|", Arrays.asList(val.getRight())));
+      for (Pair<String, String[]> pair : state.get(0)) {
+        json.addProperty(pair.getLeft(), String.join("|", Arrays.asList(pair.getRight())));
+      }
       return json;
     } else {
       JsonObject or = new JsonObject();
