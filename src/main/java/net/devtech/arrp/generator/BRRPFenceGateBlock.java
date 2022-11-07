@@ -7,7 +7,6 @@ import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.FenceGateBlock;
 import net.minecraft.data.client.BlockStateModelGenerator;
@@ -30,7 +29,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
   }
 
   public BRRPFenceGateBlock(@NotNull Block baseBlock) {
-    this(baseBlock, FabricBlockSettings.copyOf(baseBlock));
+    this(baseBlock, Settings.copy(baseBlock));
   }
 
   @Override
