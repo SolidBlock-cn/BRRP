@@ -41,6 +41,9 @@ allprojects {
         withSourcesJar()
     }
 }
+
+archivesBaseName += '-common'
+
 subprojects {
     apply plugin: "com.modrinth.minotaur"
 }
