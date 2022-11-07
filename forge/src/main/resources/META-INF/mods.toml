@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[41,)"
+issueTrackerURL = "https://github.com/SolidBlock-cn/BRRP"
+license = "MPLv2"
+
+[[mods]]
+modId = "better_runtime_resource_pack"
+version = "${version}"
+displayName = "Better Runtime Resource Pack"
+authors = "SolidBlock"
+description = '''
+BRRP is a library mod that can generate resource packs at runtime. It is an extension of ARRP mod, which fixes some issues and adds some enhancements. The mod is trying the best to make it compatible with ARRP-dependent mods. If you have installed BRRP you do not have to install ARRP again.
+'''
+#logoFile = ""
+
+[[dependencies.better_runtime_resource_pack]]
+modId = "forge"
+mandatory = true
+versionRange = "[41,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.better_runtime_resource_pack]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19,)"
+ordering = "NONE"
+side = "BOTH"

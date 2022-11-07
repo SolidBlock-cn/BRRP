@@ -381,7 +381,7 @@ public class JPool implements Cloneable {
 
     @Override
     public JPool condition(LootCondition condition) {
-      delegate.conditionally(condition);
+      delegate.conditionally(() -> condition);
       return this;
     }
 
@@ -391,9 +391,20 @@ public class JPool implements Cloneable {
       return this;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public JPool entry(LootPoolEntry entry) {
-      delegate.with(entry);
+      delegate.with(new LootPoolEntry.Builder() {
+        @Override
+        protected LootPoolEntry.Builder getThisBuilder() {
+          return this;
+        }
+
+        @Override
+        public LootPoolEntry build() {
+          return entry;
+        }
+      });
       return this;
     }
 
@@ -405,7 +416,7 @@ public class JPool implements Cloneable {
 
     @Override
     public JPool function(LootFunction function) {
-      delegate.apply(function);
+      delegate.apply(() -> function);
       return this;
     }
 

@@ -6,7 +6,6 @@ import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;
@@ -16,6 +15,7 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import pers.solid.brrp.PlatformBridge;
 
 /**
  * <p>This interface is used for items.</p>
@@ -188,7 +188,7 @@ public interface ItemResourceGenerator {
    */
   @Contract(mutates = "param1")
   default void writeAll(RuntimeResourcePack pack) {
-    if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+    if (PlatformBridge.getInstance().isClientEnvironment()) {
       writeAssets(pack);
     }
     writeData(pack);
