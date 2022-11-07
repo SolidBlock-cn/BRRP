@@ -19,7 +19,6 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.data.client.model.BlockStateSupplier;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
@@ -34,6 +33,7 @@ import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import pers.solid.brrp.PlatformBridge;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -103,7 +103,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     properties.setProperty("dump assets", "false");
     properties.setProperty("debug performance", "false");
 
-    File file = FabricLoader.getInstance().getConfigDir().resolve("rrp.properties").toFile();
+    File file = PlatformBridge.getInstance().getConfigDir().resolve("rrp.properties").toFile();
     try (FileReader reader = new FileReader(file)) {
       properties.load(reader);
       processors = Integer.parseInt(properties.getProperty("threads"));

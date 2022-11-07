@@ -1,23 +1,15 @@
 package net.devtech.arrp;
 
+import net.devtech.arrp.api.RRPEventHelper;
 import net.devtech.arrp.api.RuntimeResourcePack;
-import net.devtech.arrp.api.SidedRRPCallback;
 import net.devtech.arrp.generator.*;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
 import net.devtech.arrp.json.recipe.JStonecuttingRecipe;
 import net.devtech.arrp.json.tags.IdentifiedTag;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricMaterialBuilder;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.MapColor;
+import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.sound.BlockSoundGroup;
@@ -29,30 +21,26 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.TestOnly;
+import pers.solid.brrp.PlatformBridge;
 
 /**
  * This class is loaded only in development environment. So it is just for testing, not the real part of this mod.
  */
 @TestOnly
 @ApiStatus.Internal
-public class BRRPDevelopment implements ModInitializer {
-  static {
-    if (!FabricLoader.getInstance().isDevelopmentEnvironment()) {
-      throw new RuntimeException("This code can only exist in the development environment!");
-    }
-  }
+public class BRRPDevelopment {
 
   public static final RuntimeResourcePack PACK = RuntimeResourcePack.create(new Identifier("brrp", "test"));
   public static final BlockSoundGroup LAVA_SOUND_GROUP = new BlockSoundGroup(1, 1, SoundEvents.ITEM_BUCKET_EMPTY_LAVA, SoundEvents.BLOCK_LAVA_POP, SoundEvents.ITEM_BUCKET_FILL_LAVA, SoundEvents.BLOCK_LAVA_POP, SoundEvents.BLOCK_POINTED_DRIPSTONE_DRIP_LAVA);
   private static final Logger LOGGER = LogManager.getLogger(BRRPDevelopment.class);
-  public static final BRRPCubeBlock LAVA_BLOCK = register(BRRPCubeBlock.cubeAll(FabricBlockSettings.of(new FabricMaterialBuilder(MapColor.BRIGHT_RED).allowsMovement().lightPassesThrough().notSolid().liquid().build()).luminance(15).sounds(LAVA_SOUND_GROUP), "block/lava_still"), "lava_block");
+  public static final BRRPCubeBlock LAVA_BLOCK = register(BRRPCubeBlock.cubeAll(AbstractBlock.Settings.of(new Material.Builder(MapColor.BRIGHT_RED).allowsMovement().notSolid().liquid().build()).luminance(state -> 15).sounds(LAVA_SOUND_GROUP), "block/lava_still"), "lava_block");
 
   public static final BRRPStairsBlock LAVA_STAIRS = register(new BRRPStairsBlock(LAVA_BLOCK), "lava_stairs");
   public static final BRRPSlabBlock LAVA_SLAB = register(new BRRPSlabBlock(LAVA_BLOCK), "lava_slab");
   public static final BRRPFenceBlock LAVA_FENCE = register(new BRRPFenceBlock(LAVA_BLOCK), "lava_fence");
   public static final BRRPFenceGateBlock LAVA_FENCE_GATE = register(new BRRPFenceGateBlock(LAVA_BLOCK), "lava_fence_gate");
   public static final BRRPWallBlock LAVA_WALL = register(new BRRPWallBlock(LAVA_BLOCK), "lava_wall");
-  public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(FabricBlockSettings.copyOf(Blocks.SMOOTH_STONE), "block/smooth_stone", "block/smooth_stone_slab_side", "block/smooth_stone"), "smooth_stone");
+  public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE), "block/smooth_stone", "block/smooth_stone_slab_side", "block/smooth_stone"), "smooth_stone");
 
   static {
     blockItem(LAVA_BLOCK);
@@ -66,21 +54,12 @@ public class BRRPDevelopment implements ModInitializer {
 
   @SuppressWarnings("UnusedReturnValue")
   private static BlockItem blockItem(Block block) {
-    return Registry.register(Registry.ITEM, Registry.BLOCK.getId(block), new BlockItem(block, new FabricItemSettings().group(ItemGroup.TRANSPORTATION)));
+    final BlockItem item = new BlockItem(block, new Item.Settings().group(ItemGroup.TRANSPORTATION));
+    PlatformBridge.getInstance().registerItem(Registry.BLOCK.getId(block), item);
+    return item;
   }
 
-  @Override
-  public void onInitialize() {
-    SidedRRPCallback.BEFORE_VANILLA.register(
-        (resourceType, builder) -> builder.add(refreshPack(resourceType))
-    );
-
-    if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-      client();
-    }
-  }
-
-  private static RuntimeResourcePack refreshPack(ResourceType resourceType) {
+  public static RuntimeResourcePack refreshPack(ResourceType resourceType) {
     LOGGER.info("Generating resources!");
     PACK.setForbidsDuplicateResource(true);
     PACK.clearResources(resourceType);
@@ -134,16 +113,18 @@ public class BRRPDevelopment implements ModInitializer {
       PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone"), "transportation", new JShapedRecipe(Blocks.SMOOTH_STONE_SLAB).resultCount(6).pattern("###").addKey("#", SMOOTH_STONE).addInventoryChangedCriterion("has_smooth_stone", SMOOTH_STONE));
       PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_from_stonecutting"), "transportation", new JStonecuttingRecipe(SMOOTH_STONE, Blocks.SMOOTH_STONE_SLAB, 2).addInventoryChangedCriterion("has_smooth_stone", SMOOTH_STONE));
     }
-
     return PACK;
   }
 
-  @Environment(EnvType.CLIENT)
-  private static void client() {
-  }
 
   @Contract("_,_ -> param1")
   private static <T extends Block> T register(T block, String name) {
-    return Registry.register(Registry.BLOCK, new Identifier("brrp", name), block);
+    PlatformBridge.getInstance().registerBlock(new Identifier("brrp", name), block);
+    return block;
+  }
+
+  @ApiStatus.Internal
+  public static void registerPacks() {
+    RRPEventHelper.BEFORE_VANILLA.registerPack(BRRPDevelopment::refreshPack);
   }
 }

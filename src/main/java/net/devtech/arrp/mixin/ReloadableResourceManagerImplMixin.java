@@ -1,10 +1,6 @@
 package net.devtech.arrp.mixin;
 
-import com.google.common.collect.Lists;
 import net.devtech.arrp.ARRP;
-import net.devtech.arrp.api.RRPCallback;
-import net.devtech.arrp.api.RRPCallbackConditional;
-import net.devtech.arrp.api.SidedRRPCallback;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
@@ -15,6 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import pers.solid.brrp.PlatformBridge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,22 +24,17 @@ public abstract class ReloadableResourceManagerImplMixin {
   private ResourceType type;
   private static final Logger BRRP_LOGGER = LogManager.getLogger("BRRP/ReloadableResourceManagerImplMixin");
 
-  @SuppressWarnings("deprecation")
-  @ModifyVariable(method = "reload",
-      at = @At(value = "HEAD"),
-      argsOnly = true)
+  @ModifyVariable(method = "reload", at = @At("HEAD"), argsOnly = true)
   private List<ResourcePack> registerARRPs(List<ResourcePack> packs) throws ExecutionException, InterruptedException {
+    List<ResourcePack> copy = new ArrayList<>(packs);
     ARRP.waitForPregen();
 
     BRRP_LOGGER.info("BRRP register - before vanilla");
-    List<ResourcePack> copy = new ArrayList<>(packs);
-    RRPCallback.BEFORE_VANILLA.invoker().insert(Lists.reverse(copy));
-    RRPCallbackConditional.BEFORE_VANILLA.invoker().insertTo(type, Lists.reverse(copy));
-    SidedRRPCallback.BEFORE_VANILLA.invoker().insert(type, Lists.reverse(copy));
+    PlatformBridge.getInstance().postBefore(type, copy);
 
     BRRP_LOGGER.info("BRRP register - after vanilla");
-    SidedRRPCallback.AFTER_VANILLA.invoker().insert(type, copy);
-    RRPCallbackConditional.AFTER_VANILLA.invoker().insertTo(type, copy);
+    PlatformBridge.getInstance().postAfter(type, copy);
+
     return copy;
   }
 }

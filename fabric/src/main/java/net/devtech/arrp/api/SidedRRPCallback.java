@@ -10,7 +10,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.List;
 
 /**
- * Similar to {@link RRPCallback} but can specify resource types.
+ * Similar to {@link RRPCallback} but can specify resource types. It is also supported by {@link RRPEventHelper}.
  *
  * @author Deman Kervan
  * @since 0.6.4
@@ -19,6 +19,8 @@ import java.util.List;
 public interface SidedRRPCallback {
   /**
    * Register your resource pack that will be read <b>before</b> Minecraft and regular resources are loaded in the specific resource type. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, that will be used instead. Therefore, resource packs registered here cannot override non-runtime resources.
+   *
+   * @see RRPEventHelper#BEFORE_VANILLA
    */
   Event<SidedRRPCallback> BEFORE_VANILLA = EventFactory.createArrayBacked(SidedRRPCallback.class, r -> (type, rs) -> {
     IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, $ -> {
@@ -30,6 +32,8 @@ public interface SidedRRPCallback {
 
   /**
    * Register your resource pack that will be read <b>after</b> Minecraft and regular resources are loaded in the specific resource type. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, they will be overridden by this runtime resource. Therefore, if you want to override Minecraft vanilla resources and other non-runtime resources, you can register here.
+   *
+   * @see RRPEventHelper#AFTER_VANILLA
    */
   Event<SidedRRPCallback> AFTER_VANILLA = EventFactory.createArrayBacked(SidedRRPCallback.class, r -> (type, rs) -> {
     IrremovableList<ResourcePack> packs = new IrremovableList<>(rs, $ -> {

@@ -27,7 +27,8 @@
   },
   "mixins": [
     "arrp.mixins.json",
-    "brrp.mixins.json"
+    "brrp.mixins.json",
+    "brrp-fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.13.0",
@@ -44,6 +45,5 @@
       "net/minecraft/class_2960": ["net/devtech/arrp/IdentifierExtension"]
     }
   },
-  "accessWidener": "fabric-data-generation-api.accesswidener",
   "provides": ["advanced_runtime_resource_pack"]
 }
