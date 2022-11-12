@@ -1,4 +1,4 @@
-package net.devtech.arrp.api.forge;
+package net.devtech.arrp.api;
 
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;

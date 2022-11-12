@@ -1,10 +1,11 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "0.12.0-SNAPSHOT"
 }
 
 architectury {
     minecraft = rootProject.minecraft_version
+    common(rootProject.enabled_platforms.split(","))
 }
 
 allprojects {
@@ -28,7 +29,6 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
         mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
-        modImplementation "dev.architectury:architectury-injectables:1.0.10"
     }
 
     tasks.withType(JavaCompile) {
@@ -48,6 +48,10 @@ dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+
+    // 用于 Forge 的 event 部分
+    modCompileOnly "net.minecraftforge:eventbus:6.0.3"
+    modCompileOnly "net.minecraftforge:fmlcore:${project.minecraft_version}-${project.forge_version}"
 }
 
 publishing {

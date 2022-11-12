@@ -1,5 +1,6 @@
 package net.devtech.arrp;
 
+import net.devtech.arrp.api.RRPEventHelper;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.generator.*;
 import net.devtech.arrp.json.lang.JLang;
@@ -120,5 +121,10 @@ public class BRRPDevelopment {
   private static <T extends Block> T register(T block, String name) {
     PlatformBridge.getInstance().registerBlock(new Identifier("brrp", name), block);
     return block;
+  }
+
+  @ApiStatus.Internal
+  public static void registerPacks() {
+    RRPEventHelper.BEFORE_VANILLA.registerPack(BRRPDevelopment::refreshPack);
   }
 }

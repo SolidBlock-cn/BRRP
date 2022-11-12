@@ -8,7 +8,7 @@ architectury {
 }
 
 loom {
-    accessWidenerPath = project(":").loom.accessWidenerPath
+    accessWidenerPath = project.file("/src/main/resources/fabric-data-generation-api-tweaked.accesswidener")
 
     forge {
         convertAccessWideners = true
@@ -48,7 +48,7 @@ shadowJar {
 }
 
 remapJar {
-    input.set shadowJar.archiveFile
+    inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
 }

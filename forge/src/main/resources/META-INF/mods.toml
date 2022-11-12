@@ -5,6 +5,7 @@ license = "MPLv2"
 
 [[mods]]
 modId = "better_runtime_resource_pack"
+namespace = "brrp"
 version = "${version}"
 displayName = "Better Runtime Resource Pack"
 authors = "SolidBlock"

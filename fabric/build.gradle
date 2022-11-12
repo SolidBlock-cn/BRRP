@@ -37,6 +37,9 @@ processResources {
 
 shadowJar {
     exclude "architectury.common.json"
+    exclude "net/devtech/arrp/api/RRPEvent*"
+    exclude "net/devtech/arrp/api/RRPInitEvent*"
+    exclude "net/devtech/arrp/api/RRPCallbackForge*"
 
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
@@ -44,7 +47,7 @@ shadowJar {
 
 remapJar {
     injectAccessWidener = true
-    input.set shadowJar.archiveFile
+    inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
 }
@@ -55,7 +58,11 @@ jar {
 
 sourcesJar {
     def commonSources = rootProject.sourcesJar
+    commonSources.exclude "net/devtech/arrp/api/RRPEvent.java"
+    commonSources.exclude "net/devtech/arrp/api/RRPInitEvent.java"
+    commonSources.exclude "net/devtech/arrp/api/RRPCallbackForge.java"
     dependsOn commonSources
+
     from commonSources.archiveFile.map { zipTree(it) }
 }
 

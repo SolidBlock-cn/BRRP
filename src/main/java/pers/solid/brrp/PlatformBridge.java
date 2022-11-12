@@ -6,6 +6,7 @@ import net.minecraft.item.Item;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Supplier;
 
+@ApiStatus.AvailableSince("0.8.1")
 public abstract class PlatformBridge {
   private static final Logger LOGGER = LoggerFactory.getLogger(PlatformBridge.class);
   private static final Supplier<PlatformBridge> instanceSupplier = Suppliers.memoize(() -> {

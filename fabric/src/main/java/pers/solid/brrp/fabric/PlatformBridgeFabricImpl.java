@@ -16,6 +16,7 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.ApiStatus;
 import pers.solid.brrp.PlatformBridge;
 
 import java.nio.file.Path;
@@ -23,13 +24,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+@ApiStatus.AvailableSince("0.8.1")
 public class PlatformBridgeFabricImpl extends PlatformBridge {
+  @SuppressWarnings("deprecation")
   @Override
   public void postBefore(ResourceType type, List<ResourcePack> packs) {
     SidedRRPCallback.BEFORE_VANILLA.invoker().insert(type, Lists.reverse(packs));
     RRPCallbackConditional.BEFORE_VANILLA.invoker().insertTo(type, Lists.reverse(packs));
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void postAfter(ResourceType type, List<ResourcePack> packs) {
     SidedRRPCallback.AFTER_VANILLA.invoker().insert(type, packs);
@@ -51,9 +55,7 @@ public class PlatformBridgeFabricImpl extends PlatformBridge {
 
   @Override
   public void onDevelopmentInitialize() {
-    SidedRRPCallback.BEFORE_VANILLA.register(
-        (resourceType, builder) -> builder.add(BRRPDevelopment.refreshPack(resourceType))
-    );
+    BRRPDevelopment.registerPacks();
   }
 
   @Override
