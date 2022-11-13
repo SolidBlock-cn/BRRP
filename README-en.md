@@ -48,7 +48,7 @@ public class MyClass implements ModInitializer {
 
   public void onInitialize() {
     // you may invoke 'write' methods for 'pack' here to write something into it.
-    
+
     RRPCallback.BEFORE_VANILLA.register(a -> a.add(pack));
   }
 }
@@ -71,9 +71,7 @@ public class MyClass {
   public MyClass() {
     // you may invoke 'write' methods for 'pack' here to write something into it.
 
-    FMLJavaModLoadingContext.get().getModEventBus().addListener((RRPEvent.BeforeVanilla event) -> {
-      event.addPack(pack);
-    });
+    FMLJavaModLoadingContext.get().getModEventBus().addListener((RRPEvent.BeforeVanilla event) -> event.addPack(pack));
   }
 }
 ```

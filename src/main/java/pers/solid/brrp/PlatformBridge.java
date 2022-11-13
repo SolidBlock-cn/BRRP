@@ -1,6 +1,7 @@
 package pers.solid.brrp;
 
 import com.google.common.base.Suppliers;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.resource.ResourcePack;
@@ -42,8 +43,9 @@ public abstract class PlatformBridge {
 
   public abstract void postAfter(ResourceType type, List<ResourcePack> packs);
 
+  @ExpectPlatform
   public static PlatformBridge getInstance() {
-    return instanceSupplier.get();
+    throw new AssertionError();
   }
 
   public abstract void prelaunch();

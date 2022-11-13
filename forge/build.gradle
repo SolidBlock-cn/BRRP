@@ -13,7 +13,7 @@ loom {
     forge {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
-        mixinConfig "brrp.mixins.json", "brrp-forge.mixins.json"
+        mixinConfig "arrp.mixins.json", "brrp.mixins.json", "brrp-forge.mixins.json"
     }
 }
 
@@ -41,7 +41,7 @@ processResources {
 
 shadowJar {
     exclude "fabric.mod.json"
-    exclude "architectury.common.json"
+//    exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
@@ -81,4 +81,14 @@ publishing {
     repositories {
         // Add repositories to publish to here.
     }
+}
+
+modrinth {
+    projectId = 'JnrDtPAE'
+    versionNumber = "${rootProject.mod_version}-mc${rootProject.minecraft_version}-forge"
+    uploadFile = remapJar
+    gameVersions = (project.supported_minecraft_versions as String).split(',') as List<String>
+    loaders = ['forge']
+    dependencies = [
+    ]
 }

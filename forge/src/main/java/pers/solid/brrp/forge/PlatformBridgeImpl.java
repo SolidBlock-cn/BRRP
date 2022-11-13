@@ -10,8 +10,10 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -27,7 +29,12 @@ import java.util.List;
 import java.util.Objects;
 
 @ApiStatus.AvailableSince("0.8.1")
-public class PlatformBridgeForgeImpl extends PlatformBridge {
+public class PlatformBridgeImpl extends PlatformBridge {
+  private PlatformBridgeImpl() {
+  }
+
+  public static final PlatformBridgeImpl INSTANCE = new PlatformBridgeImpl();
+
   @SuppressWarnings("deprecation")
   @Override
   public void postBefore(ResourceType type, List<ResourcePack> packs) {
@@ -54,20 +61,21 @@ public class PlatformBridgeForgeImpl extends PlatformBridge {
 
   @Override
   public void prelaunch() {
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::particleFactoryRegister);
+    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::particleFactoryRegister));
   }
 
+  @SuppressWarnings("deprecation")
+  @OnlyIn(Dist.CLIENT)
   private void particleFactoryRegister(RegisterParticleProvidersEvent event) {
     if (FMLEnvironment.dist.isClient()) {
-      ModLoader.get().postEvent((Event & IModBusEvent) new RRPInitEvent());
+      ModLoader.get().postEvent(new RRPInitEvent());
     }
   }
 
   @Override
   public void onDevelopmentInitialize() {
-    FMLJavaModLoadingContext.get().getModEventBus().addListener((RegisterEvent event) -> {
-      event.register(ForgeRegistries.Keys.BLOCKS, helper -> BRRPDevelopment.registerPacks());
-    });
+    FMLJavaModLoadingContext.get().getModEventBus().addListener((RegisterEvent event) -> event.register(ForgeRegistries.Keys.BLOCKS, helper -> BRRPDevelopment.registerPacks()));
   }
 
   @Override
@@ -88,5 +96,9 @@ public class PlatformBridgeForgeImpl extends PlatformBridge {
   @Override
   public void registerItem(Identifier identifier, Item item) {
     ForgeRegistries.ITEMS.register(identifier, item);
+  }
+
+  public static PlatformBridge getInstance() {
+    return INSTANCE;
   }
 }

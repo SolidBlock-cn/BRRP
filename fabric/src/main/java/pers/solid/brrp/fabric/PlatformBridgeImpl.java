@@ -25,7 +25,12 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 @ApiStatus.AvailableSince("0.8.1")
-public class PlatformBridgeFabricImpl extends PlatformBridge {
+public class PlatformBridgeImpl extends PlatformBridge {
+  private PlatformBridgeImpl() {
+  }
+
+  public static final PlatformBridgeImpl INSTANCE = new PlatformBridgeImpl();
+
   @SuppressWarnings("deprecation")
   @Override
   public void postBefore(ResourceType type, List<ResourcePack> packs) {
@@ -76,5 +81,9 @@ public class PlatformBridgeFabricImpl extends PlatformBridge {
   @Override
   public void registerItem(Identifier identifier, Item item) {
     Registry.register(Registry.ITEM, identifier, item);
+  }
+
+  public static PlatformBridge getInstance() {
+    return INSTANCE;
   }
 }

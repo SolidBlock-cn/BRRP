@@ -289,7 +289,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   /**
    * Add an item-group entry with the identifier specified.
    *
-   * @param id          The identifier of the item group specified in {@link net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder}.
+   * @param id          The identifier of the item group specified in {@link net.minecraft.item.ItemGroup}.
    * @param translation The translated name of the item group.
    */
   @CanIgnoreReturnValue

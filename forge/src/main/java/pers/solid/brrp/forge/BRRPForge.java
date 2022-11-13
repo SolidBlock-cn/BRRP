@@ -9,7 +9,7 @@ public class BRRPForge {
   public BRRPForge() {
     ARRP.bridgePrelaunch();
     if (!FMLLoader.isProduction()) {
-      PlatformBridgeForgeImpl.getInstance().onDevelopmentInitialize();
+      PlatformBridgeImpl.getInstance().onDevelopmentInitialize();
     }
   }
 }

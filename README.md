@@ -71,9 +71,7 @@ public class MyClass {
   public MyClass() {
     // 你可以在此处调用 pack 的 write 方法以向资源包中写入内容。
 
-    FMLJavaModLoadingContext.get().getModEventBus().addListener((RRPEvent.BeforeVanilla event) -> {
-      event.addPack(pack);
-    });
+    FMLJavaModLoadingContext.get().getModEventBus().addListener((RRPEvent.BeforeVanilla event) -> event.addPack(pack));
   }
 }
 ```

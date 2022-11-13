@@ -1,5 +1,4 @@
 {
-  "accessWidener": "fabric-data-generation-api.accesswidener",
   "injected_interfaces": {
     "net/minecraft/class_2960": ["net/devtech/arrp/IdentifierExtension"]
   }

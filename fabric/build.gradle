@@ -1,3 +1,5 @@
+import com.modrinth.minotaur.dependencies.ModDependency
+
 plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
@@ -37,9 +39,10 @@ processResources {
 
 shadowJar {
     exclude "architectury.common.json"
-    exclude "net/devtech/arrp/api/RRPEvent*"
-    exclude "net/devtech/arrp/api/RRPInitEvent*"
-    exclude "net/devtech/arrp/api/RRPCallbackForge*"
+    exclude "net/devtech/arrp/api/RRPEvent.*"
+    exclude 'net/devtech/arrp/api/RRPEvent$*.*'
+    exclude "net/devtech/arrp/api/RRPInitEvent.*"
+    exclude "net/devtech/arrp/api/RRPCallbackForge.*"
 
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
@@ -84,4 +87,15 @@ publishing {
     repositories {
         // Add repositories to publish to here.
     }
+}
+
+modrinth {
+    projectId = 'JnrDtPAE'
+    versionNumber = "${rootProject.mod_version}-mc${rootProject.minecraft_version}-fabric"
+    uploadFile = remapJar
+    gameVersions = (project.supported_minecraft_versions as String).split(',') as List<String>
+    loaders = ['fabric']
+    dependencies = [
+            new ModDependency('P7dR8mSH', 'required') // Fabric API
+    ]
 }

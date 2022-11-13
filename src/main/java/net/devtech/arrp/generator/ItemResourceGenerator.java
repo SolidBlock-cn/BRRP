@@ -195,7 +195,7 @@ public interface ItemResourceGenerator {
   }
 
   /**
-   * Write resources in the specified environment. It is usually used for {@link net.devtech.arrp.api.RRPCallbackConditional}. It's not recommended to override this method.
+   * Write resources in the specified environment. It's not recommended to override this method.
    *
    * @param pack         The runtime resource pack.
    * @param resourceType The resource type to write. If it is null, both resource types will be used, regardless of the instance environment.
