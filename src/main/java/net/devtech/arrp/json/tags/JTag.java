@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registries;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Contract;
 
@@ -147,7 +148,7 @@ public class JTag {
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addBlock(Block block) {
-    add(Registry.BLOCK.getId(block));
+    add(Registries.BLOCK.getId(block));
     return this;
   }
 
@@ -176,7 +177,7 @@ public class JTag {
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addItem(ItemConvertible item) {
-    add(Registry.ITEM.getId(item.asItem()));
+    add(Registries.ITEM.getId(item.asItem()));
     return this;
   }
 
@@ -205,7 +206,7 @@ public class JTag {
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addFluid(Fluid fluid) {
-    add(Registry.FLUID.getId(fluid));
+    add(Registries.FLUID.getId(fluid));
     return this;
   }
 
@@ -234,7 +235,7 @@ public class JTag {
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addEntityType(EntityType<?> entityType) {
-    add(Registry.ENTITY_TYPE.getId(entityType));
+    add(Registries.ENTITY_TYPE.getId(entityType));
     return this;
   }
 

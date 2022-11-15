@@ -1,18 +1,18 @@
 package net.devtech.arrp.json.loot;
 
 import com.google.common.base.Preconditions;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.entry.LeafEntry;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.entry.LootPoolEntryType;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -86,7 +86,7 @@ public class JEntry implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   @ApiStatus.AvailableSince("0.8.0")
   public JEntry type(LootPoolEntryType type) {
-    this.type = Objects.requireNonNull(Registry.LOOT_POOL_ENTRY_TYPE.getId(type), "The loot pool entry type seems not registered yet!").toString();
+    this.type = Objects.requireNonNull(Registries.LOOT_POOL_ENTRY_TYPE.getId(type), "The loot pool entry type seems not registered yet!").toString();
     return this;
   }
 

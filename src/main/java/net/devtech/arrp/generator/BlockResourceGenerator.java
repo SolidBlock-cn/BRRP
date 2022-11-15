@@ -13,6 +13,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registries;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -68,7 +69,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @Contract(pure = true)
   default Identifier getBlockId() {
-    return Registry.BLOCK.getId((Block) this);
+    return Registries.BLOCK.getId((Block) this);
   }
 
   /**
@@ -87,13 +88,13 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
       if (item == Items.AIR) {
         if (BlockItem.BLOCK_ITEMS.containsKey(block)) {
           // 考虑到方块自身是空气的情况，虽然这种情况不太可能。
-          return Registry.ITEM.getId(BlockItem.BLOCK_ITEMS.get(block));
+          return Registries.ITEM.getId(BlockItem.BLOCK_ITEMS.get(block));
         } else {
           // 方块没有物品。
           return null;
         }
       }
-      return Registry.ITEM.getId(item);
+      return Registries.ITEM.getId(item);
     } else {
       return null;
     }

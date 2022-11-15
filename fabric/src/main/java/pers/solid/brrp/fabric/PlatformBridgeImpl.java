@@ -15,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registries;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import pers.solid.brrp.PlatformBridge;
@@ -75,12 +76,12 @@ public class PlatformBridgeImpl extends PlatformBridge {
 
   @Override
   public void registerBlock(Identifier identifier, Block block) {
-    Registry.register(Registry.BLOCK, identifier, block);
+    Registry.register(Registries.BLOCK, identifier, block);
   }
 
   @Override
   public void registerItem(Identifier identifier, Item item) {
-    Registry.register(Registry.ITEM, identifier, item);
+    Registry.register(Registries.ITEM, identifier, item);
   }
 
   public static PlatformBridge getInstance() {

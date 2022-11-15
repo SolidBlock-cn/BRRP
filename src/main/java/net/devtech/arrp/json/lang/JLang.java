@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
+import net.minecraft.util.registry.Registries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.Contract;
@@ -155,7 +156,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   @Contract(value = "_,_ -> this", mutates = "this")
   @Deprecated
   public JLang item(Item item, String translation) {
-    return this.registryEntry(Registry.ITEM, "item", item, translation);
+    return this.registryEntry(Registries.ITEM, "item", item, translation);
   }
 
   /**
@@ -177,7 +178,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   @Contract(value = "_,_ -> this", mutates = "this")
   @Deprecated
   public JLang block(Block block, String translation) {
-    return this.registryEntry(Registry.BLOCK, "block", block, translation);
+    return this.registryEntry(Registries.BLOCK, "block", block, translation);
   }
 
   /**
@@ -186,7 +187,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   @CanIgnoreReturnValue
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang fluid(Fluid fluid, String translation) {
-    return this.registryEntry(Registry.FLUID, "fluid", fluid, translation);
+    return this.registryEntry(Registries.FLUID, "fluid", fluid, translation);
   }
 
   /**
@@ -206,7 +207,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   @CanIgnoreReturnValue
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang entity(EntityType<?> type, String translation) {
-    return this.object(Registry.ENTITY_TYPE, "entity_type", type, translation);
+    return this.object(Registries.ENTITY_TYPE, "entity_type", type, translation);
   }
 
   /**
@@ -228,7 +229,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   @CanIgnoreReturnValue
   @Contract(value = "_,_ -> this", mutates = "this")
   public JLang enchantment(Enchantment enchantment, String translation) {
-    return this.object(Registry.ENCHANTMENT, "enchantment", enchantment, translation);
+    return this.object(Registries.ENCHANTMENT, "enchantment", enchantment, translation);
   }
 
   /**

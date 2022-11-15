@@ -3,7 +3,7 @@ package net.devtech.arrp.json.recipe;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.Registries;
 
 /**
  * <p>A <b>stonecutting recipe</b> is used for stonecutters. It has a simple one or multiple ingredients and a single result.</p>
@@ -68,7 +68,7 @@ public class JStonecuttingRecipe extends JRecipe {
    * @param count      The count of the result.
    */
   public JStonecuttingRecipe(final Item ingredient, final Item result, int count) {
-    this(JIngredient.ofItem(Registry.ITEM.getId(ingredient)), Registry.ITEM.getId(result).toString(), count);
+    this(JIngredient.ofItem(Registries.ITEM.getId(ingredient)), Registries.ITEM.getId(result).toString(), count);
   }
 
   /**
@@ -79,7 +79,7 @@ public class JStonecuttingRecipe extends JRecipe {
    * @param count      The count of the result.
    */
   public JStonecuttingRecipe(final ItemConvertible ingredient, final ItemConvertible result, int count) {
-    this(JIngredient.ofItem(ingredient), Registry.ITEM.getId(result.asItem()).toString(), count);
+    this(JIngredient.ofItem(ingredient), Registries.ITEM.getId(result.asItem()).toString(), count);
   }
 
   @Deprecated

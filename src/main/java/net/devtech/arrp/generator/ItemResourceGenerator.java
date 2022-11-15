@@ -10,7 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +37,7 @@ public interface ItemResourceGenerator {
    */
   @Contract(pure = true)
   default Identifier getItemId() {
-    return Registry.ITEM.getId((Item) this);
+    return Registries.ITEM.getId((Item) this);
   }
 
 

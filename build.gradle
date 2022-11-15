@@ -58,7 +58,7 @@ dependencies {
 
     // 用于 Forge 的 event 部分
     modCompileOnly "net.minecraftforge:eventbus:6.0.3"
-    modCompileOnly "net.minecraftforge:fmlcore:${project.minecraft_version}-${project.forge_version}"
+    modCompileOnly "net.minecraftforge:fmlcore:1.19.2-43.1.52"
 }
 
 publishing {

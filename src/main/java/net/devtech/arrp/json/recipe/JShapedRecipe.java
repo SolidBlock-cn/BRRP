@@ -4,7 +4,7 @@ import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.Registries;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -84,7 +84,7 @@ public class JShapedRecipe extends JResultRecipe {
   @Contract(value = "_,_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JShapedRecipe addKey(String key, Item value) {
-    return this.addKey(key, JIngredient.ofItem(Registry.ITEM.getId(value)));
+    return this.addKey(key, JIngredient.ofItem(Registries.ITEM.getId(value)));
   }
 
   @Contract(value = "_,_ -> this", mutates = "this")

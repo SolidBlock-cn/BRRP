@@ -1,16 +1,16 @@
 package net.devtech.arrp.json.recipe;
 
 import com.google.common.collect.ForwardingMap;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import net.devtech.arrp.api.JsonSerializable;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +120,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
   @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JKeys key(final String key, final Item value) {
-    return key(key, JIngredient.ofItem(Registry.ITEM.getId(value)));
+    return key(key, JIngredient.ofItem(Registries.ITEM.getId(value)));
   }
 
   @Override

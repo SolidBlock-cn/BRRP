@@ -7,27 +7,14 @@ import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
 import net.devtech.arrp.json.recipe.JStonecuttingRecipe;
 import net.devtech.arrp.json.tags.IdentifiedTag;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricMaterialBuilder;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.MapColor;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemGroups;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.TestOnly;
@@ -66,8 +53,8 @@ public class BRRPDevelopment {
 
   @SuppressWarnings("UnusedReturnValue")
   private static BlockItem blockItem(Block block) {
-    final BlockItem item = new BlockItem(block, new Item.Settings().group(ItemGroup.TRANSPORTATION));
-    PlatformBridge.getInstance().registerItem(Registry.BLOCK.getId(block), item);
+    final BlockItem item = new BlockItem(block, new Item.Settings());
+    PlatformBridge.getInstance().registerItem(Registries.BLOCK.getId(block), item);
     return item;
   }
 

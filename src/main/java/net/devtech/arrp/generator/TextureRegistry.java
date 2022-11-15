@@ -6,7 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.data.client.TextureMap;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.Registries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -68,7 +68,7 @@ public final class TextureRegistry {
 
   /**
    * <p>Register a block texture with the specified texture key. The identifier is created by the block identifier with the specified suffix.</p>
-   * <p>In this case, the block id will be used, so please make sure that the block has been registered in {@link Registry#BLOCK}. This is a convenient way.</p>
+   * <p>In this case, the block id will be used, so please make sure that the block has been registered in {@link Registries#BLOCK}. This is a convenient way.</p>
    * <p>The block with id {@code minecraft:sandstone} with the suffix {@code "_top"} parameter will use the following texture identifier: {@code minecraft:block/sandstone_top}.</p>
    *
    * @param block      The block you register.
@@ -77,12 +77,12 @@ public final class TextureRegistry {
    * @since 0.8.0 Fixed the incorrect identifier.
    */
   public static void registerAppended(Block block, TextureKey textureKey, String suffix) {
-    register(block, textureKey, Registry.BLOCK.getId(block).brrp_pend("block/", suffix));
+    register(block, textureKey, Registries.BLOCK.getId(block).brrp_pend("block/", suffix));
   }
 
   /**
    * <p>Register a block texture with the specified texture key. The identifier is created with the same namespace of the block id and the specified path.</p>
-   * <p>In this case, the namespace of block id will be used, so please make sure that the block has been registered in {@link Registry#BLOCK}.</p>
+   * <p>In this case, the namespace of block id will be used, so please make sure that the block has been registered in {@link Registries#BLOCK}.</p>
    * <p>For example, the block with id {@code minecraft:smooth_sandstone} with the path {@code "sandstone_top"} parameter will use the following texture identifier: {@code minecraft:block/sandstone_top}.</p>
    *
    * @param block      The block you register.
@@ -91,7 +91,7 @@ public final class TextureRegistry {
    * @since 0.8.0 Fixed the incorrect identifier.
    */
   public static void registerWithName(Block block, TextureKey textureKey, String path) {
-    final Identifier id = Registry.BLOCK.getId(block);
+    final Identifier id = Registries.BLOCK.getId(block);
     register(block, textureKey, new Identifier(id.getNamespace(), "block/" + path));
   }
 

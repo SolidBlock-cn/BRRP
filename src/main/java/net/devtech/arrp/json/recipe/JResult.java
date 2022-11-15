@@ -9,7 +9,7 @@ import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.Registries;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -36,7 +36,7 @@ public class JResult implements Cloneable, JsonSerializable {
    * This method will query the id of the item. You should ensure that the item has been registered.
    */
   public JResult(final ItemConvertible item) {
-    this(Registry.ITEM.getId(item.asItem()));
+    this(Registries.ITEM.getId(item.asItem()));
   }
 
   /**
@@ -44,7 +44,7 @@ public class JResult implements Cloneable, JsonSerializable {
    */
   @Deprecated
   public static JResult item(final Item item) {
-    return result(Registry.ITEM.getId(item).toString());
+    return result(Registries.ITEM.getId(item).toString());
   }
 
   /**
@@ -67,7 +67,7 @@ public class JResult implements Cloneable, JsonSerializable {
 
   @Deprecated
   public static JStackedResult itemStack(final Item item, final int count) {
-    return stackedResult(Registry.ITEM.getId(item).toString(), count);
+    return stackedResult(Registries.ITEM.getId(item).toString(), count);
   }
 
   @Deprecated

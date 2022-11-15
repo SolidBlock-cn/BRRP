@@ -4,7 +4,7 @@ import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.Registries;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -66,7 +66,7 @@ public abstract class JCookingRecipe extends JRecipe {
    * @param result     The resulting item. You must ensure that it has been registered.
    */
   protected JCookingRecipe(final String type, final JIngredient ingredient, final Item result) {
-    this(type, ingredient, Registry.ITEM.getId(result));
+    this(type, ingredient, Registries.ITEM.getId(result));
   }
 
   /**
@@ -77,7 +77,7 @@ public abstract class JCookingRecipe extends JRecipe {
    * @param result     The resulting item or block. You must ensure that its item has been registered.
    */
   protected JCookingRecipe(final String type, final JIngredient ingredient, final ItemConvertible result) {
-    this(type, ingredient, Registry.ITEM.getId(result.asItem()));
+    this(type, ingredient, Registries.ITEM.getId(result.asItem()));
   }
 
   /**
@@ -110,7 +110,7 @@ public abstract class JCookingRecipe extends JRecipe {
    * @param result     The result item.
    */
   public JCookingRecipe(final String type, ItemConvertible ingredient, ItemConvertible result) {
-    this(type, JIngredient.ofItem(ingredient), Registry.ITEM.getId(result.asItem()).toString());
+    this(type, JIngredient.ofItem(ingredient), Registries.ITEM.getId(result.asItem()).toString());
   }
 
   @Deprecated

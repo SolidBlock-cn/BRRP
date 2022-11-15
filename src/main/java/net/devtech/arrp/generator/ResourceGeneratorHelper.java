@@ -7,7 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,22 +20,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ResourceGeneratorHelper {
   public static Identifier getItemId(@NotNull ItemConvertible item) {
-    return (item instanceof ItemResourceGenerator generator) ? generator.getItemId() : Registry.ITEM.getId(item.asItem());
+    return (item instanceof ItemResourceGenerator generator) ? generator.getItemId() : Registries.ITEM.getId(item.asItem());
   }
 
   /**
    * @since 0.6.2 Fixed the issue that the item model id is not correct.
    */
   public static Identifier getItemModelId(@NotNull ItemConvertible item) {
-    return (item instanceof ItemResourceGenerator generator) ? generator.getItemModelId() : Registry.ITEM.getId(item.asItem()).brrp_prepend("item/");
+    return (item instanceof ItemResourceGenerator generator) ? generator.getItemModelId() : Registries.ITEM.getId(item.asItem()).brrp_prepend("item/");
   }
 
   public static Identifier getBlockId(@NotNull Block block) {
-    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockId() : Registry.BLOCK.getId(block);
+    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockId() : Registries.BLOCK.getId(block);
   }
 
   public static Identifier getBlockModelId(@NotNull Block block) {
-    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockModelId() : Registry.BLOCK.getId(block).brrp_prepend("block/");
+    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockModelId() : Registries.BLOCK.getId(block).brrp_prepend("block/");
   }
 
   @PreferredEnvironment(EnvType.CLIENT)
