@@ -94,3 +94,10 @@ modrinth {
     dependencies = [
     ]
 }
+
+
+remapJar {
+    // 将 remapJar 的结果放在主项目中
+//    inputFile.set rootProject.buildDir.toPath().resolve(project.buildDir.relativePath(inputFile.asFile.get())).toFile()
+    archiveFile.set rootProject.buildDir.toPath().resolve(project.buildDir.relativePath(archiveFile.asFile.get())).toFile()
+}

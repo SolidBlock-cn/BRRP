@@ -94,10 +94,18 @@ publishing {
 modrinth {
     projectId = 'JnrDtPAE'
     versionNumber = "${rootProject.mod_version}-mc${rootProject.minecraft_version}-fabric"
+    versionType = 'beta'
     uploadFile = remapJar
     gameVersions = (project.supported_minecraft_versions as String).split(',') as List<String>
     loaders = ['fabric']
     dependencies = [
             new ModDependency('P7dR8mSH', 'required') // Fabric API
     ]
+}
+
+
+remapJar {
+    // 将 remapJar 的结果放在主项目中
+//    inputFile.set rootProject.buildDir.toPath().resolve(project.buildDir.relativePath(inputFile.asFile.get())).toFile()
+    archiveFile.set rootProject.buildDir.toPath().resolve(project.buildDir.relativePath(archiveFile.asFile.get())).toFile()
 }

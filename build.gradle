@@ -46,6 +46,18 @@ archivesBaseName += '-common'
 
 subprojects {
     apply plugin: "com.modrinth.minotaur"
+
+    loom {
+        runs {
+            client {
+                programArg "-username = Solid"
+                runDir = '../run'
+            }
+            server {
+                runDir = '../run'
+            }
+        }
+    }
 }
 
 loom {
