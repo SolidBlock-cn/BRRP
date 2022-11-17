@@ -30,6 +30,7 @@ public interface IdentifierExtension {
    *
    * @param prefix The string to be prepended.
    * @return A new identifier.
+   * @see Identifier#withPrefixedPath(String)
    * @since 0.8.0 Fixed the wrong parameter name.
    */
   @Contract("_ -> new")

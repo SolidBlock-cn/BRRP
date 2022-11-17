@@ -15,12 +15,12 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * <p>This is used for recording textures. Sometimes you created a block, and wants the {@link BlockResourceGenerator#getTextureId} use textures that differ from the block id. You do not need to override the method. You can directly use this registry to specify the textures used.</p>
+ * <p>This is used for recording textures. Sometimes you created a block, and wants the {@link BlockResourceGenerator#getTextureId} to use textures that differ from the block id. You do not need to override the method. You can directly use this registry to specify the textures used.</p>
  * <p>Notice that the texture registry is <i>not always</i> respected when getting the texture. For example, in {@link BRRPCubeBlock}, the texture definitions may be predetermined when instantiating. That may ignore this registry.</p>
- * <p>Block-based blocks, for example, slabs, may query the texture registry for their base blocks, as defined in {@link BRRPSlabBlock#getTextureId}. This affects all blocks that override {@link BlockResourceGenerator#getBaseBlock()}, but <i>does not affect</i> vanilla blocks because they do not implement that method.</p>
+ * <p>Block-based blocks, for example, slabs, may query the texture registry for their base blocks, as defined in, for example, {@link BRRPSlabBlock#getTextureId}. This affects all blocks that override {@link BlockResourceGenerator#getBaseBlock()}, but <i>does not affect vanilla blocks</i> because they do not implement that method.</p>
  * <p>The texture key respects their parent keys (for "fallback keys"). For example, {@link TextureKey#EAST} fall backs to {@link TextureKey#SIDE}, which fall backs to {@link TextureKey#ALL}, so when querying the east texture of the block, and that texture key of the block is not registered, side texture will be used; if side texture does not exist as well, its all texture will be used, and if that is still absent, {@code null} value will be returned.</p>
  * <p>To register, you can simple call {@link #register}, and you can call {@link #getTexture} to get the texture.</p>
- * <p><i>Notice that textures of vanilla blocks are not registered</i> by default. It's OK to register vanilla blocks, no problem, but you may have to consider compatibility with other mods. If you're sure to register vanilla block textures to this registry, it's highly recommended to keep it identical to what the vanilla textures use (see {@link net.minecraft.data.client.BlockStateModelGenerator}).</p>
+ * <p><em>Pay attention that textures of vanilla blocks are not registered in the registry</em> by default. It's OK to register vanilla blocks, no problem, but you may have to consider compatibility with other mods. If you're willing to register vanilla block textures to this registry (such as Extended Block Shapes mod because their derived blocks need it), it's highly recommended to keep it identical to what the vanilla textures use (see {@link net.minecraft.data.client.BlockStateModelGenerator}).</p>
  * <p>For example, if you register a sandstone block like this:</p>
  * <pre>{@code
  * TextureRegistry.registerAppended(Blocks.SANDSTONE, TextureKey.TOP, "_top");
@@ -130,9 +130,9 @@ public final class TextureRegistry {
   /**
    * <p>Get the <i>unmodifiable view</i> of the map storing the blocks and their textures. However, their texture maps are not unmodifiable; they are passes <i>as is</i>.</p>
    * <p>To get the specific texture map, you can, for example:</p>
-   * {@code
+   * <pre>{@code
    * TextureRegistry.getTextureMap().get(Blocks.STONE)
-   * }
+   * }</pre>
    *
    * @return The unmodifiable view of map of texture map.
    */

@@ -21,6 +21,9 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
+/**
+ * A stairs block that implements {@link BlockResourceGenerator} so that you can conveniently generate resources. By default, a stairs block has four block models: common model, inner model, and an outer model. Each stairs block should be specified a base block, which cannot be {@code null}.
+ */
 public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerator {
   public final @NotNull Block baseBlock;
 

@@ -2,7 +2,7 @@ package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

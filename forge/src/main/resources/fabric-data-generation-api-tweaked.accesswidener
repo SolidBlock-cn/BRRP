@@ -1,5 +1,5 @@
 accessWidener	v2	named
-# copied from Fabric Data Generation API
+# copied and tweaked from Fabric Data Generation API
 accessible  field  net/minecraft/data/server/RecipeProvider  recipesPathResolver  Lnet/minecraft/data/DataGenerator$PathResolver;
 accessible  field  net/minecraft/data/server/RecipeProvider  advancementsPathResolver  Lnet/minecraft/data/DataGenerator$PathResolver;
 
