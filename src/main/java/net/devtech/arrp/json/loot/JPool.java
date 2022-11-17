@@ -1,6 +1,7 @@
 package net.devtech.arrp.json.loot;
 
 import com.google.common.collect.Lists;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
@@ -8,7 +9,6 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.LootCondition;

@@ -1,8 +1,10 @@
-BRRP（Better Runtime Resource Pack，更好的运行时资源包），是 [ARRP](https://github.com/Devan-Kerman/ARRP) 模组的一个分支。本模组提供 ARRP 的所有功能，并修复 ARRP 模组存在的一些问题，同时提供了一系列新的功能。
+# 更好的运行时资源包
+
+[Click here for English version of this document.](README-en.md)
+
+BRRP（Better Runtime Resource Pack，更好的运行时资源包），是可用于在运行时创建游戏资源的前置模组，同时是 [ARRP](https://github.com/Devan-Kerman/ARRP)（高级运行时资源包）模组的一个分支。本模组提供 ARRP 的所有功能，并修复 ARRP 模组存在的一些问题，同时提供了一系列新的功能。目前已支持 Fabric 和 Forge 的 1.16.5-1.19.3 各版本。
 
 欢迎加入QQ群**587928350**或 KOOK（开黑啦）频道邀请码**KlFS0n**体验本模组的最新更新。
-
-[Read English version of this document.](README-en.md)
 
 ## 什么是运行时资源包？
 
@@ -46,21 +48,22 @@ BRRP（Better Runtime Resource Pack，更好的运行时资源包），是 [ARRP
 public class MyClass implements ModInitializer {
   public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
 
+  @Override
   public void onInitialize() {
     // 你可以在此处调用 pack 的 write 方法以向资源包中写入内容。
 
-    RRPCallback.BEFORE_VANILLA.register(a -> a.add(pack));
+    RRPCallback.BEFORE_VANILLA.register(resources -> resources.add(pack));
   }
 }
 ```
 
 您可以在游戏运行的任何时候生成资源并注册您的资源包。上述示例使用的是游戏初始化末期的 `main` 入口点。您亦可在 `preLaunch` 或 `rrp:pregen`（需实现 `RRPPreGenEntryPoint` 接口）生成资源，但这种情况不能使用 Minecraft 的某些内容，例如游戏注册表。
 
-除了添加常规资源外，您也可以添加异步资源，以允许在 `rrp:pregen` 的时候就加入游戏内需要的内容。`rrp:pregen` 中注册的运行时资源包会采用多线程的模式生成。
+除了添加常规资源外，您也可以添加异步资源，以允许在 `rrp:pregen` 的时候就加入游戏内需要的内容。`rrp:pregen` 中注册的运行时资源包会采用多线程的模式生成，这是在原先的 ARRP 中就提供的功能。
 
 ### Forge
 
-对于 Forge 版本，你可以使用 RRPEvent 来在模组的事件总线上注册资源包，方法如下：
+对于 Forge 版本，你可以使用 `RRPEvent` 来在模组的事件总线上注册资源包，方法如下：
 
 ```java
 
@@ -84,6 +87,7 @@ public class MyClass {
 public class MyClass implements ModInitializer {
   public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
 
+  @Override
   public void onInitialize() {
     // 你可以在此处调用 pack 的 write 方法以向资源包中写入内容。
 
@@ -99,14 +103,16 @@ Minecraft 有原版的数据生成功能，Fabric API 对其进行了扩展。BR
 在 BRRP 中，部分 ARRP 对象可以直接使用 Minecraft 的原版对应的对象。例如，原版的 `BlockStateModelGenerator` 中，有很多用于直接生成方块状态对象的方法（这些方法原先是 private 的，Fabric Data Generation API 进行了访问拓宽）。然后，可以直接使用 `JBlockStates.delegate`，代码片段如下：
 
 ```java
-public class XXX /*extends ...*/ {
+public class MyClass implements ModInitializer {
   @Override
-  public BlockStates getBlockStates() {
-    return JBlockStates.delegate(BlockStateModelGenerator.createStairsBlockState(
-        this,
+  public void onInitialize() {
+    pack.addBlockStates(BlockStateModelGenerator.createStairsBlockState(
+        MyModBlocks.EXAMPLE,
         blockModelId.brrp_append("_inner"),
         blockModelId,
-        blockModelId.brrp_append("_outer")));
+        blockModelId.brrp_append("_outer"), new Identifier("my_mod", "example")));
+
+    RRPEventHelper.BEFORE_VANILLA.registerPack(pack);
   }
 }
 ```
@@ -123,18 +129,21 @@ BRRP 在 ARRP 与 Minecraft 的原版类之间搭建桥梁的另一个例子是�
 public class MyClass implements ModInitializer {
   public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
 
+  @Override
   public void onInitialize() {
-    RRPCallback.BEFORE_VANILLA.register(a -> {
+    RRPCallback.BEFORE_VANILLA.register(resources -> {
       pack.clearResources();
       pack.addXXX('...');
 
-      a.add(pack);
+      resources.add(pack);
     });
   }
 }
 ```
 
-这样，Minecraft 每加载一次资源，运行时的资源包都会重新生成一次。但是，在模组发布时请不要这么做，因为这会导致每次重新加载资源包（包括游戏初始化和 F3+T 快捷键）或数据包（包括进入世界或者运行 `/reload`）都重新生成一次资源，这显然是不必要的。因此，模组发布时，建议在注册资源包之前就将资源生成好。
+这样，Minecraft 每加载一次资源，例如通过快捷键 `F3+T` 加载资源包，或者运行 `/reload` 加载数据包时，运行时的资源包都会重新生成一次。但是，在模组发布时请不要这么做，因为这会导致每次重新加载资源包或数据包都重新生成一次资源，这显然是不必要的。因此对于需要发布的模组版本，还是建议在注册资源包之前就先将资源生成好，并在加载资源的事件中仅将其添加。
+
+关于更多具体描述，请阅读本模组 GitHub 项目的 wiki 部分。您亦可以阅读 `BRRPDevelopment` 以了解本模组的一个简单示例。
 
 ## 什么是资源与数据
 
@@ -152,31 +161,55 @@ Minecraft 和 Fabric API 的数据生成器（data generator）生成的也不�
 
 ## 如何将本模组用作您的项目的依赖
 
-如果需要将本模组作为您的依赖，并使用本模组的 API，您需要先下载 <code>**brrp-版本-游戏版本.jar**</code> 和 <code>**brrp-版本-游戏版本-sources.jar**</code> 这两个文件，并放在您的设备存储的任意地方（建议直接存储在项目文件夹内或者附近，两个文件都应该放在同一个文件夹内，并且，如有需要，将文件加入 `.gitignore`）。
+如果需要将本模组作为您的依赖，并使用本模组的 API，可以有以下几种方法。
 
-然后，在 `build.gradle` 中设置以下内容：
+### 方法一：使用 GitHub 中的仓库
+
+在 `build.gradle` 的 `repositories` 和 `dependencies` 部分分别加入以下内容：
 
 ```groovy
 repositories {
-    // [...]
+    maven {
+        url 'https://raw.githubusercontent.com/SolidBlock-cn/mvn-repo/main'
 
+        // 如果上面的网址连接不成功，可以尝试使用镜像站，例如：
+        // url 'https://raw.nuaa.cf/SolidBlock-cn/mvn-repo/main'
+        // 注：不确保镜像站能稳定连接且内容不被篡改，上述镜像站地址亦只是示例。
+    }
+}
+
+dependencies {
+    modImplementation "pers.solid:brrp-fabric:模组版本-MC版本"
+    // 注意：对于 Forge 版本，请将上面的 fabric 改为 forge。
+    // 对于 0.8.1 及以下的版本，请将 pers.solid 改为 net.devtech。但是，不建议使用旧版本。
+    // modImplementation 和 modApi 的区别在于，当其他项目依赖你的项目，如果你的项目使用的是 modApi，那么其他项目会自动加载你依赖的内容，如果是 modImplementation 则不会。你可以自行选择。
+}
+```
+
+### 方法二：将文件下载到本地
+
+您需要先下载 <code>**brrp-模组版本-MC版本.jar**</code> 和 <code>**brrp-模组版本-MC版本-sources.jar**</code> 这两个文件（可以在 GitHub 的 releases 部分，或者从 Modrinth 中下载），并放在您的设备存储的任意地方（建议直接存储在项目文件夹内或者附近，两个文件都应该放在同一个文件夹内，并且，如有需要，可将下载到的文件加入 `.gitignore`）。
+
+然后，在 `build.gradle` 的 `repositories` 和 `dependencies` 部分分别加入以下内容：
+
+```groovy
+repositories {
     // dir 中的字符串是存储这些文件的文件夹位置，可以是相对位置。
     flatDir { dir "存储上述两个 .jar 文件的文件夹路径" }
 }
 
 
 dependencies {
-    // [...]
-
-    // 这里的版本和游戏版本应该和你下载的那两个文件的版本和游戏版本一致。请及时关注 BRRP 模组的更新。
-    // 注意：不要直接把“版本”和“游戏版本”这几个字照抄进去！
-    modImplementation("net.devtech:brrp:版本-游戏版本")
+    modImplementation "pers.solid:brrp-fabric:模组版本-MC版本"
+    // 注意事项可参见上面的方法一。
 }
 ```
 
+### 检查项目是否配置完成
+
 刷新项目，然后检查该库是否被正常加载。例如，在 IntelliJ IDEA 中，您可以双击 Shift，输入 `RuntimeResourcePack`，如果找到了这个类，并且类的代码和注释都能够正常加载，说明项目加载正常了。
 
-然后，在您的 Fabric 项目的 `fabric.mod.json` 中，加入：
+然后，在您的 Fabric 项目的 `fabric.mod.json` 中的 `depends` 部分添加本模组：
 
 ```json5
 {
@@ -184,7 +217,7 @@ dependencies {
   "depends": {
     // [...]
 
-    // “*”表示“任意版本”。您亦可指定特定版本，如“>=0.6.0”。
+    // “*”表示“任意版本”。您亦可指定特定版本，如“>=0.8.2”。
     // 注意不要在 JSON 里面留下这些注释。
     "better_runtime_resource_pack": "*"
   }
@@ -197,9 +230,9 @@ dependencies {
 [[dependencies.'你的模组的id']]
 modId = "better_runtime_resource_pack"
 mandatory = true
-versionRange = "[0.8.1,)"
+versionRange = "[0.8.2,)"
 ordering = "NONE"
 side = "BOTH"
 ```
 
-注意：如果您的模组使用了本模组中仅限于特定版本的内容（注解了 `@ApiStatus.AvailableSince` 的类、方法或字段），那么就应该在 JSON 中也指定版本。例如，如果您的模组中使用的部分 API 被注解了 `@ApiStatus.AvailableSince("0.8.0")`，那么 `fabric.mod.json` 中就应该写 `"better_runtime_resource_pack": ">=0.8.0"`，以免用户装了 0.8.0 以下版本的模组而导致未预料的错误。
+注意：如果您的模组使用了本模组中仅限于特定版本的内容（注解了 `@ApiStatus.AvailableSince` 的类、方法或字段），那么就建议在 `fabric.mod.json` 中也指定版本。例如，如果您的模组中使用的部分 API 被注解了 `@ApiStatus.AvailableSince("0.8.0")`，那么 `fabric.mod.json` 中可以写 `"better_runtime_resource_pack": ">=0.8.0"`，以免用户装了 0.8.0 以下版本的模组而导致未预料的错误。

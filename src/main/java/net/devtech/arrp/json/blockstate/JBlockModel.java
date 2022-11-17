@@ -1,6 +1,6 @@
 package net.devtech.arrp.json.blockstate;
 
-import net.devtech.arrp.util.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.fabricmc.api.EnvType;
 import net.minecraft.block.Block;

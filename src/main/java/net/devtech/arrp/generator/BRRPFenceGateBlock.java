@@ -20,6 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
+/**
+ * The fence gate with can be user for data generation. By default, a fence gate has four block models: common model, open-gate model, in-wall model, and in-wall open-gate model.
+ */
 public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceGenerator {
   public final @Nullable Block baseBlock;
 

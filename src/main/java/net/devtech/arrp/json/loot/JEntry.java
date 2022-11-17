@@ -1,7 +1,7 @@
 package net.devtech.arrp.json.loot;
 
 import com.google.common.base.Preconditions;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
@@ -12,6 +12,7 @@ import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.entry.LeafEntry;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.entry.LootPoolEntryType;
+import net.minecraft.loot.entry.LootPoolEntryTypes;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -29,8 +30,7 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class JEntry implements Cloneable {
   /**
-   * The identifier (as string) of the type of the entry.<br>
-   * Allowed values: {@code minecraft:item}, {@code minecraft:tag}, {@code minecraft:loot_table}, {@code minecraft:group}, {@code minecraft:alternatives}, {@code minecraft:sequence}, {@code minecraft:dynamic}, and {@code minecraft:empty}.
+   * The identifier (as string) of the type of the entry. Allowed types can be found in {@link LootPoolEntryTypes}.
    */
   public String type;
   /**
@@ -258,7 +258,7 @@ public class JEntry implements Cloneable {
   /**
    * Create a special object that directly uses the serialization of vanilla-type {@link LootPoolEntry} object.
    *
-   * @see #delegate(LootPoolEntry.Builder)}
+   * @see #delegate(LootPoolEntry.Builder)
    */
   @ApiStatus.AvailableSince("0.8.0")
   @Contract("_ -> new")

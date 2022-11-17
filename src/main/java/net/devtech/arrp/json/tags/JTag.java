@@ -1,7 +1,7 @@
 package net.devtech.arrp.json.tags;
 
 
-import net.devtech.arrp.util.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;

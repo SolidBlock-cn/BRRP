@@ -23,7 +23,7 @@ import pers.solid.brrp.PlatformBridge;
  * <p>This interface is divided into three parts:</p>
  * <ul>
  *   <li>general part: to get the identifier of this instance.</li>
- *   <li>client part: methods related to generating and writing client assets. It's <i>highly recommended but not required</i> to annotate the methods as {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code>, because they are only used in client distribution. When running on a dedicated server, they should be ignored.</li>
+ *   <li>client part: methods related to generating and writing client assets. It's <i>highly recommended but not required</i> to annotate the methods as {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code> or <code>@OnlyIn(Dist.CLIENT)</code>, because they are only used in client distribution. When running on a dedicated server, they should be ignored.</li>
  *   <li>server part: methods related to generating and writing server data. Please do not annotate them with {@code @Environment{EnvType.SERVER}}, unless you're sure to do so, as they will be used in client distribution.</li>
  * </ul>
  * <p>Most "get" methods are nullable, which means, when writing (in those "write" methods) the values into the runtime resource pack, these null values will be ignored. When overriding these "get" methods, you can annotate @NotNull if you're sure that the values are not null.</p>
@@ -31,8 +31,9 @@ import pers.solid.brrp.PlatformBridge;
  */
 @SuppressWarnings("unused")
 public interface ItemResourceGenerator {
+
   /**
-   * Query the id of the item. You <i>override</i> this method if your class that implements this method is not a subtype of {@link Item}.
+   * Query the id of the item. You have to <i>override</i> this method if your class that implements this method is not a subtype of {@link Item}.
    *
    * @return The id of the item.
    */
@@ -46,7 +47,7 @@ public interface ItemResourceGenerator {
   // It's recommended to annotate @Environment(EnvType.CLIENT) when overriding following methods.
 
   /**
-   * The id of the model of its block item. It is usually {@code <i>namespace</i>:item/<i>path</i>}.
+   * The id of the model of its block item. It is usually <code><i>namespace</i>:item/<i>path</i></code>.
    *
    * @return The id of the item model.
    */
@@ -92,8 +93,8 @@ public interface ItemResourceGenerator {
   }
 
   /**
-   * Write client assets of this item. In this case, only item model is written, but you can add more. For example, in {@link BlockResourceGenerator#writeAssets}, the block states definition and block model are also written.<br>
-   * It's recommended to restrict the call to this method in client environment, like the follows:
+   * <p>Write client assets of this item. In this case, only item model is written, but you can add more. For example, in {@link BlockResourceGenerator#writeAssets}, the block states definition and block model are also written.</p>
+   * <p>It's recommended to restrict the call to this method in client environment, like the follows:</p>
    * <pre>{@code
    * if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
    *   writeAssets(pack);
@@ -135,7 +136,7 @@ public interface ItemResourceGenerator {
 
   /**
    * <p>Get the identifier of the advancement that corresponds to the recipe. It is usually in the format of <code style=color:maroon><i>namespace</i>:recipes/<i>group</i>/<i>path</i></code>. For example, the advancement id that corresponds to the recipe id for acacia stairs can be <code style=color:maroon>minecraft:recipe/building_blocks/acacia_stairs</code>.</p>
-   * <p>In this method, the recipe id you input will be appended with {@code "recipes/"} and the item group name, if there is one.</p>
+   * <p>In this method, the recipe id you input will be prepended with {@code "recipes/"} and the item group name, if there is one.</p>
    *
    * @return The id of the advancement that corresponds to its recipe.
    */
@@ -148,7 +149,7 @@ public interface ItemResourceGenerator {
         return recipeId.brrp_prepend("recipes/" + group.getName() + "/");
       }
     }
-    return getItemId().brrp_prepend("recipes/");
+    return recipeId.brrp_prepend("recipes/");
   }
 
   /**
@@ -208,6 +209,25 @@ public interface ItemResourceGenerator {
     } else if (resourceType == ResourceType.CLIENT_RESOURCES) {
       writeAssets(pack);
     } else {
+      writeData(pack);
+    }
+  }
+
+  /**
+   * Write resources in the specified environments. It's not recommended to override this method.
+   *
+   * @param pack           The runtime resource pack.
+   * @param clientIncluded Whether to write client resources to this object.
+   * @param serverIncluded Whether to write server data to this object.
+   */
+  @Contract(mutates = "param1")
+  @ApiStatus.AvailableSince("0.8.2")
+  @ApiStatus.OverrideOnly
+  default void writeResources(RuntimeResourcePack pack, boolean clientIncluded, boolean serverIncluded) {
+    if (clientIncluded) {
+      writeAssets(pack);
+    }
+    if (serverIncluded) {
       writeData(pack);
     }
   }

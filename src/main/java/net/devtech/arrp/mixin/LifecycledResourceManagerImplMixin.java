@@ -17,16 +17,16 @@ import java.util.concurrent.ExecutionException;
 
 @Mixin(LifecycledResourceManagerImpl.class)
 public abstract class LifecycledResourceManagerImplMixin {
-  private static final Logger BRRP_LOGGER = LoggerFactory.getLogger("BRRP/LifecycledResourceManagerImplMixin");
+  private static final Logger LOGGER = LoggerFactory.getLogger("BRRP/LifecycledResourceManagerImplMixin");
 
   @ModifyVariable(method = "<init>", at = @At("HEAD"), argsOnly = true)
   private static List<ResourcePack> registerARRPs(List<ResourcePack> packs, ResourceType type, List<ResourcePack> packs0) throws ExecutionException, InterruptedException {
     List<ResourcePack> copy = new ArrayList<>(packs);
     ARRP.waitForPregen();
-    BRRP_LOGGER.info("BRRP register - before vanilla");
+    LOGGER.info("BRRP register - before vanilla");
     PlatformBridge.getInstance().postBefore(type, copy);
 
-    BRRP_LOGGER.info("BRRP register - after vanilla");
+    LOGGER.info("BRRP register - after vanilla");
     PlatformBridge.getInstance().postAfter(type, copy);
 
     return copy;
