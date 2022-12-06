@@ -2,6 +2,7 @@ package net.devtech.arrp.json.recipe;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 
 /**
@@ -100,6 +101,11 @@ public class JSmokingRecipe extends JCookingRecipe {
   @Override
   public JSmokingRecipe group(final String group) {
     return (JSmokingRecipe) super.group(group);
+  }
+
+  @Override
+  public JSmokingRecipe category(RecipeCategory category) {
+    return (JSmokingRecipe) super.category(category);
   }
 
   @Override

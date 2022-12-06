@@ -4,15 +4,19 @@ import com.google.common.base.Suppliers;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -43,6 +47,8 @@ public abstract class PlatformBridge {
 
   public abstract void postAfter(ResourceType type, List<ResourcePack> packs);
 
+  @SuppressWarnings("Contract")
+  @Contract("-> _")
   @ExpectPlatform
   public static PlatformBridge getInstance() {
     throw new AssertionError();
@@ -59,4 +65,6 @@ public abstract class PlatformBridge {
   public abstract void registerBlock(Identifier identifier, Block block);
 
   public abstract void registerItem(Identifier identifier, Item item);
+
+  public abstract void setItemGroup(ItemGroup itemGroup, Collection<ItemStack> stacks);
 }

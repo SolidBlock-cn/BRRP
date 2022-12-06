@@ -16,7 +16,7 @@ allprojects {
     apply plugin: "maven-publish"
 
     archivesBaseName = rootProject.archives_base_name
-    version = rootProject.mod_version + "-" + project.minecraft_version
+    version = rootProject.mod_version + "-1.19.3"
     group = rootProject.maven_group
 
     sourceCompatibility = JavaVersion.VERSION_17
@@ -50,7 +50,7 @@ subprojects {
     loom {
         runs {
             client {
-                programArg "-username = Solid"
+                property "username", "Solid"
                 runDir = '../run'
             }
             server {

@@ -3,8 +3,10 @@ package net.devtech.arrp.json.recipe;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.ShapelessRecipe;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -105,6 +107,11 @@ public class JShapelessRecipe extends JResultRecipe {
   @Override
   public JShapelessRecipe group(final String group) {
     return (JShapelessRecipe) super.group(group);
+  }
+
+  @Override
+  public JShapelessRecipe category(@Nullable RecipeCategory category) {
+    return (JShapelessRecipe) super.category(category);
   }
 
   @Override

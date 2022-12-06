@@ -2,8 +2,9 @@ package net.devtech.arrp.json.recipe;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.util.Identifier;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 
 /**
  * <p>A <b>stonecutting recipe</b> is used for stonecutters. It has a simple one or multiple ingredients and a single result.</p>
@@ -95,6 +96,11 @@ public class JStonecuttingRecipe extends JRecipe {
   @Override
   public JStonecuttingRecipe group(final String group) {
     return (JStonecuttingRecipe) super.group(group);
+  }
+
+  @Override
+  public JStonecuttingRecipe category(RecipeCategory category) {
+    return (JStonecuttingRecipe) super.category(category);
   }
 
   @Override

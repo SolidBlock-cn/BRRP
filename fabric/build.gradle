@@ -94,7 +94,7 @@ publishing {
 modrinth {
     projectId = 'JnrDtPAE'
     versionNumber = "${rootProject.mod_version}-mc${rootProject.minecraft_version}-fabric"
-    versionType = 'beta'
+    versionType = 'release'
     uploadFile = remapJar
     gameVersions = (project.supported_minecraft_versions as String).split(',') as List<String>
     loaders = ['fabric']

@@ -6,10 +6,12 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.util.Identifier;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>It's similar to {@link ItemResourceGenerator} and {@link BlockResourceGenerator}, but it provides more <i>static</i> methods so that they can be used for blocks and items that do not implement {@link ItemResourceGenerator}, which are usually vanilla blocks.</p>
@@ -61,14 +63,13 @@ public final class ResourceGeneratorHelper {
   }
 
   @ApiStatus.AvailableSince("0.6.2")
-  public static Identifier getAdvancementIdForRecipe(@NotNull ItemConvertible item, Identifier recipeId) {
+  public static Identifier getAdvancementIdForRecipe(@NotNull ItemConvertible item, Identifier recipeId, @Nullable RecipeCategory recipeCategory) {
     if (item instanceof ItemResourceGenerator generator) {
-      return generator.getAdvancementIdForRecipe(recipeId);
+      return generator.getAdvancementIdForRecipe(recipeId, recipeCategory);
     } else {
-//      final ItemGroup group = item.asItem().getGroup();
-//      if (group != null) {
-//        return recipeId.brrp_prepend("recipes/" + group.getName() + "/");
-//      }
+      if (recipeCategory != null) {
+        return recipeId.brrp_prepend("recipes/" + recipeCategory.getName() + "/");
+      }
       return getItemId(item).brrp_prepend("recipes/");
     }
   }

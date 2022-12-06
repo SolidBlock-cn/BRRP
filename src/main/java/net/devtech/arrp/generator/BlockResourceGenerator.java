@@ -7,14 +7,14 @@ import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.fabricmc.api.EnvType;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +62,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * Query the id of the block in {@link Registry#BLOCK}.<br>
+   * Query the id of the block in {@link Registries#BLOCK}.<br>
    * You <i>must</i> override this method if you're implementing this interface on a non-{@code Block} class, or will use it when it is not yet registered.
    *
    * @return The id of the block.
@@ -262,6 +262,9 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @Contract(pure = true)
   default Identifier getLootTableId() {
+    if (this instanceof AbstractBlock block) {
+      return block.getLootTableId();
+    }
     return getBlockId().brrp_prepend("blocks/");
   }
 
@@ -327,7 +330,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
       if (stonecuttingRecipe != null) {
         final Identifier stonecuttingRecipeId = getStonecuttingRecipeId();
         pack.addRecipe(stonecuttingRecipeId, stonecuttingRecipe);
-        pack.addRecipeAdvancement(stonecuttingRecipeId, getAdvancementIdForRecipe(stonecuttingRecipeId), stonecuttingRecipe);
+        pack.addRecipeAdvancement(stonecuttingRecipeId, getAdvancementIdForRecipe(stonecuttingRecipeId, stonecuttingRecipe), stonecuttingRecipe);
       }
     }
   }

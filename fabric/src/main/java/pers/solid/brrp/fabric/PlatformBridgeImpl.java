@@ -9,19 +9,23 @@ import net.devtech.arrp.api.RRPPreGenEntrypoint;
 import net.devtech.arrp.api.SidedRRPCallback;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import pers.solid.brrp.PlatformBridge;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -82,6 +86,11 @@ public class PlatformBridgeImpl extends PlatformBridge {
   @Override
   public void registerItem(Identifier identifier, Item item) {
     Registry.register(Registries.ITEM, identifier, item);
+  }
+
+  @Override
+  public void setItemGroup(ItemGroup itemGroup, Collection<ItemStack> stacks) {
+    ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> entries.addAll(stacks));
   }
 
   public static PlatformBridge getInstance() {

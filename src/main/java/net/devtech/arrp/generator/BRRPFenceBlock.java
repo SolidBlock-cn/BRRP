@@ -75,13 +75,14 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
   /**
    * This recipe uses the base block and stick as the ingredients.
    *
-   * @see net.minecraft.data.server.RecipeProvider#createFenceRecipe(ItemConvertible, Ingredient)
+   * @see net.minecraft.data.server.recipe.RecipeProvider#createFenceRecipe(ItemConvertible, Ingredient)
    */
   @Override
   public @UnknownNullability("Null if the base block is null.") JRecipe getCraftingRecipe() {
     final Item secondIngredient = getSecondIngredient();
     return baseBlock == null || secondIngredient == null ? null :
         new JShapedRecipe(this)
+            .category(getRecipeCategory())
             .resultCount(3)
             .pattern("W#W", "W#W")
             .addKey("W", baseBlock)

@@ -236,7 +236,7 @@ public class JLootTable implements Cloneable {
    *
    * @param blockId The id (as string) of the block.
    * @return The simplest block loot table.
-   * @see net.minecraft.data.server.BlockLootTableGenerator#drops(ItemConvertible)
+   * @see net.minecraft.data.server.loottable.BlockLootTableGenerator#drops(ItemConvertible)
    */
   @Contract(value = "_ -> new", pure = true)
   public static JLootTable simple(String blockId) {

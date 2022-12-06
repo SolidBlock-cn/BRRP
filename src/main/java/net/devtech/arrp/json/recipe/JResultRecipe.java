@@ -2,8 +2,10 @@ package net.devtech.arrp.json.recipe;
 
 import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A <b>result recipe</b>, as it literally means, is a recipe with a result, which is a {@link JResult} object.
@@ -70,6 +72,13 @@ public abstract class JResultRecipe extends JRecipe {
   @Override
   public JResultRecipe group(final String group) {
     return (JResultRecipe) super.group(group);
+  }
+
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @Override
+  public JResultRecipe category(@Nullable RecipeCategory category) {
+    return (JResultRecipe) super.category(category);
   }
 
   @Override

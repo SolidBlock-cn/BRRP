@@ -3,6 +3,7 @@ package net.devtech.arrp.json.recipe;
 import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 
 /**
@@ -98,6 +99,12 @@ public class JBlastingRecipe extends JCookingRecipe {
   @Override
   public JBlastingRecipe group(final String group) {
     return (JBlastingRecipe) super.group(group);
+  }
+
+  @CanIgnoreReturnValue
+  @Override
+  public JBlastingRecipe category(RecipeCategory category) {
+    return (JBlastingRecipe) super.category(category);
   }
 
   @Override

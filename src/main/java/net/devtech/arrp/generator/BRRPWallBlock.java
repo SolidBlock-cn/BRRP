@@ -13,6 +13,7 @@ import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,11 +72,12 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
   }
 
   /**
-   * @see net.minecraft.data.server.RecipeProvider#getWallRecipe(ItemConvertible, Ingredient)
+   * @see net.minecraft.data.server.recipe.RecipeProvider#getWallRecipe(RecipeCategory, ItemConvertible, Ingredient)
    */
   @Override
   public @UnknownNullability("Null if the base block is null.") JRecipe getCraftingRecipe() {
     return baseBlock == null ? null : new JShapedRecipe(this)
+        .category(getRecipeCategory())
         .resultCount(6)
         .pattern("###", "###")
         .addKey("#", baseBlock)

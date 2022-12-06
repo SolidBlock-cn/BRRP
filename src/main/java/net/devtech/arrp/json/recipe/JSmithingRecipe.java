@@ -1,17 +1,19 @@
 package net.devtech.arrp.json.recipe;
 
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.json.tags.IdentifiedTag;
+import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.data.server.recipe.SmithingRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SmithingRecipe;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
@@ -73,6 +75,13 @@ public class JSmithingRecipe extends JResultRecipe {
   @Override
   public JSmithingRecipe group(final String group) {
     return (JSmithingRecipe) super.group(group);
+  }
+
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
+  @Override
+  public JSmithingRecipe category(@Nullable RecipeCategory category) {
+    return (JSmithingRecipe) super.category(category);
   }
 
   @Override

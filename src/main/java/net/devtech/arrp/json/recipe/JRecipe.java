@@ -13,6 +13,7 @@ import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -38,6 +39,10 @@ public abstract class JRecipe implements Cloneable {
    * The optional recipe group. If defined, in the recipe book, different recipes with equal group will be shown together.
    */
   public String group;
+  /**
+   * The recipe category of 1.19.3. It will be used in the recipe location.
+   */
+  public RecipeCategory category;
 
   /**
    * <p>The advancement of this recipe. It usually triggers when you unlocked the recipe or obtained an ingredient, and rewards you with unlocking this recipe.</p>
@@ -137,6 +142,16 @@ public abstract class JRecipe implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   public JRecipe group(final String group) {
     this.group = group;
+    return this;
+  }
+
+  /**
+   * Set the recipe category of the recipe.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  public JRecipe category(RecipeCategory category) {
+    this.category = category;
     return this;
   }
 

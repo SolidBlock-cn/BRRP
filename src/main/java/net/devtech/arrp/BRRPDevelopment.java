@@ -1,5 +1,6 @@
 package net.devtech.arrp;
 
+import com.google.common.collect.Collections2;
 import net.devtech.arrp.api.RRPEventHelper;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.generator.*;
@@ -10,17 +11,23 @@ import net.devtech.arrp.json.tags.IdentifiedTag;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroups;
+import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.TestOnly;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.solid.brrp.PlatformBridge;
+
+import java.util.List;
 
 /**
  * This class is loaded only in development environment. So it is just for testing, not the real part of this mod.
@@ -49,6 +56,15 @@ public class BRRPDevelopment {
     blockItem(LAVA_FENCE_GATE);
     blockItem(LAVA_WALL);
     blockItem(SMOOTH_STONE);
+    LAVA_BLOCK.setRecipeCategory(RecipeCategory.BUILDING_BLOCKS);
+    LAVA_STAIRS.setRecipeCategory(RecipeCategory.BUILDING_BLOCKS);
+    LAVA_SLAB.setRecipeCategory(RecipeCategory.BUILDING_BLOCKS);
+    LAVA_FENCE.setRecipeCategory(RecipeCategory.DECORATIONS);
+    LAVA_FENCE_GATE.setRecipeCategory(RecipeCategory.DECORATIONS);
+    LAVA_WALL.setRecipeCategory(RecipeCategory.DECORATIONS);
+    SMOOTH_STONE.setRecipeCategory(RecipeCategory.BUILDING_BLOCKS);
+
+    PlatformBridge.getInstance().setItemGroup(ItemGroups.getGroups().get(4), Collections2.transform(List.of(LAVA_BLOCK, LAVA_STAIRS, LAVA_SLAB, LAVA_FENCE, LAVA_FENCE_GATE, LAVA_WALL, SMOOTH_STONE), ItemStack::new));
   }
 
   @SuppressWarnings("UnusedReturnValue")
@@ -108,9 +124,10 @@ public class BRRPDevelopment {
       ((IdentifiedTag) new IdentifiedTag("blocks", new Identifier("fences")).addBlocks(LAVA_FENCE)).write(PACK);
       ((IdentifiedTag) new IdentifiedTag("blocks", new Identifier("fence_gates")).addBlocks(LAVA_FENCE_GATE)).write(PACK);
       ((IdentifiedTag) new IdentifiedTag("blocks", new Identifier("walls")).addBlock(LAVA_WALL)).write(PACK);
+      ((IdentifiedTag) new IdentifiedTag("blocks", BlockTags.PICKAXE_MINEABLE.id()).addBlock(SMOOTH_STONE)).write(PACK);
 
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone"), "transportation", new JShapedRecipe(Blocks.SMOOTH_STONE_SLAB).resultCount(6).pattern("###").addKey("#", SMOOTH_STONE).addInventoryChangedCriterion("has_smooth_stone", SMOOTH_STONE));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_from_stonecutting"), "transportation", new JStonecuttingRecipe(SMOOTH_STONE, Blocks.SMOOTH_STONE_SLAB, 2).addInventoryChangedCriterion("has_smooth_stone", SMOOTH_STONE));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone"), "transportation", new JShapedRecipe(Blocks.SMOOTH_STONE_SLAB).resultCount(6).pattern("###").addKey("#", SMOOTH_STONE).category(RecipeCategory.BUILDING_BLOCKS).addInventoryChangedCriterion("has_smooth_stone", SMOOTH_STONE));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_from_stonecutting"), "transportation", new JStonecuttingRecipe(SMOOTH_STONE, Blocks.SMOOTH_STONE_SLAB, 2).category(RecipeCategory.BUILDING_BLOCKS).addInventoryChangedCriterion("has_smooth_stone", SMOOTH_STONE));
     }
     return PACK;
   }

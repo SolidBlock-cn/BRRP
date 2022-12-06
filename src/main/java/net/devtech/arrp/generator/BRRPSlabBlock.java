@@ -12,6 +12,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.data.client.TextureKey;
+import net.minecraft.data.server.loottable.VanillaBlockLootTableGenerator;
 import net.minecraft.data.server.recipe.RecipeProvider;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.Ingredient;
@@ -86,8 +87,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
 
   @Override
   public JLootTable getLootTable() {
-    return null;
-//    return JLootTable.delegate(BlockLootTableGenerator.slabDrops(this));
+    return JLootTable.delegate(new VanillaBlockLootTableGenerator().slabDrops(this));
   }
 
   /**
@@ -96,6 +96,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
   @Override
   public @UnknownNullability("Null if the base block is null.") JRecipe getCraftingRecipe() {
     return baseBlock == null ? null : new JShapedRecipe(this)
+        .category(getRecipeCategory())
         .resultCount(6)
         .pattern("###")
         .addKey("#", baseBlock)

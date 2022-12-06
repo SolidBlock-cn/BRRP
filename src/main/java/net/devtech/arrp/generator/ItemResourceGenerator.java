@@ -1,5 +1,7 @@
 package net.devtech.arrp.generator;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.models.JModel;
@@ -8,11 +10,13 @@ import net.devtech.arrp.json.recipe.JRecipe;
 import net.fabricmc.api.EnvType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.PlatformBridge;
 
@@ -30,6 +34,8 @@ import pers.solid.brrp.PlatformBridge;
  */
 @SuppressWarnings("unused")
 public interface ItemResourceGenerator {
+  Object2ObjectMap<Item, RecipeCategory> ITEM_TO_RECIPE_CATEGORY = new Object2ObjectOpenHashMap<>();
+
   /**
    * Query the id of the item. You <i>override</i> this method if your class that implements this method is not a subtype of {@link Item}.
    *
@@ -122,6 +128,36 @@ public interface ItemResourceGenerator {
   }
 
   /**
+   * Get the recipe category of this item. You can just modify this method so that you do not need to modify {@link #ITEM_TO_RECIPE_CATEGORY}.
+   *
+   * @return The recipe category of this item. It may be used in {@link #getCraftingRecipe()}.
+   */
+  @ApiStatus.AvailableSince("0.8.1-mc1.19.3")
+  @Contract(pure = true)
+  default @Nullable RecipeCategory getRecipeCategory() {
+    if (this instanceof ItemConvertible itemConvertible) {
+      return ITEM_TO_RECIPE_CATEGORY.get(itemConvertible.asItem());
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Set the recipe category of this item. It will directly modify {@link #ITEM_TO_RECIPE_CATEGORY} which may be used in {@link #getRecipeCategory()}. You may also directly override {@link #getRecipeCategory()} to modify the recipe category.
+   * <p>
+   * Note that this method is only used for data generation, so you should invoke it before the recipe is generated.
+   *
+   * @param recipeCategory The recipe category.
+   */
+  default void setRecipeCategory(@Nullable RecipeCategory recipeCategory) {
+    if (this instanceof ItemConvertible itemConvertible) {
+      ITEM_TO_RECIPE_CATEGORY.put(itemConvertible.asItem(), recipeCategory);
+    } else {
+      throw new UnsupportedOperationException("Cannot invoke setRecipeCategory for non-ItemConvertible objects. Maybe you have to modify this method.");
+    }
+  }
+
+  /**
    * <p>Get the identifier of its recipe file. It is usually the same of the item id.</p>
    * <p>It can be the id for any form of recipe: crafting, smelting, stonecutting, etc. If an item has multiple recipes to make, different ids are distinguished by suffix. For example, a blackstone stairs block can either be crafted or be stone-cut; the crafting recipe id is <span style="color:maroon">{@code minecraft:blackstone_stairs}</span> and the stonecutting id is <span style="color:maroon">{@code minecraft:blackstone_stairs_from_stonecutting}</span>.</p>
    *
@@ -134,20 +170,30 @@ public interface ItemResourceGenerator {
 
   /**
    * <p>Get the identifier of the advancement that corresponds to the recipe. It is usually in the format of <code style=color:maroon><i>namespace</i>:recipes/<i>group</i>/<i>path</i></code>. For example, the advancement id that corresponds to the recipe id for acacia stairs can be <code style=color:maroon>minecraft:recipe/building_blocks/acacia_stairs</code>.</p>
-   * <p>In this method, the recipe id you input will be appended with {@code "recipes/"} and the item group name, if there is one.</p>
+   * <p>In this method, the recipe id you input will be appended with {@code "recipes/"} and the recipe category name, if there is one.</p>
    *
    * @return The id of the advancement that corresponds to its recipe.
    */
-  @ApiStatus.AvailableSince("0.6.2")
+  @ApiStatus.AvailableSince("0.8.1")
   @Contract(pure = true)
-  default Identifier getAdvancementIdForRecipe(Identifier recipeId) {
+  default Identifier getAdvancementIdForRecipe(Identifier recipeId, @Nullable RecipeCategory recipeCategory) {
     if (this instanceof ItemConvertible itemConvertible) {
-//      final ItemGroup group = itemConvertible.asItem().getGroup();
-//      if (group != null) {
-//        return recipeId.brrp_prepend("recipes/" + group.getName() + "/");
-//      }
+      if (recipeCategory != null) {
+        return recipeId.brrp_prepend("recipes/" + recipeCategory.getName() + "/");
+      }
     }
     return getItemId().brrp_prepend("recipes/");
+  }
+
+  /**
+   * Get the identifier of the advancement that corresponds to the recipe. The recipe category in the {@code recipe} parameter will be used.
+   *
+   * @return The id of the advancement that corresponds to its recipe.
+   */
+  @ApiStatus.AvailableSince("0.8.1")
+  @Contract(pure = true)
+  default Identifier getAdvancementIdForRecipe(Identifier recipeId, @NotNull JRecipe recipe) {
+    return getAdvancementIdForRecipe(recipeId, recipe.category);
   }
 
   /**
@@ -162,7 +208,7 @@ public interface ItemResourceGenerator {
     if (craftingRecipe != null) {
       final Identifier recipeId = getRecipeId();
       pack.addRecipe(recipeId, craftingRecipe);
-      pack.addRecipeAdvancement(recipeId, getAdvancementIdForRecipe(recipeId), craftingRecipe);
+      pack.addRecipeAdvancement(recipeId, getAdvancementIdForRecipe(recipeId, craftingRecipe), craftingRecipe);
     }
   }
 

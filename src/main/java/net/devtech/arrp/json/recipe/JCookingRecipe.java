@@ -3,8 +3,9 @@ package net.devtech.arrp.json.recipe;
 import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.util.Identifier;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 
 /**
@@ -140,6 +141,11 @@ public abstract class JCookingRecipe extends JRecipe {
   @Override
   public JCookingRecipe group(final String group) {
     return (JCookingRecipe) super.group(group);
+  }
+
+  @Override
+  public JCookingRecipe category(RecipeCategory category) {
+    return (JCookingRecipe) super.category(category);
   }
 
   @Override

@@ -3,9 +3,11 @@ package net.devtech.arrp.json.recipe;
 import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.util.Identifier;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>This is a recipe for <b>shaped crafting</b>.</p>
@@ -103,6 +105,10 @@ public class JShapedRecipe extends JResultRecipe {
     return (JShapedRecipe) super.group(group);
   }
 
+  @Override
+  public JShapedRecipe category(@Nullable RecipeCategory category) {
+    return (JShapedRecipe) super.category(category);
+  }
 
   @Override
   public JShapedRecipe clone() {

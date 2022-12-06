@@ -2,10 +2,7 @@ package net.devtech.arrp.impl;
 
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import joptsimple.internal.Strings;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
@@ -26,6 +23,7 @@ import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.provider.number.LootNumberProvider;
 import net.minecraft.loot.provider.number.LootNumberProviderTypes;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.resource.AbstractFileResourcePack;
 import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourcePack;
@@ -85,6 +83,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       .registerTypeHierarchyAdapter(BlockStateSupplier.class, (JsonSerializer<BlockStateSupplier>) (builder, type, jsonSerializationContext) -> builder.get())
       .registerTypeHierarchyAdapter(RecipeJsonProvider.class, ((JsonSerializer<RecipeJsonProvider>) (recipe, typeOrSrc, context) -> recipe.toJson()))
       .registerTypeHierarchyAdapter(Advancement.Builder.class, (JsonSerializer<Advancement.Builder>) (builder, type, jsonSerializationContext) -> builder.toJson())
+      .registerTypeAdapter(RecipeCategory.class, (JsonSerializer<RecipeCategory>) (src, type, context) -> new JsonPrimitive(src.getName()))
       .create();
   // if it works, don't touch it
   /**
