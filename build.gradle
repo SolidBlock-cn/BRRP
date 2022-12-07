@@ -50,7 +50,7 @@ subprojects {
     loom {
         runs {
             client {
-                property "username", "Solid"
+                programArg "-username=Solid"
                 runDir = '../run'
             }
             server {
