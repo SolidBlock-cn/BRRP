@@ -34,6 +34,9 @@ import pers.solid.brrp.PlatformBridge;
  */
 @SuppressWarnings("unused")
 public interface ItemResourceGenerator {
+  /**
+   * This map is used for {@link #getRecipeCategory()}, in cases you don't want to override that category. It will be used only for data generation.
+   */
   Object2ObjectMap<Item, RecipeCategory> ITEM_TO_RECIPE_CATEGORY = new Object2ObjectOpenHashMap<>();
 
   /**
@@ -169,7 +172,7 @@ public interface ItemResourceGenerator {
   }
 
   /**
-   * <p>Get the identifier of the advancement that corresponds to the recipe. It is usually in the format of <code style=color:maroon><i>namespace</i>:recipes/<i>group</i>/<i>path</i></code>. For example, the advancement id that corresponds to the recipe id for acacia stairs can be <code style=color:maroon>minecraft:recipe/building_blocks/acacia_stairs</code>.</p>
+   * <p>Get the identifier of the advancement that corresponds to the recipe. It is usually in the format of <code style=color:maroon><i>namespace</i>:recipes/<i>category</i>/<i>path</i></code>. For example, the advancement id that corresponds to the recipe id for acacia stairs can be <code style=color:maroon>minecraft:recipe/building_blocks/acacia_stairs</code>.</p>
    * <p>In this method, the recipe id you input will be appended with {@code "recipes/"} and the recipe category name, if there is one.</p>
    *
    * @return The id of the advancement that corresponds to its recipe.
@@ -193,7 +196,7 @@ public interface ItemResourceGenerator {
   @ApiStatus.AvailableSince("0.8.1")
   @Contract(pure = true)
   default Identifier getAdvancementIdForRecipe(Identifier recipeId, @NotNull JRecipe recipe) {
-    return getAdvancementIdForRecipe(recipeId, recipe.category);
+    return getAdvancementIdForRecipe(recipeId, recipe.recipeCategory);
   }
 
   /**

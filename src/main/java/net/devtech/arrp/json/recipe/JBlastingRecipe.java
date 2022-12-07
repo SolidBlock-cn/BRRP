@@ -3,8 +3,10 @@ package net.devtech.arrp.json.recipe;
 import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.CookingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A <b>blasting recipe</b> is a recipe for blast furnace.
@@ -103,7 +105,12 @@ public class JBlastingRecipe extends JCookingRecipe {
 
   @CanIgnoreReturnValue
   @Override
-  public JBlastingRecipe category(RecipeCategory category) {
+  public JBlastingRecipe recipeCategory(RecipeCategory category) {
+    return (JBlastingRecipe) super.recipeCategory(category);
+  }
+
+  @Override
+  public JBlastingRecipe category(@Nullable CookingRecipeCategory category) {
     return (JBlastingRecipe) super.category(category);
   }
 

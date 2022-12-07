@@ -3,6 +3,7 @@ package net.devtech.arrp.json.recipe;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.ShapelessRecipe;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
@@ -110,7 +111,12 @@ public class JShapelessRecipe extends JResultRecipe {
   }
 
   @Override
-  public JShapelessRecipe category(@Nullable RecipeCategory category) {
+  public JShapelessRecipe recipeCategory(@Nullable RecipeCategory category) {
+    return (JShapelessRecipe) super.recipeCategory(category);
+  }
+
+  @Override
+  public JShapelessRecipe category(@Nullable CraftingRecipeCategory category) {
     return (JShapelessRecipe) super.category(category);
   }
 

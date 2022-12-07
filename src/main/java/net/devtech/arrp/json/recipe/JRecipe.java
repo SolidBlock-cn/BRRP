@@ -40,9 +40,9 @@ public abstract class JRecipe implements Cloneable {
    */
   public String group;
   /**
-   * The recipe category of 1.19.3. It will be used in the recipe location.
+   * The recipe category of 1.19.3. It will be used in the location of the recipe advancement, in place of the former item groups. In previous versions, the location of the advancement of the recipe is decided by the item group and the recipe id.
    */
-  public RecipeCategory category;
+  public transient @Nullable RecipeCategory recipeCategory;
 
   /**
    * <p>The advancement of this recipe. It usually triggers when you unlocked the recipe or obtained an ingredient, and rewards you with unlocking this recipe.</p>
@@ -150,8 +150,8 @@ public abstract class JRecipe implements Cloneable {
    */
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
-  public JRecipe category(RecipeCategory category) {
-    this.category = category;
+  public JRecipe recipeCategory(RecipeCategory category) {
+    this.recipeCategory = category;
     return this;
   }
 

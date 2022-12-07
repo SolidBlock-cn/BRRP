@@ -126,8 +126,8 @@ public class BRRPDevelopment {
       ((IdentifiedTag) new IdentifiedTag("blocks", new Identifier("walls")).addBlock(LAVA_WALL)).write(PACK);
       ((IdentifiedTag) new IdentifiedTag("blocks", BlockTags.PICKAXE_MINEABLE.id()).addBlock(SMOOTH_STONE)).write(PACK);
 
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone"), "transportation", new JShapedRecipe(Blocks.SMOOTH_STONE_SLAB).resultCount(6).pattern("###").addKey("#", SMOOTH_STONE).category(RecipeCategory.BUILDING_BLOCKS).addInventoryChangedCriterion("has_smooth_stone", SMOOTH_STONE));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_from_stonecutting"), "transportation", new JStonecuttingRecipe(SMOOTH_STONE, Blocks.SMOOTH_STONE_SLAB, 2).category(RecipeCategory.BUILDING_BLOCKS).addInventoryChangedCriterion("has_smooth_stone", SMOOTH_STONE));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone"), "transportation", new JShapedRecipe(Blocks.SMOOTH_STONE_SLAB).resultCount(6).pattern("###").addKey("#", SMOOTH_STONE).recipeCategory(RecipeCategory.BUILDING_BLOCKS).addInventoryChangedCriterion("has_smooth_stone", SMOOTH_STONE));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_from_stonecutting"), "transportation", new JStonecuttingRecipe(SMOOTH_STONE, Blocks.SMOOTH_STONE_SLAB, 2).recipeCategory(RecipeCategory.BUILDING_BLOCKS).addInventoryChangedCriterion("has_smooth_stone", SMOOTH_STONE));
     }
     return PACK;
   }

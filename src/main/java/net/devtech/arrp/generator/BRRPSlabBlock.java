@@ -96,7 +96,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
   @Override
   public @UnknownNullability("Null if the base block is null.") JRecipe getCraftingRecipe() {
     return baseBlock == null ? null : new JShapedRecipe(this)
-        .category(getRecipeCategory())
+        .recipeCategory(getRecipeCategory())
         .resultCount(6)
         .pattern("###")
         .addKey("#", baseBlock)

@@ -30,6 +30,7 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.StringIdentifiable;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +85,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       .registerTypeHierarchyAdapter(RecipeJsonProvider.class, ((JsonSerializer<RecipeJsonProvider>) (recipe, typeOrSrc, context) -> recipe.toJson()))
       .registerTypeHierarchyAdapter(Advancement.Builder.class, (JsonSerializer<Advancement.Builder>) (builder, type, jsonSerializationContext) -> builder.toJson())
       .registerTypeAdapter(RecipeCategory.class, (JsonSerializer<RecipeCategory>) (src, type, context) -> new JsonPrimitive(src.getName()))
+      .registerTypeHierarchyAdapter(StringIdentifiable.class, (JsonSerializer<StringIdentifiable>) (src, typeOfSrc, context) -> new JsonPrimitive(src.asString()))
       .create();
   // if it works, don't touch it
   /**

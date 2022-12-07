@@ -3,6 +3,7 @@ package net.devtech.arrp.json.recipe;
 import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
@@ -106,7 +107,12 @@ public class JShapedRecipe extends JResultRecipe {
   }
 
   @Override
-  public JShapedRecipe category(@Nullable RecipeCategory category) {
+  public JShapedRecipe recipeCategory(@Nullable RecipeCategory category) {
+    return (JShapedRecipe) super.recipeCategory(category);
+  }
+
+  @Override
+  public JShapedRecipe category(@Nullable CraftingRecipeCategory category) {
     return (JShapedRecipe) super.category(category);
   }
 

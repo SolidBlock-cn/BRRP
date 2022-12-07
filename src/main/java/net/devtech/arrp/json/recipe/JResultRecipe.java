@@ -2,6 +2,7 @@ package net.devtech.arrp.json.recipe;
 
 import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
@@ -15,6 +16,10 @@ public abstract class JResultRecipe extends JRecipe {
    * The result of the recipe. It is final, so it should be specified when the object is created.
    */
   public final JResult result;
+  /**
+   * The category in the recipe book. It exists only for shapeless and shaped crafting recipes.
+   */
+  public @Nullable CraftingRecipeCategory category;
 
   /**
    * Create a new recipe with the specified type and result.
@@ -74,11 +79,30 @@ public abstract class JResultRecipe extends JRecipe {
     return (JResultRecipe) super.group(group);
   }
 
+  /**
+   * Set the recipe category as well as the crafting category for this recipe.
+   */
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   @Override
-  public JResultRecipe category(@Nullable RecipeCategory category) {
-    return (JResultRecipe) super.category(category);
+  public JResultRecipe recipeCategory(@Nullable RecipeCategory category) {
+    this.category = category == null ? null : switch (category) {
+      case BUILDING_BLOCKS -> CraftingRecipeCategory.BUILDING;
+      case TOOLS, COMBAT -> CraftingRecipeCategory.EQUIPMENT;
+      case REDSTONE -> CraftingRecipeCategory.REDSTONE;
+      default -> CraftingRecipeCategory.MISC;
+    };
+    return (JResultRecipe) super.recipeCategory(category);
+  }
+
+  /**
+   * Set the crafting category of this recipe, which will be used in the display of recipe books.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  public JRecipe category(@Nullable CraftingRecipeCategory category) {
+    this.category = category;
+    return this;
   }
 
   @Override

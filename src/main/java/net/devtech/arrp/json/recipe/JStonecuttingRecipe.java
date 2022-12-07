@@ -99,8 +99,8 @@ public class JStonecuttingRecipe extends JRecipe {
   }
 
   @Override
-  public JStonecuttingRecipe category(RecipeCategory category) {
-    return (JStonecuttingRecipe) super.category(category);
+  public JStonecuttingRecipe recipeCategory(RecipeCategory category) {
+    return (JStonecuttingRecipe) super.recipeCategory(category);
   }
 
   @Override

@@ -2,8 +2,10 @@ package net.devtech.arrp.json.recipe;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.CookingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>A <b>campfire recipe</b> is used for a campfire block.</p>
@@ -103,7 +105,12 @@ public class JCampfireRecipe extends JCookingRecipe {
   }
 
   @Override
-  public JCampfireRecipe category(RecipeCategory category) {
+  public JCampfireRecipe recipeCategory(RecipeCategory category) {
+    return (JCampfireRecipe) super.recipeCategory(category);
+  }
+
+  @Override
+  public JCampfireRecipe category(@Nullable CookingRecipeCategory category) {
     return (JCampfireRecipe) super.category(category);
   }
 

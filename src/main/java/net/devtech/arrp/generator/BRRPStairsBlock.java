@@ -77,7 +77,7 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
   public @UnknownNullability JRecipe getCraftingRecipe() {
     return new JShapedRecipe(new JResult(this)
         .count(4))
-        .category(getRecipeCategory())
+        .recipeCategory(getRecipeCategory())
         .pattern("#  ", "## ", "###")
         .addKey("#", baseBlock)
         .addInventoryChangedCriterion("has_the_ingredient", baseBlock);

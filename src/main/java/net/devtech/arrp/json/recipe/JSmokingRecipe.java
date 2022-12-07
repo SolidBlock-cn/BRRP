@@ -2,8 +2,10 @@ package net.devtech.arrp.json.recipe;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.CookingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>A <b>smoking</b> recipe is used for smokers.</p>
@@ -104,7 +106,12 @@ public class JSmokingRecipe extends JCookingRecipe {
   }
 
   @Override
-  public JSmokingRecipe category(RecipeCategory category) {
+  public JSmokingRecipe recipeCategory(RecipeCategory category) {
+    return (JSmokingRecipe) super.recipeCategory(category);
+  }
+
+  @Override
+  public JSmokingRecipe category(@Nullable CookingRecipeCategory category) {
     return (JSmokingRecipe) super.category(category);
   }
 

@@ -1,6 +1,7 @@
 package net.devtech.arrp.generator;
 
 import net.devtech.arrp.annotations.PreferredEnvironment;
+import net.devtech.arrp.json.recipe.JRecipe;
 import net.fabricmc.api.EnvType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -10,6 +11,7 @@ import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +64,21 @@ public final class ResourceGeneratorHelper {
     }
   }
 
-  @ApiStatus.AvailableSince("0.6.2")
+  @Contract(pure = true)
+  @ApiStatus.AvailableSince("0.8.1")
+  public static Identifier getAdvancementIdForRecipe(@NotNull ItemConvertible item, Identifier recipeId, @NotNull JRecipe recipe) {
+    if (item instanceof ItemResourceGenerator generator) {
+      return generator.getAdvancementIdForRecipe(recipeId, recipe);
+    } else {
+      if (recipe.recipeCategory != null) {
+        return recipeId.brrp_prepend("recipes/" + recipe.recipeCategory.getName() + "/");
+      }
+      return recipeId;
+    }
+  }
+
+  @Contract(pure = true)
+  @ApiStatus.AvailableSince("0.8.1")
   public static Identifier getAdvancementIdForRecipe(@NotNull ItemConvertible item, Identifier recipeId, @Nullable RecipeCategory recipeCategory) {
     if (item instanceof ItemResourceGenerator generator) {
       return generator.getAdvancementIdForRecipe(recipeId, recipeCategory);
@@ -70,7 +86,7 @@ public final class ResourceGeneratorHelper {
       if (recipeCategory != null) {
         return recipeId.brrp_prepend("recipes/" + recipeCategory.getName() + "/");
       }
-      return getItemId(item).brrp_prepend("recipes/");
+      return recipeId;
     }
   }
 

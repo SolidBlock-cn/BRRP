@@ -9,6 +9,7 @@ import net.minecraft.data.server.recipe.SmithingRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SmithingRecipe;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
@@ -80,7 +81,18 @@ public class JSmithingRecipe extends JResultRecipe {
   @CanIgnoreReturnValue
   @Contract("_ -> this")
   @Override
-  public JSmithingRecipe category(@Nullable RecipeCategory category) {
+  public JSmithingRecipe recipeCategory(@Nullable RecipeCategory category) {
+    return (JSmithingRecipe) super.recipeCategory(category);
+  }
+
+  /**
+   * @deprecated Note that this type of category usually does not exist in smithing recipe.
+   */
+  @CanIgnoreReturnValue
+  @Contract("_ -> this")
+  @Deprecated
+  @Override
+  public JSmithingRecipe category(@Nullable CraftingRecipeCategory category) {
     return (JSmithingRecipe) super.category(category);
   }
 

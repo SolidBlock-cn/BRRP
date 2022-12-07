@@ -2,8 +2,10 @@ package net.devtech.arrp.json.recipe;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.CookingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The <b>smelting recipe</b>s are used for furnace blocks.
@@ -103,7 +105,12 @@ public class JSmeltingRecipe extends JCookingRecipe {
   }
 
   @Override
-  public JSmeltingRecipe category(RecipeCategory category) {
+  public JSmeltingRecipe recipeCategory(RecipeCategory category) {
+    return (JSmeltingRecipe) super.recipeCategory(category);
+  }
+
+  @Override
+  public JSmeltingRecipe category(@Nullable CookingRecipeCategory category) {
     return (JSmeltingRecipe) super.category(category);
   }
 

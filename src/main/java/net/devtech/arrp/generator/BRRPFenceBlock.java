@@ -82,7 +82,7 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
     final Item secondIngredient = getSecondIngredient();
     return baseBlock == null || secondIngredient == null ? null :
         new JShapedRecipe(this)
-            .category(getRecipeCategory())
+            .recipeCategory(getRecipeCategory())
             .resultCount(3)
             .pattern("W#W", "W#W")
             .addKey("W", baseBlock)

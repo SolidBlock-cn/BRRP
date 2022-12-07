@@ -3,10 +3,12 @@ package net.devtech.arrp.json.recipe;
 import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.book.CookingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>A <b>cooking recipe</b> is a recipe used in a furnace. It has several types: {@linkplain JBlastingRecipe blasting}, {@linkplain JCampfireRecipe campfire_cooking}, {@linkplain JSmeltingRecipe smelting} and {@linkplain JSmokingRecipe smoking}.</p>
@@ -25,6 +27,10 @@ public abstract class JCookingRecipe extends JRecipe {
    * The identifier (as string) of the resulting item. Only one item can be specified without providing the amount or nbt.
    */
   public final String result;
+  /**
+   * The category of the cooking recipe.
+   */
+  public CookingRecipeCategory category;
 
   /**
    * The experience generated when finishing cooking.
@@ -143,9 +149,18 @@ public abstract class JCookingRecipe extends JRecipe {
     return (JCookingRecipe) super.group(group);
   }
 
+  /**
+   * Set the category of the cooking recipe, which will be used in recipe books.
+   */
+  @Contract(value = "_ -> this", mutates = "this")
+  public JCookingRecipe category(final @Nullable CookingRecipeCategory category) {
+    this.category = category;
+    return this;
+  }
+
   @Override
-  public JCookingRecipe category(RecipeCategory category) {
-    return (JCookingRecipe) super.category(category);
+  public JCookingRecipe recipeCategory(RecipeCategory category) {
+    return (JCookingRecipe) super.recipeCategory(category);
   }
 
   @Override
