@@ -6,7 +6,7 @@ plugins {
 
 architectury {
     minecraft = rootProject.minecraft_version
-    common(rootProject.enabled_platforms.split(","))
+    common((rootProject.enabled_platforms as String).split(","))
 }
 
 allprojects {
@@ -16,7 +16,7 @@ allprojects {
     apply plugin: "maven-publish"
 
     archivesBaseName = rootProject.archives_base_name
-    version = rootProject.mod_version + "-1.19.3"
+    version = rootProject.mod_version + "-" + project.minecraft_version
     group = rootProject.maven_group
 
     sourceCompatibility = JavaVersion.VERSION_17
@@ -58,6 +58,14 @@ subprojects {
             }
         }
     }
+
+    publishing {
+        repositories {
+            maven {
+                url = rootProject.file('../mvn-repo').path
+            }
+        }
+    }
 }
 
 loom {
@@ -69,8 +77,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
 
     // 用于 Forge 的 event 部分
-    modCompileOnly "net.minecraftforge:eventbus:6.0.3"
-    modCompileOnly "net.minecraftforge:fmlcore:1.19.2-43.1.52"
+    modCompileOnly "net.minecraftforge:eventbus:+"
+    modCompileOnly "net.minecraftforge:fmlcore:${rootProject.minecraft_version}-+"
 }
 
 publishing {
@@ -81,11 +89,5 @@ publishing {
         }
     }
     repositories {
-    }
-}
-
-task buildall {
-    subprojects.forEach {
-        dependsOn it.build
     }
 }

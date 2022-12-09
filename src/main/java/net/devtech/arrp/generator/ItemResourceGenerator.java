@@ -26,7 +26,7 @@ import pers.solid.brrp.PlatformBridge;
  * <p>This interface is divided into three parts:</p>
  * <ul>
  *   <li>general part: to get the identifier of this instance.</li>
- *   <li>client part: methods related to generating and writing client assets. It's <i>highly recommended but not required</i> to annotate the methods as {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code>, because they are only used in client distribution. When running on a dedicated server, they should be ignored.</li>
+ *   <li>client part: methods related to generating and writing client assets. It's <i>highly recommended but not required</i> to annotate the methods as {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code> or <code>@OnlyIn(Dist.CLIENT)</code>, because they are only used in client distribution. When running on a dedicated server, they should be ignored.</li>
  *   <li>server part: methods related to generating and writing server data. Please do not annotate them with {@code @Environment{EnvType.SERVER}}, unless you're sure to do so, as they will be used in client distribution.</li>
  * </ul>
  * <p>Most "get" methods are nullable, which means, when writing (in those "write" methods) the values into the runtime resource pack, these null values will be ignored. When overriding these "get" methods, you can annotate @NotNull if you're sure that the values are not null.</p>
@@ -40,7 +40,7 @@ public interface ItemResourceGenerator {
   Object2ObjectMap<Item, RecipeCategory> ITEM_TO_RECIPE_CATEGORY = new Object2ObjectOpenHashMap<>();
 
   /**
-   * Query the id of the item. You <i>override</i> this method if your class that implements this method is not a subtype of {@link Item}.
+   * Query the id of the item. You have to <i>override</i> this method if your class that implements this method is not a subtype of {@link Item}.
    *
    * @return The id of the item.
    */
@@ -54,7 +54,7 @@ public interface ItemResourceGenerator {
   // It's recommended to annotate @Environment(EnvType.CLIENT) when overriding following methods.
 
   /**
-   * The id of the model of its block item. It is usually {@code <i>namespace</i>:item/<i>path</i>}.
+   * The id of the model of its block item. It is usually <code><i>namespace</i>:item/<i>path</i></code>.
    *
    * @return The id of the item model.
    */
@@ -100,8 +100,8 @@ public interface ItemResourceGenerator {
   }
 
   /**
-   * Write client assets of this item. In this case, only item model is written, but you can add more. For example, in {@link BlockResourceGenerator#writeAssets}, the block states definition and block model are also written.<br>
-   * It's recommended to restrict the call to this method in client environment, like the follows:
+   * <p>Write client assets of this item. In this case, only item model is written, but you can add more. For example, in {@link BlockResourceGenerator#writeAssets}, the block states definition and block model are also written.</p>
+   * <p>It's recommended to restrict the call to this method in client environment, like the follows:</p>
    * <pre>{@code
    * if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
    *   writeAssets(pack);
@@ -152,6 +152,7 @@ public interface ItemResourceGenerator {
    *
    * @param recipeCategory The recipe category.
    */
+  @ApiStatus.AvailableSince("0.8.1-mc1.19.3")
   default void setRecipeCategory(@Nullable RecipeCategory recipeCategory) {
     if (this instanceof ItemConvertible itemConvertible) {
       ITEM_TO_RECIPE_CATEGORY.put(itemConvertible.asItem(), recipeCategory);
@@ -173,19 +174,19 @@ public interface ItemResourceGenerator {
 
   /**
    * <p>Get the identifier of the advancement that corresponds to the recipe. It is usually in the format of <code style=color:maroon><i>namespace</i>:recipes/<i>category</i>/<i>path</i></code>. For example, the advancement id that corresponds to the recipe id for acacia stairs can be <code style=color:maroon>minecraft:recipe/building_blocks/acacia_stairs</code>.</p>
-   * <p>In this method, the recipe id you input will be appended with {@code "recipes/"} and the recipe category name, if there is one.</p>
+   * <p>In this method, the recipe id you input will be prepended with {@code "recipes/"} and the recipe category name, if there is one.</p>
    *
    * @return The id of the advancement that corresponds to its recipe.
+   * @since 0.8.2 Fixed the wrong calculation of advancement id.
    */
   @ApiStatus.AvailableSince("0.8.1")
   @Contract(pure = true)
   default Identifier getAdvancementIdForRecipe(Identifier recipeId, @Nullable RecipeCategory recipeCategory) {
-    if (this instanceof ItemConvertible itemConvertible) {
-      if (recipeCategory != null) {
-        return recipeId.brrp_prepend("recipes/" + recipeCategory.getName() + "/");
-      }
+    if (recipeCategory != null) {
+      return recipeId.brrp_prepend("recipes/" + recipeCategory.getName() + "/");
+    } else {
+      return recipeId.brrp_prepend("recipes/");
     }
-    return getItemId().brrp_prepend("recipes/");
   }
 
   /**
@@ -193,7 +194,7 @@ public interface ItemResourceGenerator {
    *
    * @return The id of the advancement that corresponds to its recipe.
    */
-  @ApiStatus.AvailableSince("0.8.1")
+  @ApiStatus.AvailableSince("0.8.1-mc1.19.3")
   @Contract(pure = true)
   default Identifier getAdvancementIdForRecipe(Identifier recipeId, @NotNull JRecipe recipe) {
     return getAdvancementIdForRecipe(recipeId, recipe.recipeCategory);
@@ -256,6 +257,25 @@ public interface ItemResourceGenerator {
     } else if (resourceType == ResourceType.CLIENT_RESOURCES) {
       writeAssets(pack);
     } else {
+      writeData(pack);
+    }
+  }
+
+  /**
+   * Write resources in the specified environments. It's not recommended to override this method.
+   *
+   * @param pack           The runtime resource pack.
+   * @param clientIncluded Whether to write client resources to this object.
+   * @param serverIncluded Whether to write server data to this object.
+   */
+  @Contract(mutates = "param1")
+  @ApiStatus.AvailableSince("0.8.2")
+  @ApiStatus.OverrideOnly
+  default void writeResources(RuntimeResourcePack pack, boolean clientIncluded, boolean serverIncluded) {
+    if (clientIncluded) {
+      writeAssets(pack);
+    }
+    if (serverIncluded) {
       writeData(pack);
     }
   }

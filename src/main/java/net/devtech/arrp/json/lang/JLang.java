@@ -1,7 +1,6 @@
 package net.devtech.arrp.json.lang;
 
-import com.google.common.base.Suppliers;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
@@ -20,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * <p>The <b>language file</b> determines how Minecraft will translate strings according to their language settings.</p>
+ * <p>The <b>language file</b> determines how Minecraft will translate strings according to their language settings. It is essentially a hash map.</p>
  */
 @SuppressWarnings("unused")
 public class JLang extends HashMap<String, String> implements Cloneable {
@@ -29,7 +28,7 @@ public class JLang extends HashMap<String, String> implements Cloneable {
   }
 
   /**
-   * Simply "upgrades" a simple string map to this object.
+   * Simply "upgrades" a simple string map to this object. The content of the {@code map} parameter will be just copied.
    *
    * @param map The string map.
    */
@@ -104,11 +103,13 @@ public class JLang extends HashMap<String, String> implements Cloneable {
 
   /**
    * Add a registry entry to this instance, using {@link Registry#getId(Object)}.
+   *
+   * @since 0.8.2 Fixed the issue that the exception object will be created even if it will not be thrown.
    */
   @CanIgnoreReturnValue
   @Contract(value = "_,_,_,_ -> this", mutates = "this")
   public <T> JLang registryEntry(Registry<T> registry, String type, T t, String translation) {
-    final RegistryKey<T> registryKey = registry.getKey(t).orElseThrow(Suppliers.ofInstance(new RuntimeException("Please register it first!")));
+    final RegistryKey<T> registryKey = registry.getKey(t).orElseThrow(() -> new RuntimeException("Please register it first!"));
     return registryEntry(type, registryKey.getValue(), translation);
   }
 

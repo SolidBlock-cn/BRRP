@@ -19,6 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
+/**
+ * A wall block by default has three block models. You can specify its texture (if different from base block) through {@link TextureRegistry}.
+ */
 public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
   public final @Nullable Block baseBlock;
 

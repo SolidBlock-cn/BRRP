@@ -32,6 +32,7 @@ dependencies {
 }
 
 processResources {
+    // 确保这里的是模组版本（不含游戏版本）而不是项目版本
     inputs.property "version", rootProject.mod_version
 
     filesMatching("fabric.mod.json") {
@@ -87,7 +88,6 @@ publishing {
 
     // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
-        // Add repositories to publish to here.
     }
 }
 

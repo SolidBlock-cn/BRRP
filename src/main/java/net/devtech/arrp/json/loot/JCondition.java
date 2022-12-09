@@ -1,6 +1,6 @@
 package net.devtech.arrp.json.loot;
 
-import net.devtech.arrp.util.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
@@ -48,7 +48,7 @@ public class JCondition implements Cloneable, JsonSerializable {
   /**
    * @see LootCondition.Builder#or(LootCondition.Builder)
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   public static JCondition ofAlternative(Iterable<JCondition> conditions) {
     final JCondition result = new JCondition("alternative");
     result.parameters.add("terms", RuntimeResourcePackImpl.GSON.toJsonTree(conditions));
@@ -58,6 +58,7 @@ public class JCondition implements Cloneable, JsonSerializable {
   /**
    * This method is kept just for compatibility.
    */
+  @Contract(value = "_ -> new", pure = true)
   public static JCondition ofAlternative(Collection<JCondition> conditions) {
     return ofAlternative((Iterable<JCondition>) conditions);
   }
@@ -65,7 +66,7 @@ public class JCondition implements Cloneable, JsonSerializable {
   /**
    * @see LootCondition.Builder#or(LootCondition.Builder)
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   public static JCondition ofAlternative(JCondition... conditions) {
     return ofAlternative(Arrays.asList(conditions));
   }
@@ -86,32 +87,38 @@ public class JCondition implements Cloneable, JsonSerializable {
   }
 
   @CanIgnoreReturnValue
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JCondition parameter(String key, Number value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
   @CanIgnoreReturnValue
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JCondition parameter(String key, JsonElement value) {
     this.parameters.add(key, value);
     return this;
   }
 
   @CanIgnoreReturnValue
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JCondition parameter(String key, Boolean value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
   @CanIgnoreReturnValue
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JCondition parameter(String key, Character value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
   @CanIgnoreReturnValue
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JCondition parameter(String key, Identifier value) {
     return parameter(key, value.toString());
   }
 
   @CanIgnoreReturnValue
+  @Contract(value = "_, _ -> this", mutates = "this")
   public JCondition parameter(String key, String value) {
     return parameter(key, new JsonPrimitive(value));
   }

@@ -6,12 +6,15 @@ import net.devtech.arrp.api.RRPEvent;
 import net.devtech.arrp.api.RRPInitEvent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroups;
+import net.minecraft.item.ItemStack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoader;
@@ -25,6 +28,7 @@ import org.jetbrains.annotations.ApiStatus;
 import pers.solid.brrp.PlatformBridge;
 
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -96,6 +100,13 @@ public class PlatformBridgeImpl extends PlatformBridge {
   @Override
   public void registerItem(Identifier identifier, Item item) {
     ForgeRegistries.ITEMS.register(identifier, item);
+  }
+
+  @Override
+  public void setItemGroup(Collection<ItemStack> stacks) {
+    FMLJavaModLoadingContext.get().getModEventBus().addListener((CreativeModeTabEvent.BuildContents event) -> {
+      if (event.getTab().equals(ItemGroups.REDSTONE)) event.addAll(stacks);
+    });
   }
 
   public static PlatformBridge getInstance() {

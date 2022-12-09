@@ -1,10 +1,12 @@
 package net.devtech.arrp.json.animation;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.*;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.api.JsonSerializable;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
+import net.fabricmc.api.EnvType;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -13,8 +15,11 @@ import java.util.List;
 
 /**
  * An <b>animation file</b> defines how a texture is animated.
+ *
+ * @see net.minecraft.client.texture.SpriteContents.Animation
  */
 @SuppressWarnings("unused")
+@PreferredEnvironment(EnvType.CLIENT)
 public class JAnimation implements Cloneable, JsonSerializable {
   private Boolean interpolate;
   private Integer width;

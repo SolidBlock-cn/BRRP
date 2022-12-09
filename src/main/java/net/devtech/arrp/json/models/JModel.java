@@ -3,7 +3,7 @@ package net.devtech.arrp.json.models;
 import com.google.common.collect.Lists;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.json.loot.JCondition;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;

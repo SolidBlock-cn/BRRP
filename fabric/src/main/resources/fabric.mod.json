@@ -9,7 +9,8 @@
     "SolidBlock"
   ],
   "contact": {
-    "sources": "https://github.com/SolidBlock-cn/BRRP"
+    "sources": "https://github.com/SolidBlock-cn/BRRP",
+    "issues": "https://github.com/SolidBlock-cn/BRRP/issues"
   },
   "license": "MPLv2",
   "icon": "assets/brrp/icon.png",
@@ -32,7 +33,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.13.0",
-    "minecraft": [">=1.19.3-beta", ">=1.19.3"]
+    "minecraft": ">=1.19.3"
   },
   "custom": {
     "modmenu": {

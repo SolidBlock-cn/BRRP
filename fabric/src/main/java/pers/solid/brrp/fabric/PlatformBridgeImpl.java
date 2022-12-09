@@ -3,7 +3,6 @@ package pers.solid.brrp.fabric;
 import com.google.common.collect.Lists;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.BRRPDevelopment;
-import net.devtech.arrp.api.RRPCallback;
 import net.devtech.arrp.api.RRPCallbackConditional;
 import net.devtech.arrp.api.RRPPreGenEntrypoint;
 import net.devtech.arrp.api.SidedRRPCallback;
@@ -13,7 +12,7 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -52,8 +51,6 @@ public class PlatformBridgeImpl extends PlatformBridge {
 
   @Override
   public void prelaunch() {
-    SidedRRPCallback.BEFORE_VANILLA.register((type, resources) -> RRPCallback.BEFORE_VANILLA.invoker().insert(resources));
-    SidedRRPCallback.AFTER_VANILLA.register((type, resources) -> RRPCallback.AFTER_VANILLA.invoker().insert(resources));
     ARRP.LOGGER.info("BRRP data generation: PreLaunch");
     FabricLoader loader = FabricLoader.getInstance();
     List<Future<?>> futures = new ArrayList<>();
@@ -89,8 +86,8 @@ public class PlatformBridgeImpl extends PlatformBridge {
   }
 
   @Override
-  public void setItemGroup(ItemGroup itemGroup, Collection<ItemStack> stacks) {
-    ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> entries.addAll(stacks));
+  public void setItemGroup(Collection<ItemStack> stacks) {
+    ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> entries.addAll(stacks));
   }
 
   public static PlatformBridge getInstance() {

@@ -2,7 +2,7 @@ package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.Maps;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * <p>A <b>JWhenProperties</b> represents a <b>when</b> object with one or multiple properties to match the block state. In the "multipart" object, if the block state matches the properties, the part will be used.</p>
+ * <p>A <b>JWhenProperties</b> represents a {@link When} object with one or multiple properties to match the block state. In the "multipart" object, if the block state matches the properties, the part will be used.</p>
  * <p>It's essentially a map, with keys being the name of properties, and values representing the matching rule of value of properties. Values can be directly a value, or multiple values joined with {@code "|"}, or one or more values prefixed by {@code "|"} representing negation.</p>
  * <p>This is a simple JSON example for a JWhenProperties object (note that comments are actually not allowed in JSONs):</p>
  * <pre>{@code
@@ -80,7 +80,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param property The name of the property, representing as string.
    * @param values   The values of the property, representing as strings.
    */
-  @Contract("_, _ -> new")
+  @Contract(value = "_, _ -> new", pure = true)
   public static JWhenProperties of(String property, String... values) {
     return new JWhenProperties().add(property, values);
   }
@@ -91,7 +91,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param property The name of the property, representing as string.
    * @param values   The values of the property, representing as {@code StringIdentifiable}s.
    */
-  @Contract("_, _ -> new")
+  @Contract(value = "_, _ -> new", pure = true)
   public static JWhenProperties of(String property, StringIdentifiable... values) {
     return new JWhenProperties().add(property, values);
   }
@@ -103,7 +103,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param value    The values of the property.
    */
   @SafeVarargs
-  @Contract("_, _ -> new")
+  @Contract(value = "_, _ -> new", pure = true)
   public static <T extends Comparable<T>> JWhenProperties of(Property<T> property, T... value) {
     return new JWhenProperties().add(property, value);
   }

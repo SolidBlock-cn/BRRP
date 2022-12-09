@@ -75,7 +75,7 @@ public class JBlockStates implements JsonSerializable {
   }
 
   /**
-   * Create a new JBlockStates object with varargs. The parameter {@code multiparts} is a vararg, and since 0.7.0 will be converted to an array list through {@link Lists#newArrayList}.<p>However, for BRRP versions before 0.7.0, it will be {@link java.util.Arrays#asList(Object[])}, which means it <i>will throw</i> {@link UnsupportedOperationException} if you call {@link #add}. This bug is fixed in 0.7.0. Therefore, <u>if you use this method and call {@link #add} thereafter, you're supposed to require at least BRRP 0.7.0</u> (which can be defined in {@code fabric.mod.json}).
+   * Create a new JBlockStates object with varargs. The parameter {@code multiparts} is a vararg, and will be converted to an array list.
    *
    * @param multiparts The varargs of multiparts.
    * @return A new JBlockStates object.
@@ -93,7 +93,7 @@ public class JBlockStates implements JsonSerializable {
    */
   @Contract(value = "_, _ -> this", mutates = "this")
   public JBlockStates addVariant(String variant, JBlockModel... modelDefinition) {
-    if (variant == null) throw new IllegalStateException("A block state definition can only have either variants or multiparts, not both");
+    if (variant == null) throw new IllegalStateException("A block states definition can only have either variants or multiparts, not both");
     variants.addVariant(variant, modelDefinition);
     return this;
   }
@@ -105,7 +105,7 @@ public class JBlockStates implements JsonSerializable {
    */
   @Contract(value = "_ -> this", mutates = "this")
   public JBlockStates add(JMultipart multipart) {
-    if (multiparts == null) throw new IllegalStateException("A block state definition can only have either variants or multipart, not both");
+    if (multiparts == null) throw new IllegalStateException("A block states definition can only have either variants or multipart, not both");
     multiparts.add(multipart);
     return this;
   }
@@ -136,6 +136,7 @@ public class JBlockStates implements JsonSerializable {
    *
    * @see BlockStateModelGenerator#createSingletonBlockState(Block, Identifier)
    */
+  @Contract(value = "_ -> new", pure = true)
   public static JBlockStates simple(Identifier blockModelId) {
     return ofVariants(JVariants.ofNoVariants(new JBlockModel(blockModelId)));
   }
@@ -152,6 +153,7 @@ public class JBlockStates implements JsonSerializable {
    *
    * @see BlockStateModelGenerator#createBlockStateWithRandomHorizontalRotations(Block, Identifier)
    */
+  @Contract(value = "_ -> new", pure = true)
   public static JBlockStates simpleRandomRotation(Identifier blockModelId) {
     return ofVariants(JVariants.ofNoVariants(JVariants.ofRandomRotation(new JBlockModel(blockModelId))));
   }
@@ -175,6 +177,7 @@ public class JBlockStates implements JsonSerializable {
    * @return The block states definition for the horizontal facing block.
    * @see BlockStateModelGenerator#createSouthDefaultHorizontalRotationStates()
    */
+  @Contract(value = "_, _ -> new", pure = true)
   public static JBlockStates simpleHorizontalFacing(Identifier blockModelId, boolean uvlock) {
     return ofVariants(JVariants.ofHorizontalFacing(new JBlockModel(blockModelId).uvlock(uvlock)));
   }
@@ -193,6 +196,7 @@ public class JBlockStates implements JsonSerializable {
    * @return The block states definition for the slab block.
    * @see BlockStateModelGenerator#createSlabBlockState(Block, Identifier, Identifier, Identifier)
    */
+  @Contract(value = "_, _, _ -> new", pure = true)
   public static JBlockStates simpleSlab(Identifier baseBlockModelId, Identifier bottomSlabModelId, Identifier topSlabModelId) {
     return ofVariants(JVariants.ofSlab(new JBlockModel(baseBlockModelId), bottomSlabModelId, topSlabModelId));
   }
@@ -203,7 +207,7 @@ public class JBlockStates implements JsonSerializable {
    * @param delegate The vanilla block state supplier, whose serialization will be directly used.
    * @return The delegated object.
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   public static JBlockStates delegate(BlockStateSupplier delegate) {
     return new Delegate(delegate);
   }

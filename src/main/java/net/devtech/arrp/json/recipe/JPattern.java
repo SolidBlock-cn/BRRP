@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import net.devtech.arrp.api.JsonSerializable;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;

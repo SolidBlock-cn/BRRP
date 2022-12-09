@@ -1,6 +1,6 @@
 modLoader = "javafml"
-loaderVersion = "[41,)"
-issueTrackerURL = "https://github.com/SolidBlock-cn/BRRP"
+loaderVersion = "[44,)"
+issueTrackerURL = "https://github.com/SolidBlock-cn/BRRP/issues"
 license = "MPLv2"
 
 [[mods]]
@@ -17,13 +17,13 @@ BRRP is a library mod that can generate resource packs at runtime. It is an exte
 [[dependencies.better_runtime_resource_pack]]
 modId = "forge"
 mandatory = true
-versionRange = "[41,)"
+versionRange = "[44,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.better_runtime_resource_pack]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19,)"
+versionRange = "[1.19.3,)"
 ordering = "NONE"
 side = "BOTH"

@@ -1,9 +1,15 @@
 package net.devtech.arrp.json.animation;
 
 
+import net.devtech.arrp.annotations.PreferredEnvironment;
+import net.fabricmc.api.EnvType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
+/**
+ * @see net.minecraft.client.texture.SpriteContents.AnimationFrame
+ */
+@PreferredEnvironment(EnvType.CLIENT)
 public class JFrame implements Cloneable {
   public final int index;
   public Integer time;

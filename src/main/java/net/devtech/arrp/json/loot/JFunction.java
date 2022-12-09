@@ -1,11 +1,13 @@
 package net.devtech.arrp.json.loot;
 
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.function.LootFunction;
+import net.minecraft.loot.function.LootFunctionType;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -13,6 +15,7 @@ import org.jetbrains.annotations.Contract;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>The <b>loot table function</b> is in essence an "item modifier". The field "function" is the identifier (as string) of the loot table function.</p>
@@ -23,7 +26,7 @@ import java.util.List;
 public class JFunction implements Cloneable, JsonSerializable {
   public List<JCondition> conditions;
   /**
-   * The name of the loot table function. Possible values: {@code "apply_bonus"}, {@code "copy_name"}, {@code "copy_nbt"}, so on.
+   * The name of the loot table function. Possible values can be seen in {@link net.minecraft.loot.function.LootFunctionTypes}.
    */
   public String function;
   public JsonObject properties = new JsonObject();
@@ -59,6 +62,30 @@ public class JFunction implements Cloneable, JsonSerializable {
   public JFunction function(String function) {
     this.function = function;
     return this;
+  }
+
+  /**
+   * Set the name of the loot table function.
+   *
+   * @param function The function name, which is an identifier.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.2")
+  public JFunction function(Identifier function) {
+    return function(function.toString());
+  }
+
+  /**
+   * Set the name of the loot table function.
+   *
+   * @param function The loot function type, the id of which will be used.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.2")
+  public JFunction function(LootFunctionType function) {
+    return function(Objects.requireNonNull(Registries.LOOT_FUNCTION_TYPE.getId(function), "The loot function type is not registered."));
   }
 
   /**
