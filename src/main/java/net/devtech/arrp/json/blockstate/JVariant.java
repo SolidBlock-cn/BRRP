@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.blockstate;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -36,6 +37,7 @@ public final class JVariant implements Cloneable, JsonSerializable {
   public JVariant() {
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JVariant put(String key, JBlockModel model) {
     List<JBlockModel> models = this.models.getOrDefault(key, new ArrayList<>());
@@ -49,6 +51,7 @@ public final class JVariant implements Cloneable, JsonSerializable {
   /**
    * boolean block properties
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _, _ -> this", mutates = "this")
   public JVariant put(String property, boolean value, JBlockModel model) {
     return put(property + '=' + value, model);
@@ -57,6 +60,7 @@ public final class JVariant implements Cloneable, JsonSerializable {
   /**
    * int block properties
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _, _ -> this", mutates = "this")
   public JVariant put(String property, int value, JBlockModel model) {
     return put(property + '=' + value, model);
@@ -67,6 +71,7 @@ public final class JVariant implements Cloneable, JsonSerializable {
    *
    * @see Direction
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _, _ -> this", mutates = "this")
   public JVariant put(String property, StringIdentifiable value, JBlockModel model) {
     return put(property + '=' + value.asString(), model);
@@ -75,6 +80,7 @@ public final class JVariant implements Cloneable, JsonSerializable {
   /**
    * everything else
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _, _ -> this", mutates = "this")
   public JVariant put(String property, String value, JBlockModel model) {
     return put(property + '=' + value, model);

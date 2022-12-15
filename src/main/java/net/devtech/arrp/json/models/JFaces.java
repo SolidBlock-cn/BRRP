@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.models;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -28,6 +29,7 @@ public class JFaces extends EnumMap<Direction, JFace> implements Cloneable, Json
   /**
    * This method quite resembles {@link java.util.Map#put(Object, Object)}, but will return the instance itself, making it possible to chain call.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JFaces set(Direction direction, JFace face) {
     put(direction, face);
@@ -38,6 +40,7 @@ public class JFaces extends EnumMap<Direction, JFace> implements Cloneable, Json
    * Set all faces the same JFace object.<p>
    * Note: Sometimes you need to set the cullface for specific direction. In that case, you may use {@link #setAllFaces(JFace, boolean)} or {@link #setAllFaces(Function)}.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JFaces setAllFaces(JFace face) {
     for (Direction direction : Direction.values()) {
@@ -54,6 +57,7 @@ public class JFaces extends EnumMap<Direction, JFace> implements Cloneable, Json
    * @see #setAllFaces(Function)
    */
   @ApiStatus.AvailableSince("0.6.2")
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JFaces setAllFaces(@NotNull JFace face, boolean cullface) {
     for (Direction direction : Direction.values()) {
@@ -69,6 +73,7 @@ public class JFaces extends EnumMap<Direction, JFace> implements Cloneable, Json
    * @see #setAllFaces(JFace)
    * @see #setAllFaces(JFace, boolean)
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JFaces setAllFaces(Function<Direction, JFace> faces) {
     for (Direction direction : Direction.values()) {
@@ -77,36 +82,42 @@ public class JFaces extends EnumMap<Direction, JFace> implements Cloneable, Json
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JFaces up(JFace face) {
     put(Direction.UP, face);
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JFaces down(JFace face) {
     put(Direction.DOWN, face);
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JFaces north(JFace face) {
     put(Direction.NORTH, face);
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JFaces south(JFace face) {
     put(Direction.SOUTH, face);
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JFaces east(JFace face) {
     put(Direction.EAST, face);
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JFaces west(JFace face) {
     put(Direction.WEST, face);

@@ -22,17 +22,17 @@ public abstract class ReloadableResourceManagerImplMixin {
   @Shadow
   @Final
   private ResourceType type;
-  private static final Logger BRRP_LOGGER = LogManager.getLogger("BRRP/ReloadableResourceManagerImplMixin");
+  private static final Logger LOGGER = LogManager.getLogger("BRRP/ReloadableResourceManagerImplMixin");
 
   @ModifyVariable(method = "reload", at = @At("HEAD"), argsOnly = true)
   private List<ResourcePack> registerARRPs(List<ResourcePack> packs) throws ExecutionException, InterruptedException {
     List<ResourcePack> copy = new ArrayList<>(packs);
     ARRP.waitForPregen();
 
-    BRRP_LOGGER.info("BRRP register - before vanilla");
+    LOGGER.info("BRRP register - before vanilla");
     PlatformBridge.getInstance().postBefore(type, copy);
 
-    BRRP_LOGGER.info("BRRP register - after vanilla");
+    LOGGER.info("BRRP register - after vanilla");
     PlatformBridge.getInstance().postAfter(type, copy);
 
     return copy;

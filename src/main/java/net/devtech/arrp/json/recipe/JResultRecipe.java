@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
@@ -58,11 +59,13 @@ public abstract class JResultRecipe extends JRecipe {
    * Set the count of the result item.
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JResultRecipe resultCount(int count) {
     this.result.count = count;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   @Override
   public JResultRecipe group(final String group) {

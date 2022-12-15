@@ -2,6 +2,7 @@ package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.Maps;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.annotations.PreferredEnvironment;
@@ -21,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * <p>A <b>JWhenProperties</b> represents a <b>when</b> object with one or multiple properties to match the block state. In the "multipart" object, if the block state matches the properties, the part will be used.</p>
+ * <p>A <b>JWhenProperties</b> represents a {@link When} object with one or multiple properties to match the block state. In the "multipart" object, if the block state matches the properties, the part will be used.</p>
  * <p>It's essentially a map, with keys being the name of properties, and values representing the matching rule of value of properties. Values can be directly a value, or multiple values joined with {@code "|"}, or one or more values prefixed by {@code "|"} representing negation.</p>
  * <p>This is a simple JSON example for a JWhenProperties object (note that comments are actually not allowed in JSONs):</p>
  * <pre>{@code
@@ -79,7 +80,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param property The name of the property, representing as string.
    * @param values   The values of the property, representing as strings.
    */
-  @Contract("_, _ -> new")
+  @Contract(value = "_, _ -> new", pure = true)
   public static JWhenProperties of(String property, String... values) {
     return new JWhenProperties().add(property, values);
   }
@@ -90,7 +91,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param property The name of the property, representing as string.
    * @param values   The values of the property, representing as {@code StringIdentifiable}s.
    */
-  @Contract("_, _ -> new")
+  @Contract(value = "_, _ -> new", pure = true)
   public static JWhenProperties of(String property, StringIdentifiable... values) {
     return new JWhenProperties().add(property, values);
   }
@@ -102,7 +103,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param value    The values of the property.
    */
   @SafeVarargs
-  @Contract("_, _ -> new")
+  @Contract(value = "_, _ -> new", pure = true)
   public static <T extends Comparable<T>> JWhenProperties of(Property<T> property, T... value) {
     return new JWhenProperties().add(property, value);
   }
@@ -147,6 +148,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param value    The value of this property.
    * @return The object itself.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public <T extends Comparable<T>> JWhenProperties add(Property<T> property, T value) {
     return add(property.getName(), property.name(value));
@@ -161,6 +163,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    */
   @Contract(value = "_, _ -> this", mutates = "this")
   @SafeVarargs
+  @CanIgnoreReturnValue
   public final <T extends Comparable<T>> JWhenProperties add(Property<T> property, T... values) {
     return add(property.getName(), Arrays.stream(values).map(property::name).collect(Collectors.joining("|")));
   }
@@ -172,6 +175,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param value    The one or multiple values of this property, represented as string.
    * @return The object itself.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties add(String property, String value) {
     properties.put(property, value);
@@ -185,6 +189,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param value    The one or multiple values of this property, represented as string.
    * @return The object itself.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties addNegated(String property, String value) {
     return add(property, "!" + value);
@@ -197,6 +202,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param value    The value of this property, represented as a {@link StringIdentifiable} object.
    * @return The object itself.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties add(String property, StringIdentifiable value) {
     return add(property, value.asString());
@@ -209,6 +215,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param value    The value of this property, represented as a {@link StringIdentifiable} object.
    * @return The object itself.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties addNegated(String property, StringIdentifiable value) {
     return add(property, "!" + value.asString());
@@ -221,6 +228,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param values   The values of this property, representing that each one of the values will be matched. In this case, they will be joined with {@code "|"}.
    * @return The object itself.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties add(String property, String... values) {
     return add(property, String.join("|", values));
@@ -233,6 +241,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param values   The values of this property, representing that each one of the values will be negated. In this case, they will be joined with {@code "|"}.
    * @return The object itself.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties addNegated(String property, String... values) {
     return add(property, "!" + String.join("|", values));
@@ -245,6 +254,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param values   The values of this property, representing that each one of the values will be matched. In this case, they will be joined with {@code "|"}.
    * @return The object itself.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties add(String property, StringIdentifiable... values) {
     return add(property, Arrays.stream(values).map(StringIdentifiable::asString).collect(Collectors.joining("|")));
@@ -257,6 +267,7 @@ public class JWhenProperties extends ForwardingMap<String, String> implements Cl
    * @param values   The values of this property, representing that each one of the values will be negated. In this case, they will be joined with {@code "|"}.
    * @return The object itself.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _->this", mutates = "this")
   public JWhenProperties addNegated(String property, StringIdentifiable... values) {
     return add(property, "!" + Arrays.stream(values).map(StringIdentifiable::asString).collect(Collectors.joining("|")));

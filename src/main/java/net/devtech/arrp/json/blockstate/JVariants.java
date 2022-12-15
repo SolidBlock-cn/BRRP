@@ -2,6 +2,7 @@ package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.Maps;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -55,7 +56,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
   private final Map<String, JBlockModel[]> variants;
 
   /**
-   * Create a new {@code jVariant} object, which contains a linked hash map. This is the most common use. In this case, you can add properties to it.
+   * Create a new {@link JVariants} object, which contains a linked hash map. This is the most common use. In this case, you can add properties to it.
    */
   public JVariants() {
     this(new LinkedHashMap<>());
@@ -87,7 +88,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @see #of(String, JBlockModel...)
    * @see JBlockStates#simple(Identifier)
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   public static JVariants ofNoVariants(JBlockModel... modelDefinition) {
     return of("", modelDefinition);
   }
@@ -110,7 +111,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @return The array of block model definitions in four rotations.
    * @see JBlockStates#simpleRandomRotation
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   public static JBlockModel[] ofRandomRotation(JBlockModel model) {
     final JBlockModel[] result = new JBlockModel[4];
     for (int i = 0; i < result.length; i++) {
@@ -138,7 +139,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    *
    * @see JBlockStates#simpleHorizontalFacing
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   public static JVariants ofHorizontalFacing(JBlockModel model) {
     final JVariants JVariants = new JVariants();
     for (Direction direction : Direction.Type.HORIZONTAL) {
@@ -165,7 +166,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @return The model variant definition for the slab block.
    * @apiNote This method does not support additional block state properties. If you'd like to deal with slabs with properties, and you can confirm that the slab has all properties that the base block has, you can use {@link #composeToSlab(Function, Function)}.
    */
-  @Contract("_, _, _ -> new")
+  @Contract(value = "_, _, _ -> new", pure = true)
   public static JVariants ofSlab(JBlockModel model, Identifier bottomSlabIdentifier, Identifier topSlabIdentifier) {
     return new JVariants()
         .addVariant(Properties.SLAB_TYPE, SlabType.BOTTOM, model.clone().modelId(bottomSlabIdentifier))
@@ -182,7 +183,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @see #ofNoVariants(JBlockModel...)
    * @see #addVariant(String, JBlockModel...)
    */
-  @Contract("_, _ -> new")
+  @Contract(value = "_, _ -> new", pure = true)
   public static JVariants of(String variant, JBlockModel... modelDefinition) {
     return new JVariants().addVariant(variant, modelDefinition);
   }
@@ -196,7 +197,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param modelDefinition The block model definition.
    * @see #addVariant(String, String, JBlockModel...)
    */
-  @Contract("_, _, _ -> new")
+  @Contract(value = "_, _, _ -> new", pure = true)
   public static JVariants of(String property, String value, JBlockModel... modelDefinition) {
     return new JVariants().addVariant(property, value, modelDefinition);
   }
@@ -210,7 +211,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param modelDefinition The block model definition.
    * @see #addVariant(String, String, JBlockModel...)
    */
-  @Contract("_, _, _ -> new")
+  @Contract(value = "_, _, _ -> new", pure = true)
   public static JVariants of(String property, StringIdentifiable value, JBlockModel... modelDefinition) {
     return new JVariants().addVariant(property, value, modelDefinition);
   }
@@ -223,7 +224,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param modelDefinition The block model definition.
    * @see #addVariant(Property, Comparable, JBlockModel...)
    */
-  @Contract("_, _, _ -> new")
+  @Contract(value = "_, _, _ -> new", pure = true)
   public static <T extends Comparable<T>> JVariants of(Property<T> property, T value, JBlockModel... modelDefinition) {
     return new JVariants().addVariant(property, value, modelDefinition);
   }
@@ -234,7 +235,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param delegate The delegated object, whose serialization will be directly used.
    * @return The delegated object.
    */
-  @Contract("_ -> new")
+  @Contract(value = "_ -> new", pure = true)
   public static JVariants delegate(BlockStateVariant delegate) {
     return new Delegate(delegate);
   }
@@ -272,6 +273,7 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @return The variant definition for the slab block.
    * @see #ofSlab
    */
+  @Contract(value = "_, _ -> new", pure = true)
   public JVariants composeToSlab(Function<Identifier, Identifier> bottomSlabIdFunction, Function<Identifier, Identifier> topSlabIdFunction) {
     final JVariants result = new JVariants();
     this.forEach((property, models) -> {
@@ -290,15 +292,15 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param modelDefinition The block model definition.
    * @see #of(String, JBlockModel...)
    */
-
-  @Contract("_, _-> this")
+  @CanIgnoreReturnValue
+  @Contract(value = "_, _-> this", mutates = "this")
   public JVariants addVariant(String variant, JBlockModel... modelDefinition) {
     put(variant, modelDefinition);
     return this;
   }
 
   @Override
-  public JBlockModel[] put(@NotNull String key, JBlockModel @NotNull ... value) {
+  public JBlockModel[] put(String key, JBlockModel... value) {
     return super.put(key, value);
   }
 
@@ -310,8 +312,8 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param modelDefinition The block model definition.
    * @see #of(Property, Comparable, JBlockModel...)
    */
-
-  @Contract("_,_,_ -> this")
+  @CanIgnoreReturnValue
+  @Contract(value = "_,_,_ -> this", mutates = "this")
   public <T extends Comparable<T>> JVariants addVariant(Property<T> property, T value, JBlockModel... modelDefinition) {
     return addVariant(property.getName() + "=" + property.name(value), modelDefinition);
   }
@@ -324,8 +326,8 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param modelDefinition The block model definition.
    * @see #of(String, String, JBlockModel...)
    */
-
-  @Contract("_,_,_ -> this")
+  @CanIgnoreReturnValue
+  @Contract(value = "_,_,_ -> this", mutates = "this")
   public JVariants addVariant(String property, String value, JBlockModel... modelDefinition) {
     return addVariant(property + "=" + value, modelDefinition);
   }
@@ -338,8 +340,8 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
    * @param modelDefinition The block model definition.
    * @see #of(String, String, JBlockModel...)
    */
-
-  @Contract("_,_,_ -> this")
+  @CanIgnoreReturnValue
+  @Contract(value = "_,_,_ -> this", mutates = "this")
   public JVariants addVariant(String property, StringIdentifiable value, JBlockModel... modelDefinition) {
     return addVariant(property, value.asString(), modelDefinition);
   }
@@ -366,12 +368,12 @@ public class JVariants extends ForwardingMap<String, JBlockModel[]> implements J
 
     @Override
     public JsonElement get() {
-      return delegate.get();
+      return ((Supplier<JsonElement>) delegate).get();
     }
 
     @Override
     public JsonElement serialize(Type typeOfSrc, JsonSerializationContext context) {
-      return delegate.get();
+      return ((Supplier<JsonElement>) delegate).get();
     }
   }
 }

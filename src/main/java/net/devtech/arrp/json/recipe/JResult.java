@@ -1,5 +1,7 @@
 package net.devtech.arrp.json.recipe;
 
+
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -57,6 +59,7 @@ public class JResult implements Cloneable, JsonSerializable {
    * Set the count of this result.
    */
   @Contract("_ -> this")
+  @CanIgnoreReturnValue
   public JResult count(int count) {
     this.count = count;
     return this;

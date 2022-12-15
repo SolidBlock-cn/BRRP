@@ -1,6 +1,7 @@
 package net.devtech.arrp.json.recipe;
 
 import com.google.common.collect.ForwardingMap;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -67,6 +68,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    * @param key   The recipe key.
    * @param value The ingredient.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JKeys key(final String key, final JIngredient value) {
     this.keys.put(key, value);
@@ -79,6 +81,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    * @param key   The recipe key.
    * @param value The identifier (as string) of the ingredient item.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JKeys key(final String key, final String value) {
     return key(key, JIngredient.ofItem(value));
@@ -90,6 +93,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    * @param key   The recipe key.
    * @param value The identifier of the ingredient item.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JKeys key(final String key, final Identifier value) {
     return key(key, JIngredient.ofItem(value));
@@ -101,6 +105,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    * @param key   The recipe key.
    * @param value The ingredient item. Must be registered when calling this.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JKeys key(final String key, final ItemConvertible value) {
     return key(key, JIngredient.ofItem(value));
@@ -112,6 +117,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    * @param key   The recipe key.
    * @param value The ingredient item. Must be registered when calling this.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JKeys key(final String key, final Item value) {
     return key(key, JIngredient.ofItem(Registry.ITEM.getId(value)));

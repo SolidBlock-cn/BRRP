@@ -1,12 +1,12 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "0.12.0-SNAPSHOT"
+    id "dev.architectury.loom" version "1.0-SNAPSHOT"
     id "com.modrinth.minotaur" version "2.+" apply false
 }
 
 architectury {
     minecraft = rootProject.minecraft_version
-    common(rootProject.enabled_platforms.split(","))
+    common((rootProject.enabled_platforms as String).split(","))
 }
 
 allprojects {
@@ -30,6 +30,8 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
         mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
+        // 由于新版的 Loom 没有 @CanIgnoreReturnValue 等注解，故在这里手动添加。
+        modCompileOnly "com.google.errorprone:error_prone_annotations:+"
     }
 
     tasks.withType(JavaCompile) {
@@ -46,6 +48,26 @@ archivesBaseName += '-common'
 
 subprojects {
     apply plugin: "com.modrinth.minotaur"
+
+    loom {
+        runs {
+            client {
+                programArg "-username=Solid"
+                runDir = '../run'
+            }
+            server {
+                runDir = '../run'
+            }
+        }
+    }
+
+    publishing {
+        repositories {
+            maven {
+                url = rootProject.file('../mvn-repo').path
+            }
+        }
+    }
 }
 
 loom {
@@ -57,8 +79,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
 
     // 用于 Forge 的 event 部分
-    modCompileOnly "net.minecraftforge:eventbus:6.0.3"
-    modCompileOnly "net.minecraftforge:fmlcore:${project.minecraft_version}-${project.forge_version}"
+    modCompileOnly "net.minecraftforge:eventbus:+"
+    modCompileOnly "net.minecraftforge:fmlcore:${rootProject.minecraft_version}-+"
 }
 
 publishing {
@@ -69,11 +91,5 @@ publishing {
         }
     }
     repositories {
-    }
-}
-
-task buildall {
-    subprojects.forEach {
-        dependsOn it.build
     }
 }

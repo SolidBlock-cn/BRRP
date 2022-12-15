@@ -2,10 +2,7 @@ package net.devtech.arrp.impl;
 
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
@@ -32,7 +29,9 @@ import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import net.minecraft.util.StringIdentifiable;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.PlatformBridge;
 
 import javax.imageio.ImageIO;
@@ -80,6 +79,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       .registerTypeHierarchyAdapter(BlockStateSupplier.class, (JsonSerializer<BlockStateSupplier>) (builder, type, jsonSerializationContext) -> builder.get())
       .registerTypeHierarchyAdapter(RecipeJsonProvider.class, ((JsonSerializer<RecipeJsonProvider>) (recipe, typeOrSrc, context) -> recipe.toJson()))
       .registerTypeHierarchyAdapter(Advancement.Task.class, (JsonSerializer<Advancement.Task>) (builder, type, jsonSerializationContext) -> builder.toJson())
+      .registerTypeHierarchyAdapter(StringIdentifiable.class, (JsonSerializer<StringIdentifiable>) (src, typeOfSrc, context) -> new JsonPrimitive(src.asString()))
       .create();
   // if it works, don't touch it
   /**
@@ -198,14 +198,17 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public void mergeLang(Identifier identifier, JLang lang) {
-    this.langMergeable.compute(identifier, (identifier1, lang1) -> {
-      if (lang1 == null) {
-        lang1 = new JLang();
-        JLang finalLang = lang1;
-        this.addLazyResource(ResourceType.CLIENT_RESOURCES, identifier, (pack, identifier2) -> pack.addLang(identifier, finalLang));
+    this.langMergeable.compute(identifier, (identifier1, existingLang) -> {
+      final JLang newLang;
+      if (existingLang == null) {
+        newLang = new JLang();
+        final Identifier path = fix(identifier, "lang", "json");
+        assets.put(path, new Memoized<>((pack, identifier2) -> serialize(newLang), path));
+      } else {
+        newLang = existingLang;
       }
-      lang1.putAll(lang);
-      return lang1;
+      newLang.putAll(lang);
+      return newLang;
     });
   }
 
@@ -376,7 +379,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public void dumpDirect(Path output) {
-    LOGGER.info("Dumping {}.", getName());
+    LOGGER.info("Dumping {} in the path {}.", getName(), output);
     // data dump time
     try {
       for (Map.Entry<String, Supplier<byte[]>> e : this.root.entrySet()) {
@@ -478,7 +481,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   /**
    * pack.png and that's about it, I think/hope
    *
-   * @param fileName the name of the file, can't be a path tho
+   * @param fileName the name of the file.
    * @return the pack.png image as a stream
    */
   @Override
@@ -497,17 +500,13 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     }
   }
 
+  @Nullable
   @Override
   public InputStream open(ResourceType type, Identifier id) {
     this.lock();
     Supplier<byte[]> supplier = this.getSys(type).get(id);
-    if (supplier == null) {
-      LOGGER.warn("No resource found for " + id);
-      this.waiting.unlock();
-      return null;
-    }
     this.waiting.unlock();
-    return new ByteArrayInputStream(supplier.get());
+    return supplier == null ? null : new ByteArrayInputStream(supplier.get());
   }
 
   @Override
@@ -571,7 +570,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public void close() {
-    LOGGER.info("Closing rrp " + this.id);
+    LOGGER.info("Closing {}.", getName());
 
     // lock
     this.lock();

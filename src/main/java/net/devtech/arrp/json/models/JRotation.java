@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.models;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.Direction;
@@ -42,6 +43,7 @@ public class JRotation implements Cloneable {
     angle(angle);
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_, _, _ -> this", mutates = "this")
   public JRotation origin(float x, float y, float z) {
     this.origin[0] = x;
@@ -50,18 +52,21 @@ public class JRotation implements Cloneable {
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JRotation angle(Float angle) {
     this.angle = angle;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JRotation rescale(boolean rescale) {
     this.rescale = rescale;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "-> this", mutates = "this")
   public JRotation rescale() {
     this.rescale = true;

@@ -7,6 +7,7 @@ import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.fabricmc.api.EnvType;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.model.TextureKey;
 import net.minecraft.item.BlockItem;
@@ -20,10 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * <p>The interface is used for blocks.</p>
- * <p>Your custom block class can implement this interface, and override some methods you need.</p>
- * <p>This interface simply <i>extends</i> {@link ItemResourceGenerator}, as the resources of the block item related to it will be also generated. It's also possible that the block does not have a block item; in this case the recipe and item model should be ignored.</p>
- * <p>Here is an example:</p>
+ * <p>The interface is used for blocks. Your custom block class can implement this interface, and override some methods you need.</p>
+ * <p>This interface simply <i>extends</i> {@link ItemResourceGenerator}, as the resources of the block item related to it will be also generated. It's also possible that the block does not have a block item; in this case the recipe and item model should be ignored. <b>Please notice that the "{@code get}" methods are used for data generation. instead of being directly used in the gameplay.</b></p>
+ * <p>You can override the methods so that it can generate data in your specified ways. Here is an example:</p>
  * <pre>{@code
  * public class MyBlock extends Block implements BlockResourceGenerator {
  *   [...]
@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
  * }
  * }</pre>
  * <p>Also, your custom class can implement this interface. In this case, you <i>must</i> override {@link #getBlockId()} method, as it cannot be casted to {@code Block}.</p>
- * <p>It's highly recommended but not required to annotate methods related to client (block states, block models, item models) with {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code>, as they are only used in the client version mod. The interface itself does not annotate it, in consideration of rare situations that the server really needs. But mostly these client-related methods are not needed in the server side.</p>
+ * <p>It's highly recommended but not required to annotate methods related to client (block states, block models, item models) with {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code> or {@code @OnlyIn(Dist.CLIENT)}, as they are only used in the client environment. The interface itself does not annotate it, in consideration of rare situations where the server really needs. But mostly these client-related methods are not needed in the server side.</p>
  * <p>After implementing this interface and appropriately overriding some methods, you can do the following to quickly add resources to a runtime resource pack:</p>
  * <pre>{@code
  * // 'block' is an instance of BlockResourceGenerator
@@ -62,7 +62,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
 
   /**
    * Query the id of the block in {@link Registry#BLOCK}.<br>
-   * You <i>must</i> override this method if you're implementing this interface on a non-{@code Block} class, or will use it when it is not yet registered.
+   * You <i>must</i> override this method if you're implementing this interface on a non-{@code Block} class, or you intend to generate resources before registration.
    *
    * @return The id of the block.
    */
@@ -170,7 +170,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * The model of the block. If a block has multiple models, you may override this method for the most basic model, and override {@link #writeBlockModel}.
+   * The model of the block. If a block has multiple models, you may override this method for the most basic model, and override {@link #writeBlockModel} to generate and write other models.
    *
    * @return The block model.
    */
@@ -181,7 +181,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * Write the block model (returned in {@link #getBlockModel}) to the runtime resource pack. It does nothing if the returned model is {@code null}. If the block has multiple models, you may override this method.
+   * Write the block model (returned in {@link #getBlockModel}) to the runtime resource pack. It does nothing if the returned model is {@code null}. If the block has multiple models, you may override this method to write more models.
    *
    * @param pack The runtime resource pack.
    */
@@ -207,7 +207,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * If the item id is null, which means the block item does not exist, the item model will not be generated, let alone written.
+   * If the item model id is null, which means the block item does not exist, the item model will not be generated, let alone written.
    *
    * @param pack The runtime resource pack.
    */
@@ -255,17 +255,20 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   // SERVER PART
 
   /**
-   * Get the id of the block loot table. It's by default in the format of <code><i>namespace:</i>blocks/<i>path</i></code>, note its "blocks" instead of "block". The loot table is used when the block is broken.
+   * Get the id of the block loot table. It's by default in the format of <code><i>namespace:</i>blocks/<i>path</i></code>, note its "{@code blocks}" instead of "{@code block}". The loot table is used when the block is broken.
    *
    * @return The id of the block loot table.
    */
   @Contract(pure = true)
   default Identifier getLootTableId() {
+    if (this instanceof AbstractBlock block) {
+      return block.getLootTableId();
+    }
     return getBlockId().brrp_prepend("blocks/");
   }
 
   /**
-   * Get the block loot table. It's by default the simplest loot table, which means one block of itself will be dropped when broken.
+   * Get the block loot table. It's by default the simplest loot table, which means one block of itself will be dropped when broken. Note that this method is used just for data generation, instead of real usage in the gameplay.
    *
    * @return The block loot table.
    */
@@ -317,6 +320,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @param pack The runtime resource pack.
    */
+  @ApiStatus.AvailableSince("0.6.2")
   @Override
   default void writeRecipes(RuntimeResourcePack pack) {
     ItemResourceGenerator.super.writeRecipes(pack);

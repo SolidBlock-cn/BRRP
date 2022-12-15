@@ -20,6 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
+/**
+ * This is a simple fence block which can be used for {@link BlockResourceGenerator}. You may modify its texture with {@link TextureRegistry}.
+ */
 public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator {
   /**
    * The base block of the fence block.

@@ -1,7 +1,8 @@
 package net.devtech.arrp.json.tags;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.devtech.arrp.api.RuntimeResourcePack;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Contract;
 @SuppressWarnings("unused")
 public class IdentifiedTag extends JTag {
   /**
-   * The type of the tag. It is usually one of the following values: {@code blocks entity_types fluids functions game_events items worldgen}, but a customized value is also OK.
+   * The type of the tag. It is usually one of the following values: {@code blocks entity_types fluids game_events items} or the name of registries, but a customized value is also OK.
    */
   public transient final String type;
   /**
@@ -34,8 +35,8 @@ public class IdentifiedTag extends JTag {
    */
   public transient final Identifier identifier;
   /**
-   * The identifier with the type specification. It's in the format of <code style=color:maroon><i>namespace</i>:<i>type</i>/<i>path</i></code>, where the <i>namespace</i> and <i>path</i> are those of the {@link #identifier}. It's used as a resource location, for example, when written into the runtime resource pack, or generated as a normal data pack.<br>
-   * For example, for the block tag <code style=color:maroon>minecraft:logs</code>, the identifier is <code style=color:maroon>minecraft:logs</code> and the full identifier is <code style=color:maroon>minecraft:blocks/logs</code>.
+   * <p>The identifier with the type specification. It's in the format of <code style=color:maroon><i>namespace</i>:<i>type</i>/<i>path</i></code>, where the <i>namespace</i> and <i>path</i> are those of the {@link #identifier}. It's used as a resource location, for example, when written into the runtime resource pack, or generated as a normal data pack.
+   * <p>For example, for the block tag <code style=color:maroon>minecraft:logs</code>, the identifier is <code style=color:maroon>minecraft:logs</code> and the full identifier is <code style=color:maroon>minecraft:blocks/logs</code>.
    */
   public transient final Identifier fullIdentifier;
 
@@ -49,6 +50,15 @@ public class IdentifiedTag extends JTag {
     this.type = type;
     this.identifier = identifier;
     fullIdentifier = new Identifier(identifier.getNamespace(), this.type + "/" + identifier.getPath());
+  }
+
+  /**
+   * Create a new {@link IdentifiedTag} object with a vanilla-type {@link Tag} object. The full identifier will be decided according to the {@code type}, which may be {@code blocks}, {@code items}, etc.
+   *
+   * @param tagKey The vanilla {@code TagKey} object.
+   */
+  public IdentifiedTag(Tag.Identified<?> tagKey, String type) {
+    this(type, tagKey.getId());
   }
 
   /**

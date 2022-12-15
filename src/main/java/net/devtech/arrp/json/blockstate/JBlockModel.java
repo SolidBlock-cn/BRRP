@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.blockstate;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.fabricmc.api.EnvType;
 import net.minecraft.block.Block;
@@ -117,36 +118,42 @@ public class JBlockModel implements Cloneable {
   /**
    * Set the model id.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JBlockModel modelId(Identifier model) {
     this.model = model;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JBlockModel x(int x) {
     this.x = x;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JBlockModel y(int y) {
     this.y = y;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "-> this", mutates = "this")
   public JBlockModel uvlock() {
     this.uvlock = true;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JBlockModel uvlock(boolean uvlock) {
     this.uvlock = uvlock;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JBlockModel weight(int weight) {
     this.weight = weight;

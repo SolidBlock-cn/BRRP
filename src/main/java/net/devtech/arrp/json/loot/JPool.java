@@ -1,6 +1,7 @@
 package net.devtech.arrp.json.loot;
 
 import com.google.common.collect.Lists;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
@@ -8,7 +9,6 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.LootCondition;
@@ -117,6 +117,7 @@ public class JPool implements Cloneable {
    * @param entry The loot table entry.
    * @return The loot table itself, allowing chained call.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JPool entry(JEntry entry) {
     if (this.entries == null) {
@@ -158,6 +159,7 @@ public class JPool implements Cloneable {
    * @param condition The loot table condition.
    * @return The loot table itself, allowing chained call.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JPool condition(JCondition condition) {
     if (this.conditions == null) {
@@ -199,6 +201,7 @@ public class JPool implements Cloneable {
    * @param function The loot table function.
    * @return The loot table itself, allowing chained call.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JPool function(JFunction function) {
     if (this.functions == null) {
@@ -241,21 +244,25 @@ public class JPool implements Cloneable {
    */
   @Deprecated
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JPool rolls(Integer rolls) {
     return rolls(ConstantLootNumberProvider.create(rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JPool rolls(int rolls) {
     return rolls(ConstantLootNumberProvider.create(rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JPool rolls(float rolls) {
     return rolls(ConstantLootNumberProvider.create(rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JPool rolls(LootNumberProvider rolls) {
     this.rolls = rolls;
     return this;
@@ -266,6 +273,7 @@ public class JPool implements Cloneable {
    */
   @Deprecated
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JPool rolls(JRoll roll) {
     return rolls(roll.asLootNumberProvider());
   }
@@ -277,21 +285,25 @@ public class JPool implements Cloneable {
    */
   @Deprecated
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JPool bonus(Integer bonus_rolls) {
     return bonus(ConstantLootNumberProvider.create(bonus_rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JPool bonus(int bonus_rolls) {
     return bonus(ConstantLootNumberProvider.create(bonus_rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JPool bonus(float bonus_rolls) {
     return bonus(ConstantLootNumberProvider.create(bonus_rolls));
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JPool bonus(LootNumberProvider bonusRollsProvider) {
     this.bonusRolls = bonusRollsProvider;
     return this;
@@ -302,6 +314,7 @@ public class JPool implements Cloneable {
    */
   @Deprecated
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JPool bonus(JRoll bonus_roll) {
     return bonus(bonus_roll.asLootNumberProvider());
   }

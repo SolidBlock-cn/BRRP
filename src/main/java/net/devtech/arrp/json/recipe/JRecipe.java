@@ -1,5 +1,7 @@
 package net.devtech.arrp.json.recipe;
 
+
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
@@ -131,6 +133,7 @@ public abstract class JRecipe implements Cloneable {
   /**
    * Set the recipe group.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JRecipe group(final String group) {
     this.group = group;
@@ -185,6 +188,7 @@ public abstract class JRecipe implements Cloneable {
    * @param criterionName The name of the advancement criterion. It is usually a short, descriptive name, such as {@code "has_stone"}.
    * @param item          The item that when obtained, the criterion will be triggered.
    */
+  @CanIgnoreReturnValue
   @Contract("_, _ -> this")
   public JRecipe addInventoryChangedCriterion(String criterionName, ItemConvertible item) {
     advancementBuilder.criterion(criterionName, InventoryChangedCriterion.Conditions.items(item));
@@ -196,6 +200,7 @@ public abstract class JRecipe implements Cloneable {
    *
    * @param recipeId The id of the recipe.
    */
+  @CanIgnoreReturnValue
   @Contract("_ -> this")
   public JRecipe prepareAdvancement(Identifier recipeId) {
     advancementBuilder

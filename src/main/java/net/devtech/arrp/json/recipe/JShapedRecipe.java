@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
@@ -45,18 +46,21 @@ public class JShapedRecipe extends JResultRecipe {
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JShapedRecipe pattern(JPattern pattern) {
     this.pattern = pattern;
     return this;
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JShapedRecipe pattern(String... pattern) {
     this.pattern = new JPattern(pattern);
     return this;
   }
 
   @Contract(value = "_,_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JShapedRecipe addKey(String key, JIngredient value) {
     if (this.key == null) {
       this.key = new JKeys();
@@ -66,21 +70,25 @@ public class JShapedRecipe extends JResultRecipe {
   }
 
   @Contract(value = "_,_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JShapedRecipe addKey(String key, String value) {
     return this.addKey(key, JIngredient.ofItem(value));
   }
 
   @Contract(value = "_,_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JShapedRecipe addKey(String key, Identifier value) {
     return this.addKey(key, JIngredient.ofItem(value));
   }
 
   @Contract(value = "_,_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JShapedRecipe addKey(String key, Item value) {
     return this.addKey(key, JIngredient.ofItem(Registry.ITEM.getId(value)));
   }
 
   @Contract(value = "_,_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JShapedRecipe addKey(String key, ItemConvertible value) {
     return this.addKey(key, JIngredient.ofItem(value));
   }

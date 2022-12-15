@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.models;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.Direction;
@@ -65,6 +66,7 @@ public class JElement implements Cloneable {
     return new JElement().from(x1, y1, z1).to(x2, y2, z2);
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_,_,_ -> this", mutates = "this")
   public JElement from(float x, float y, float z) {
     this.from[0] = x;
@@ -73,6 +75,7 @@ public class JElement implements Cloneable {
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_,_,_ -> this", mutates = "this")
   public JElement to(float x, float y, float z) {
     this.to[0] = x;
@@ -81,12 +84,14 @@ public class JElement implements Cloneable {
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JElement rotation(JRotation rotation) {
     this.rotation = rotation;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JElement shade(boolean shade) {
     this.shade = shade;
@@ -99,18 +104,21 @@ public class JElement implements Cloneable {
    * @deprecated Please use {@link #shade(boolean) shade}{@code (false)}.
    */
   @Deprecated
+  @CanIgnoreReturnValue
   @Contract(value = "-> this", mutates = "this")
   public JElement shade() {
     this.shade = false;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JElement faces(JFaces faces) {
     this.faces = faces;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JElement addFace(Direction direction, JFace face) {
     if (this.faces == null) {
@@ -120,6 +128,7 @@ public class JElement implements Cloneable {
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JElement addAllFaces(JFace face) {
     if (this.faces == null) this.faces = new JFaces();
@@ -127,6 +136,7 @@ public class JElement implements Cloneable {
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JElement addAllFaces(Function<Direction, JFace> faces) {
     if (this.faces == null) this.faces = new JFaces();
