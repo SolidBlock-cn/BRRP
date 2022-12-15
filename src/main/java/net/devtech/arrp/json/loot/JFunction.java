@@ -1,16 +1,21 @@
 package net.devtech.arrp.json.loot;
 
+
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.*;
 import net.devtech.arrp.api.JsonSerializable;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.function.LootFunction;
+import net.minecraft.loot.function.LootFunctionType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>The <b>loot table function</b> is in essence an "item modifier". The field "function" is the identifier (as string) of the loot table function.</p>
@@ -21,7 +26,7 @@ import java.util.List;
 public class JFunction implements Cloneable, JsonSerializable {
   public List<JCondition> conditions;
   /**
-   * The name of the loot table function. Possible values: {@code "apply_bonus"}, {@code "copy_name"}, {@code "copy_nbt"}, so on.
+   * The name of the loot table function. Possible values can be seen in {@link net.minecraft.loot.function.LootFunctionTypes}.
    */
   public String function;
   public JsonObject properties = new JsonObject();
@@ -52,6 +57,7 @@ public class JFunction implements Cloneable, JsonSerializable {
    *
    * @param function The function name, which is an identifier (as string).
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JFunction function(String function) {
     this.function = function;
@@ -59,40 +65,71 @@ public class JFunction implements Cloneable, JsonSerializable {
   }
 
   /**
+   * Set the name of the loot table function.
+   *
+   * @param function The function name, which is an identifier.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.2")
+  public JFunction function(Identifier function) {
+    return function(function.toString());
+  }
+
+  /**
+   * Set the name of the loot table function.
+   *
+   * @param function The loot function type, the id of which will be used.
+   */
+  @CanIgnoreReturnValue
+  @Contract(value = "_ -> this", mutates = "this")
+  @ApiStatus.AvailableSince("0.8.2")
+  public JFunction function(LootFunctionType function) {
+    return function(Objects.requireNonNull(Registry.LOOT_FUNCTION_TYPE.getId(function), "The loot function type is not registered."));
+  }
+
+  /**
    * Set all properties of the function, overriding existing ones, except {@link #function} and {@link #conditions}.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JFunction set(JsonObject properties) {
     this.properties = properties;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, JsonElement value) {
     this.properties.add(key, value);
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, String value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, Number value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, Boolean value) {
     return parameter(key, new JsonPrimitive(value));
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, Identifier value) {
     return parameter(key, value.toString());
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JFunction parameter(String key, Character value) {
     return parameter(key, new JsonPrimitive(value));
@@ -103,6 +140,7 @@ public class JFunction implements Cloneable, JsonSerializable {
    *
    * @param condition The loot table condition.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JFunction condition(JCondition condition) {
     if (conditions == null) this.conditions = new ArrayList<>();

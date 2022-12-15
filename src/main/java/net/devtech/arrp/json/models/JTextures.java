@@ -1,6 +1,7 @@
 package net.devtech.arrp.json.models;
 
 import com.google.common.collect.ForwardingMap;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -146,6 +147,7 @@ public class JTextures extends ForwardingMap<String, String> implements Cloneabl
    * @see #vars(String...)
    */
   @Contract(value = "_, _ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures var(String name, String val) {
     put(name, val);
     return this;
@@ -174,6 +176,7 @@ public class JTextures extends ForwardingMap<String, String> implements Cloneabl
    * @see #of(String...)
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures vars(String... strings) {
     for (int i = 0; i < strings.length; i += 2) {
       final String name = strings[i];
@@ -189,6 +192,7 @@ public class JTextures extends ForwardingMap<String, String> implements Cloneabl
    * @see #ofAll(String)
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures all(String all) {
     return var("all", all);
   }
@@ -199,6 +203,7 @@ public class JTextures extends ForwardingMap<String, String> implements Cloneabl
    * @see #ofSides(String, String, String)
    */
   @Contract(value = "_, _, _ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures sides(String top, String side, String bottom) {
     return var("top", top).var("side", side).var("bottom", bottom);
   }
@@ -207,6 +212,7 @@ public class JTextures extends ForwardingMap<String, String> implements Cloneabl
    * Add the {@code "particle"} texture variable. Identical to {@link #var}{@code ("particle", val)}.
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures particle(String val) {
     put("particle", val);
     return this;
@@ -218,30 +224,35 @@ public class JTextures extends ForwardingMap<String, String> implements Cloneabl
    * @see #ofLayer0(String)
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures layer0(String val) {
     put("layer0", val);
     return this;
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures layer1(String val) {
     put("layer1", val);
     return this;
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures layer2(String val) {
     put("layer2", val);
     return this;
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures layer3(String val) {
     put("layer3", val);
     return this;
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JTextures layer4(String val) {
     put("layer4", val);
     return this;

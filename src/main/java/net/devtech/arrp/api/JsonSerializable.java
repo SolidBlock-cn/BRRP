@@ -7,13 +7,14 @@ import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 
 /**
- * Implement this interface, and in the {@link net.devtech.arrp.impl.RuntimeResourcePackImpl#GSON}  the method {@link #serialize} will be used to serialize.<p>
- * To make your GSON able to use the method, do this in your GSONBuilder:
+ * <p>Implement this interface, and in the {@link net.devtech.arrp.impl.RuntimeResourcePackImpl#GSON}  the method {@link #serialize} will be used to serialize.
+ * <p>To make your GSON able to use the method, do this in your GSONBuilder:
  * <pre>
  *   {@code
  *       new GsonBuilder()
  *        .registerTypeHierarchyAdapter(JSONSerializable.class, JSONSerializable.SERIALIZER)}
  * </pre>
+ * <p>Do not implement this method as anonymous classes, as GSON may fail to correctly serialize it.
  */
 public interface JsonSerializable {
   /**

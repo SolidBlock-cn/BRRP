@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -89,6 +90,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
    *
    * @param item The item.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JIngredient item(Item item) {
     return this.item(Registry.ITEM.getId(item).toString());
@@ -99,6 +101,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
    *
    * @param itemConvertible The item. It can be a block.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JIngredient item(ItemConvertible itemConvertible) {
     return item(itemConvertible.asItem());
@@ -109,6 +112,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
    *
    * @param id The identifier as string.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JIngredient item(String id) {
     if (this.isDefined()) {
@@ -125,6 +129,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
    *
    * @param id The identifier of the item.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JIngredient item(Identifier id) {
     return item(id.toString());
@@ -236,6 +241,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
   /**
    * Add another ingredient to this ingredient. In this case, the {@link #ingredients} field will be non-null, and this object will be serialized to a {@link com.google.gson.JsonArray}.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JIngredient add(final JIngredient ingredient) {
     if (this.ingredients == null) {

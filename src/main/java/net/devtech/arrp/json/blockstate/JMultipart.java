@@ -1,6 +1,7 @@
 package net.devtech.arrp.json.blockstate;
 
 import com.google.common.collect.Lists;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -81,6 +82,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
    *
    * @deprecated class is kept for compatibility. You should use {@link #when(When)}.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   @Deprecated
   public JMultipart when(JWhen when) {
@@ -90,6 +92,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
   /**
    * Set the condition of the multipart object. If a condition is already specified, it will be overridden.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JMultipart when(When when) {
     this.when = when;
@@ -100,6 +103,7 @@ public class JMultipart implements Cloneable, JsonSerializable {
    * Add a model in the {@link #apply} list.<br>
    * If the list contains multiple elements, Minecraft will choose a random one in it when rendering.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JMultipart addModel(JBlockModel model) {
     this.apply.add(model);

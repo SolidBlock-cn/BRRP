@@ -1,17 +1,18 @@
 package net.devtech.arrp.json.loot;
 
 import com.google.common.base.Preconditions;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.entry.LeafEntry;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.entry.LootPoolEntryType;
+import net.minecraft.loot.entry.LootPoolEntryTypes;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -29,8 +30,7 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class JEntry implements Cloneable {
   /**
-   * The identifier (as string) of the type of the entry.<br>
-   * Allowed values: {@code minecraft:item}, {@code minecraft:tag}, {@code minecraft:loot_table}, {@code minecraft:group}, {@code minecraft:alternatives}, {@code minecraft:sequence}, {@code minecraft:dynamic}, and {@code minecraft:empty}.
+   * The identifier (as string) of the type of the entry. Allowed types can be found in {@link LootPoolEntryTypes}.
    */
   public String type;
   /**
@@ -70,6 +70,7 @@ public class JEntry implements Cloneable {
    *
    * @param type See {@link #type}.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JEntry type(String type) {
     this.type = type;
@@ -92,6 +93,7 @@ public class JEntry implements Cloneable {
   /**
    * @param name See {@link #name}.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JEntry name(String name) {
     this.name = name;
@@ -103,6 +105,7 @@ public class JEntry implements Cloneable {
    *
    * @param child Another loot table entry. Cannot be the loot table entry itself.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JEntry child(JEntry child) {
     if (this == child) {
@@ -125,6 +128,7 @@ public class JEntry implements Cloneable {
     return child(RuntimeResourcePackImpl.GSON.fromJson(child, JEntry.class));
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JEntry expand(Boolean expand) {
     this.expand = expand;
@@ -150,6 +154,7 @@ public class JEntry implements Cloneable {
    *
    * @param function The id (as string) of the loot table function.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JEntry function(String function) {
     return function(new JFunction(function));
@@ -160,6 +165,7 @@ public class JEntry implements Cloneable {
    *
    * @param condition The loot table condition.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JEntry condition(JCondition condition) {
     if (this.conditions == null) {
@@ -204,17 +210,20 @@ public class JEntry implements Cloneable {
    *
    * @param condition The id (as string) of the loot table condition.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JEntry condition(String condition) {
     return condition(new JCondition(condition));
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JEntry weight(Integer weight) {
     this.weight = weight;
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JEntry quality(Integer quality) {
     this.quality = quality;
@@ -248,7 +257,7 @@ public class JEntry implements Cloneable {
   /**
    * Create a special object that directly uses the serialization of vanilla-type {@link LootPoolEntry} object.
    *
-   * @see #delegate(LootPoolEntry.Builder)}
+   * @see #delegate(LootPoolEntry.Builder)
    */
   @ApiStatus.AvailableSince("0.8.0")
   @Contract("_ -> new")

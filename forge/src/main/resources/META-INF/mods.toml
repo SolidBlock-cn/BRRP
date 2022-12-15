@@ -1,6 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "[35,)"
-issueTrackerURL = "https://github.com/SolidBlock-cn/BRRP"
+issueTrackerURL = "https://github.com/SolidBlock-cn/BRRP/issues"
 license = "MPLv2"
 
 [[mods]]

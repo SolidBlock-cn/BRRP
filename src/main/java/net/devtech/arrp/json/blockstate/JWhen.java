@@ -26,6 +26,7 @@ import java.util.function.Supplier;
  * <p>However, you can directly use {@link #delegate(When)}, which creates an object with vanilla serialization. You can create the delegate with {@link When#create()} , {@link #anyOf(When...)}. Do not use classes in <i>this</i> mod as parameters of {@link #delegate}.</p>
  *
  * @see net.minecraft.data.client.model.When
+ * @deprecated Please use {@link JWhenLogical} and {@link JWhenProperties}.
  */
 @Deprecated
 @PreferredEnvironment(EnvType.CLIENT)

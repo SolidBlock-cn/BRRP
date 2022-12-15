@@ -1,15 +1,16 @@
 package net.devtech.arrp.json.loot;
 
 import com.google.common.collect.Lists;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.function.LootFunction;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 public class JLootTable implements Cloneable {
   /**
-   * The type of the loot table. Allowed values: {@code minecraft:empty}, {@code minecraft:entity}, {@code minecraft:block}, {@code minecraft:chest}, {@code minecraft:fishing}, {@code minecraft:advancement_reward}, {@code minecraft:barter}, {@code minecraft:command}, {@code minecraft:selector}, {@code minecraft:advancement_entity}, and {@code minecraft:generic}.
+   * The type of the loot table. Allowed values can be found in {@link LootContextTypes}.
    */
   public final String type;
   /**
@@ -56,7 +57,7 @@ public class JLootTable implements Cloneable {
 
   /**
    * Create a simple loot table with the specified type and pools.<p>
-   * Please note that parameter {@code pools} is a "varargs", and will be used to create a new array list with {@link Lists#newArrayList}. However, for BRRP versions before 0.7.0, it was a fixed-size list created by {@link java.util.Arrays#asList}, which will throw an {@link UnsupportedOperationException} if you add an element with {@link #pool(JPool)}, and can be seen as <b>a bug before 0.7.0</b>. Therefore, <u>if you create an object with this method and adds elements to the pool list thereafter, you'd better demand that the BRRP version is >=0.7.0</u>, which can be defined in your {@code fabric.mod.json}.
+   * Please note that parameter {@code pools} is a "varargs", and will be used to create a new array list with {@link Lists#newArrayList}.
    *
    * @param type  The loot table type. Please refer to {@link #type}.
    * @param pools The loot table pools varargs.
@@ -141,6 +142,7 @@ public class JLootTable implements Cloneable {
    *
    * @param pool The loot table pool.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JLootTable pool(JPool pool) {
     if (this.pools == null) {
@@ -187,6 +189,7 @@ public class JLootTable implements Cloneable {
    *
    * @param function The loot table function.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JLootTable function(JFunction function) {
     if (this.functions == null) {

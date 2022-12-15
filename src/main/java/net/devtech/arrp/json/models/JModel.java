@@ -1,6 +1,7 @@
 package net.devtech.arrp.json.models;
 
 import com.google.common.collect.Lists;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.devtech.arrp.json.loot.JCondition;
 import net.fabricmc.api.EnvType;
@@ -231,6 +232,7 @@ public class JModel implements Cloneable {
     return new JTextures();
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JModel addOverride(JOverride override) {
     if (this.overrides == null) {
@@ -241,11 +243,13 @@ public class JModel implements Cloneable {
     return this;
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JModel addOverride(JOverride... overrides) {
     return addOverride(Arrays.asList(overrides));
   }
 
+  @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JModel addOverride(Collection<? extends JOverride> overrides) {
     if (this.overrides == null) {
@@ -260,6 +264,7 @@ public class JModel implements Cloneable {
    * Set the identifier of model parent. You can also specify the model parent in the {@linkplain #JModel(String) constructor}.
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel parent(String parent) {
     this.parent = parent;
     return this;
@@ -269,30 +274,35 @@ public class JModel implements Cloneable {
    * Set the identifier of model parent. You can also specify the model parent in the {@linkplain #JModel(Identifier) constructor}.
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel parent(Identifier parent) {
     this.parent = parent.toString();
     return this;
   }
 
   @Contract(value = "-> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel noAmbientOcclusion() {
     this.ambientocclusion = false;
     return this;
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel ambientOcclusion(@SuppressWarnings("SpellCheckingInspection") boolean ambientocclusion) {
     this.ambientocclusion = ambientocclusion;
     return this;
   }
 
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel display(JDisplay display) {
     this.display = display;
     return this;
   }
 
   @Contract(value = "_, _ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel addDisplay(JDisplay.DisplayPosition displayPosition, JPosition position) {
     if (this.display == null) display = new JDisplay();
     this.display.put(displayPosition, position);
@@ -303,6 +313,7 @@ public class JModel implements Cloneable {
    * Set the {@linkplain #textures texture variables} of the model. If it exists already, will override it, instead of append it.
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel textures(JTextures textures) {
     this.textures = textures;
     return this;
@@ -319,6 +330,7 @@ public class JModel implements Cloneable {
    * new JModel("block/template_button").addTexture("texture", "block/stone")}</pre>
    */
   @Contract(value = "_, _ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel addTexture(String name, String val) {
     if (textures == null) textures = new JTextures();
     textures.var(name, val);
@@ -331,6 +343,7 @@ public class JModel implements Cloneable {
    * @param strings The texture names and values. Must be an even number.
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel addTextures(String... strings) {
     if (textures == null) textures = new JTextures();
     textures.vars(strings);
@@ -341,6 +354,7 @@ public class JModel implements Cloneable {
    * Add one or more elements to the model. If the {@link #elements} field already exists, they will be appended to the field.
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel element(JElement... elements) {
     return element(Arrays.asList(elements));
   }
@@ -349,6 +363,7 @@ public class JModel implements Cloneable {
    * Add a collection of elements to the model. If the {@link #elements} field already exists, they will be appended to the field.
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel element(Collection<? extends JElement> elements) {
     if (this.elements == null) {
       this.elements = new ArrayList<>(elements);
@@ -363,6 +378,7 @@ public class JModel implements Cloneable {
    * In this case you can make different {@code JModel}s share the same {@link #elements} field, which can be an immutable list.
    */
   @Contract(value = "_ -> this", mutates = "this")
+  @CanIgnoreReturnValue
   public JModel setElements(List<JElement> elements) {
     this.elements = elements;
     return this;

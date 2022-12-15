@@ -1,5 +1,6 @@
 package net.devtech.arrp.json.models;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -42,6 +43,7 @@ public class JPredicate extends Object2FloatLinkedOpenHashMap<String> implements
   /**
    * This method quite resembles {@link it.unimi.dsi.fastutil.objects.Object2FloatMap#put(Object, float)}, but returns the object itself, making it possible to chain-call.
    */
+  @CanIgnoreReturnValue
   @Contract(value = "_, _ -> this", mutates = "this")
   public JPredicate addPredicate(String name, float value) {
     put(name, value);
