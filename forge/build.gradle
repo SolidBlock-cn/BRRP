@@ -34,16 +34,16 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
+    // 确保这里的是模组版本（不含游戏版本）而不是项目版本
+    inputs.property "version", rootProject.mod_version
 
     filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
+        expand "version": rootProject.mod_version
     }
 }
 
 shadowJar {
     exclude "fabric.mod.json"
-//    exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"

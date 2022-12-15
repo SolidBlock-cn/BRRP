@@ -3,7 +3,6 @@ package pers.solid.brrp.fabric;
 import com.google.common.collect.Lists;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.BRRPDevelopment;
-import net.devtech.arrp.api.RRPCallback;
 import net.devtech.arrp.api.RRPCallbackConditional;
 import net.devtech.arrp.api.RRPPreGenEntrypoint;
 import net.devtech.arrp.api.SidedRRPCallback;
@@ -47,8 +46,6 @@ public class PlatformBridgeImpl extends PlatformBridge {
 
   @Override
   public void prelaunch() {
-    SidedRRPCallback.BEFORE_VANILLA.register((type, resources) -> RRPCallback.BEFORE_VANILLA.invoker().insert(resources));
-    SidedRRPCallback.AFTER_VANILLA.register((type, resources) -> RRPCallback.AFTER_VANILLA.invoker().insert(resources));
     ARRP.LOGGER.info("BRRP data generation: PreLaunch");
     FabricLoader loader = FabricLoader.getInstance();
     List<Future<?>> futures = new ArrayList<>();

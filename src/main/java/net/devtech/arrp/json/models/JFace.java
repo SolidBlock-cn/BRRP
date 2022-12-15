@@ -1,7 +1,7 @@
 package net.devtech.arrp.json.models;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.devtech.arrp.annotations.PreferredEnvironment;
-import net.devtech.arrp.util.CanIgnoreReturnValue;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Contract;

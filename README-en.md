@@ -1,8 +1,10 @@
-BRRP (Better Runtime Resource Pack), is a branch of [ARRP](https://github.com/Devan-Kerman/ARRP) mod. This mod provides all features of ARRP, fixes some bugs that exist in ARRP, and provides some new features.
+# Better Runtime Resource Pack
+
+[点击此处阅读本文档的中文版。](README.md)
+
+BRRP (Better Runtime Resource Pack), is a library mod used for generate resources at runtime, which is a branch of [ARRP](https://github.com/Devan-Kerman/ARRP) (Advanced Runtime Resource Pack) mod. This mod provides all features of ARRP, fixes some bugs that exist in ARRP, and provides some new features. It currently supports Fabric and Forge of Minecraft 1.16.5-1.19.3.
 
 Welcome to join Tencent QQ group **587928350** or KOOK (KaiHeiLa) channel invitation code **KlFS0n** to experience the latest update of this mod.
-
-[阅读本文档的中文版。](README.md)
 
 ## What is a runtime resource pack?
 
@@ -19,7 +21,7 @@ To summarize again the process traditional resource packs and runtime resource p
 - *Traditional* File → (read as) byte form → (deserialized as) in-game objects
 - *Runtime* Code → ARRP objects → (serialized as) byte form → (deserialized as) in-game objects
 
-It's considered to directly use objects generated in game in future versions, without the process of deserialization and serialization. This is already possible in theory, but to be in the form of resource pack and allow overriding by traditional resource packs and data packs, some further research is required.
+It's been in my plan to make it possible to directly use objects generated in game in future versions, without the process of deserialization and serialization. This is already possible in theory, but to be in the form of resource pack and allow overriding by traditional resource packs and data packs, some further research is required.
 
 ## About this mod
 
@@ -46,21 +48,22 @@ Runtime resource packs, after created and written, take effect only after regist
 public class MyClass implements ModInitializer {
   public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
 
+  @Override
   public void onInitialize() {
     // you may invoke 'write' methods for 'pack' here to write something into it.
 
-    RRPCallback.BEFORE_VANILLA.register(a -> a.add(pack));
+    RRPCallback.BEFORE_VANILLA.register(resources -> resources.add(pack));
   }
 }
 ```
 
 You can generate resource and register your resource pack at any time. In the example above, the registration takes place at the `main` entrypoint at the end of initialization of Minecraft. You can also generate resources at `preLaunch` or `rrp:pregen` (implement `RRPPreGenEntryPoint`), but in this case you cannot use some contents of Minecraft, such as game registries.
 
-Apart from adding normal resource, you can also add async resource, allowing adding required contents in `rrp:pregen`. In `rrp:pregen`, resource packs are generated in the form of multiple-thread.
+Apart from adding normal resource, you can also add async resource, allowing adding required contents in `rrp:pregen`. In `rrp:pregen`, resource packs are generated in the form of multiple-thread. The feature has been already existing in ARRP.
 
 ### Forge
 
-For Forge versions, you may use RRPEvent to register resource packs on your mod's event bus, as following:
+For Forge versions, you may use `RRPEvent` to register resource packs on your mod's event bus, as following:
 
 ```java
 
@@ -84,6 +87,7 @@ The mod supports a `RRPEventHelper` that supports both Forge and Fabric. For exa
 public class MyClass implements ModInitializer {
   public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
 
+  @Override
   public void onInitialize() {
     // you may invoke 'write' methods for 'pack' here to write something into it.
 
@@ -96,17 +100,19 @@ public class MyClass implements ModInitializer {
 
 Minecraft has vanilla data generation features, which are extended by Fabric API. BRRP is trying to bridge ARRP and Minecraft's vanilla classes.
 
-In BRRP, some ARRP objects can directly use their corresponding objects of vanilla Minecraft. For example, in vanilla `BlockStateModelGenerated`, there are many methods to directly create "block states" objects (these methods had been private, but are access-widened by Fabric Data Generation API). And then `JBlockStates.delegate` can be directly used, as the following code snippet:
+In BRRP, some ARRP objects can directly use their corresponding objects of vanilla Minecraft. For example, in vanilla `BlockStateModelGenerator`, there are many methods to directly create "block states" objects (these methods had been private, but are access-widened by Fabric Data Generation API). And then `JBlockStates.delegate` can be directly used, as the following code snippet:
 
 ```java
-public class XXX /*extends ...*/ {
+public class MyClass implements ModInitializer {
   @Override
-  public BlockStates getBlockStates() {
-    return JBlockStates.delegate(BlockStateModelGenerator.createStairsBlockState(
-        this,
+  public void onInitialize() {
+    pack.addBlockStates(BlockStateModelGenerator.createStairsBlockState(
+        MyModBlocks.EXAMPLE,
         blockModelId.brrp_append("_inner"),
         blockModelId,
-        blockModelId.brrp_append("_outer")));
+        blockModelId.brrp_append("_outer"), new Identifier("my_mod", "example")));
+
+    RRPEventHelper.BEFORE_VANILLA.registerPack(pack);
   }
 }
 ```
@@ -123,18 +129,21 @@ Hot-swap is usually not supported when resource packs are created, as its conten
 public class MyClass implements ModInitializer {
   public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
 
+  @Override
   public void onInitialize() {
-    RRPCallback.BEFORE_VANILLA.register(a -> {
+    RRPCallback.BEFORE_VANILLA.register(resources -> {
       pack.clearResources();
       pack.addXXX('...');
 
-      a.add(pack);
+      resources.add(pack);
     });
   }
 }
 ```
 
-In this way, each time Minecraft loads resources, the runtime resource packs are re-generated. But please do *not* do this when publishing your mods, as it causes resources re-generated each time you reload resource packs (including game initialization and F3+T hotkey) or data packs (including entering word or running `/reload`), which is obvious unnecessary. Therefore, when publishing your mod, it's advised to generate all resources before registering the pack.
+In this way, each time Minecraft loads resources, such as pressing hotkey `F3+T` to reload resource packs, or typing `/reload` to reload data packs, the runtime resource packs are re-generated. But please do *not* do this when publishing your mods, as it causes resources re-generated each time you reload resource packs or data packs, which is obvious unnecessary. Therefore, when publishing your mod, it's advised to generate all resources before registering the pack, and add it in the resource loading event.
+
+About more detail explanations, please refer to the wiki part of the GitHub project of this mod. You may also refer to `BRRPDevelopment` to understand a simple example of this mod.
 
 ## What are assets and data
 
@@ -152,31 +161,53 @@ Let's re-summarize here: when it comes to modding, "resources" and "data" have s
 
 ## How to use this mod as your project's dependency
 
-To use this mod as your project's dependency, and use this mod's API, you can at first download these two files: <code>**brrp-version-gameVersion.jar**</code> 和 <code>**brrp-version-gameVersion-sources.jar**</code>, stored in any place in your device (places inside or nearby your project folder are preferred, the two files should be in the same folder, and, if needed, add these files to `.gitignore`).
+To use this mod as your project's dependency, and use this mod's API, you have two ways:
 
-And write following content in `build.gradle`:
+### Way 1: By using the repository in GitHub
+
+Add following content to the `repositories` and `dependencies` part of your `build.gradle` respectively.
 
 ```groovy
 repositories {
-    // [...]
+    maven {
+        url 'https://raw.githubusercontent.com/SolidBlock-cn/mvn-repo/main'
 
+        // If the website above is beyond reach, you may try mirror websites, such as:
+        // url 'https://raw.nuaa.cf/SolidBlock-cn/mvn-repo/main'
+        // Note that there is no guarantee that the mirror website can be connected stably and contents are not mutated, and that the mirror website above is only an example.
+    }
+}
+
+dependencies {
+    modImplementation "pers.solid:brrp-fabric:<mod version>-<Minecraft version>"
+    // Note: For Forge versions, replace the word `fabric` with `forge`.
+    // For version 0.8.1 and above, please replace `pers.solid` with `net.devtech`. Old version is not recommended.
+    // The difference between `modImplementation` and `modApi` is, when other projects depend on your project, if your project uses `modApi`, that project will also load what you depend on; if uses `modImplementation` then not. You can choose by yourself.
+}
+```
+
+### Way 2: Download files to local
+
+You can at first download these two files: **`brrp-<mod version>-<Minecraft version>.jar`** and **`brrp-<mod version>-<Minecraft version>-sources.jar`**, which may be accessible in the "release" part of GitHub or in Modrinth. Save the two files in any place in your device (places inside or nearby your project folder are preferred, the two files should be in the same folder, and, if needed, you can add the downloaded files to `.gitignore`).
+
+And then, add following content to the `repositories` and `dependencies` part of your `build.gradle` respectively.
+
+```groovy
+repositories {
     // the string in "dir" is the folder that stores these files; relative directory OK.
     flatDir { dir "the folder storing the two .jar files" }
 }
 
 
 dependencies {
-    // [...]
-
-    // the "version" and "gameVersion" should be identical of that of the two files you downloaded. Please subscribe to updates of BRRP.
-    // don't stupidly write literally the words "version" and "gameVersion"
-    modImplementation("net.devtech:brrp:version-gameVersion")
+    modImplementation("net.devtech:brrp:<mod version>-<minecraft_version>")
+    // the note can be found in the "Way 1" section
 }
 ```
 
 Refresh the project, and check if this library is normally loaded. For example, in IntelliJ IDEA, you can double-click Shift, input `RuntimeResourcePack`. If you can find this class, and codes and comments are correctly loaded, you can conclude that the project is correctly loaded.
 
-And then, in your `fabric.mod.json` of your Fabric project, add:
+And then, in the `depends` part of your `fabric.mod.json` of your Fabric project, add:
 
 ```json lines
 {
@@ -184,8 +215,8 @@ And then, in your `fabric.mod.json` of your Fabric project, add:
   "depends": {
     // [...]
 
-    // "*" means "any version"; you can also specify versions, such as ">=0.6.0".
-    // Don't leave these comment in the JSON
+    // "*" means "any version"; you can also specify versions, such as ">=0.8.2".
+    // Don't leave these comments in the JSON
     "better_runtime_resource_pack": "*"
   }
 }
@@ -197,9 +228,9 @@ Or add into `mods.toml` in your Forge project:
 [[dependencies.'the id of your mod']]
 modId = "better_runtime_resource_pack"
 mandatory = true
-versionRange = "[0.8.1,)"
+versionRange = "[0.8.2,)"
 ordering = "NONE"
 side = "BOTH"
 ```
 
-**Note:** If your mod uses features that only exist in some versions (classes, methods or fields annotated `@ApiStatus.AvailableSince`), the version should also be specified in your JSON. For example, if some APIs used in your mod are annotated `@ApiStatus.AvailableSince("0.8.0")`, you're supposed to write `"better_runtime_resource_pack": ">=0.8.0"` in your `fabric.mod.json`, in prevention of some potential unexpected errors when user installed BRRP lower than 0.8.0.
+**Note:** If your mod uses features that only exist in some versions (classes, methods or fields annotated `@ApiStatus.AvailableSince`), the version may also be specified in your `fabric.mod.json`. For example, if some APIs used in your mod are annotated `@ApiStatus.AvailableSince("0.8.0")`, you can write `"better_runtime_resource_pack": ">=0.8.0"` in your `fabric.mod.json`, in prevention of some potential unexpected errors when user installed BRRP lower than 0.8.0.

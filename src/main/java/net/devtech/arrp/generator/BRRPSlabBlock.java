@@ -26,7 +26,7 @@ import org.jetbrains.annotations.UnknownNullability;
  */
 public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
   /**
-   * The base block will be used to generate some files. It can be null.<br>
+   * The base block will be used to generate some files. It can be null.<p>
    * When the base block is null, the double-slab creates and uses the model or "slab_double" model, instead of directly using the model of base block.
    */
   public final @Nullable Block baseBlock;

@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+/**
+ * The entrypoint for pregen resource generation. In Fabric, the class implements {@code PreLaunchEntrypoint} through {@code ARRPMixin} in the Fabric submodule.
+ */
 public class ARRP {
   public static List<Future<?>> futures;
 
-  public static final Logger LOGGER = LogManager.getLogger("BRRP (branch of ARRP)");
+  public static final Logger LOGGER = LogManager.getLogger("BRRP");
 
   public static void bridgePrelaunch() {
     PlatformBridge.getInstance().prelaunch();
@@ -27,5 +30,4 @@ public class ARRP {
       futures = null;
     }
   }
-
 }
