@@ -23,11 +23,6 @@ public class RRPEvent extends Event implements IModBusEvent {
     this.resourceType = resourceType;
   }
 
-  @Deprecated
-  public RRPEvent(List<ResourcePack> pack) {
-    this(pack, null);
-  }
-
   public void addPack(ResourcePack pack) {
     runTimeResourcePacks.add(pack);
   }
@@ -48,10 +43,6 @@ public class RRPEvent extends Event implements IModBusEvent {
   }
 
   public static class BeforeVanilla extends RRPEvent {
-    @Deprecated
-    public BeforeVanilla(List<ResourcePack> pack) {
-      super(pack);
-    }
 
     public BeforeVanilla(List<ResourcePack> pack, ResourceType resourceType) {
       super(pack, resourceType);
@@ -61,11 +52,6 @@ public class RRPEvent extends Event implements IModBusEvent {
   public static class AfterVanilla extends RRPEvent {
     public AfterVanilla(List<ResourcePack> pack, ResourceType resourceType) {
       super(pack, resourceType);
-    }
-
-    @Deprecated
-    public AfterVanilla(List<ResourcePack> pack) {
-      super(pack, null);
     }
   }
 }

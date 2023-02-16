@@ -1,12 +1,11 @@
 package net.devtech.arrp.json.models;
 
 import com.google.common.collect.Lists;
-import net.devtech.arrp.annotations.PreferredEnvironment;
-import net.devtech.arrp.json.loot.JCondition;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.fabricmc.api.EnvType;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -89,149 +88,6 @@ public class JModel implements Cloneable {
     return new JModel("item/handheld").textures(JTextures.ofLayer0(layer0));
   }
 
-  /**
-   * @return a new model that does not override it's parent's elements
-   * @deprecated Please directly use the constructor {@link #JModel()}.
-   */
-  @Deprecated
-  @Contract("-> new")
-  public static JModel modelKeepElements() {
-    JModel model = new JModel();
-    model.elements = null;
-    return model;
-  }
-
-  /**
-   * @return a new model that does not override it's parent's elements
-   * @deprecated Please directly use the constructor {@link #JModel(String)}.
-   */
-  @Deprecated
-  @Contract("_ -> new")
-  public static JModel modelKeepElements(String parent) {
-    JModel model = new JModel();
-    model.parent = parent;
-    model.elements = null;
-    return model;
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link #JModel(Identifier)}.
-   */
-  @Deprecated
-  @Contract("_ -> new")
-  public static JModel modelKeepElements(Identifier identifier) {
-    return modelKeepElements(identifier.toString());
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link #JModel()}.
-   */
-  @Deprecated
-  @Contract("-> new")
-  public static JModel model() {
-    return new JModel();
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link #JModel(String)}.
-   */
-  @Deprecated
-  @Contract("_ -> new")
-  public static JModel model(String parent) {
-    JModel model = new JModel();
-    model.parent = parent;
-    return model;
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link JOverride#JOverride(JCondition, String)}.
-   */
-  @Deprecated
-  public static JOverride override(JCondition predicate, Identifier model) {
-    return new JOverride(predicate, model.toString());
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link JCondition#JCondition()}.
-   */
-  @Deprecated
-  @Contract("-> new")
-  public static JCondition condition() {
-    return new JCondition((String) null);
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link #JModel(Identifier)}.
-   */
-  @Deprecated
-  @Contract("_ -> new")
-  public static JModel model(Identifier identifier) {
-    return model(identifier.toString());
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link JDisplay#JDisplay()}.
-   */
-  @Deprecated
-  @Contract("-> new")
-  public static JDisplay display() {
-    return new JDisplay();
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link JElement#JElement()}.
-   */
-  @Deprecated
-  @Contract("-> new")
-  public static JElement element() {
-    return new JElement();
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link JFace#JFace(String)}.
-   */
-  @Deprecated
-  @Contract("_ -> new")
-  public static JFace face(String texture) {
-    return new JFace(texture);
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link JFaces#JFaces()}.
-   */
-  @Deprecated
-  @Contract("-> new")
-  public static JFaces faces() {
-    return new JFaces();
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link JPosition#JPosition()}.
-   */
-  @Deprecated
-  @Contract("-> new")
-  public static JPosition position() {
-    return new JPosition();
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link JRotation#JRotation(Direction.Axis)}.
-   */
-  @Deprecated
-  @Contract("_ -> new")
-  public static JRotation rotation(Direction.Axis axis) {
-    return new JRotation(axis);
-  }
-
-  /**
-   * @deprecated Please directly use the constructor {@link JTextures#JTextures()}.
-   */
-  @Deprecated
-  @Contract("-> new")
-  public static JTextures textures() {
-    return new JTextures();
-  }
-
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JModel addOverride(JOverride override) {
@@ -303,7 +159,7 @@ public class JModel implements Cloneable {
 
   @Contract(value = "_, _ -> this", mutates = "this")
   @CanIgnoreReturnValue
-  public JModel addDisplay(JDisplay.DisplayPosition displayPosition, JPosition position) {
+  public JModel addDisplay(ModelTransformationMode displayPosition, JPosition position) {
     if (this.display == null) display = new JDisplay();
     this.display.put(displayPosition, position);
     return this;

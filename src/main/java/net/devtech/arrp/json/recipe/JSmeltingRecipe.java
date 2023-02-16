@@ -84,11 +84,6 @@ public class JSmeltingRecipe extends JCookingRecipe {
     super(TYPE, ingredient, result);
   }
 
-  @Deprecated
-  public JSmeltingRecipe(final JIngredient ingredient, final JResult result) {
-    super(TYPE, ingredient, result);
-  }
-
   @Override
   public JSmeltingRecipe experience(final float experience) {
     return (JSmeltingRecipe) super.experience(experience);

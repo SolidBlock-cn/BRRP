@@ -4,8 +4,7 @@
   "package": "pers.solid.brrp.fabric.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ARRPMixin",
-    "BRRPDevelopmentMixin"
+    "ARRPMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The simple block model that usually represents as the value in {@link JVariant}. It defines the model id and some simple rotations of that model.
+ * The simple block model that usually represents as the value in {@link JVariants}. It defines the model id and some simple rotations of that model.
  * <p>
  * <B>Note: </B>This class is used as a model definition in the block states definition file. To represent a model's content, please use {@link net.devtech.arrp.json.models.JModel}.
  */
@@ -53,15 +53,6 @@ public class JBlockModel implements Cloneable {
    * Create a new, empty model definition. This is usually not recommended, as you can directly assign a model id.
    */
   public JBlockModel() {
-  }
-
-  /**
-   * @param modelId The identifier of the block model. For example, {@code "minecraft:block/oak_slab_top"}.
-   * @deprecated Please use {@link #JBlockModel(Identifier)} or {@link #JBlockModel(String, String)}.
-   */
-  @Deprecated
-  public JBlockModel(String modelId) {
-    this(new Identifier(modelId));
   }
 
   /**

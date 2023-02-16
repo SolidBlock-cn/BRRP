@@ -83,16 +83,6 @@ public class JStonecuttingRecipe extends JRecipe {
     this(JIngredient.ofItem(ingredient), Registries.ITEM.getId(result.asItem()).toString(), count);
   }
 
-  @Deprecated
-  public JStonecuttingRecipe(final JIngredient ingredient, final JResult result) {
-    this(ingredient, result.item, result.count);
-  }
-
-  @Deprecated
-  public JStonecuttingRecipe(final JIngredient ingredient, final JStackedResult result) {
-    this(ingredient, result.item, result.count);
-  }
-
   @Override
   public JStonecuttingRecipe group(final String group) {
     return (JStonecuttingRecipe) super.group(group);

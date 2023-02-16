@@ -16,11 +16,6 @@ public class JBlastingRecipe extends JCookingRecipe {
 
   private static final String TYPE = "blasting";
 
-  @Deprecated
-  public JBlastingRecipe(final JIngredient ingredient, final JResult result) {
-    super(TYPE, ingredient, result);
-  }
-
   public JBlastingRecipe(JIngredient ingredient, String result) {
     super(TYPE, ingredient, result);
   }

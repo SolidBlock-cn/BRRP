@@ -1,7 +1,10 @@
 package net.devtech.arrp.json.animation;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.devtech.arrp.annotations.PreferredEnvironment;
@@ -34,22 +37,6 @@ public class JAnimation implements Cloneable, JsonSerializable {
    * @since 0.8.0 由 List<Integer> 改为 IntList。
    */
   private IntList defaultFrames;
-
-  /**
-   * @deprecated Please directly call the constructor {@link #JAnimation()}.
-   */
-  @Deprecated
-  public static JAnimation animation() {
-    return new JAnimation();
-  }
-
-  /**
-   * @deprecated Please directly call the constructor {@link JFrame#JFrame(int)}.
-   */
-  @Deprecated
-  public static JFrame frame(int index) {
-    return new JFrame(index);
-  }
 
   @Override
   public JAnimation clone() {
@@ -170,16 +157,5 @@ public class JAnimation implements Cloneable, JsonSerializable {
       object.add("animation", animation);
     }
     return object;
-  }
-
-  /**
-   * This class is kept for only compatibility.
-   */
-  @Deprecated
-  public static class Serializer implements JsonSerializer<JAnimation> {
-    @Override
-    public JsonElement serialize(JAnimation jAnimation, Type type, JsonSerializationContext jsonSerializationContext) {
-      return jAnimation.serialize(type, jsonSerializationContext);
-    }
   }
 }

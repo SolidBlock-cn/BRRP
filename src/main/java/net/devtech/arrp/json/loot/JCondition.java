@@ -123,21 +123,6 @@ public class JCondition implements Cloneable, JsonSerializable {
     return parameter(key, new JsonPrimitive(value));
   }
 
-  /**
-   * "or"'s the conditions together
-   *
-   * @deprecated Please use {@link #ofAlternative}.
-   */
-  @Deprecated
-  public JCondition alternative(JCondition... conditions) {
-    JsonArray array = new JsonArray();
-    for (JCondition condition : conditions) {
-      array.add(RuntimeResourcePackImpl.GSON.toJsonTree(condition));
-    }
-    this.parameters.add("terms", array);
-    return this;
-  }
-
   @Override
   public JCondition clone() {
     try {
@@ -152,17 +137,6 @@ public class JCondition implements Cloneable, JsonSerializable {
     final JsonObject parameters = this.parameters;
     parameters.addProperty("condition", condition);
     return parameters;
-  }
-
-  /**
-   * @deprecated This class is kept for compatibility.
-   */
-  @Deprecated
-  public static class Serializer implements JsonSerializer<JCondition> {
-    @Override
-    public JsonElement serialize(JCondition src, Type typeOfSrc, JsonSerializationContext context) {
-      return src.serialize(typeOfSrc, context);
-    }
   }
 
   /**

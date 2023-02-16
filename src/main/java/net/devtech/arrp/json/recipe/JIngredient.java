@@ -1,18 +1,17 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.json.tags.IdentifiedTag;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 
@@ -75,14 +74,6 @@ public class JIngredient implements Cloneable, JsonSerializable {
   @ApiStatus.Internal
   protected JIngredient(List<JIngredient> ingredients) {
     this.ingredients = ingredients;
-  }
-
-  /**
-   * @deprecated Please directly call {@link #JIngredient()}. It's public now.
-   */
-  @Deprecated
-  public static JIngredient ingredient() {
-    return new JIngredient();
   }
 
   /**
@@ -154,7 +145,7 @@ public class JIngredient implements Cloneable, JsonSerializable {
   @Contract(value = "_ -> this", mutates = "this")
   public JIngredient tag(String tagId) {
     if (this.isDefined()) {
-      return this.add(JIngredient.ingredient().tag(tagId));
+      return this.add(new JIngredient().tag(tagId));
     }
 
     this.tag = tagId;
@@ -286,19 +277,6 @@ public class JIngredient implements Cloneable, JsonSerializable {
     object.add("tag", context.serialize(this.tag));
 
     return object;
-  }
-
-  /**
-   * @deprecated This class is kept for only compatibility.
-   */
-  @Deprecated
-  public static class Serializer implements JsonSerializer<JIngredient> {
-    @Override
-    public JsonElement serialize(final JIngredient src,
-                                 final Type typeOfSrc,
-                                 final JsonSerializationContext context) {
-      return src.serialize(typeOfSrc, context);
-    }
   }
 
   @ApiStatus.Internal

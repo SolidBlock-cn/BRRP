@@ -1,10 +1,10 @@
 package net.devtech.arrp.json.recipe;
 
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementRewards;
 import net.minecraft.advancement.CriterionMerger;
@@ -57,82 +57,6 @@ public abstract class JRecipe implements Cloneable {
    */
   public JRecipe(final String type) {
     this.type = type;
-  }
-
-  /**
-   * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
-   */
-  @Deprecated
-  @Contract("_, _, _ -> new")
-  public static JSmithingRecipe smithing(final JIngredient base, final JIngredient addition, final JResult result) {
-    return new JSmithingRecipe(base, addition, result);
-  }
-
-  /**
-   * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
-   */
-  @Deprecated
-  @Contract("_, _ -> new")
-  public static JStonecuttingRecipe stonecutting(final JIngredient ingredient, final JStackedResult result) {
-    return new JStonecuttingRecipe(ingredient, result);
-  }
-
-  // crafting
-
-  /**
-   * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
-   */
-  @Deprecated
-  @Contract("_, _, _ -> new")
-  public static JShapedRecipe shaped(final JPattern pattern, final JKeys keys, final JResult result) {
-    return new JShapedRecipe(result, pattern, keys);
-  }
-
-  /**
-   * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
-   */
-  @Deprecated
-  @Contract("_, _ -> new")
-  public static JShapelessRecipe shapeless(final JIngredients ingredients, final JResult result) {
-    return new JShapelessRecipe(result, ingredients);
-  }
-
-  // cooking
-
-  /**
-   * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
-   */
-  @Deprecated
-  @Contract("_, _ -> new")
-  public static JBlastingRecipe blasting(final JIngredient ingredient, final JResult result) {
-    return new JBlastingRecipe(ingredient, result);
-  }
-
-  /**
-   * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
-   */
-  @Deprecated
-  @Contract("_, _ -> new")
-  public static JSmeltingRecipe smelting(final JIngredient ingredient, final JResult result) {
-    return new JSmeltingRecipe(ingredient, result);
-  }
-
-  /**
-   * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
-   */
-  @Deprecated
-  @Contract("_, _ -> new")
-  public static JCampfireRecipe campfire(final JIngredient ingredient, final JResult result) {
-    return new JCampfireRecipe(ingredient, result);
-  }
-
-  /**
-   * @deprecated Please directly call the constructor. In BRRP mod, they are public now.
-   */
-  @Deprecated
-  @Contract("_, _ -> new")
-  public static JSmokingRecipe smoking(final JIngredient ingredient, final JResult result) {
-    return new JSmokingRecipe(ingredient, result);
   }
 
   /**

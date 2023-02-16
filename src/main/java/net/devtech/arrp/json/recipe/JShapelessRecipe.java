@@ -89,15 +89,6 @@ public class JShapelessRecipe extends JResultRecipe {
   }
 
   /**
-   * @deprecated Please use {@link #JShapelessRecipe(JResult, List)}.
-   */
-  @Deprecated
-  public JShapelessRecipe(final JResult result, final JIngredients ingredients) {
-    super("minecraft:crafting_shapeless", result);
-    this.ingredients = ingredients.ingredients;
-  }
-
-  /**
    * {@inheritDoc}
    */
   @Override

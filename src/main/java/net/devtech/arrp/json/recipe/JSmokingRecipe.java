@@ -85,11 +85,6 @@ public class JSmokingRecipe extends JCookingRecipe {
     super(TYPE, ingredient, result);
   }
 
-  @Deprecated
-  public JSmokingRecipe(final JIngredient ingredient, final JResult result) {
-    super(TYPE, ingredient, result);
-  }
-
   @Override
   public JSmokingRecipe experience(final float experience) {
     return (JSmokingRecipe) super.experience(experience);

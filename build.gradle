@@ -78,7 +78,7 @@ dependencies {
 
     // 用于 Forge 的 event 部分
     modCompileOnly "net.minecraftforge:eventbus:+"
-    modCompileOnly "net.minecraftforge:fmlcore:${rootProject.minecraft_version}-+"
+    modCompileOnly "net.minecraftforge:fmlcore:1.19.3-+"
 }
 
 publishing {

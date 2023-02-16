@@ -98,18 +98,6 @@ public class JElement implements Cloneable {
     return this;
   }
 
-  /**
-   * This method sets the {@link #shade} to <code>false</code>, not <code>true</code>.
-   *
-   * @deprecated Please use {@link #shade(boolean) shade}{@code (false)}.
-   */
-  @Deprecated
-  @CanIgnoreReturnValue
-  @Contract(value = "-> this", mutates = "this")
-  public JElement shade() {
-    this.shade = false;
-    return this;
-  }
 
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")

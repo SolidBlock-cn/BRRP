@@ -84,11 +84,6 @@ public class JCampfireRecipe extends JCookingRecipe {
     super(TYPE, ingredient, result);
   }
 
-  @Deprecated
-  public JCampfireRecipe(final JIngredient ingredient, final JResult result) {
-    super(TYPE, ingredient, result);
-  }
-
   @Override
   public JCampfireRecipe experience(final float experience) {
     return (JCampfireRecipe) super.experience(experience);

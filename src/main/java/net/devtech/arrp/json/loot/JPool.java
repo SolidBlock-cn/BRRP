@@ -1,14 +1,12 @@
 package net.devtech.arrp.json.loot;
 
 import com.google.common.collect.Lists;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.SerializedName;
 import net.devtech.arrp.api.JsonSerializable;
-import net.devtech.arrp.impl.RuntimeResourcePackImpl;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.LootCondition;
@@ -237,18 +235,6 @@ public class JPool implements Cloneable {
     return function(JFunction.delegate(function));
   }
 
-  /**
-   * This method is kept for compatibility.
-   *
-   * @deprecated Please use {@link #rolls(int)} or {@link #rolls(float)}.
-   */
-  @Deprecated
-  @Contract(value = "_ -> this", mutates = "this")
-  @CanIgnoreReturnValue
-  public JPool rolls(Integer rolls) {
-    return rolls(ConstantLootNumberProvider.create(rolls));
-  }
-
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
   public JPool rolls(int rolls) {
@@ -268,27 +254,6 @@ public class JPool implements Cloneable {
     return this;
   }
 
-  /**
-   * @deprecated Please use {@link #rolls(LootNumberProvider)}.
-   */
-  @Deprecated
-  @Contract(value = "_ -> this", mutates = "this")
-  @CanIgnoreReturnValue
-  public JPool rolls(JRoll roll) {
-    return rolls(roll.asLootNumberProvider());
-  }
-
-  /**
-   * This method is kept for compatibility.
-   *
-   * @deprecated Please use {@link #bonus(int)} or {@link #bonus(float)}.
-   */
-  @Deprecated
-  @Contract(value = "_ -> this", mutates = "this")
-  @CanIgnoreReturnValue
-  public JPool bonus(Integer bonus_rolls) {
-    return bonus(ConstantLootNumberProvider.create(bonus_rolls));
-  }
 
   @Contract(value = "_ -> this", mutates = "this")
   @CanIgnoreReturnValue
@@ -309,33 +274,12 @@ public class JPool implements Cloneable {
     return this;
   }
 
-  /**
-   * @deprecated Please use {@link #bonus(LootNumberProvider)}.
-   */
-  @Deprecated
-  @Contract(value = "_ -> this", mutates = "this")
-  @CanIgnoreReturnValue
-  public JPool bonus(JRoll bonus_roll) {
-    return bonus(bonus_roll.asLootNumberProvider());
-  }
-
   @Override
   public JPool clone() {
     try {
       return (JPool) super.clone();
     } catch (CloneNotSupportedException e) {
       throw new InternalError(e);
-    }
-  }
-
-  /**
-   * This class is kept for compatibility.
-   */
-  @Deprecated
-  public static class Serializer implements JsonSerializer<JPool> {
-    @Override
-    public JsonElement serialize(JPool src, Type typeOfSrc, JsonSerializationContext context) {
-      return RuntimeResourcePackImpl.GSON.toJsonTree(src, typeOfSrc);
     }
   }
 

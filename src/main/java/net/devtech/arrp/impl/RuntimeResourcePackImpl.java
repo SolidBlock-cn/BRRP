@@ -8,7 +8,6 @@ import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
 import net.devtech.arrp.json.blockstate.JBlockStates;
-import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
@@ -43,7 +42,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
@@ -322,10 +320,6 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     return this.addAsset(fix(id, "models", "json"), serialize(model));
   }
 
-  @Override
-  public byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier identifier) {
-    return this.addAsset(fix(identifier, "blockstates", "json"), serialize(state));
-  }
 
   @Override
   public byte[] addBlockState(JBlockStates state, Identifier id) {
@@ -429,12 +423,6 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
         }
       }
     }
-  }
-
-  @Override
-  @Deprecated
-  public void dump(File output) {
-    this.dump(Paths.get(output.toURI()));
   }
 
   @Override

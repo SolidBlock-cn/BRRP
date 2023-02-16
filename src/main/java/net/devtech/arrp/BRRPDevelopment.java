@@ -20,6 +20,8 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.SignType;
+import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.TestOnly;
@@ -42,6 +44,10 @@ import java.util.List;
 @TestOnly
 @ApiStatus.Internal
 public class BRRPDevelopment {
+  static {
+    Validate.isTrue(PlatformBridge.getInstance().isDevelopmentEnvironment(), "The class 'BRRPDevelopment' should not be loaded out of the development environment.");
+  }
+
   /**
    * <p>The runtime resource pack that will be used in development environment, as a simple example. The object is created in the initialization of this class.
    * <p>开发环境中使用的运行时资源包，可用作简单的示例。此对象是在类初始化时创建的。
@@ -64,7 +70,7 @@ public class BRRPDevelopment {
   public static final BRRPStairsBlock LAVA_STAIRS = register(new BRRPStairsBlock(LAVA_BLOCK), "lava_stairs");
   public static final BRRPSlabBlock LAVA_SLAB = register(new BRRPSlabBlock(LAVA_BLOCK), "lava_slab");
   public static final BRRPFenceBlock LAVA_FENCE = register(new BRRPFenceBlock(LAVA_BLOCK), "lava_fence");
-  public static final BRRPFenceGateBlock LAVA_FENCE_GATE = register(new BRRPFenceGateBlock(LAVA_BLOCK, SoundEvents.BLOCK_BAMBOO_WOOD_FENCE_GATE_OPEN, SoundEvents.BLOCK_BAMBOO_WOOD_FENCE_GATE_CLOSE), "lava_fence_gate");
+  public static final BRRPFenceGateBlock LAVA_FENCE_GATE = register(new BRRPFenceGateBlock(LAVA_BLOCK, SignType.MANGROVE), "lava_fence_gate");
   public static final BRRPWallBlock LAVA_WALL = register(new BRRPWallBlock(LAVA_BLOCK), "lava_wall");
   /**
    * <p>The block specifies the texture of top, side and bottom via parameters of {@link BRRPCubeBlock#cubeBottomTop(AbstractBlock.Settings, String, String, String)}. {@link BRRPCubeBlock#getBlockModel()} will directly use the textures.

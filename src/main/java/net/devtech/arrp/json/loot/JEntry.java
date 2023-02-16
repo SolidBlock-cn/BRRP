@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
-import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.entry.LeafEntry;
@@ -116,16 +115,6 @@ public class JEntry implements Cloneable {
     }
     this.children.add(child);
     return this;
-  }
-
-  /**
-   * @see JEntry#child(JEntry)
-   * @deprecated unintuitive to use
-   */
-  @Deprecated
-  @Contract(value = "_ -> this", mutates = "this")
-  public JEntry child(String child) {
-    return child(RuntimeResourcePackImpl.GSON.fromJson(child, JEntry.class));
   }
 
   @CanIgnoreReturnValue

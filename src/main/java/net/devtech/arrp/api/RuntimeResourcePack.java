@@ -7,7 +7,6 @@ import io.netty.buffer.ByteBufOutputStream;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
 import net.devtech.arrp.json.animation.JAnimation;
 import net.devtech.arrp.json.blockstate.JBlockStates;
-import net.devtech.arrp.json.blockstate.JState;
 import net.devtech.arrp.json.lang.JLang;
 import net.devtech.arrp.json.loot.JLootTable;
 import net.devtech.arrp.json.models.JModel;
@@ -27,7 +26,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -226,18 +224,6 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a block states file to the runtime resource pack. It defines which model or models will be used and how be used for each variant of the block.
    *
-   * @param state      The block states file to be added.
-   * @param identifier The identifier of the block states file. It is usually the same as the block id.
-   */
-  @CanIgnoreReturnValue
-  @Contract(mutates = "this")
-  default byte[] addBlockState(@SuppressWarnings("deprecation") JState state, Identifier identifier) {
-    return addBlockState(JBlockStates.of(state), identifier);
-  }
-
-  /**
-   * Add a block states file to the runtime resource pack. It defines which model or models will be used and how be used for each variant of the block.
-   *
    * @param state The block states file to be added.
    * @param id    The identifier of the block states file. It is usually the same as the block id.
    * @see JBlockStates
@@ -390,14 +376,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @throws IOException if thrown when reading files.
    */
   void load(Path path) throws IOException;
-
-  /**
-   * Write the runtime resource pack as local files, making you available to directly visit its content.
-   *
-   * @deprecated use {@link #dump(Path)}
-   */
-  @Deprecated
-  void dump(File file);
 
   /**
    * Write the runtime resource pack as local files, as if it is a regular resource pack or data pack, making you available to directly visit its content.

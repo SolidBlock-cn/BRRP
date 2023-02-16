@@ -120,14 +120,6 @@ public abstract class JCookingRecipe extends JRecipe {
     this(type, JIngredient.ofItem(ingredient), Registries.ITEM.getId(result.asItem()).toString());
   }
 
-  @Deprecated
-  protected JCookingRecipe(final String type, final JIngredient ingredient, final JResult result) {
-    super(type);
-
-    this.ingredient = ingredient;
-    this.result = result.item;
-  }
-
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
   public JCookingRecipe experience(final float experience) {

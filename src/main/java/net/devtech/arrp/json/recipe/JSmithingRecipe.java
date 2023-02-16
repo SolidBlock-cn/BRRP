@@ -1,15 +1,16 @@
 package net.devtech.arrp.json.recipe;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.json.tags.IdentifiedTag;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import net.minecraft.data.server.recipe.SmithingRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.data.server.recipe.SmithingTransformRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.SmithingTrimRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.SmithingRecipe;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.recipe.SmithingTransformRecipe;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
@@ -22,7 +23,7 @@ import java.lang.reflect.Type;
  * A <b>smithing recipe</b> refers to a recipe used in a smithing table. It's usually the recipe to upgrade diamond armors to netherite armors.
  *
  * @see net.minecraft.recipe.SmithingRecipe
- * @see net.minecraft.data.server.recipe.SmithingRecipeJsonBuilder
+ * @see net.minecraft.data.server.recipe.SmithingTransformRecipeJsonBuilder.SmithingTransformRecipeJsonProvider
  */
 @SuppressWarnings("unused")
 public class JSmithingRecipe extends JResultRecipe {
@@ -61,13 +62,24 @@ public class JSmithingRecipe extends JResultRecipe {
   }
 
   /**
-   * Create a "delegated" JSmithingRecipe object from a vanilla SmithingRecipeJsonProvider object. Its json serialization will be the same as the delegate.
+   * Create a "delegated" JSmithingRecipe object from a vanilla {@link SmithingTransformRecipeJsonBuilder.SmithingTransformRecipeJsonProvider} object. Its json serialization will be the same as the delegate.
    *
-   * @param delegate The vanilla SmithingRecipeJsonProvider object. When serializing, its serialization will be directly used.
+   * @param delegate The vanilla {@link SmithingTransformRecipeJsonBuilder.SmithingTransformRecipeJsonProvider} object. When serializing, its serialization will be directly used.
    * @return A "delegated" object.
-   * @see net.minecraft.data.server.recipe.SmithingRecipeJsonBuilder.SmithingRecipeJsonProvider
+   * @see net.minecraft.data.server.recipe.SmithingTransformRecipeJsonBuilder.SmithingTransformRecipeJsonProvider
    */
-  public static JSmithingRecipe delegate(SmithingRecipeJsonBuilder.SmithingRecipeJsonProvider delegate) {
+  public static JSmithingRecipe delegate(SmithingTransformRecipeJsonBuilder.SmithingTransformRecipeJsonProvider delegate) {
+    return new Delegate(delegate);
+  }
+
+  /**
+   * Create a "delegated" JSmithingRecipe object from a vanilla {@link SmithingTrimRecipeJsonBuilder.SmithingTrimRecipeJsonProvider} object. Its json serialization will be the same as the delegate.
+   *
+   * @param delegate The vanilla {@link SmithingTrimRecipeJsonBuilder.SmithingTrimRecipeJsonProvider} object. When serializing, its serialization will be directly used.
+   * @return A "delegated" object.
+   * @see net.minecraft.data.server.recipe.SmithingTrimRecipeJsonBuilder.SmithingTrimRecipeJsonProvider
+   */
+  public static JSmithingRecipe delegate(SmithingTrimRecipeJsonBuilder.SmithingTrimRecipeJsonProvider delegate) {
     return new Delegate(delegate);
   }
 
@@ -85,17 +97,6 @@ public class JSmithingRecipe extends JResultRecipe {
     return (JSmithingRecipe) super.recipeCategory(category);
   }
 
-  /**
-   * @deprecated Note that this type of category usually does not exist in smithing recipe.
-   */
-  @CanIgnoreReturnValue
-  @Contract("_ -> this")
-  @Deprecated
-  @Override
-  public JSmithingRecipe category(@Nullable CraftingRecipeCategory category) {
-    return (JSmithingRecipe) super.category(category);
-  }
-
   @Override
   public JSmithingRecipe clone() {
     return (JSmithingRecipe) super.clone();
@@ -103,10 +104,10 @@ public class JSmithingRecipe extends JResultRecipe {
 
   @ApiStatus.Internal
   private static final class Delegate extends JSmithingRecipe implements JsonSerializable {
-    public final SmithingRecipeJsonBuilder.SmithingRecipeJsonProvider delegate;
-    public static final RecipeSerializer<SmithingRecipe> SERIALIZER = RecipeSerializer.SMITHING;
+    public final RecipeJsonProvider delegate;
+    public static final RecipeSerializer<SmithingTransformRecipe> SERIALIZER = RecipeSerializer.SMITHING_TRANSFORM;
 
-    private Delegate(SmithingRecipeJsonBuilder.SmithingRecipeJsonProvider delegate) {
+    private Delegate(RecipeJsonProvider delegate) {
       super((JIngredient) null, null, null);
       this.delegate = delegate;
     }

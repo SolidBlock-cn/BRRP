@@ -6,9 +6,9 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -71,14 +71,6 @@ public class JTag {
   }
 
   /**
-   * @deprecated Please directly use {@code new JTag().replace()}.
-   */
-  @Deprecated
-  public static JTag replacingTag() {
-    return tag().replace();
-  }
-
-  /**
    * Set the {@link #replace} to {@code true}.
    *
    * @see #replace(boolean)
@@ -103,15 +95,7 @@ public class JTag {
   }
 
   /**
-   * @deprecated Please directly use the constructor method {@link #JTag()}.
-   */
-  @Deprecated
-  public static JTag tag() {
-    return new JTag();
-  }
-
-  /**
-   * @implNote Usually you should add the identifier by calling {@link #add(Identifier)} or {@link #tag(Identifier)}.
+   * @implNote Usually you should add the identifier by calling {@link #add(Identifier)} or {@link #addTag(IdentifiedTag)}.
    */
   @CanIgnoreReturnValue
   @Contract(value = "_ -> this", mutates = "this")
@@ -255,19 +239,6 @@ public class JTag {
   @Contract(value = "_ -> this", mutates = "this")
   public JTag addEntityTypes(EntityType<?>... entityTypes) {
     return this.addEntityTypes(Arrays.asList(entityTypes));
-  }
-
-  /**
-   * add a tag to the tag
-   *
-   * @deprecated Ambiguous name. Please use {@link #addTag(Identifier)}.
-   */
-  @Deprecated
-  @CanIgnoreReturnValue
-  @Contract(value = "_ -> this", mutates = "this")
-  public JTag tag(Identifier tag) {
-    this.values.add('#' + tag.getNamespace() + ':' + tag.getPath());
-    return this;
   }
 
   /**

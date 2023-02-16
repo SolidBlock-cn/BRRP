@@ -16,8 +16,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.SignType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
@@ -28,13 +28,13 @@ import org.jetbrains.annotations.UnknownNullability;
 public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceGenerator {
   public final @Nullable Block baseBlock;
 
-  public BRRPFenceGateBlock(@Nullable Block baseBlock, Settings settings, SoundEvent soundEvent, SoundEvent soundEvent2) {
-    super(settings, soundEvent, soundEvent2);
+  public BRRPFenceGateBlock(@Nullable Block baseBlock, Settings settings, SignType signType) {
+    super(settings, signType);
     this.baseBlock = baseBlock;
   }
 
-  public BRRPFenceGateBlock(@NotNull Block baseBlock, SoundEvent soundEvent, SoundEvent soundEvent2) {
-    this(baseBlock, Settings.copy(baseBlock), soundEvent, soundEvent2);
+  public BRRPFenceGateBlock(@NotNull Block baseBlock, SignType signType) {
+    this(baseBlock, Settings.copy(baseBlock), signType);
   }
 
   @Override

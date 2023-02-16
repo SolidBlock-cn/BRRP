@@ -1,15 +1,14 @@
 package net.devtech.arrp.json.recipe;
 
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.devtech.arrp.api.JsonSerializable;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 
 import java.lang.reflect.Type;
@@ -40,22 +39,6 @@ public class JResult implements Cloneable, JsonSerializable {
   }
 
   /**
-   * @deprecated Please directly call {@link #JResult(ItemConvertible)}.
-   */
-  @Deprecated
-  public static JResult item(final Item item) {
-    return result(Registries.ITEM.getId(item).toString());
-  }
-
-  /**
-   * @deprecated Please directly call {@link #JResult(String)} .
-   */
-  @Deprecated
-  public static JResult result(final String id) {
-    return new JResult(id);
-  }
-
-  /**
    * Set the count of this result.
    */
   @Contract("_ -> this")
@@ -63,20 +46,6 @@ public class JResult implements Cloneable, JsonSerializable {
   public JResult count(int count) {
     this.count = count;
     return this;
-  }
-
-  @Deprecated
-  public static JStackedResult itemStack(final Item item, final int count) {
-    return stackedResult(Registries.ITEM.getId(item).toString(), count);
-  }
-
-  @Deprecated
-  public static JStackedResult stackedResult(final String id, final int count) {
-    final JStackedResult stackedResult = new JStackedResult(id);
-
-    stackedResult.count = count;
-
-    return stackedResult;
   }
 
   @Override

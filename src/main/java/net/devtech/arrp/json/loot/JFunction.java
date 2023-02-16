@@ -148,17 +148,6 @@ public class JFunction implements Cloneable, JsonSerializable {
     return this;
   }
 
-  /**
-   * Add a condition to the function.
-   *
-   * @see JFunction#condition(JCondition)
-   * @deprecated unintuitive name
-   */
-  @Deprecated
-  public JFunction add(JCondition condition) {
-    return condition(condition);
-  }
-
   @Override
   public JFunction clone() {
     try {
@@ -179,18 +168,6 @@ public class JFunction implements Cloneable, JsonSerializable {
     return properties;
   }
 
-  /**
-   * This class is kept for compatibility.
-   *
-   * @deprecated
-   */
-  @Deprecated
-  public static class Serializer implements JsonSerializer<JFunction> {
-    @Override
-    public JsonElement serialize(JFunction src, Type typeOfSrc, JsonSerializationContext context) {
-      return src.serialize(typeOfSrc, context);
-    }
-  }
 
   /**
    * @author SolidBlock

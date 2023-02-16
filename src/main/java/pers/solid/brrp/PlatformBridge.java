@@ -18,7 +18,7 @@ import java.util.List;
  * The class is used in the multi-platform development.
  *
  * @see pers.solid.brrp.fabric.PlatformBridgeImpl
- * @see pers.solid.brrp.forge.PlatformBridgeImpl
+ * // @see pers.solid.brrp.forge.PlatformBridgeImpl
  */
 @ApiStatus.AvailableSince("0.8.1")
 @ApiStatus.Internal
@@ -37,7 +37,7 @@ public abstract class PlatformBridge {
 
   public abstract void prelaunch();
 
-  public abstract void onDevelopmentInitialize();
+  public abstract boolean isDevelopmentEnvironment();
 
   public abstract Path getConfigDir();
 

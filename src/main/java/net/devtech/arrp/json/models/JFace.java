@@ -1,7 +1,7 @@
 package net.devtech.arrp.json.models;
 
-import net.devtech.arrp.annotations.PreferredEnvironment;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import net.devtech.arrp.annotations.PreferredEnvironment;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Contract;
@@ -56,17 +56,6 @@ public class JFace implements Cloneable {
   @Contract(value = "_ -> this", mutates = "this")
   public JFace cullface(@Nullable Direction direction) {
     this.cullface = direction == null ? null : direction.asString();
-    return this;
-  }
-
-  /**
-   * Usually the cullface is a direction, so you should use {@link #cullface(Direction)}.
-   */
-  @Deprecated
-  @CanIgnoreReturnValue
-  @Contract(value = "_ -> this", mutates = "this")
-  public JFace cullface(String cullface) {
-    this.cullface = cullface;
     return this;
   }
 

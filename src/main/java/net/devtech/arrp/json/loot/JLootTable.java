@@ -80,64 +80,6 @@ public class JLootTable implements Cloneable {
   }
 
   /**
-   * @deprecated Please directly call the constructor {@link #JLootTable(String)}.
-   */
-  @Deprecated
-  public static JLootTable loot(String type) {
-    return new JLootTable(type);
-  }
-
-  /**
-   * @deprecated Please directly call {@link JEntry#JEntry() new JEntry()}.
-   */
-  @Deprecated
-  public static JEntry entry() {
-    return new JEntry();
-  }
-
-  /**
-   * @see JCondition#JCondition(String)  JCondition
-   * @deprecated unintuitive name
-   */
-  @Deprecated
-  public static JCondition condition(String condition) {
-    return new JCondition(condition);
-  }
-
-  /**
-   * @param condition the predicate's condition identifier
-   * @deprecated Please use {@link JCondition#JCondition()}
-   */
-  @Deprecated
-  public static JCondition predicate(String condition) {
-    return new JCondition(condition);
-  }
-
-  /**
-   * @deprecated Please directly call {@link JFunction#JFunction(String)}.
-   */
-  @Deprecated
-  public static JFunction function(String function) {
-    return new JFunction(function);
-  }
-
-  /**
-   * @deprecated Please directly call {@link JPool#JPool()}.
-   */
-  @Deprecated
-  public static JPool pool() {
-    return new JPool();
-  }
-
-  /**
-   * @deprecated Please directly call {@link JRoll#JRoll(int, int)}.
-   */
-  @Deprecated
-  public static JRoll roll(int min, int max) {
-    return new JRoll(min, max);
-  }
-
-  /**
    * Add a pool to the {@link #pools}.
    *
    * @param pool The loot table pool.
@@ -294,19 +236,6 @@ public class JLootTable implements Cloneable {
   @Contract(value = "_, _ -> new", pure = true)
   public static JLootTable ofEntries(String type, JEntry... entries) {
     return ofPools(type, JPool.ofEntries(entries));
-  }
-
-  /**
-   * Create a delegated loot table object, whose serialization will be directly used.
-   *
-   * @param delegate The vanilla loot table. Its serialization will be directly used when serializing.
-   * @return A new object.
-   * @deprecated Please use {@link #delegate(LootTable.Builder)}.
-   */
-  @Deprecated
-  @Contract("_ -> new")
-  public static JLootTable delegate(LootTable delegate) {
-    return new FromLootTable(delegate);
   }
 
   /**

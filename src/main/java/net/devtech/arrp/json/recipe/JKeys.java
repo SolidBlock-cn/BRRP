@@ -1,42 +1,33 @@
 package net.devtech.arrp.json.recipe;
 
 import com.google.common.collect.ForwardingMap;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import net.devtech.arrp.api.JsonSerializable;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registries;
-import org.jetbrains.annotations.ApiStatus;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneable, JsonSerializable {
   /**
    * The map storing its keys, used for the forwarding map. It's by default a {@link LinkedHashMap}.
    */
   protected final Map<String, JIngredient> keys;
-  /**
-   * @deprecated You do not need it anymore.
-   */
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated(forRemoval = true)
-  @ApiStatus.ScheduledForRemoval(inVersion = "unsure")
-  protected final Map<String, List<JIngredient>> acceptableKeys;
 
   /**
    * Create a new, mutable {@code JKeys} object, with a new {@link LinkedHashMap} initialized.
    */
   public JKeys() {
     this.keys = new LinkedHashMap<>(9, 1);
-    this.acceptableKeys = new HashMap<>();
   }
 
   /**
@@ -46,7 +37,6 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
    */
   public JKeys(Map<String, JIngredient> keys) {
     this.keys = keys;
-    this.acceptableKeys = Collections.emptyMap();
   }
 
   @Override
@@ -54,13 +44,6 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
     return keys;
   }
 
-  /**
-   * @deprecated Please directly call {@link #JKeys()}.
-   */
-  @Deprecated
-  public static JKeys keys() {
-    return new JKeys();
-  }
 
   /**
    * Add a key with the ingredient specified.
@@ -138,21 +121,7 @@ public class JKeys extends ForwardingMap<String, JIngredient> implements Cloneab
 
     keys.forEach((final String key, final JIngredient ingredient) -> object.add(key,
         context.serialize(ingredient)));
-    acceptableKeys.forEach((final String key, final List<JIngredient> acceptableIngredients) -> object.add(
-        key,
-        context.serialize(acceptableIngredients)));
 
     return object;
-  }
-
-  /**
-   * @deprecated This class is kept for just compatibility. For example, some mixins may apply to it.
-   */
-  @Deprecated
-  public static class Serializer implements JsonSerializer<JKeys> {
-    @Override
-    public JsonElement serialize(final JKeys src, final Type typeOfSrc, final JsonSerializationContext context) {
-      return src.serialize(typeOfSrc, context);
-    }
   }
 }

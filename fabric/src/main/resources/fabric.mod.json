@@ -20,7 +20,7 @@
       "net.devtech.arrp.ARRP"
     ],
     "main": [
-      "net.devtech.arrp.BRRPInitialize"
+      "pers.solid.brrp.fabric.BRRPFabricInitialize"
     ],
     "brrp:develop": [
       "net.devtech.arrp.BRRPDevelopment"

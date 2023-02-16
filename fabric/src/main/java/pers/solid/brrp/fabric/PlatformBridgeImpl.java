@@ -2,8 +2,6 @@ package pers.solid.brrp.fabric;
 
 import com.google.common.collect.Lists;
 import net.devtech.arrp.ARRP;
-import net.devtech.arrp.BRRPDevelopment;
-import net.devtech.arrp.api.RRPCallbackConditional;
 import net.devtech.arrp.api.RRPPreGenEntrypoint;
 import net.devtech.arrp.api.SidedRRPCallback;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
@@ -35,18 +33,14 @@ public class PlatformBridgeImpl extends PlatformBridge {
 
   public static final PlatformBridgeImpl INSTANCE = new PlatformBridgeImpl();
 
-  @SuppressWarnings("deprecation")
   @Override
   public void postBefore(ResourceType type, List<ResourcePack> packs) {
     SidedRRPCallback.BEFORE_VANILLA.invoker().insert(type, Lists.reverse(packs));
-    RRPCallbackConditional.BEFORE_VANILLA.invoker().insertTo(type, Lists.reverse(packs));
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public void postAfter(ResourceType type, List<ResourcePack> packs) {
     SidedRRPCallback.AFTER_VANILLA.invoker().insert(type, packs);
-    RRPCallbackConditional.AFTER_VANILLA.invoker().insertTo(type, packs);
   }
 
   @Override
@@ -61,8 +55,8 @@ public class PlatformBridgeImpl extends PlatformBridge {
   }
 
   @Override
-  public void onDevelopmentInitialize() {
-    BRRPDevelopment.registerPacks();
+  public boolean isDevelopmentEnvironment() {
+    return FabricLoader.getInstance().isDevelopmentEnvironment();
   }
 
   @Override

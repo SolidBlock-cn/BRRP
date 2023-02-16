@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  * }</pre>
  * <p>The negation is defined in {@link PropertyCondition} for data generation but is actually not used. There is no guarantee that the usage of negation can take effect.</p>
  *
- * @see JWhen.PropertyCondition
+ * @see When.PropertyCondition
  */
 @PreferredEnvironment(EnvType.CLIENT)
 public class JWhenProperties extends ForwardingMap<String, String> implements Cloneable, When, JsonSerializable {
