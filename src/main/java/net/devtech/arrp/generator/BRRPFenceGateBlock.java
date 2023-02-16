@@ -9,6 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.block.FenceGateBlock;
+import net.minecraft.block.WoodType;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.data.server.recipe.RecipeProvider;
@@ -17,7 +18,6 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.SignType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
@@ -28,13 +28,13 @@ import org.jetbrains.annotations.UnknownNullability;
 public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceGenerator {
   public final @Nullable Block baseBlock;
 
-  public BRRPFenceGateBlock(@Nullable Block baseBlock, Settings settings, SignType signType) {
-    super(settings, signType);
+  public BRRPFenceGateBlock(@Nullable Block baseBlock, Settings settings, WoodType woodType) {
+    super(settings, woodType);
     this.baseBlock = baseBlock;
   }
 
-  public BRRPFenceGateBlock(@NotNull Block baseBlock, SignType signType) {
-    this(baseBlock, Settings.copy(baseBlock), signType);
+  public BRRPFenceGateBlock(@NotNull Block baseBlock, WoodType woodType) {
+    this(baseBlock, Settings.copy(baseBlock), woodType);
   }
 
   @Override
