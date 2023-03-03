@@ -20,6 +20,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.TestOnly;
@@ -42,6 +43,10 @@ import java.util.List;
 @TestOnly
 @ApiStatus.Internal
 public class BRRPDevelopment {
+  static {
+    Validate.isTrue(PlatformBridge.getInstance().isDevelopmentEnvironment(), "The class 'BRRPDevelopment' should not be loaded out of the development environment.");
+  }
+
   /**
    * <p>The runtime resource pack that will be used in development environment, as a simple example. The object is created in the initialization of this class.
    * <p>开发环境中使用的运行时资源包，可用作简单的示例。此对象是在类初始化时创建的。

@@ -35,9 +35,7 @@ public abstract class PlatformBridge {
     throw new AssertionError();
   }
 
-  public abstract void prelaunch();
-
-  public abstract void onDevelopmentInitialize();
+  public abstract boolean isDevelopmentEnvironment();
 
   public abstract Path getConfigDir();
 
