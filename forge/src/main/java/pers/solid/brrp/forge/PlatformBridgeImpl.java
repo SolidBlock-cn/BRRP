@@ -1,9 +1,7 @@
 package pers.solid.brrp.forge;
 
-import net.devtech.arrp.BRRPDevelopment;
 import net.devtech.arrp.api.RRPCallbackForge;
 import net.devtech.arrp.api.RRPEvent;
-import net.devtech.arrp.api.RRPInitEvent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.resource.ResourcePack;
@@ -13,8 +11,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -60,25 +58,6 @@ public class PlatformBridgeImpl extends PlatformBridge {
   }
 
   @Override
-  public void prelaunch() {
-    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::particleFactoryRegister));
-  }
-
-  @SuppressWarnings("deprecation")
-  @OnlyIn(Dist.CLIENT)
-  private void particleFactoryRegister(ParticleFactoryRegisterEvent event) {
-    if (FMLEnvironment.dist.isClient()) {
-      ModLoader.get().postEvent(new RRPInitEvent());
-    }
-  }
-
-  @Override
-  public void onDevelopmentInitialize() {
-    FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, (RegistryEvent.Register<Block> event) -> BRRPDevelopment.registerPacks());
-  }
-
-  @Override
   public Path getConfigDir() {
     return Path.of(FMLConfig.defaultConfigPath());
   }
@@ -102,5 +81,10 @@ public class PlatformBridgeImpl extends PlatformBridge {
 
   public static PlatformBridge getInstance() {
     return INSTANCE;
+  }
+
+  @Override
+  public boolean isDevelopmentEnvironment() {
+    return !FMLEnvironment.production;
   }
 }
