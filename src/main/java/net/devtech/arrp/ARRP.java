@@ -19,10 +19,6 @@ public class ARRP {
 
   public static final Logger LOGGER = LogManager.getLogger("BRRP");
 
-  public static void bridgePrelaunch() {
-    PlatformBridge.getInstance().prelaunch();
-  }
-
   @Blocking
   public static void waitForPregen() throws ExecutionException, InterruptedException {
     if (futures != null) {

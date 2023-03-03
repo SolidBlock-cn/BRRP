@@ -17,13 +17,10 @@
   "environment": "*",
   "entrypoints": {
     "preLaunch": [
-      "net.devtech.arrp.ARRP"
+      "pers.solid.brrp.fabric.BRRPPrelaunch"
     ],
     "main": [
-      "net.devtech.arrp.BRRPInitialize"
-    ],
-    "brrp:develop": [
-      "net.devtech.arrp.BRRPDevelopment"
+      "pers.solid.brrp.fabric.BRRPInitialize"
     ]
   },
   "mixins": [
