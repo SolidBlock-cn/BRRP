@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * The entrypoint for pregen resource generation. In Fabric, the class implements {@code PreLaunchEntrypoint} through {@code ARRPMixin} in the Fabric submodule.
+ * The entrypoint for pregen resource generation.
  */
 public class ARRP {
   public static List<Future<?>> futures;
