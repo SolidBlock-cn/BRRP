@@ -16,6 +16,7 @@ import java.util.function.Function;
 public class RRPEventHelperImpl<E extends RRPEvent> extends RRPEventHelper {
   public static final RRPEventHelperImpl<RRPEvent.BeforeVanilla> BEFORE_VANILLA = new RRPEventHelperImpl<>();
   public static final RRPEventHelperImpl<RRPEvent.AfterVanilla> AFTER_VANILLA = new RRPEventHelperImpl<>();
+  public static final RRPEventHelperImpl<RRPEvent.BeforeUser> BEFORE_USER = new RRPEventHelperImpl<>();
 
   public static RRPEventHelper getBeforeVanilla() {
     return BEFORE_VANILLA;
@@ -48,5 +49,11 @@ public class RRPEventHelperImpl<E extends RRPEvent> extends RRPEventHelper {
   @Override
   public void registerPacks(@NotNull Function<ResourceType, @NotNull Collection<RuntimeResourcePack>> packsFunction) {
     FMLJavaModLoadingContext.get().getModEventBus().addListener((E event) -> event.addPacks(packsFunction.apply(event.resourceType)));
+  }
+
+  @ApiStatus.Experimental
+  @ApiStatus.Internal
+  public static RRPEventHelper getBeforeUser() {
+    return BEFORE_USER;
   }
 }

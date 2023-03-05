@@ -1,6 +1,5 @@
 package pers.solid.brrp.forge;
 
-import net.devtech.arrp.api.RRPCallbackForge;
 import net.devtech.arrp.api.RRPEvent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -24,7 +23,6 @@ import pers.solid.brrp.PlatformBridge;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 @ApiStatus.AvailableSince("0.8.1")
 public class PlatformBridgeImpl extends PlatformBridge {
@@ -33,28 +31,29 @@ public class PlatformBridgeImpl extends PlatformBridge {
 
   public static final PlatformBridgeImpl INSTANCE = new PlatformBridgeImpl();
 
-  @SuppressWarnings("deprecation")
   @Override
   public void postBefore(ResourceType type, List<ResourcePack> packs) {
     RRPEvent.BeforeVanilla beforeVanilla = new RRPEvent.BeforeVanilla(packs, type);
     if (ModLoader.isLoadingStateValid()) {
       ModLoader.get().postEvent((Event & IModBusEvent) beforeVanilla);
     }
-
-    // This is already deprecated.
-    RRPCallbackForge.BEFORE_VANILLA.build().stream().map(f -> f.apply(type)).filter(Objects::nonNull).forEach(packs::add);
   }
 
-  @SuppressWarnings("deprecation")
+  @ApiStatus.Experimental
+  @Override
+  public void postBeforeUser(ResourceType type, List<ResourcePack> packs) {
+    RRPEvent.BeforeUser beforeUser = new RRPEvent.BeforeUser(packs, type);
+    if (ModLoader.isLoadingStateValid()) {
+      ModLoader.get().postEvent((Event & IModBusEvent) beforeUser);
+    }
+  }
+
   @Override
   public void postAfter(ResourceType type, List<ResourcePack> packs) {
     RRPEvent.AfterVanilla afterVanilla = new RRPEvent.AfterVanilla(packs, type);
     if (ModLoader.isLoadingStateValid()) {
       ModLoader.get().postEvent((Event & IModBusEvent) afterVanilla);
     }
-
-    // This is already deprecated.
-    RRPCallbackForge.AFTER_VANILLA.build().stream().map(f -> f.apply(type)).filter(Objects::nonNull).forEach(packs::add);
   }
 
   @Override

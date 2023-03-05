@@ -33,6 +33,12 @@ public class PlatformBridgeImpl extends PlatformBridge {
     SidedRRPCallback.BEFORE_VANILLA.invoker().insert(type, Lists.reverse(packs));
   }
 
+  @ApiStatus.Experimental
+  @Override
+  public void postBeforeUser(ResourceType type, List<ResourcePack> packs) {
+    SidedRRPCallback.BEFORE_USER.invoker().insert(type, Lists.reverse(packs));
+  }
+
   @Override
   public void postAfter(ResourceType type, List<ResourcePack> packs) {
     SidedRRPCallback.AFTER_VANILLA.invoker().insert(type, packs);

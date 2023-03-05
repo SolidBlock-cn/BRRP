@@ -15,6 +15,7 @@ public interface RRPCallback {
   @ApiStatus.AvailableSince("0.8.2")
   Function<RRPCallback, SidedRRPCallback> FORWARDING_FUNCTION = rrpCallback -> (type, resources) -> rrpCallback.insert(resources);
   @ApiStatus.AvailableSince("0.8.2")
+  @ApiStatus.Internal
   Function<SidedRRPCallback, RRPCallback> INVOKER_FUNCTION = sidedRRPCallback -> resources -> sidedRRPCallback.insert(null, resources);
 
   /**
@@ -23,6 +24,12 @@ public interface RRPCallback {
    * @see RRPEventHelper#BEFORE_VANILLA
    */
   Event<RRPCallback> BEFORE_VANILLA = new ForwardingEvent<>(FORWARDING_FUNCTION, SidedRRPCallback.BEFORE_VANILLA, INVOKER_FUNCTION);
+
+  /**
+   * Register your resource pack at a higher priority than minecraft and mod resources, but lower priority than user resources.
+   */
+  @ApiStatus.Experimental
+  Event<RRPCallback> BEFORE_USER = new ForwardingEvent<>(FORWARDING_FUNCTION, SidedRRPCallback.BEFORE_USER, INVOKER_FUNCTION);
 
   /**
    * Register your resource pack that will be read <b>after</b> Minecraft and regular resources are loaded. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, they will be overridden by this runtime resource. Therefore, if you want to override Minecraft vanilla resources and other non-runtime resources, you can register here.

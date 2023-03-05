@@ -4,6 +4,7 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -54,6 +55,18 @@ public class RRPEvent extends Event implements IModBusEvent {
     }
 
     public BeforeVanilla(List<ResourcePack> pack, ResourceType resourceType) {
+      super(pack, resourceType);
+    }
+  }
+
+  @ApiStatus.Experimental
+  public static class BeforeUser extends RRPEvent {
+    @Deprecated
+    public BeforeUser(List<ResourcePack> pack) {
+      super(pack);
+    }
+
+    public BeforeUser(List<ResourcePack> pack, ResourceType resourceType) {
       super(pack, resourceType);
     }
   }

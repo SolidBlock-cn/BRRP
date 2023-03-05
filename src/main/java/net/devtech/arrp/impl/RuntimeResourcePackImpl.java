@@ -3,7 +3,7 @@ package net.devtech.arrp.impl;
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.*;
-import joptsimple.internal.Strings;
+import com.mojang.bridge.game.PackType;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
@@ -17,6 +17,7 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
+import net.minecraft.SharedConstants;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
@@ -29,6 +30,7 @@ import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 import org.jetbrains.annotations.ApiStatus;
@@ -139,11 +141,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
   private final Map<Identifier, JLang> langMergeable = new ConcurrentHashMap<>();
-  private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
+  private final Map<List<String>, Supplier<byte[]>> root = new ConcurrentHashMap<>();
   private boolean forbidsDuplicateResource = false;
 
   public RuntimeResourcePackImpl(Identifier id) {
-    this(id, 5);
+    this(id, SharedConstants.getGameVersion().getPackVersion(PackType.RESOURCE));
   }
 
   public RuntimeResourcePackImpl(Identifier id, int version) {
@@ -268,11 +270,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public Future<byte[]> addAsyncRootResource(String path, CallableFunction<String, byte[]> data) {
-    if (forbidsDuplicateResource && root.containsKey(path)) {
+    if (forbidsDuplicateResource && root.containsKey(Arrays.asList(path.split("/")))) {
       throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getName()));
     }
     Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.get(path));
-    this.root.put(path, () -> {
+    this.root.put(Arrays.asList(path.split("/")), () -> {
       try {
         return future.get();
       } catch (InterruptedException | ExecutionException e) {
@@ -284,18 +286,18 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
 
   @Override
   public void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data) {
-    if (forbidsDuplicateResource && root.containsKey(path)) {
+    if (forbidsDuplicateResource && root.containsKey(Arrays.asList(path.split("/")))) {
       throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getName()));
     }
-    this.root.put(path, new Memoized<>(data, path));
+    this.root.put(Arrays.asList(path.split("/")), new Memoized<>(data, path));
   }
 
   @Override
   public byte[] addRootResource(String path, byte[] data) {
-    if (forbidsDuplicateResource && root.containsKey(path)) {
+    if (forbidsDuplicateResource && root.containsKey(Arrays.asList(path.split("/")))) {
       throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getName()));
     }
-    this.root.put(path, () -> data);
+    this.root.put(Arrays.asList(path.split("/")), () -> data);
     return data;
   }
 
@@ -389,8 +391,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     LOGGER.info("Dumping {} in the path {}.", getName(), output);
     // data dump time
     try {
-      for (Map.Entry<String, Supplier<byte[]>> e : this.root.entrySet()) {
-        Path root = output.resolve(e.getKey());
+      for (Map.Entry<List<String>, Supplier<byte[]>> e : this.root.entrySet()) {
+        Path root = output.resolve(String.join("/", e.getKey()));
         Files.createDirectories(root.getParent());
         Files.write(root, e.getValue().get());
       }
@@ -425,7 +427,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
           this.load(path, this.data, Files.readAllBytes(file));
         } else {
           byte[] data = Files.readAllBytes(file);
-          this.root.put(s, () -> data);
+          this.root.put(Arrays.asList(s.split("/")), () -> data);
         }
       }
     }
@@ -440,8 +442,8 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   @Override
   public void dump(ZipOutputStream zos) throws IOException {
     this.lock();
-    for (Map.Entry<String, Supplier<byte[]>> entry : this.root.entrySet()) {
-      zos.putNextEntry(new ZipEntry(entry.getKey()));
+    for (Map.Entry<List<String>, Supplier<byte[]>> entry : this.root.entrySet()) {
+      zos.putNextEntry(new ZipEntry(String.join("/", entry.getKey())));
       zos.write(entry.getValue().get());
       zos.closeEntry();
     }
@@ -475,7 +477,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
         this.load(path, this.data, this.read(entry, stream));
       } else {
         byte[] data = this.read(entry, stream);
-        this.root.put(s, () -> data);
+        this.root.put(Arrays.asList(s.split("/")), () -> data);
       }
     }
   }
@@ -493,18 +495,14 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
    */
   @Override
   public InputSupplier<InputStream> openRoot(String... segments) {
-    if (segments.length == 1) {
-      this.lock();
-      Supplier<byte[]> supplier = this.root.get(Strings.join(segments, "/"));
-      if (supplier == null) {
-        this.waiting.unlock();
-        return () -> null;
-      }
+    this.lock();
+    Supplier<byte[]> supplier = this.root.get(Arrays.asList(segments));
+    if (supplier == null) {
       this.waiting.unlock();
-      return () -> new ByteArrayInputStream(supplier.get());
-    } else {
-      throw new IllegalArgumentException("File name can't be a path");
+      return null;
     }
+    this.waiting.unlock();
+    return () -> new ByteArrayInputStream(supplier.get());
   }
 
   @Nullable
@@ -520,6 +518,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   public void findResources(ResourceType type, String namespace, String prefix, ResultConsumer consumer) {
     this.lock();
     for (Identifier identifier : this.getSys(type).keySet()) {
+      // deleted section: detecting "No resource found for..."
       if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix)) {
         consumer.accept(identifier, open(type, identifier));
       }
@@ -550,16 +549,23 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
    * 本方法与 BRRP 0.7.0 版本根据 ARRP 0.6.2 进行了修改，作者 Devan Kerman。
    */
   @Override
-  public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
-    final InputSupplier<InputStream> supplier = this.openRoot("pack.mcmeta");
-    InputStream stream = supplier == null ? null : supplier.get();
+  public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
+    InputStream stream = null;
+    try {
+      InputSupplier<InputStream> supplier = this.openRoot("pack.mcmeta");
+      if (supplier != null) {
+        stream = supplier.get();
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
     if (stream != null) {
       return AbstractFileResourcePack.parseMetadata(metaReader, stream);
     } else {
       if (metaReader.getKey().equals("pack")) {
         JsonObject object = new JsonObject();
         object.addProperty("pack_format", this.packVersion);
-        object.addProperty("description", "runtime resource pack");
+        object.add("description", Text.Serializer.toJsonTree(getDescription()));
         return metaReader.fromJson(object);
       }
       if (KEY_WARNINGS.add(metaReader.getKey())) {
@@ -668,5 +674,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       }
       return this.data;
     }
+  }
+
+  @ApiStatus.AvailableSince("0.9.0")
+  @Override
+  public boolean isAlwaysStable() {
+    return true;
   }
 }

@@ -5,6 +5,9 @@ import net.devtech.arrp.api.RRPEventHelper;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.generator.*;
 import net.devtech.arrp.json.lang.JLang;
+import net.devtech.arrp.json.loot.JLootTable;
+import net.devtech.arrp.json.models.JModel;
+import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.json.recipe.JShapedRecipe;
 import net.devtech.arrp.json.recipe.JStonecuttingRecipe;
 import net.devtech.arrp.json.tags.IdentifiedTag;
@@ -12,6 +15,8 @@ import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.function.SetCountLootFunction;
+import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
@@ -228,5 +233,13 @@ public class BRRPDevelopment {
 
     // In this case, the `refreshPack` will be invoked once when registering the pack. And then the refreshed pack will be directly used each time Minecraft loads resources.
     // 在这个例子中，注册资源包的时候会调用一次 `refreshPack`，然后每次 Minecraft 加载资源包的时候直接使用这些资源包。
+
+    // The following code is an example of 'before-user' runtime resource pack.
+    final RuntimeResourcePack beforeUser = RuntimeResourcePack.create(new Identifier("brrp", "test_before_user"));
+    beforeUser.addModel(new JModel("item/handheld").textures(new JTextures().layer0("block/yellow_wool")), new Identifier("minecraft", "item/yellow_wool"));
+    beforeUser.addLang(new Identifier("minecraft", "en_us"), new JLang().blockRespect(Blocks.YELLOW_WOOL, "The model is modified by a 'before-user' runtime resource pack."));
+    beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableId(), JLootTable.simple("yellow_wool").function(SetCountLootFunction.builder(ConstantLootNumberProvider.create(3))));
+    RRPEventHelper.BEFORE_USER.registerPack(beforeUser);
+
   }
 }
