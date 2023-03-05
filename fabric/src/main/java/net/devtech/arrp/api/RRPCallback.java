@@ -15,6 +15,7 @@ public interface RRPCallback {
   @ApiStatus.AvailableSince("0.8.2")
   Function<RRPCallback, SidedRRPCallback> FORWARDING_FUNCTION = rrpCallback -> (type, resources) -> rrpCallback.insert(resources);
   @ApiStatus.AvailableSince("0.8.2")
+  @ApiStatus.Internal
   Function<SidedRRPCallback, RRPCallback> INVOKER_FUNCTION = sidedRRPCallback -> resources -> sidedRRPCallback.insert(null, resources);
 
   /**

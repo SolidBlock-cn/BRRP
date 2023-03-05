@@ -1,4 +1,7 @@
 {
   "modmenu.descriptionTranslation.better_runtime_resource_pack": "BRRP（Better Runtime Resource Pack，更好的运行时资源包）是用于在运行时生成资源包的库模组，是ARRP（Advanced Runtime Resource Pack，更好的运行时资源包）的分支，在ARRP的基础上修复了一些漏洞，增强了一些功能。本模组尽可能兼容依赖ARRP的模组。若已经安装了BRRP，则不再需要单独安装ARRP。",
-  "modmenu.summaryTranslation.better_runtime_resource_pack": "本模组用于在运行时生成资源包。ARRP的分支。"
+  "modmenu.summaryTranslation.better_runtime_resource_pack": "本模组用于在运行时生成资源包。ARRP的分支。",
+
+  "brrp.pack_display_name": "运行时“%s”",
+  "brrp.pack_description": "运行时资源包"
 }

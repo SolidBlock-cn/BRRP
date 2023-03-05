@@ -14,8 +14,6 @@ import org.jetbrains.annotations.ApiStatus;
 import pers.solid.brrp.PlatformBridge;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @ApiStatus.AvailableSince("0.8.1")
