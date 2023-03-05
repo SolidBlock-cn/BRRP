@@ -102,7 +102,7 @@ public class BRRPDevelopment {
    * @param serverIncluded Whether to clear and regenerate server data of {@link #PACK}.
    */
   private static RuntimeResourcePack refreshPack(boolean clientIncluded, boolean serverIncluded) {
-    LOGGER.info("Generating resources!");
+    LOGGER.info("Generating resources for the development environment.");
     // When testing, to avoid potential bugs, duplicate resources are not allowed. That means once you have added a resource, you cannot add another resource with the same identifier.
     // 测试时，为了避免潜在的问题，因此不允许重复的资源。这意味着添加了一个资源之后，你无法再添加一个相同 id 的另一个资源。
     PACK.setForbidsDuplicateResource(true);
@@ -178,6 +178,8 @@ public class BRRPDevelopment {
     LAVA_FENCE_GATE.writeResources(PACK, clientIncluded, serverIncluded);
     LAVA_WALL.writeResources(PACK, clientIncluded, serverIncluded);
     SMOOTH_STONE.writeResources(PACK, clientIncluded, serverIncluded);
+
+    LOGGER.info("Resources generation finished for the development environment.");
 
     return PACK;
   }
