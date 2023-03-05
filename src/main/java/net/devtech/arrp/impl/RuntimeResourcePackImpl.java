@@ -3,6 +3,7 @@ package net.devtech.arrp.impl;
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.*;
+import com.mojang.bridge.game.PackType;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
@@ -16,6 +17,7 @@ import net.devtech.arrp.json.tags.JTag;
 import net.devtech.arrp.util.CallableFunction;
 import net.devtech.arrp.util.CountingInputStream;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
+import net.minecraft.SharedConstants;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
@@ -26,6 +28,7 @@ import net.minecraft.resource.AbstractFileResourcePack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 import org.jetbrains.annotations.ApiStatus;
@@ -136,7 +139,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   private boolean forbidsDuplicateResource = false;
 
   public RuntimeResourcePackImpl(Identifier id) {
-    this(id, 5);
+    this(id, SharedConstants.getGameVersion().getPackVersion(PackType.RESOURCE));
   }
 
   public RuntimeResourcePackImpl(Identifier id, int version) {
@@ -288,7 +291,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     if (forbidsDuplicateResource && root.containsKey(path)) {
       throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getName()));
     }
-    this.root.put(path, () -> data);
+    this.root.put(path, Suppliers.ofInstance(data));
     return data;
   }
 
@@ -383,7 +386,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     // data dump time
     try {
       for (Map.Entry<String, Supplier<byte[]>> e : this.root.entrySet()) {
-        Path root = output.resolve(e.getKey());
+        Path root = output.resolve(String.join("/", e.getKey()));
         Files.createDirectories(root.getParent());
         Files.write(root, e.getValue().get());
       }
@@ -418,7 +421,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
           this.load(path, this.data, Files.readAllBytes(file));
         } else {
           byte[] data = Files.readAllBytes(file);
-          this.root.put(s, () -> data);
+          this.root.put(s, Suppliers.ofInstance(data));
         }
       }
     }
@@ -434,7 +437,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   public void dump(ZipOutputStream zos) throws IOException {
     this.lock();
     for (Map.Entry<String, Supplier<byte[]>> entry : this.root.entrySet()) {
-      zos.putNextEntry(new ZipEntry(entry.getKey()));
+      zos.putNextEntry(new ZipEntry(String.join("/", entry.getKey())));
       zos.write(entry.getValue().get());
       zos.closeEntry();
     }
@@ -468,7 +471,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
         this.load(path, this.data, this.read(entry, stream));
       } else {
         byte[] data = this.read(entry, stream);
-        this.root.put(s, () -> data);
+        this.root.put(s, Suppliers.ofInstance(data));
       }
     }
   }
@@ -553,7 +556,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
       if (metaReader.getKey().equals("pack")) {
         JsonObject object = new JsonObject();
         object.addProperty("pack_format", this.packVersion);
-        object.addProperty("description", "runtime resource pack");
+        object.add("description", Text.Serializer.toJsonTree(getDescription()));
         return metaReader.fromJson(object);
       }
       if (KEY_WARNINGS.add(metaReader.getKey())) {
@@ -594,7 +597,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
     int sep = fullPath.indexOf('/');
     String namespace = fullPath.substring(0, sep);
     String path = fullPath.substring(sep + 1);
-    map.put(new Identifier(namespace, path), () -> data);
+    map.put(new Identifier(namespace, path), Suppliers.ofInstance(data));
   }
 
   private void lock() {

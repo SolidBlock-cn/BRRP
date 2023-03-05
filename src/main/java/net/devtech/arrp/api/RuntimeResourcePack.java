@@ -20,6 +20,8 @@ import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.loot.LootTable;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.ApiStatus;
@@ -449,4 +451,13 @@ public interface RuntimeResourcePack extends ResourcePack {
   @ApiStatus.AvailableSince("0.7.0")
   @Contract(mutates = "this")
   void clearRootResources();
+
+  @ApiStatus.AvailableSince("0.9.0")
+  default Text getDisplayName() {
+    return new TranslatableText("brrp.pack_display_name", getId());
+  }
+
+  default Text getDescription() {
+    return new TranslatableText("brrp.pack_description");
+  }
 }
