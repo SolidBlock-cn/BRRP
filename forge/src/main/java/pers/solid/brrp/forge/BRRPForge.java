@@ -24,7 +24,6 @@ public class BRRPForge {
     }
   }
 
-  @SuppressWarnings("deprecation")
   @OnlyIn(Dist.CLIENT)
   private void particleFactoryRegister(RegisterParticleProvidersEvent event) {
     if (FMLEnvironment.dist.isClient()) {

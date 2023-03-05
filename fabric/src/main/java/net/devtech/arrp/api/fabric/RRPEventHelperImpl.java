@@ -6,6 +6,7 @@ import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.api.SidedRRPCallback;
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.resource.ResourceType;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +16,7 @@ import java.util.function.Function;
 public class RRPEventHelperImpl extends RRPEventHelper {
   public static final RRPEventHelperImpl BEFORE_VANILLA = new RRPEventHelperImpl(RRPCallback.BEFORE_VANILLA, SidedRRPCallback.BEFORE_VANILLA);
   public static final RRPEventHelperImpl AFTER_VANILLA = new RRPEventHelperImpl(RRPCallback.AFTER_VANILLA, SidedRRPCallback.AFTER_VANILLA);
+  public static final RRPEventHelperImpl BEFORE_USER = new RRPEventHelperImpl(RRPCallback.BEFORE_USER, SidedRRPCallback.BEFORE_USER);
   public final Event<RRPCallback> callback;
   public final Event<SidedRRPCallback> sidedCallback;
 
@@ -50,5 +52,11 @@ public class RRPEventHelperImpl extends RRPEventHelper {
 
   public void registerPacks(@NotNull Function<ResourceType, @NotNull Collection<RuntimeResourcePack>> packsFunction) {
     sidedCallback.register((type, resources) -> resources.addAll(packsFunction.apply(type)));
+  }
+
+  @ApiStatus.Experimental
+  @ApiStatus.Internal
+  public static RRPEventHelper getBeforeUser() {
+    return BEFORE_USER;
   }
 }

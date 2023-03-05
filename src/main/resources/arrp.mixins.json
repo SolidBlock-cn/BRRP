@@ -4,6 +4,7 @@
   "package": "net.devtech.arrp.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "FileResourcePackProviderMixin",
     "LifecycledResourceManagerImplMixin"
   ],
   "injectors": {

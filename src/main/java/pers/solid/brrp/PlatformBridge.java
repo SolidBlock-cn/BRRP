@@ -26,6 +26,9 @@ public abstract class PlatformBridge {
 
   public abstract void postBefore(ResourceType type, List<ResourcePack> packs);
 
+  @ApiStatus.Experimental
+  public abstract void postBeforeUser(ResourceType type, List<ResourcePack> packs);
+
   public abstract void postAfter(ResourceType type, List<ResourcePack> packs);
 
   @SuppressWarnings("Contract")
