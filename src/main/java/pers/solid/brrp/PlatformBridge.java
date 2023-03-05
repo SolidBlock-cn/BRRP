@@ -9,6 +9,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.TestOnly;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -48,5 +49,7 @@ public abstract class PlatformBridge {
 
   public abstract void registerItem(Identifier identifier, Item item);
 
+  @TestOnly
+  @ApiStatus.Internal
   public abstract void setItemGroup(Collection<ItemStack> stacks);
 }

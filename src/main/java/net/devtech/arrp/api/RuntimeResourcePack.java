@@ -434,6 +434,7 @@ public interface RuntimeResourcePack extends ResourcePack {
     return Text.translatable("brrp.pack_display_name", getId());
   }
 
+  @ApiStatus.AvailableSince("0.9.0")
   default Text getDescription() {
     return Text.translatable("brrp.pack_description");
   }
