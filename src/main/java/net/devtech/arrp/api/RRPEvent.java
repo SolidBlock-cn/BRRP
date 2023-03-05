@@ -13,7 +13,7 @@ import java.util.List;
  * <p>In the development environment, this class is placed in the {@code common} submodule to avoid conflict with Fabric submodule (because it shares a same package name with common part). This class should neither exist nor be used in Fabric.
  * <p>If you're seeking something that supports both Fabric and Forge, you may see {@link RRPEventHelper}.
  */
-public class RRPEvent extends Event /*implements IModBusEvent*/ {
+public abstract class RRPEvent extends Event /*implements IModBusEvent*/ {
   private final List<ResourcePack> runTimeResourcePacks;
   public final ResourceType resourceType;
 
