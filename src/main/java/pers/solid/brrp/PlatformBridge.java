@@ -8,6 +8,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.TestOnly;
 
 import java.nio.file.Path;
 import java.util.List;
