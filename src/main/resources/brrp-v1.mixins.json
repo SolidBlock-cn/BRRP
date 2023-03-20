@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "pers.solid.brrp.v1.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "FileResourcePackProviderMixin",
+    "IdentifierMixin",
+    "LifecycledResourceManagerImplMixin",
+    "ModelAccessor", "TextureMapAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
