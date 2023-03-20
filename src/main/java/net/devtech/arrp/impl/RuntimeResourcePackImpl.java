@@ -3,7 +3,6 @@ package net.devtech.arrp.impl;
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.*;
-import com.mojang.bridge.game.PackType;
 import net.devtech.arrp.api.JsonSerializable;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.animation.JAnimation;
@@ -143,7 +142,7 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   private boolean forbidsDuplicateResource = false;
 
   public RuntimeResourcePackImpl(Identifier id) {
-    this(id, SharedConstants.getGameVersion().getPackVersion(PackType.RESOURCE));
+    this(id, SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES));
   }
 
   public RuntimeResourcePackImpl(Identifier id, int version) {

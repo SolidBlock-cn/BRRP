@@ -52,11 +52,6 @@ public abstract class RRPEvent extends Event implements IModBusEvent {
 
   @ApiStatus.Experimental
   public static class BeforeUser extends RRPEvent {
-    @Deprecated
-    public BeforeUser(List<ResourcePack> pack) {
-      super(pack);
-    }
-
     public BeforeUser(List<ResourcePack> pack, ResourceType resourceType) {
       super(pack, resourceType);
     }

@@ -1,6 +1,5 @@
 package net.devtech.arrp.mixin;
 
-import com.mojang.bridge.game.PackType;
 import net.devtech.arrp.ARRP;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.minecraft.SharedConstants;
@@ -60,7 +59,7 @@ public class FileResourcePackProviderMixin {
           pack instanceof final RuntimeResourcePack runtimeResourcePack ? runtimeResourcePack.getDisplayName() : Text.literal(pack.getName()), // the line modified by SolidBlock
           false,
           name -> pack,
-          new ResourcePackProfile.Metadata(pack instanceof final RuntimeResourcePack runtimeResourcePack ? runtimeResourcePack.getDescription() : metadata.description(), SharedConstants.getGameVersion().getPackVersion(type == ResourceType.SERVER_DATA ? PackType.DATA : PackType.RESOURCE), metadata.requestedFeatures()),
+          new ResourcePackProfile.Metadata(pack instanceof final RuntimeResourcePack runtimeResourcePack ? runtimeResourcePack.getDescription() : metadata.description(), SharedConstants.getGameVersion().getResourceVersion(type), metadata.requestedFeatures()),
           this.type,
           ResourcePackProfile.InsertionPosition.TOP,
           false,

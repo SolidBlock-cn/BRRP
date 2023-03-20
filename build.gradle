@@ -2,6 +2,7 @@ plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.0-SNAPSHOT"
     id "com.modrinth.minotaur" version "2.+" apply false
+    id 'io.github.juuxel.loom-quiltflower' version '1.8.0'
 }
 
 architectury {
@@ -78,7 +79,7 @@ dependencies {
 
     // 用于 Forge 的 event 部分
     modCompileOnly "net.minecraftforge:eventbus:+"
-    modCompileOnly "net.minecraftforge:fmlcore:1.19.3-+"
+    modCompileOnly "net.minecraftforge:fmlcore:1.19.4-+"
 }
 
 publishing {

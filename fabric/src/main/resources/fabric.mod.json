@@ -25,8 +25,7 @@
   },
   "mixins": [
     "arrp.mixins.json",
-    "brrp.mixins.json",
-    "brrp-fabric.mixins.json"
+    "brrp.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.13.0",
