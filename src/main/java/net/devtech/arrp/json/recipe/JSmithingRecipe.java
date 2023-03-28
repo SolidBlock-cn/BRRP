@@ -12,6 +12,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SmithingTransformRecipe;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -29,9 +30,10 @@ import java.lang.reflect.Type;
 public class JSmithingRecipe extends JResultRecipe {
   public final JIngredient base;
   public final JIngredient addition;
+  public static final String TYPE = Registries.RECIPE_SERIALIZER.getId(RecipeSerializer.SMITHING).toString();
 
   public JSmithingRecipe(final JIngredient base, final JIngredient addition, final JResult result) {
-    super("smithing", result);
+    super(TYPE, result);
 
     this.base = base;
     this.addition = addition;

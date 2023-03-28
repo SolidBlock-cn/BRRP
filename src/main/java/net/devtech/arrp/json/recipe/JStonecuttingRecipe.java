@@ -2,6 +2,7 @@ package net.devtech.arrp.json.recipe;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
@@ -11,7 +12,7 @@ import net.minecraft.util.Identifier;
  */
 @SuppressWarnings("unused")
 public class JStonecuttingRecipe extends JRecipe {
-  private static final String TYPE = "stonecutting";
+  private static final String TYPE = Registries.RECIPE_SERIALIZER.getId(RecipeSerializer.STONECUTTING).toString();
   /**
    * The ingredient to be cut. It can be single or multiple items or item tags.
    */

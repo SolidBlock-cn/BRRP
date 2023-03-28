@@ -2,17 +2,21 @@ package net.devtech.arrp.json.recipe;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.book.CookingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>A <b>campfire recipe</b> is used for a campfire block.</p>
+ *
+ * @see net.minecraft.recipe.CampfireCookingRecipe
  */
 @SuppressWarnings("unused")
 public class JCampfireRecipe extends JCookingRecipe {
-  private static final String TYPE = "campfire_cooking";
+  private static final String TYPE = Registries.RECIPE_SERIALIZER.getId(RecipeSerializer.CAMPFIRE_COOKING).toString();
 
   /**
    * Creates the simplest campfire recipe, with the ingredient and result simply specified.

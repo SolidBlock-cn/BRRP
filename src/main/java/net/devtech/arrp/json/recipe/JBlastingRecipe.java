@@ -3,18 +3,22 @@ package net.devtech.arrp.json.recipe;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.book.CookingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * A <b>blasting recipe</b> is a recipe for blast furnace.
+ *
+ * @see net.minecraft.recipe.BlastingRecipe
  */
 @SuppressWarnings("unused")
 public class JBlastingRecipe extends JCookingRecipe {
 
-  private static final String TYPE = "blasting";
+  private static final String TYPE = Registries.RECIPE_SERIALIZER.getId(RecipeSerializer.BLASTING).toString();
 
   public JBlastingRecipe(JIngredient ingredient, String result) {
     super(TYPE, ingredient, result);

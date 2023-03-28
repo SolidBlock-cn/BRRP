@@ -371,6 +371,11 @@ public class RuntimeResourcePackImpl implements RuntimeResourcePack, ResourcePac
   }
 
   @Override
+  public byte[] addAdvancement(Identifier id, JsonObject jsonObject) {
+    return this.addData(fix(id, "advancements", "json"), serialize(jsonObject));
+  }
+
+  @Override
   public Future<?> async(Consumer<RuntimeResourcePack> action) {
     this.lock();
     return EXECUTOR_SERVICE.submit(() -> {

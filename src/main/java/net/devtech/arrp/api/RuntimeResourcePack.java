@@ -2,6 +2,7 @@ package net.devtech.arrp.api;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.devtech.arrp.impl.RuntimeResourcePackImpl;
@@ -329,6 +330,13 @@ public interface RuntimeResourcePack extends ResourcePack {
     addRecipeAdvancement(recipeId, recipeId.brrp_prepend("recipes/" + (StringUtils.isEmpty(categoryName) ? "" : categoryName + "/")), recipeContainingAdvancement);
   }
 
+  @ApiStatus.AvailableSince("0.9.1")
+  @Contract(mutates = "this")
+  default void addRecipeAndAdvancement(RecipeJsonProvider recipeJsonProvider) {
+    addRecipe(recipeJsonProvider.getRecipeId(), recipeJsonProvider);
+    addAdvancement(recipeJsonProvider.getAdvancementId(), recipeJsonProvider.toAdvancementJson());
+  }
+
   @ApiStatus.AvailableSince("0.8.0")
   @CanIgnoreReturnValue
   @Contract(mutates = "this")
@@ -345,6 +353,11 @@ public interface RuntimeResourcePack extends ResourcePack {
   @CanIgnoreReturnValue
   @Contract(mutates = "this")
   byte[] addAdvancement(Identifier id, Advancement.Builder advancement);
+
+  @CanIgnoreReturnValue
+  @Contract(mutates = "this")
+  @ApiStatus.Internal
+  byte[] addAdvancement(Identifier id, JsonObject jsonObject);
 
   /**
    * Invokes the action on the RRP executor. RRPs are thread-safe, so you can create expensive assets here. All resources

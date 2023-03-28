@@ -2,8 +2,10 @@ package net.devtech.arrp.json.recipe;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.book.CookingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @SuppressWarnings("unused")
 public class JSmeltingRecipe extends JCookingRecipe {
-  private static final String TYPE = "smelting";
+  private static final String TYPE = Registries.RECIPE_SERIALIZER.getId(RecipeSerializer.SMELTING).toString();
 
   /**
    * Creates the simplest smelting recipe, with the ingredient and result simply specified.

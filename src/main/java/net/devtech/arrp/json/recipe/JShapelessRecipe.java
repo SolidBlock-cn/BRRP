@@ -2,9 +2,11 @@ package net.devtech.arrp.json.recipe;
 
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("unused")
 public class JShapelessRecipe extends JResultRecipe {
-  private static final String TYPE = "minecraft:crafting_shapeless";
+  private static final String TYPE = Registries.RECIPE_SERIALIZER.getId(RecipeSerializer.SHAPELESS).toString();
   /**
    * The ingredient list of this recipe.
    */

@@ -3,6 +3,7 @@ package net.devtech.arrp.json.recipe;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @SuppressWarnings("unused")
 public class JShapedRecipe extends JResultRecipe {
-  private static final String TYPE = "minecraft:crafting_shaped";
+  private static final String TYPE = Registries.RECIPE_SERIALIZER.getId(RecipeSerializer.SHAPED).toString();
   protected JPattern pattern;
   protected JKeys key;
 
