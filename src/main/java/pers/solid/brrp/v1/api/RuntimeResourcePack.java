@@ -8,7 +8,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.block.AbstractBlock;
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.resource.metadata.AnimationResourceMetadata;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.BlockStateSupplier;
@@ -99,7 +98,6 @@ public interface RuntimeResourcePack extends ResourcePack {
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, new Identifier.Serializer())
       .registerTypeHierarchyAdapter(StringIdentifiable.class, JsonSerializers.STRING_IDENTIFIABLE)
-      .registerTypeAdapter(JsonUnbakedModel.GuiLight.class, JsonSerializers.GUI_LIGHT)
       .registerTypeHierarchyAdapter(Vector3f.class, JsonSerializers.VECTOR_3F)
       .registerTypeHierarchyAdapter(Either.class, JsonSerializers.EITHER)
       .registerTypeHierarchyAdapter(RecipeJsonProvider.class, JsonSerializers.RECIPE_JSON_PROVIDER)

@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 import com.mojang.datafixers.util.Either;
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.util.StringIdentifiable;
 import org.joml.Vector3f;
@@ -23,5 +22,4 @@ public final class JsonSerializers {
     return array;
   };
   public static final JsonSerializer<StringIdentifiable> STRING_IDENTIFIABLE = (src, type, context) -> new JsonPrimitive(src.asString());
-  public static final JsonSerializer<JsonUnbakedModel.GuiLight> GUI_LIGHT =(src, typeOfSrc, context) -> new JsonPrimitive(src.isSide() ? "side":"front");
 }

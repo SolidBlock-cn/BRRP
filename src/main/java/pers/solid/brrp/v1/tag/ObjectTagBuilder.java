@@ -13,6 +13,7 @@ import java.util.function.Function;
 
 /**
  * The class simply extends {@link TagBuilder}, and provides some utilities to add a registry entry (converted to id according to {@link #valueToId}) and tag keys.
+ *
  * @see net.minecraft.data.server.tag.ValueLookupTagProvider.ObjectBuilder
  */
 public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends TagBuilder {
@@ -27,6 +28,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
 
   /**
    * Create a new {@link ObjectTagBuilder} instance with a specified function to convert objects to ids.
+   *
    * @param valueToId The function to convert object to id.
    */
   @Contract("_ -> new")
@@ -36,6 +38,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
 
   /**
    * Create a new {@link ObjectTagBuilder} that used the registry to convert object to ids.
+   *
    * @param registry The registry used to convert objects to ids, which will use {@link Registry#getId(Object)}.
    */
   @Contract("_ -> new")
@@ -57,6 +60,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
 
   /**
    * Add an id of the entry.
+   *
    * @param id The id of the entry to add. It is not a tag id.
    */
   @Override
@@ -67,6 +71,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
 
   /**
    * Add an optional id of the entry.
+   *
    * @param id The id of the entry to add. It is not a tag id.
    */
   @Override
@@ -77,6 +82,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
 
   /**
    * Add another tag to this tag.
+   *
    * @param id The id of the tag to be added to this tag.
    */
   @Override
@@ -87,6 +93,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
 
   /**
    * Add another tag to this tag.
+   *
    * @param tagKey The other tag to be added to this tag.
    */
   public Self addTag(@NotNull TagKey<T> tagKey) {
@@ -95,6 +102,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
 
   /**
    * Add other tags to this tag.
+   *
    * @param tagKeys The other tags to be added to this tag.
    */
   @SafeVarargs
@@ -107,6 +115,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
 
   /**
    * Add an optional tag to this tag.
+   *
    * @param id The id of the tag to be added to this tag.
    */
   @Override
@@ -117,6 +126,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
 
   /**
    * Add an object to this tag. The {@link #valueToId} will be used to get its id.
+   *
    * @param value The object to be added to this tag.
    */
   public Self add(T value) {
@@ -125,6 +135,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
 
   /**
    * Add objects to this tag. The {@link #valueToId} will be used to get their id.
+   *
    * @param value The objects to be added to this tag.
    */
   @SafeVarargs

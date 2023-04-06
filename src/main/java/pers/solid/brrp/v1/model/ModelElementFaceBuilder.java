@@ -11,9 +11,10 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * This represents a face of a model element.
+ *
  * @see net.minecraft.client.render.model.json.ModelElementFace
  */
-public class ModelElementFaceBuilder implements Cloneable{
+public class ModelElementFaceBuilder implements Cloneable {
   @SerializedName("uv")
   public float @Nullable [] uvs;
   public int rotation;
@@ -29,7 +30,7 @@ public class ModelElementFaceBuilder implements Cloneable{
     return this;
   }
 
-  public ModelElementFaceBuilder uv(float [] uvs) {
+  public ModelElementFaceBuilder uv(float[] uvs) {
     if (uvs != null) {
       Preconditions.checkArgument(uvs.length == 4, "Parameter uv must be an 4-element array, instead of %s!", uvs.length);
     }
@@ -59,6 +60,7 @@ public class ModelElementFaceBuilder implements Cloneable{
 
   /**
    * Convert this object to vanilla {@link ModelElementFace} object. This method is client-side only.
+   *
    * @return The vanilla {@link ModelElementFace} object.
    */
   @Environment(EnvType.CLIENT)

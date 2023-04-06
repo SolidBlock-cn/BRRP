@@ -1,7 +1,6 @@
 package pers.solid.brrp.v1.annotations;
 
 import net.fabricmc.api.EnvType;
-import org.jetbrains.annotations.ApiStatus;
 import pers.solid.brrp.v1.generator.BlockResourceGenerator;
 
 import java.lang.annotation.*;

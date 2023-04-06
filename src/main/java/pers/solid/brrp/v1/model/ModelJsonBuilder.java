@@ -2,14 +2,16 @@ package pers.solid.brrp.v1.model;
 
 import com.google.gson.annotations.SerializedName;
 import com.mojang.datafixers.util.Either;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.render.model.json.Transformation;
 import net.minecraft.data.client.Model;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.data.client.TextureMap;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.StringIdentifiable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,12 +34,12 @@ public class ModelJsonBuilder implements Cloneable {
   public List<ModelElementBuilder> elements;
   @Nullable
   @SerializedName("gui_light")
-  public JsonUnbakedModel.GuiLight guiLight;
+  public GuiLight guiLight;
   @Nullable
   @SerializedName("ambientocclusion")
   public Boolean ambientOcclusion;
   @SerializedName("display")
-  public Map<ModelTransformationMode, Transformation> transformations;
+  public Map<ModelTransformationMode, TransformationBuilder> transformations;
   public List<ModelOverrideBuilder> overrides;
   /**
    * The textures of this model. The key is texture variable name (prefixed with '#"). The value is the identifier of the texture, of a reference to another model texture (prefixed with '#').
@@ -103,7 +105,7 @@ public class ModelJsonBuilder implements Cloneable {
   }
 
   @Contract(mutates = "this", value = "_ -> this")
-  public ModelJsonBuilder guiLight(JsonUnbakedModel.GuiLight guiLight) {
+  public ModelJsonBuilder guiLight(GuiLight guiLight) {
     this.guiLight = guiLight;
     return this;
   }
@@ -115,14 +117,14 @@ public class ModelJsonBuilder implements Cloneable {
   }
 
   @Contract(mutates = "this", value = "_, _ -> this")
-  public ModelJsonBuilder transformation(ModelTransformationMode modelTransformationMode, Transformation transformation) {
+  public ModelJsonBuilder transformation(ModelTransformationMode modelTransformationMode, TransformationBuilder transformation) {
     if (transformations == null) transformations = new HashMap<>();
     transformations.put(modelTransformationMode, transformation);
     return this;
   }
 
   @Contract(mutates = "this", value = "_-> this")
-  public ModelJsonBuilder transformations(Map<ModelTransformationMode, Transformation> transformations) {
+  public ModelJsonBuilder transformations(Map<ModelTransformationMode, TransformationBuilder> transformations) {
     this.transformations = transformations;
     return this;
   }
@@ -233,6 +235,34 @@ public class ModelJsonBuilder implements Cloneable {
       return clone;
     } catch (CloneNotSupportedException e) {
       throw new AssertionError();
+    }
+  }
+
+  /**
+   * Similar to {@link JsonUnbakedModel.GuiLight}, but not client-side only.
+   */
+  public enum GuiLight implements StringIdentifiable {
+    FRONT("front"), SIDE("side");
+
+    private final String name;
+
+    GuiLight(String name) {
+      this.name = name;
+    }
+
+    /**
+     * This method can only be used in client.
+     *
+     * @return The vanilla client-only object that corresponds to it.
+     */
+    @Environment(EnvType.CLIENT)
+    public JsonUnbakedModel.GuiLight asVanillaGuiLight() {
+      return this == FRONT ? JsonUnbakedModel.GuiLight.ITEM : JsonUnbakedModel.GuiLight.BLOCK;
+    }
+
+    @Override
+    public String asString() {
+      return name;
     }
   }
 }

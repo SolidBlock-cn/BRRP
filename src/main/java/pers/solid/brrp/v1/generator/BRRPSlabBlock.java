@@ -75,7 +75,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
   public void writeBlockModel(RuntimeResourcePack pack) {
     final ModelJsonBuilder model = getBlockModel();
     final Identifier id = getBlockModelId();
-    ModelUtils.writeModelsWithVariants(pack,id, model, Models.SLAB, Models.SLAB_TOP);
+    ModelUtils.writeModelsWithVariants(pack, id, model, Models.SLAB, Models.SLAB_TOP);
     if (baseBlock == null) {
       pack.addModel(id.brrp_suffixed("_double"), model.withParent(Models.CUBE_BOTTOM_TOP));
     }

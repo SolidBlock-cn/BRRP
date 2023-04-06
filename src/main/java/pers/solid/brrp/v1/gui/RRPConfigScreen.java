@@ -127,7 +127,8 @@ public class RRPConfigScreen extends Screen {
         if (beforeUserListWidget.nothingHereText != null) {
           builder.nextMessage().put(NarrationPart.USAGE, PackListWidget.NOTHING_HERE);
         }
-      } case 2 -> {
+      }
+      case 2 -> {
         if (afterVanillaListWidget.nothingHereText != null) {
           builder.nextMessage().put(NarrationPart.USAGE, PackListWidget.NOTHING_HERE);
         }
@@ -230,7 +231,7 @@ public class RRPConfigScreen extends Screen {
           if (resourcePack instanceof RuntimeResourcePack runtimeResourcePack) {
             client.setScreen(new RegenerateScreen(RRPConfigScreen.this, runtimeResourcePack));
           }
-        }).dimensions(0, 0, 60, 20).tooltip(Tooltip.of(Text.translatable("brrp.configScreen.regenerate.tooltip").append(resourcePack instanceof RuntimeResourcePack runtimeResourcePack && runtimeResourcePack.hasRegenerationCallback() ? Text.empty(): Text.literal("\n").formatted(Formatting.RED).append(Text.translatable("brrp.configScreen.regenerate.notSupported"))))).build();
+        }).dimensions(0, 0, 60, 20).tooltip(Tooltip.of(Text.translatable("brrp.configScreen.regenerate.tooltip").append(resourcePack instanceof RuntimeResourcePack runtimeResourcePack && runtimeResourcePack.hasRegenerationCallback() ? Text.empty() : Text.literal("\n").formatted(Formatting.RED).append(Text.translatable("brrp.configScreen.regenerate.notSupported"))))).build();
         this.dumpButton = ButtonWidget.builder(Text.translatable("brrp.configScreen.dump"), button -> {
           if (resourcePack instanceof RuntimeResourcePack runtimeResourcePack) client.setScreen(new DumpScreen(RRPConfigScreen.this, runtimeResourcePack));
         }).tooltip(Tooltip.of(Text.translatable("brrp.configScreen.dump.tooltip"))).dimensions(0, 0, 60, 20).build();

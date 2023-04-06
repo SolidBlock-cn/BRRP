@@ -69,7 +69,7 @@ public class RegenerateScreen extends Screen {
           LOGGER.warn("Waiting the thread to finish:", e);
         }
       }
-    }).dimensions(width/2-100, height - 48, 200, 20).tooltip(Tooltip.of(Text.translatable("brrp.regenerateScreen.interrupt.tooltip"))).build());
+    }).dimensions(width / 2 - 100, height - 48, 200, 20).tooltip(Tooltip.of(Text.translatable("brrp.regenerateScreen.interrupt.tooltip"))).build());
     interruptButton.active = false;
     addDrawableChild(backButton = ButtonWidget.builder(ScreenTexts.BACK, button -> close()).dimensions(this.width / 2 - 100, this.height - 28, 200, 20).build());
   }

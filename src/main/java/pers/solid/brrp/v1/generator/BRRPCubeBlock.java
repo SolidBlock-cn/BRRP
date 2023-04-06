@@ -63,7 +63,7 @@ public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
    * @return A new instance.
    */
   public static BRRPCubeBlock cubeBottomTop(Settings settings, Identifier topTexture, Identifier sideTexture, Identifier bottomTexture) {
-    return new BRRPCubeBlock(settings, ModelUtils.getId(Models.CUBE_BOTTOM_TOP), new TextureMap().put(TextureKey.TOP, topTexture).put(TextureKey.SIDE,sideTexture).put(TextureKey.BOTTOM, bottomTexture));
+    return new BRRPCubeBlock(settings, ModelUtils.getId(Models.CUBE_BOTTOM_TOP), new TextureMap().put(TextureKey.TOP, topTexture).put(TextureKey.SIDE, sideTexture).put(TextureKey.BOTTOM, bottomTexture));
   }
 
   @Environment(EnvType.CLIENT)

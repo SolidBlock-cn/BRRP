@@ -64,7 +64,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
   public void writeBlockModel(RuntimeResourcePack pack) {
     final Identifier blockModelId = getBlockModelId();
     final @UnknownNullability ModelJsonBuilder blockModel = getBlockModel();
-    ModelUtils.writeModelsWithVariants(pack, blockModelId,blockModel, Models.TEMPLATE_WALL_POST, Models.TEMPLATE_WALL_SIDE, Models.TEMPLATE_WALL_SIDE_TALL);
+    ModelUtils.writeModelsWithVariants(pack, blockModelId, blockModel, Models.TEMPLATE_WALL_POST, Models.TEMPLATE_WALL_SIDE, Models.TEMPLATE_WALL_SIDE_TALL);
   }
 
   @Environment(EnvType.CLIENT)

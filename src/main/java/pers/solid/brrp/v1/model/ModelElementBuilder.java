@@ -93,6 +93,7 @@ public class ModelElementBuilder implements Cloneable {
    */
   @PreferredEnvironment(EnvType.CLIENT)
   public record ModelRotation(Vector3f origin, Direction.Axis axis, float angle, boolean rescale) {
+    @Environment(EnvType.CLIENT)
     public net.minecraft.client.render.model.json.ModelRotation asVanilla() {
       return new net.minecraft.client.render.model.json.ModelRotation(origin, axis, angle, rescale);
     }
