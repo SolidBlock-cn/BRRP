@@ -6,6 +6,7 @@
   "brrp.pack.defaultName": "運行時資囊 [%s]",
   "brrp.pack.defaultDescription": "運行時資囊%s",
   "pack.source.runtime": "運行時",
+  "pack.brrp_v1.description": "BRRP之資囊",
 
   "brrp.configScreen.title": "運行時資囊配置",
   "brrp.configScreen.tab.beforeVanilla": "原版之前（%s）",

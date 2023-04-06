@@ -6,6 +6,7 @@
   "brrp.pack.defaultName": "Runtime Resource Pack [%s]",
   "brrp.pack.defaultDescription": "Runtime resource pack %s",
   "pack.source.runtime": "Runtime",
+  "pack.brrp_v1.description": "The resource pack of BRRP",
 
   "brrp.configScreen.title": "Configuration of Runtime Resource Packs",
   "brrp.configScreen.tab.beforeVanilla": "Before Vanilla (%s)",

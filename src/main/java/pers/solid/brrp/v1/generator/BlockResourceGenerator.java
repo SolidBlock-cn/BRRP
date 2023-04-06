@@ -6,12 +6,13 @@ import net.minecraft.block.Block;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.data.server.loottable.vanilla.VanillaBlockLootTableGenerator;
-import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.data.server.recipe.SingleItemRecipeJsonBuilder;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTables;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.*;
@@ -258,7 +259,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   // SERVER PART
 
   /**
-   * Get the id of the block loot table. It's by default in the format of <code><i>namespace:</i>blocks/<i>path</i></code>, note its "{@code blocks}" instead of "{@code block}". The loot table is used when the block is broken.
+   * Get the id of the block loot table. It's by default in the format of <code><i>namespace:</i>blocks/<i>path</i></code>, note its "{@code blocks}" instead of "{@code block}". The loot table is used when the block is broken. This method respects {@link Block#getLootTableId()}, which may be influenced by {@link Block.Settings#dropsNothing()} or {@link Block.Settings#dropsLike(Block)}.
    *
    * @return The id of the block loot table.
    */
@@ -282,15 +283,20 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * Write the block loot table to the runtime resource pack.
+   * Write the block loot table to the runtime resource pack. If the block drops nothing ({@link Block.Settings#dropsNothing()}, the loot table will not be generated. However, if the block drops other's loot table ({@link Block.Settings#dropsLike(Block)}, the loot table will be written in <i>that</i> id, and please notice of potential duplication.
    *
    * @param pack The runtime resource pack.
    */
   @Contract(mutates = "param1")
   default void writeLootTable(RuntimeResourcePack pack) {
+    final Identifier lootTableId = getLootTableId();
+    if (lootTableId.equals(LootTables.EMPTY)) {
+      // If the loot table is empty, don't write.
+      return;
+    }
     final LootTable.Builder lootTable = getLootTable();
     if (lootTable != null) {
-      pack.addLootTable(getLootTableId(), lootTable);
+      pack.addLootTable(lootTableId, lootTable);
     }
   }
 
@@ -302,7 +308,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The stonecutting recipe.
    */
   @Contract(pure = true)
-  default @Nullable RecipeJsonProvider getStonecuttingRecipe() {
+  default @Nullable SingleItemRecipeJsonBuilder getStonecuttingRecipe() {
     return null;
   }
 
@@ -325,9 +331,9 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   default void writeRecipes(RuntimeResourcePack pack) {
     ItemResourceGenerator.super.writeRecipes(pack);
     if (shouldWriteStonecuttingRecipe()) {
-      final RecipeJsonProvider stonecuttingRecipe = getStonecuttingRecipe();
+      final SingleItemRecipeJsonBuilder stonecuttingRecipe = getStonecuttingRecipe();
       if (stonecuttingRecipe != null) {
-        pack.addRecipeAndAdvancement(stonecuttingRecipe);
+        pack.addRecipeAndAdvancement(getStonecuttingRecipeId(), stonecuttingRecipe);
       }
     }
   }

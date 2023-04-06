@@ -4,8 +4,9 @@
   "modmenu.nameTranslation.brrp_v1": "BRRP（高級運行時資源包）v1",
 
   "brrp.pack.defaultName": "運行時資源包 [%s]",
-  "brrp.pack.defaultDescription": "運行時資源包%s",
+  "brrp.pack.defaultDescription": "運行時資源包 %s",
   "pack.source.runtime": "運行時",
+  "pack.brrp_v1.description": "BRRP 模組嘅資源包",
 
   "brrp.configScreen.title": "運行時資源包配置",
   "brrp.configScreen.tab.beforeVanilla": "原版之前（%s）",

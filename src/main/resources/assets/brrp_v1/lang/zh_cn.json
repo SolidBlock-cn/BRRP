@@ -6,6 +6,7 @@
   "brrp.pack.defaultName": "运行时资源包 [%s]",
   "brrp.pack.defaultDescription": "运行时资源包%s",
   "pack.source.runtime": "运行时",
+  "pack.brrp_v1.description": "BRRP模组的资源包",
 
   "brrp.configScreen.title": "运行时资源包配置",
   "brrp.configScreen.tab.beforeVanilla": "原版之前（%s）",
