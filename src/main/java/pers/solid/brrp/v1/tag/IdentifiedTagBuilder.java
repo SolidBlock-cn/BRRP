@@ -2,12 +2,9 @@ package pers.solid.brrp.v1.tag;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-
-import java.util.List;
 
 public class IdentifiedTagBuilder<T> extends ObjectTagBuilder<T, IdentifiedTagBuilder<T>> {
   public final Registry<T> registry;
@@ -29,14 +26,7 @@ public class IdentifiedTagBuilder<T> extends ObjectTagBuilder<T, IdentifiedTagBu
 
   public static IdentifiedTagBuilder<Item> copy(IdentifiedTagBuilder<Block> blockTagBuilder) {
     final IdentifiedTagBuilder<Item> itemTagBuilder = new IdentifiedTagBuilder<>(Registry.ITEM, blockTagBuilder.identifier);
-    // TODO: 2023/4/10, 010 optimize
-    blockTagBuilder.build(identifier1 -> {
-      itemTagBuilder.addTag(identifier1);
-      return new Tag<>(List.of());
-    }, identifier1 -> {
-      itemTagBuilder.addTag(identifier1);
-      return Registry.ITEM.get(identifier1);
-    });
+    blockTagBuilder.streamEntries().forEach(itemTagBuilder::add);
     return itemTagBuilder;
   }
 }
