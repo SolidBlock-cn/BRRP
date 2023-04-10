@@ -1,6 +1,8 @@
 {
   "pack": {
-    "description": "Example Mod",
-    "pack_format": 9
+    "description": {
+      "translate": "pack.brrp_v1.description"
+    },
+    "pack_format": 8
   }
 }

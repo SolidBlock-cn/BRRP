@@ -2,7 +2,7 @@
 
 [点击此处阅读本文档的中文版。](README.md)
 
-BRRP (Better Runtime Resource Pack), is a library mod used for generate resources at runtime, which is a branch of [ARRP](https://github.com/Devan-Kerman/ARRP) (Advanced Runtime Resource Pack) mod. This mod provides all features of ARRP, fixes some bugs that exist in ARRP, and provides some new features. It currently supports Fabric and Forge of Minecraft 1.16.5-1.19.3.
+BRRP (Better Runtime Resource Pack), is a library mod used for generate resources at runtime, which is a branch of [ARRP](https://github.com/Devan-Kerman/ARRP) (Advanced Runtime Resource Pack) mod.
 
 Welcome to join Tencent QQ group **587928350** or KOOK (KaiHeiLa) channel invitation code **KlFS0n** to experience the latest update of this mod.
 
@@ -25,18 +25,9 @@ It's been in my plan to make it possible to directly use objects generated in ga
 
 ## About this mod
 
-This mod (BRRP) can be seen as a branch of ARRP, supporting all features of ARRP. If you installed BRRP mod, and installed mods that depend on ARRP (not BRRP), the game can launch. Therefore, please *do not* install BRRP and ARRP simultaneously. But if some mods nest ARRP in their mod JARs, some issues may happen, so it's not recommended to nest this mod into your mod JAR.
-
-This mod tries to reduce incompatible changes to ARRP, so no classes, fields or methods are deleted; they are just deprecated. If some mods apply mixins on ARRP, the mod may have some issues when run on BRRP, but the probability of this has been as reduced as possible.
+This mod (BRRP) is a branch of ARRP. Since 1.0.0, this mod has become independent of ARRP, no longer provides features of ARRP, but can co-exist with ARRP mod.
 
 This mod is open-source and published under the MPLv2 license.
-
-Relations of this mod and ARRP:
-
-| Other mods installed: | only depends ARRP     | depends BRRP        |
-|-----------------------|-----------------------|---------------------|
-| only installed ARRP   | can run normally      | cannot run normally |
-| only installed BRRP   | usually runs normally | can run normally    |
 
 ## How to register your runtime resource pack
 
@@ -46,7 +37,7 @@ Runtime resource packs, after created and written, take effect only after regist
 
 ```java
 public class MyClass implements ModInitializer {
-  public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create(new Identifier("my_mod", "my_pack"));
 
   @Override
   public void onInitialize() {
@@ -57,10 +48,6 @@ public class MyClass implements ModInitializer {
 }
 ```
 
-You can generate resource and register your resource pack at any time. In the example above, the registration takes place at the `main` entrypoint at the end of initialization of Minecraft. You can also generate resources at `preLaunch` or `rrp:pregen` (implement `RRPPreGenEntryPoint`), but in this case you cannot use some contents of Minecraft, such as game registries.
-
-Apart from adding normal resource, you can also add async resource, allowing adding required contents in `rrp:pregen`. In `rrp:pregen`, resource packs are generated in the form of multiple-thread. The feature has been already existing in ARRP.
-
 ### Forge
 
 For Forge versions, you may use `RRPEvent` to register resource packs on your mod's event bus, as following:
@@ -69,7 +56,7 @@ For Forge versions, you may use `RRPEvent` to register resource packs on your mo
 
 @Mod("my_mod_id")
 public class MyClass {
-  public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create(new Identifier("my_mod", "my_pack"));
 
   public MyClass() {
     // you may invoke 'write' methods for 'pack' here to write something into it.
@@ -85,7 +72,7 @@ The mod supports a `RRPEventHelper` that supports both Forge and Fabric. For exa
 
 ```java
 public class MyClass implements ModInitializer {
-  public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create(new Identifier("my_mod", "my_pack"));
 
   @Override
   public void onInitialize() {
@@ -95,55 +82,6 @@ public class MyClass implements ModInitializer {
   }
 }
 ```
-
-## Runtime resource packs and data generation
-
-Minecraft has vanilla data generation features, which are extended by Fabric API. BRRP is trying to bridge ARRP and Minecraft's vanilla classes.
-
-In BRRP, some ARRP objects can directly use their corresponding objects of vanilla Minecraft. For example, in vanilla `BlockStateModelGenerator`, there are many methods to directly create "block states" objects (these methods had been private, but are access-widened by Fabric Data Generation API). And then `JBlockStates.delegate` can be directly used, as the following code snippet:
-
-```java
-public class MyClass implements ModInitializer {
-  @Override
-  public void onInitialize() {
-    pack.addBlockStates(BlockStateModelGenerator.createStairsBlockState(
-        MyModBlocks.EXAMPLE,
-        blockModelId.brrp_append("_inner"),
-        blockModelId,
-        blockModelId.brrp_append("_outer"), new Identifier("my_mod", "example")));
-
-    RRPEventHelper.BEFORE_VANILLA.registerPack(pack);
-  }
-}
-```
-
-In this way, when JSONs are generated, Minecraft vanilla JSON generations are used.
-
-Another example of BRRP bridging ARRP and Minecraft's vanilla class is, in loot tables, places related to value provides, the `JRoll` in ARRP is not recommended anymore, and Minecraft's vanilla `LootNumberProvider` is used instead, which can be directly serialized as JSON formats you need.
-
-## Hot-swapping
-
-Hot-swap is usually not supported when resource packs are created, as its contents are well-written before registration. If you'd like to enable hot-swap for your runtime resource packs, you can do the followings:
-
-```java
-public class MyClass implements ModInitializer {
-  public static final RuntimeResourcePack pack = RuntimeResourePack.create("my_pack");
-
-  @Override
-  public void onInitialize() {
-    RRPCallback.BEFORE_VANILLA.register(resources -> {
-      pack.clearResources();
-      pack.addXXX('...');
-
-      resources.add(pack);
-    });
-  }
-}
-```
-
-In this way, each time Minecraft loads resources, such as pressing hotkey `F3+T` to reload resource packs, or typing `/reload` to reload data packs, the runtime resource packs are re-generated. But please do *not* do this when publishing your mods, as it causes resources re-generated each time you reload resource packs or data packs, which is obvious unnecessary. Therefore, when publishing your mod, it's advised to generate all resources before registering the pack, and add it in the resource loading event.
-
-About more detail explanations, please refer to the wiki part of the GitHub project of this mod. You may also refer to `BRRPDevelopment` to understand a simple example of this mod.
 
 ## What are assets and data
 
@@ -163,7 +101,7 @@ Let's re-summarize here: when it comes to modding, "resources" and "data" have s
 
 To use this mod as your project's dependency, and use this mod's API, you have two ways:
 
-### Way 1: By using the repository in GitHub
+### Method 1: By using the repository in GitHub
 
 Add following content to the `repositories` and `dependencies` part of your `build.gradle` respectively.
 
@@ -186,7 +124,7 @@ dependencies {
 }
 ```
 
-### Way 2: Download files to local
+### Method 2: Download files to local
 
 You can at first download these two files: **`brrp-<mod version>-<Minecraft version>.jar`** and **`brrp-<mod version>-<Minecraft version>-sources.jar`**, which may be accessible in the "release" part of GitHub or in Modrinth. Save the two files in any place in your device (places inside or nearby your project folder are preferred, the two files should be in the same folder, and, if needed, you can add the downloaded files to `.gitignore`).
 
@@ -200,7 +138,7 @@ repositories {
 
 
 dependencies {
-    modImplementation("net.devtech:brrp:<mod version>-<minecraft_version>")
+    modImplementation("pers.solid:brrp-fabric:<mod version>-<minecraft_version>")
     // the note can be found in the "Way 1" section
 }
 ```
@@ -215,9 +153,9 @@ And then, in the `depends` part of your `fabric.mod.json` of your Fabric project
   "depends": {
     // [...]
 
-    // "*" means "any version"; you can also specify versions, such as ">=0.8.2".
+    // "*" means "any version"; you can also specify versions, such as ">=1.0.0".
     // Don't leave these comments in the JSON
-    "better_runtime_resource_pack": "*"
+    "brrp_v1": "*"
   }
 }
 ```
@@ -226,11 +164,9 @@ Or add into `mods.toml` in your Forge project:
 
 ```toml
 [[dependencies.'the id of your mod']]
-modId = "better_runtime_resource_pack"
+modId = "brrp_v1"
 mandatory = true
-versionRange = "[0.8.2,)"
+versionRange = "[1.0.0,)"
 ordering = "NONE"
 side = "BOTH"
 ```
-
-**Note:** If your mod uses features that only exist in some versions (classes, methods or fields annotated `@ApiStatus.AvailableSince`), the version may also be specified in your `fabric.mod.json`. For example, if some APIs used in your mod are annotated `@ApiStatus.AvailableSince("0.8.0")`, you can write `"better_runtime_resource_pack": ">=0.8.0"` in your `fabric.mod.json`, in prevention of some potential unexpected errors when user installed BRRP lower than 0.8.0.
