@@ -1,11 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "better_runtime_resource_pack",
+  "id": "brrp_v1",
   "version": "${version}",
-  "name": "Better Runtime Resource Pack",
-  "description": "BRRP is a library mod that can generate resource packs at runtime. It is an extension of ARRP mod, which fixes some issues and adds some enhancements. The mod is trying the best to make it compatible with ARRP-dependent mods. If you have installed BRRP you do not have to install ARRP again.",
+  "name": "Better Runtime Resource Pack (BRRP) v1",
+  "description": "BRRP is a library mod that can generate resource packs at runtime, instead of storing them as files. The mod is based on Advanced Runtime Resource Pack mod.",
   "authors": [
-    "HalfOf2",
     "SolidBlock"
   ],
   "contact": {
@@ -13,35 +12,34 @@
     "issues": "https://github.com/SolidBlock-cn/BRRP/issues"
   },
   "license": "MPLv2",
-  "icon": "assets/brrp/icon.png",
+  "icon": "assets/brrp_v1/icon.png",
   "environment": "*",
   "entrypoints": {
-    "preLaunch": [
-      "pers.solid.brrp.fabric.BRRPPrelaunch"
-    ],
     "main": [
-      "pers.solid.brrp.fabric.BRRPInitialize"
+      "pers.solid.brrp.v1.fabric.BRRPFabricInitialize"
+    ],
+    "modmenu":[
+      "pers.solid.brrp.v1.fabric.RRPModMenu"
     ]
   },
   "mixins": [
-    "arrp.mixins.json",
-    "brrp.mixins.json",
-    "brrp-fabric.mixins.json"
+    "brrp-v1.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.13.0",
-    "minecraft": ">=1.16"
-  },
-  "breaks": {
-    "minecraft": ">=1.17"
+    "fabricloader": "*",
+    "fabric": "*",
+    "minecraft": [
+      "~1.16.4",
+      "~1.16.5"
+    ]
   },
   "custom": {
     "modmenu": {
       "badges": ["library"]
     },
     "loom:injected_interfaces": {
-      "net/minecraft/class_2960": ["net/devtech/arrp/IdentifierExtension"]
+      "net/minecraft/class_2960": ["pers/solid/brrp/v1/IdentifierExtension"]
     }
   },
-  "provides": ["advanced_runtime_resource_pack"]
+  "provides": []
 }

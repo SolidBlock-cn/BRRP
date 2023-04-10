@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "pers.solid.brrp.v1.forge.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ResourcePackProfileForgeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
