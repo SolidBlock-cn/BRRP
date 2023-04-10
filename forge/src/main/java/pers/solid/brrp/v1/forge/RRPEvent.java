@@ -17,17 +17,12 @@ import java.util.List;
  * <p>If you're seeking something that supports both Fabric and Forge, you may see {@link RRPEventHelper}.
  */
 public abstract class RRPEvent extends Event implements IModBusEvent {
-  private final List<ResourcePack> runtimeResourcePacks;
   public final ResourceType resourceType;
+  private final List<ResourcePack> runtimeResourcePacks;
 
   public RRPEvent(List<ResourcePack> pack, ResourceType resourceType) {
     this.runtimeResourcePacks = pack;
     this.resourceType = resourceType;
-  }
-
-  @Deprecated
-  public RRPEvent(List<ResourcePack> pack) {
-    this(pack, null);
   }
 
   public void addPack(ResourcePack pack) {
@@ -43,10 +38,6 @@ public abstract class RRPEvent extends Event implements IModBusEvent {
   }
 
   public static class BeforeVanilla extends RRPEvent {
-    @Deprecated
-    public BeforeVanilla(List<ResourcePack> pack) {
-      super(pack);
-    }
 
     public BeforeVanilla(List<ResourcePack> pack, ResourceType resourceType) {
       super(pack, resourceType);
@@ -63,11 +54,6 @@ public abstract class RRPEvent extends Event implements IModBusEvent {
   public static class AfterVanilla extends RRPEvent {
     public AfterVanilla(List<ResourcePack> pack, ResourceType resourceType) {
       super(pack, resourceType);
-    }
-
-    @Deprecated
-    public AfterVanilla(List<ResourcePack> pack) {
-      super(pack, null);
     }
   }
 }

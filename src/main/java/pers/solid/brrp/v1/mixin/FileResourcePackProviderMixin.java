@@ -27,12 +27,11 @@ import java.util.function.UnaryOperator;
  */
 @Mixin(FileResourcePackProvider.class)
 public class FileResourcePackProviderMixin {
+  private static final ResourcePackSource RUNTIME = ResourcePackSource.create(getSourceTextSupplier(), true);
+  private static final Logger LOGGER = LoggerFactory.getLogger("FileResourcePackProviderMixin");
   @Shadow
   @Final
   private ResourceType type;
-  private static final ResourcePackSource RUNTIME = ResourcePackSource.create(getSourceTextSupplier(), true);
-  private static final Logger LOGGER = LoggerFactory.getLogger("FileResourcePackProviderMixin");
-
 
   private static UnaryOperator<Text> getSourceTextSupplier() {
     Text text = Text.translatable("pack.source.runtime");

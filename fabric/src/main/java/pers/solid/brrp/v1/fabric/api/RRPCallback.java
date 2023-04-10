@@ -38,13 +38,6 @@ public interface RRPCallback {
   Event<RRPCallback> AFTER_VANILLA = new ForwardingEvent<>(FORWARDING_FUNCTION, SidedRRPCallback.AFTER_VANILLA, INVOKER_FUNCTION);
 
   /**
-   * @see #BEFORE_VANILLA
-   * @deprecated unintuitive name
-   */
-  @Deprecated
-  Event<RRPCallback> EVENT = BEFORE_VANILLA;
-
-  /**
    * In this method, you should add your resource pack into your resources. You can also <i>generate</i> resources in this method, but it's not preferred to do this unless in development environment.
    *
    * @param resources You should add your runtime resource pack here. The list is irremovable.
