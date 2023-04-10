@@ -3,6 +3,7 @@ package pers.solid.brrp.v1.forge;
 import net.minecraft.resource.ResourceType;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.v1.RRPEventHelper;
@@ -32,6 +33,12 @@ public class RRPEventHelperImpl<E extends Event> extends RRPEventHelper {
 
   public static RRPEventHelper getAfterVanilla() {
     return AFTER_VANILLA;
+  }
+
+  @ApiStatus.Experimental
+  @ApiStatus.Internal
+  public static RRPEventHelper getBeforeUser() {
+    return BEFORE_USER;
   }
 
   @Override
