@@ -23,12 +23,18 @@ configurations {
     developmentFabric.extendsFrom common
 }
 
+repositories {
+    maven { url "https://maven.terraformersmc.com/releases/" }
+}
+
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 
     common(project(path: ":", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":", configuration: "transformProductionFabric")) { transitive false }
+
+    modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 }
 
 processResources {
@@ -41,12 +47,6 @@ processResources {
 }
 
 shadowJar {
-    exclude "architectury.common.json"
-    exclude "net/devtech/arrp/api/RRPEvent.*"
-    exclude 'net/devtech/arrp/api/RRPEvent$*.*'
-    exclude "net/devtech/arrp/api/RRPInitEvent.*"
-    exclude "net/devtech/arrp/api/RRPCallbackForge.*"
-
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
 }
@@ -64,9 +64,6 @@ jar {
 
 sourcesJar {
     def commonSources = rootProject.sourcesJar
-    commonSources.exclude "net/devtech/arrp/api/RRPEvent.java"
-    commonSources.exclude "net/devtech/arrp/api/RRPInitEvent.java"
-    commonSources.exclude "net/devtech/arrp/api/RRPCallbackForge.java"
     dependsOn commonSources
 
     from commonSources.archiveFile.map { zipTree(it) }

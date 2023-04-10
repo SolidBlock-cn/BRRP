@@ -1,6 +1,10 @@
 {
   "pack": {
-    "description": "Example Mod",
-    "pack_format": 9
+    "description": {
+      "translate": "pack.brrp_v1.description"
+    },
+    "forge:resource_pack_format": 8,
+    "forge:data_pack_format": 9,
+    "pack_format": 8
   }
 }
