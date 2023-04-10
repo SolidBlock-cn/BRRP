@@ -21,10 +21,14 @@ import java.util.Collection;
 import java.util.List;
 
 public class PlatformBridgeImpl extends PlatformBridge {
+  public static final PlatformBridgeImpl INSTANCE = new PlatformBridgeImpl();
+
   private PlatformBridgeImpl() {
   }
 
-  public static final PlatformBridgeImpl INSTANCE = new PlatformBridgeImpl();
+  public static PlatformBridge getInstance() {
+    return INSTANCE;
+  }
 
   @Override
   public void postBefore(ResourceType type, List<ResourcePack> packs) {
@@ -70,9 +74,5 @@ public class PlatformBridgeImpl extends PlatformBridge {
   @Override
   public void setItemGroup(Collection<ItemStack> stacks) {
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> entries.addAll(stacks));
-  }
-
-  public static PlatformBridge getInstance() {
-    return INSTANCE;
   }
 }

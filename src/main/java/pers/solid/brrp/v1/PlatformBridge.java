@@ -21,19 +21,19 @@ import java.util.List;
 @ApiStatus.Internal
 public abstract class PlatformBridge {
 
-  public abstract void postBefore(ResourceType type, List<ResourcePack> packs);
-
-  @ApiStatus.Experimental
-  public abstract void postBeforeUser(ResourceType type, List<ResourcePack> packs);
-
-  public abstract void postAfter(ResourceType type, List<ResourcePack> packs);
-
   @SuppressWarnings("Contract")
   @Contract("-> _")
   @ExpectPlatform
   public static PlatformBridge getInstance() {
     throw new AssertionError();
   }
+
+  public abstract void postBefore(ResourceType type, List<ResourcePack> packs);
+
+  @ApiStatus.Experimental
+  public abstract void postBeforeUser(ResourceType type, List<ResourcePack> packs);
+
+  public abstract void postAfter(ResourceType type, List<ResourcePack> packs);
 
   public abstract boolean isDevelopmentEnvironment();
 

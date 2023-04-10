@@ -17,8 +17,8 @@ import java.util.List;
  * <p>If you're seeking something that supports both Fabric and Forge, you may see {@link RRPEventHelper}.
  */
 public abstract class RRPEvent extends Event implements IModBusEvent {
-  private final List<ResourcePack> runtimeResourcePacks;
   public final ResourceType resourceType;
+  private final List<ResourcePack> runtimeResourcePacks;
 
   public RRPEvent(List<ResourcePack> pack, ResourceType resourceType) {
     this.runtimeResourcePacks = pack;

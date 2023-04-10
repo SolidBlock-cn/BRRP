@@ -60,7 +60,7 @@ public class BRRPTest {
   public static final BRRPFenceGateBlock LAVA_FENCE_GATE = register(new BRRPFenceGateBlock(LAVA_BLOCK, WoodType.MANGROVE), "lava_fence_gate");
   public static final BRRPWallBlock LAVA_WALL = register(new BRRPWallBlock(LAVA_BLOCK), "lava_wall");
   /**
-   * <p>The block specifies the texture of top, side and bottom via parameters of {@link BRRPCubeBlock#cubeBottomTop(AbstractBlock.Settings, Identifier, Identifier, Identifier)}  {@link BRRPCubeBlock#getBlockModel()} will directly use the textures.</p>
+   * <p>The block specifies the texture of top, side and bottom via parameters of {@link BRRPCubeBlock#cubeBottomTop(AbstractBlock.Settings, Identifier, Identifier, Identifier)}. {@link BRRPCubeBlock#getBlockModel()} will directly use the textures.</p>
    */
   public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE), new Identifier("block/smooth_stone"), new Identifier("block/smooth_stone_slab_side"), new Identifier("block/smooth_stone")), "smooth_stone");
   /**

@@ -35,6 +35,12 @@ public class RRPEventHelperImpl<E extends Event> extends RRPEventHelper {
     return AFTER_VANILLA;
   }
 
+  @ApiStatus.Experimental
+  @ApiStatus.Internal
+  public static RRPEventHelper getBeforeUser() {
+    return BEFORE_USER;
+  }
+
   @Override
   public void registerPack(RuntimeResourcePack pack) {
     FMLJavaModLoadingContext.get().getModEventBus().addListener(consumerTransformer.apply(event -> ((RRPEvent) event).addPack(pack)));
@@ -58,11 +64,5 @@ public class RRPEventHelperImpl<E extends Event> extends RRPEventHelper {
   @Override
   public void registerPacks(@NotNull Function<ResourceType, @NotNull Collection<RuntimeResourcePack>> packsFunction) {
     FMLJavaModLoadingContext.get().getModEventBus().addListener(consumerTransformer.apply(event -> ((RRPEvent) event).addPack(packsFunction.apply(((RRPEvent) event).resourceType))));
-  }
-
-  @ApiStatus.Experimental
-  @ApiStatus.Internal
-  public static RRPEventHelper getBeforeUser() {
-    return BEFORE_USER;
   }
 }

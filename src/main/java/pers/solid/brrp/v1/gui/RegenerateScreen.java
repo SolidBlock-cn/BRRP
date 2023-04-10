@@ -21,11 +21,11 @@ import pers.solid.brrp.v1.api.RuntimeResourcePack;
  */
 @Environment(EnvType.CLIENT)
 public class RegenerateScreen extends Screen {
-  private static final Logger LOGGER = LoggerFactory.getLogger("BRRP/RegenerateScreen");
   protected static final Text STATE_REGEN_CLIENT = Text.translatable("brrp.regenerateScreen.state.client");
   protected static final Text STATE_REGEN_SERVER = Text.translatable("brrp.regenerateScreen.state.server");
   protected static final Text STATE_REGEN_ALL = Text.translatable("brrp.regenerateScreen.state.all");
   protected static final Text STATE_IDLE = Text.translatable("brrp.regenerateScreen.state.idle");
+  private static final Logger LOGGER = LoggerFactory.getLogger("BRRP/RegenerateScreen");
   private final Screen parent;
   private final RuntimeResourcePack pack;
   protected Thread currentThread;

@@ -24,10 +24,14 @@ import java.util.Collection;
 import java.util.List;
 
 public class PlatformBridgeImpl extends PlatformBridge {
+  public static final PlatformBridgeImpl INSTANCE = new PlatformBridgeImpl();
+
   private PlatformBridgeImpl() {
   }
 
-  public static final PlatformBridgeImpl INSTANCE = new PlatformBridgeImpl();
+  public static PlatformBridge getInstance() {
+    return INSTANCE;
+  }
 
   @Override
   public void postBefore(ResourceType type, List<ResourcePack> packs) {
@@ -79,10 +83,6 @@ public class PlatformBridgeImpl extends PlatformBridge {
     FMLJavaModLoadingContext.get().getModEventBus().addListener((CreativeModeTabEvent.BuildContents event) -> {
       if (event.getTab().equals(ItemGroups.REDSTONE)) event.addAll(stacks);
     });
-  }
-
-  public static PlatformBridge getInstance() {
-    return INSTANCE;
   }
 
   @Override

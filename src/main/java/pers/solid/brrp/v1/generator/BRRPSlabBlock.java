@@ -31,11 +31,6 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
    */
   public final @Nullable Block baseBlock;
 
-  @Override
-  public @Nullable Block getBaseBlock() {
-    return baseBlock;
-  }
-
   /**
    * Simply creates an instance with a given base block. The block settings of the base block will be used, so you do not need to provide it.
    */
@@ -53,6 +48,11 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
    */
   public BRRPSlabBlock(Settings settings) {
     this(null, settings);
+  }
+
+  @Override
+  public @Nullable Block getBaseBlock() {
+    return baseBlock;
   }
 
   @Environment(EnvType.CLIENT)
