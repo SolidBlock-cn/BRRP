@@ -232,10 +232,14 @@ public class RRPConfigScreen extends Screen {
           if (resourcePack instanceof RuntimeResourcePack runtimeResourcePack) {
             client.setScreen(new RegenerateScreen(RRPConfigScreen.this, runtimeResourcePack));
           }
-        }, (button, matrices, mouseX, mouseY) -> renderOrderedTooltip(matrices, textRenderer.wrapLines(Text.translatable("brrp.configScreen.regenerate.tooltip").append(resourcePack instanceof RuntimeResourcePack runtimeResourcePack && runtimeResourcePack.hasRegenerationCallback() ? Text.empty() : Text.literal("\n").formatted(Formatting.RED).append(Text.translatable("brrp.configScreen.regenerate.notSupported"))), 250), mouseX, mouseY));
+        }, (button, matrices, mouseX, mouseY) -> {
+          if (button.isMouseOver(mouseX, mouseY)) renderOrderedTooltip(matrices, textRenderer.wrapLines(Text.translatable("brrp.configScreen.regenerate.tooltip").append(resourcePack instanceof RuntimeResourcePack runtimeResourcePack && runtimeResourcePack.hasRegenerationCallback() ? Text.empty() : Text.literal("\n").formatted(Formatting.RED).append(Text.translatable("brrp.configScreen.regenerate.notSupported"))), 250), mouseX, mouseY);
+        });
         this.dumpButton = new ButtonWidget(0, 0, 60, 20, Text.translatable("brrp.configScreen.dump"), button -> {
           if (resourcePack instanceof RuntimeResourcePack runtimeResourcePack) client.setScreen(new DumpScreen(RRPConfigScreen.this, runtimeResourcePack));
-        }, (button, matrices, mouseX, mouseY) -> renderOrderedTooltip(matrices, textRenderer.wrapLines(Text.translatable("brrp.configScreen.dump.tooltip"), 250), mouseX, mouseY));
+        }, (button, matrices, mouseX, mouseY) -> {
+          if (button.isMouseOver(mouseX, mouseY)) renderOrderedTooltip(matrices, textRenderer.wrapLines(Text.translatable("brrp.configScreen.dump.tooltip"), 250), mouseX, mouseY);
+        });
         List<Text> descriptionList = new ArrayList<>();
         if (resourcePack instanceof RuntimeResourcePack runtimeResourcePack) {
           titleText = runtimeResourcePack.getDisplayName();
@@ -274,7 +278,7 @@ public class RRPConfigScreen extends Screen {
           tooltipContent.append(Text.literal(runtimeResourcePack.getId().toString()).formatted(Formatting.GRAY)).append(ScreenTexts.LINE_BREAK);
         }
         tooltipContent.append(description.copy().formatted(Formatting.GRAY));
-        if (isMouseOver(mouseX, mouseY) && !regenerateButton.isMouseOver(mouseX, mouseY) && !dumpButton.isMouseOver(mouseX, mouseY)) {
+        if (isMouseOver(mouseX, mouseY) && !regenerateButton.isHovered() && !dumpButton.isHovered()) {
           renderOrderedTooltip(matrices, textRenderer.wrapLines(tooltipContent, 250), mouseX, mouseY);
         }
 

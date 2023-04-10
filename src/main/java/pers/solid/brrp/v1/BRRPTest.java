@@ -41,10 +41,6 @@ import pers.solid.brrp.v1.tag.IdentifiedTagBuilder;
 @TestOnly
 @ApiStatus.Internal
 public class BRRPTest {
-  /**
-   * <p>The block specifies the texture of top, side and bottom via parameters of {@link BRRPCubeBlock#cubeBottomTop(AbstractBlock.Settings, Identifier, Identifier, Identifier)}  {@link BRRPCubeBlock#getBlockModel()} will directly use the textures.</p>
-   */
-  public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE), new Identifier("block/smooth_stone"), new Identifier("block/smooth_stone_slab_side"), new Identifier("block/smooth_stone")), "smooth_stone");
   private static final BlockSoundGroup LAVA_SOUND_GROUP = new BlockSoundGroup(1, 1, SoundEvents.ITEM_BUCKET_EMPTY_LAVA, SoundEvents.BLOCK_LAVA_POP, SoundEvents.ITEM_BUCKET_FILL_LAVA, SoundEvents.BLOCK_LAVA_POP, SoundEvents.BLOCK_POINTED_DRIPSTONE_DRIP_LAVA);
   /**
    * <p>The block, as its name indicates, is a block with a texture of lava. It is an instance of {@link BRRPCubeBlock}, which can directly specify textures and can conveniently generation all resources of it, taking the convenience of {@link BlockResourceGenerator} interface, which is implemented by {@code BRRPCubeBlock}.</p>
@@ -59,6 +55,10 @@ public class BRRPTest {
   public static final BRRPFenceBlock LAVA_FENCE = register(new BRRPFenceBlock(LAVA_BLOCK), "lava_fence");
   public static final BRRPFenceGateBlock LAVA_FENCE_GATE = register(new BRRPFenceGateBlock(LAVA_BLOCK), "lava_fence_gate");
   public static final BRRPWallBlock LAVA_WALL = register(new BRRPWallBlock(LAVA_BLOCK), "lava_wall");
+  /**
+   * <p>The block specifies the texture of top, side and bottom via parameters of {@link BRRPCubeBlock#cubeBottomTop(AbstractBlock.Settings, Identifier, Identifier, Identifier)}  {@link BRRPCubeBlock#getBlockModel()} will directly use the textures.</p>
+   */
+  public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE), new Identifier("block/smooth_stone"), new Identifier("block/smooth_stone_slab_side"), new Identifier("block/smooth_stone")), "smooth_stone");
   /**
    * <p>The runtime resource pack that will be used in development environment, as a simple example. The object is created in the initialization of this class.</p>
    */

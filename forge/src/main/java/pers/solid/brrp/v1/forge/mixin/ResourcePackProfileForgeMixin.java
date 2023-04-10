@@ -19,7 +19,9 @@ import java.util.function.Supplier;
 @Mixin(ResourcePackProfile.class)
 public class ResourcePackProfileForgeMixin {
   @Mutable
-  @Shadow @Final private ResourcePackCompatibility compatibility;
+  @Shadow
+  @Final
+  private ResourcePackCompatibility compatibility;
 
   @Inject(at = @At("TAIL"), method = "<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/text/Text;Lnet/minecraft/text/Text;Lnet/minecraft/resource/ResourcePackCompatibility;Lnet/minecraft/resource/ResourcePackProfile$InsertionPosition;ZLnet/minecraft/resource/ResourcePackSource;Z)V")
   private void forceCompatible(String name, boolean alwaysEnabled, Supplier<ResourcePack> packFactory, Text displayName, Text description, ResourcePackCompatibility compatibility, ResourcePackProfile.InsertionPosition direction, boolean pinned, ResourcePackSource source, boolean hidden, CallbackInfo ci) {

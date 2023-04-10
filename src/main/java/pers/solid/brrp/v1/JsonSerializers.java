@@ -9,9 +9,6 @@ import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Vec3f;
 
 public final class JsonSerializers {
-  private JsonSerializers() {
-  }
-
   public static final JsonSerializer<RecipeJsonProvider> RECIPE_JSON_PROVIDER = (src, type, context) -> src.toJson();
   public static final JsonSerializer<Either<?, ?>> EITHER = (src, type, context) -> src.map(context::serialize, context::serialize);
   public static final JsonSerializer<Vec3f> VECTOR_3F = (src, type, context) -> {
@@ -22,4 +19,7 @@ public final class JsonSerializers {
     return array;
   };
   public static final JsonSerializer<StringIdentifiable> STRING_IDENTIFIABLE = (src, type, context) -> new JsonPrimitive(src.asString());
+
+  private JsonSerializers() {
+  }
 }

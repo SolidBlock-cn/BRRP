@@ -16,10 +16,14 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class PlatformBridgeImpl extends PlatformBridge {
+  public static final PlatformBridgeImpl INSTANCE = new PlatformBridgeImpl();
+
   private PlatformBridgeImpl() {
   }
 
-  public static final PlatformBridgeImpl INSTANCE = new PlatformBridgeImpl();
+  public static PlatformBridge getInstance() {
+    return INSTANCE;
+  }
 
   @Override
   public void postBefore(ResourceType type, List<ResourcePack> packs) {
@@ -60,9 +64,5 @@ public class PlatformBridgeImpl extends PlatformBridge {
   @Override
   public void registerItem(Identifier identifier, Item item) {
     Registry.register(Registry.ITEM, identifier, item);
-  }
-
-  public static PlatformBridge getInstance() {
-    return INSTANCE;
   }
 }
