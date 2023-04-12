@@ -323,7 +323,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * For blocks, they may have stonecutting recipes. If you {@link #shouldWriteStonecuttingRecipe()} does not return {@code false} and {@link #getStonecuttingRecipe()} returns not null, the stonecutting recipe will be generated. The id of the stonecutting recipe is by default the crafting id appended with {@code "_from_stonecutting"}, but you can override it in {@link #getStonecuttingRecipeId()}.
+   * For blocks, they may have stonecutting recipes. If you {@link #shouldWriteStonecuttingRecipe()} does not return {@code false} and {@link #getStonecuttingRecipe()} returns not null, the stonecutting recipe will be generated. The id of the stonecutting recipe is by default the crafting id appended with {@code "_from_stonecutting"}, but you can override it in {@link #getStonecuttingRecipeId()}. <b>The advancement will not be written if it does not have an item group.</b>
    *
    * @param pack The runtime resource pack.
    */

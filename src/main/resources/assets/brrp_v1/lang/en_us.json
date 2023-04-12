@@ -64,9 +64,10 @@
   "brrp.dumpScreen.dump": "Dump now",
   "brrp.dumpScreen.dumping": "Dumping",
   "brrp.dumpScreen.dumpSummary": "Dumping (%s, %s, %s)",
+  "brrp.dumpScreen.removeExisting": "Removing existing files, please wait...",
   "brrp.dumpScreen.existing.title": "Are you sure to dump at this path?",
   "brrp.dumpScreen.existing.message": "The dump path has %1$s existing files. Please confirm the dump path:\n%2$s\nIf you dump, the %1$s existing files will be removed.",
-  "brrp.dumpScreen.existing.size": "over %s",
+  "brrp.dumpScreen.existing.size": "more than %s",
   "brrp.dumpScreen.interrupt": "Interrupt",
   "brrp.dumpScreen.interrupt.tooltip": "Interrupt the dumping process."
 }
