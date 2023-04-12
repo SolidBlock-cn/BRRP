@@ -17,6 +17,7 @@ import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.RecipeProvider;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootTable;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagBuilder;
@@ -371,7 +372,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
-   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe. Both the recipe id and the advancement id are stored in the {@link RecipeJsonProvider}, so you do not need to specify it here.
+   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe. Both the recipe id and the advancement id are stored in the {@link RecipeJsonProvider}, so you do not need to specify it here. The recipe must have a {@link RecipeCategory}, or it will throw an error when fetching the advancement id.
    *
    * @param recipeJsonProvider The {@link RecipeJsonProvider} object. You may conveniently create it using methods in {@link RecipeProvider}.
    */
@@ -382,7 +383,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
-   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe.
+   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe. The {@link CraftingRecipeJsonBuilder} must have a {@link RecipeCategory} or it will throw an error.
    *
    * @param recipeId          The id of the recipe.
    * @param recipeJsonBuilder The {@link RecipeJsonBuilder}. The id of the advancement will be determined by {@link CraftingRecipeJsonBuilder#offerTo}.
@@ -517,7 +518,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    *   }
    * }
    * </pre>
-   * Of couse, you can invoke {@link #regenerate()} during initialization:
+   * Of course, you can invoke {@link #regenerate()} during initialization:
    * <pre>{@code
    *   private static final RuntimeResourcePack MY_PACK = ...;
    *

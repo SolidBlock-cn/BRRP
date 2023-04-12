@@ -154,13 +154,21 @@ public class BRRPTest {
 
     if (serverIncluded) {
       PACK.clearResources(ResourceType.SERVER_DATA);
-      // Add some tags that contain blocks and items of this mod. In this example, we just use `RuntimeResourcePack#addTag(IdentifiedTagBuilder)`.
-      PACK.addTag(IdentifiedTagBuilder.createBlock(BlockTags.FENCES).add(LAVA_FENCE));
-      PACK.addTag(IdentifiedTagBuilder.createBlock(BlockTags.FENCE_GATES).add(LAVA_FENCE_GATE));
-      PACK.addTag(IdentifiedTagBuilder.createBlock(BlockTags.WALLS).add(LAVA_WALL));
-      PACK.addTag(IdentifiedTagBuilder.createItem(ItemTags.FENCES).add(LAVA_FENCE.asItem()));
-      PACK.addTag(IdentifiedTagBuilder.createItem(ItemTags.FENCE_GATES).add(LAVA_FENCE_GATE.asItem()));
-      PACK.addTag(IdentifiedTagBuilder.createItem(ItemTags.WALLS).add(LAVA_WALL.asItem()));
+      final IdentifiedTagBuilder<Block> stairs = IdentifiedTagBuilder.createBlock(BlockTags.STAIRS).add(LAVA_STAIRS);
+      PACK.addTag(stairs);
+      PACK.addTag(IdentifiedTagBuilder.createItemCopy(ItemTags.STAIRS, stairs));
+      final IdentifiedTagBuilder<Block> slabs = IdentifiedTagBuilder.createBlock(BlockTags.SLABS).add(LAVA_SLAB);
+      PACK.addTag(slabs);
+      PACK.addTag(IdentifiedTagBuilder.createItemCopy(ItemTags.SLABS, slabs));
+      final IdentifiedTagBuilder<Block> fences = IdentifiedTagBuilder.createBlock(BlockTags.FENCES).add(LAVA_FENCE);
+      PACK.addTag(fences);
+      PACK.addTag(IdentifiedTagBuilder.createItemCopy(ItemTags.FENCES, fences));
+      final IdentifiedTagBuilder<Block> fenceGates = IdentifiedTagBuilder.createBlock(BlockTags.FENCE_GATES).add(LAVA_FENCE_GATE);
+      PACK.addTag(fenceGates);
+      PACK.addTag(IdentifiedTagBuilder.createItemCopy(ItemTags.FENCE_GATES, fenceGates));
+      final IdentifiedTagBuilder<Block> walls = IdentifiedTagBuilder.createBlock(BlockTags.WALLS).add(LAVA_WALL);
+      PACK.addTag(walls);
+      PACK.addTag(IdentifiedTagBuilder.createItemCopy(ItemTags.WALLS, walls));
       PACK.addTag(IdentifiedTagBuilder.createBlock(BlockTags.PICKAXE_MINEABLE).add(SMOOTH_STONE));
 
       // The recipe of smooth stone is not generated in `BlockResourceGenerator#writeRecipes`, and there is also no need to create a subclass for it. Therefore, we just generate the recipe here.
