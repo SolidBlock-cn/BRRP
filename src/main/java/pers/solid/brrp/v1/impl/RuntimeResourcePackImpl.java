@@ -243,11 +243,15 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   public void dumpInPath(Path output, @Nullable ResourceType dumpResourceType, int @Nullable [] stat) {
     LOGGER.info("Dumping {} in the path {}. The path will be cleared.", getName(), output);
     try {
+      if (stat != null) stat[0] = -1;
       if (output.toFile().exists()) {
         FileUtils.cleanDirectory(output.toFile());
       } else {
         Files.createDirectories(output);
       }
+      if (stat != null) {
+        stat[0] = stat[1] = stat[2] = 0;
+      };
       if (!root.isEmpty()) {
         for (Map.Entry<List<String>, Supplier<byte[]>> e : this.root.entrySet()) {
           Path root = output.resolve(String.join("/", e.getKey()));

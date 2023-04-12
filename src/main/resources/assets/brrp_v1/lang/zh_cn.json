@@ -64,9 +64,10 @@
   "brrp.dumpScreen.dump": "立即导出",
   "brrp.dumpScreen.dumping": "正在导出",
   "brrp.dumpScreen.dumpSummary": "正在导出（%s，%s，%s）",
+  "brrp.dumpScreen.removeExisting": "正在移除已有文件，请稍候…",
   "brrp.dumpScreen.existing.title": "确认导出至此路径？",
   "brrp.dumpScreen.existing.message": "此导出路径中已经有%1$s个文件。请确认导出路径：\n%2$s\n如果导出，这%1$s个已经存在的文件将被移除。",
-  "brrp.dumpScreen.existing.size": "%s多",
+  "brrp.dumpScreen.existing.size": "超过%s",
   "brrp.dumpScreen.interrupt": "中止",
   "brrp.dumpScreen.interrupt.tooltip": "中止导出过程。"
 }

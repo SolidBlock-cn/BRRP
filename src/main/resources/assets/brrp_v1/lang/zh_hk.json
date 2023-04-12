@@ -64,9 +64,10 @@
   "brrp.dumpScreen.dump": "立即匯出",
   "brrp.dumpScreen.dumping": "正在匯出",
   "brrp.dumpScreen.dumpSummary": "正在匯出（%s，%s，%s）",
+  "brrp.dumpScreen.removeExisting": "正在移除已有檔案，請稍候…",
   "brrp.dumpScreen.existing.title": "確認匯出至此路徑？",
   "brrp.dumpScreen.existing.message": "此匯出路徑中已經有%1$s個檔。請確認匯出路徑：\n%2$s\n如果匯出，這%1$s個已經存在的檔將被移除。",
-  "brrp.dumpScreen.existing.size": "%s多",
+  "brrp.dumpScreen.existing.size": "超過%s",
   "brrp.dumpScreen.interrupt": "中止",
   "brrp.dumpScreen.interrupt.tooltip": "中止匯出過程。"
 }

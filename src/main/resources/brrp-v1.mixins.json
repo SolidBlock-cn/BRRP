@@ -8,6 +8,7 @@
     "IdentifierMixin",
     "LifecycledResourceManagerImplMixin",
     "ModelAccessor",
+    "TagBuilderAccessor",
     "TextureMapAccessor"
   ],
   "injectors": {

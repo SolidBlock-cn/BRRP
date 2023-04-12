@@ -127,10 +127,14 @@ public class DumpScreen extends Screen {
     super.tick();
     dumpButton.active = invalidPathException == null && (dumpThread == null || !dumpThread.isAlive());
     if (dumpThread != null && dumpThread.isAlive()) {
-      dumpProgressText.setMessage(Text.translatable("brrp.dumpScreen.dumpSummary",
-          RRPConfigScreen.PackListWidget.Entry.singleOrPlural("brrp.configScreen.summary.rootResources.", dumpStat[0]),
-          RRPConfigScreen.PackListWidget.Entry.singleOrPlural("brrp.configScreen.summary.clientResources.", dumpStat[1]),
-          RRPConfigScreen.PackListWidget.Entry.singleOrPlural("brrp.configScreen.summary.serverData.", dumpStat[2])));
+      if (dumpStat[0] == -1) {
+        dumpProgressText.setMessage(Text.translatable("brrp.dumpScreen.removeExisting"));
+      } else {
+        dumpProgressText.setMessage(Text.translatable("brrp.dumpScreen.dumpSummary",
+            RRPConfigScreen.PackListWidget.Entry.singleOrPlural("brrp.configScreen.summary.rootResources.", dumpStat[0]),
+            RRPConfigScreen.PackListWidget.Entry.singleOrPlural("brrp.configScreen.summary.clientResources.", dumpStat[1]),
+            RRPConfigScreen.PackListWidget.Entry.singleOrPlural("brrp.configScreen.summary.serverData.", dumpStat[2])));
+      }
     } else if (dumpThread != null) {
       dumpProgressText.setMessage(ScreenTexts.DONE);
     }
@@ -143,7 +147,7 @@ public class DumpScreen extends Screen {
   private void runDump(boolean ignoreExistingWarning) {
     try {
       if (!ignoreExistingWarning && PathUtils.isDirectory(dumpPath) && !PathUtils.isEmptyDirectory(dumpPath)) {
-        final long size = Files.walk(dumpPath).limit(501).count();
+        final long size = Files.walk(dumpPath).limit(2001).count();
         if (client != null) {
           dumpProgressText.setMessage(ScreenTexts.EMPTY);
           client.setScreen(new ConfirmScreen(value -> {
@@ -153,7 +157,7 @@ public class DumpScreen extends Screen {
                 runDump(true);
               }
             }
-          }, Text.translatable("brrp.dumpScreen.existing.title"), Text.translatable("brrp.dumpScreen.existing.message", size > 500 ? Text.translatable("brrp.dumpScreen.existing.size", 500) : size, dumpPath.toAbsolutePath().toString())));
+          }, Text.translatable("brrp.dumpScreen.existing.title"), Text.translatable("brrp.dumpScreen.existing.message", size > 2000 ? Text.translatable("brrp.dumpScreen.existing.size", 2000) : size, dumpPath.toAbsolutePath().toString())));
           return;
         }
       }
