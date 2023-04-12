@@ -1,5 +1,6 @@
 package pers.solid.brrp.v1.api;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Either;
 import io.netty.buffer.ByteBufInputStream;
@@ -15,6 +16,7 @@ import net.minecraft.data.server.LootTableProvider;
 import net.minecraft.data.server.RecipeProvider;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootTable;
 import net.minecraft.resource.ResourcePack;
@@ -371,7 +373,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
-   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe. Both the recipe id and the advancement id are stored in the {@link RecipeJsonProvider}, so you do not need to specify it here.
+   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe. Both the recipe id and the advancement id are stored in the {@link RecipeJsonProvider}, so you do not need to specify it here. The recipe must have an {@link ItemGroup}, or it will throw an error when fetching the advancement id.
    *
    * @param recipeJsonProvider The {@link RecipeJsonProvider} object. You may conveniently create it using methods in {@link RecipeProvider}.
    */
@@ -382,13 +384,14 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
-   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe.
+   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe. <b>The {@link CraftingRecipeJsonBuilder} must have an {@link ItemGroup}, or it will throw an exception.</b>
    *
    * @param recipeId          The id of the recipe.
    * @param recipeJsonBuilder The {@link CraftingRecipeJsonBuilder}. The id of the advancement will be determined by {@link CraftingRecipeJsonBuilder#offerTo}.
    */
   @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull CraftingRecipeJsonBuilder recipeJsonBuilder) {
+    Preconditions.checkNotNull(recipeJsonBuilder.getOutputItem().getGroup(), "According to vanilla Minecraft code, the item must have an item group, or the recipe and advancement cannot be correctly written.");
     recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
   }
 
@@ -517,7 +520,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    *   }
    * }
    * </pre>
-   * Of couse, you can invoke {@link #regenerate()} during initialization:
+   * Of course, you can invoke {@link #regenerate()} during initialization:
    * <pre>{@code
    *   private static final RuntimeResourcePack MY_PACK = ...;
    *

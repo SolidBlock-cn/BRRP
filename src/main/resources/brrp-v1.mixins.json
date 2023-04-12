@@ -9,6 +9,7 @@
     "LifecycledResourceManagerImplMixin",
     "ModelAccessor",
     "ResourcePackProfileMixin",
+    "TagBuilderAccessor",
     "TextureMapAccessor"
   ],
   "injectors": {

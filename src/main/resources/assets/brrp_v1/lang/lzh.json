@@ -65,8 +65,9 @@
   "brrp.dumpScreen.dumping": "正在出錄",
   "brrp.dumpScreen.dumpSummary": "正在出錄（%s，%s，%s）",
   "brrp.dumpScreen.existing.title": "確認出錄至此路徑？",
+  "brrp.dumpScreen.removeExisting": "除檔之已存者，請稍候…",
   "brrp.dumpScreen.existing.message": "是出錄路徑已有%1$s檔。請確認出錄路徑：\n%2$s\n若出錄，此%1$s檔之存者盡除。",
-  "brrp.dumpScreen.existing.size": "%s多",
+  "brrp.dumpScreen.existing.size": "逾%s",
   "brrp.dumpScreen.interrupt": "止",
   "brrp.dumpScreen.interrupt.tooltip": "止出錄過程。"
 }
