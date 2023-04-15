@@ -7,7 +7,7 @@ import pers.solid.brrp.v1.BRRPTest;
 public class BRRPFabricInitialize implements ModInitializer {
   @Override
   public void onInitialize() {
-    if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+    if (FabricLoader.getInstance().isDevelopmentEnvironment() && FabricLoader.getInstance().getConfigDir().resolve("brrp-test-features.json").toFile().exists()) {
       BRRPTest.registerPacks();
     }
   }

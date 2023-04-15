@@ -1,6 +1,5 @@
 package pers.solid.brrp.v1.api;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Either;
 import io.netty.buffer.ByteBufInputStream;
@@ -15,6 +14,7 @@ import net.minecraft.data.server.LootTablesProvider;
 import net.minecraft.data.server.RecipesProvider;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonFactory;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.data.server.recipe.SmithingRecipeJsonFactory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootTable;
@@ -30,6 +30,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Vec3f;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -106,6 +108,7 @@ public interface RuntimeResourcePack extends ResourcePack {
       .setPrettyPrinting()
       .create();
   ResourcePackSource RUNTIME = ResourcePackSource.nameAndSource("pack.source.runtime");
+  Logger LOGGER = LogManager.getLogger(RuntimeResourcePack.class);
 
   /**
    * Create a new runtime resource pack with the default supported resource pack version
@@ -133,8 +136,15 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Serialize an object to a byte array, using the default GSON for the runtime resource pack.
    */
-  static byte[] serialize(Object object) {
+  static byte[] defaultSerialize(Object object) {
     return serialize(object, GSON);
+  }
+
+  /**
+   * Serialize the object to a byte array. You can override this method for your own serialization.
+   */
+  default byte[] serialize(Object object) {
+    return defaultSerialize(object);
   }
 
   /**
@@ -158,8 +168,8 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Reads, clones, and recolors the texture at the given path, and puts the newly created image in the given id.
    * <p>
-   * <b>If your resource pack is registered at a higher priority than where you expect the texture to be in, Minecraft will
-   * be unable to find the asset you are looking for.</b>
+   * <strong>If your resource pack is registered at a higher priority than where you expect the texture to be in, Minecraft will
+   * be unable to find the asset you are looking for.</strong>
    *
    * @param identifier the place to put the new texture
    * @param target     the input stream of the original texture
@@ -177,7 +187,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <pre>{@code
    * pack.addLang(new Identifier("my_mod", "zh_cn"), LanguageProvider.create().add(...));
    * }</pre>
-   * <p><i>Do not</i> call this method multiple times for a same language, as they will override each other!</pre>
+   * <p><em>Do not</em> call this method multiple times for a same language, as they will override each other!</pre>
    * <pre>{@code
    * // wrong:
    * pack.addLang(new Identifier("my_mod", "zh_cn"), LanguageProvider.create().add("key1", "value1");
@@ -206,7 +216,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @Contract(mutates = "this")
   default byte[] addLootTable(Identifier identifier, LootTable lootTable) {
-    return addLootTable(identifier, serialize(lootTable, GSON));
+    return addLootTable(identifier, serialize(lootTable));
   }
 
   /**
@@ -247,7 +257,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add an async root resource, which is evaluated off-thread and does not hold all resource retrieval unlike.
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta.
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, default mcmeta will be generated.
    *
    * @see #async(Consumer)
    */
@@ -258,7 +268,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a root resource that is lazily evaluated.
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta.
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, default mcmeta will be generated.
    */
   @Contract(mutates = "this")
   void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data);
@@ -266,7 +276,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a raw resource to the root path
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta.
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, default mcmeta will be generated.
    */
   @Contract(mutates = "this")
   byte[] addRootResource(String path, byte[] data);
@@ -311,11 +321,16 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a tag to the pack.
    *
-   * @param id             The full resource location of the pack. For example, <code>new Identifier("minecraft", "blocks/stairs")</code>, <code>new Identifier("minecraft", "functions/tick")</code>.
+   * @param fullId         The full resource location of the pack. For example, <code>new Identifier("minecraft", "blocks/stairs")</code>, <code>new Identifier("minecraft", "functions/tick")</code>.
    * @param serializedData The serialized tag data.
    */
   @Contract(mutates = "this")
-  byte[] addTag(Identifier id, byte[] serializedData);
+  byte[] addTag(Identifier fullId, byte[] serializedData);
+
+  @Contract(mutates = "this")
+  default byte[] addTag(Identifier fullId, Tag.Builder tagBuilder) {
+    return addTag(fullId, serialize(tagBuilder.toJson()));
+  }
 
   /**
    * Add a tag to the pack. It uses the vanilla {@link Tag} object, which contains the registry type and the identifier, so the full resource location can be determined.
@@ -342,7 +357,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   byte[] addAnimation(Identifier id, byte[] serializedData);
 
   /**
-   * Add an animation json for a texture. <b>Note: {@link AnimationResourceMetadata} is client-only, so you should only use it in the client distribution.</b> There is an example:
+   * Add an animation json for a texture. <strong>Note: {@link AnimationResourceMetadata} is client-only, so you should only use it in the client distribution.</strong> There is an example:
    * <pre>{@code
    * if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
    *   AnimationResourceMetadata metadata = new AnimationResourceMetadata(...);
@@ -375,7 +390,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
-   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe. Both the recipe id and the advancement id are stored in the {@link RecipeJsonProvider}, so you do not need to specify it here. The recipe must have an {@link ItemGroup}, or it will throw an error when fetching the advancement id.
+   * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. Both the recipe id and the advancement id are stored in the {@link RecipeJsonProvider}, so you do not need to specify it here. The recipe must have an {@link ItemGroup}, or it will throw an error when fetching the advancement id.
    *
    * @param recipeJsonProvider The {@link RecipeJsonProvider} object. You may conveniently create it using methods in {@link RecipesProvider}.
    */
@@ -386,14 +401,24 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
-   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe. <b>The {@link CraftingRecipeJsonFactory} must have an {@link ItemGroup}, or it will throw an exception.</b>
+   * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. <strong>The {@link CraftingRecipeJsonFactory} must have an {@link ItemGroup}, or it will throw an exception.</strong>
    *
    * @param recipeId          The id of the recipe.
    * @param recipeJsonBuilder The {@link CraftingRecipeJsonFactory}. The id of the advancement will be determined by {@link CraftingRecipeJsonFactory#offerTo}.
    */
   @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull CraftingRecipeJsonFactory recipeJsonBuilder) {
-    Preconditions.checkNotNull(recipeJsonBuilder.getOutputItem().getGroup(), "According to vanilla Minecraft code, the item must have an item group, or the recipe and advancement cannot be correctly written.");
+    recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
+  }
+
+  /**
+   * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. You may confirm it has a criterion to obtain the recipe of it will throw an error, unless you call {@link pers.solid.brrp.v1.recipe.RecipeJsonBuilderExtension#setBypassesValidation(boolean)} to bypass it.
+   *
+   * @param recipeId          The id of the recipe.
+   * @param recipeJsonBuilder The {@link SmithingRecipeJsonFactory}. The id of the advancement will be determined by {@link SmithingRecipeJsonFactory#offerTo}.
+   */
+  @Contract(mutates = "this")
+  default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingRecipeJsonFactory recipeJsonBuilder) {
     recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
   }
 
@@ -643,7 +668,8 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @return The description of the pac, which may be shown in the {@link RRPConfigScreen}.
    */
   @Contract(pure = true)
-  @Nullable Text getDescription();
+  @Nullable
+  Text getDescription();
 
   /**
    * Set the description of the pack, which may be shown in the {@link RRPConfigScreen}.

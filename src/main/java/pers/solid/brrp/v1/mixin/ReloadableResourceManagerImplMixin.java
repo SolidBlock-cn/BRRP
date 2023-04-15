@@ -1,5 +1,6 @@
 package pers.solid.brrp.v1.mixin;
 
+import com.google.common.collect.Lists;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
@@ -23,10 +24,10 @@ public abstract class ReloadableResourceManagerImplMixin {
   private static final Logger LOGGER = LogManager.getLogger("BRRP/ReloadableResourceManagerImplMixin");
 
   @ModifyVariable(method = "reload", at = @At("HEAD"), argsOnly = true)
-  private List<ResourcePack> register(List<ResourcePack> packs) {
+  private List<ResourcePack> registerRRPs(List<ResourcePack> packs) {
     List<ResourcePack> copy = new ArrayList<>(packs);
     LOGGER.info("BRRP register - before vanilla");
-    PlatformBridge.getInstance().postBefore(type, copy);
+    PlatformBridge.getInstance().postBefore(type, Lists.reverse(copy));
 
     LOGGER.info("BRRP register - after vanilla");
     PlatformBridge.getInstance().postAfter(type, copy);

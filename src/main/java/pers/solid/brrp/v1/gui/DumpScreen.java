@@ -119,7 +119,7 @@ public class DumpScreen extends Screen {
   public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
     renderBackground(matrices);
     dumpPathPreviewText.drawCenterWithShadow(matrices, width / 2, 120, 16, 0xffffff);
-    textRenderer.draw(matrices, dumpPathText, 20, 65, 0xcccccc);
+    drawCenteredText(matrices, textRenderer, dumpPathText, width / 2, 65, 0xcccccc);
     drawCenteredText(matrices, textRenderer, summaryText, width / 2, height - 89, 0xffcccccc);
     drawCenteredText(matrices, textRenderer, dumpProgressText, width / 2, height - 73, 0xffcccccc);
     drawCenteredTextWithShadow(matrices, this.textRenderer, this.title.asOrderedText(), this.width / 2, 8, 0xFFFFFF);

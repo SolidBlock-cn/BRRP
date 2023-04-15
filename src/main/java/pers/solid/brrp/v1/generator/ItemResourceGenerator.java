@@ -11,7 +11,6 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
 import pers.solid.brrp.v1.PlatformBridge;
 import pers.solid.brrp.v1.annotations.PreferredEnvironment;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
@@ -23,7 +22,7 @@ import pers.solid.brrp.v1.model.ModelJsonBuilder;
  * <p>This interface is divided into three parts:</p>
  * <ul>
  *   <li>general part: to get the identifier of this instance.</li>
- *   <li>client part: methods related to generating and writing client assets. It's <i>highly recommended but not required</i> to annotate the methods as {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code> or <code>@OnlyIn(Dist.CLIENT)</code>, because they are only used in client distribution. When running on a dedicated server, they should be ignored.</li>
+ *   <li>client part: methods related to generating and writing client assets. It's <em>highly recommended but not required</em> to annotate the methods as {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code> or <code>@OnlyIn(Dist.CLIENT)</code>, because they are only used in client distribution. When running on a dedicated server, they should be ignored.</li>
  *   <li>server part: methods related to generating and writing server data. Please do not annotate them with {@code @Environment(EnvType.SERVER)}, unless you're sure to do so, as they will be used in client distribution.</li>
  * </ul>
  * <p>Most "get" methods are nullable, which means, when writing (in those "write" methods) the values into the runtime resource pack, these null values will be ignored. When overriding these "get" methods, you can annotate @NotNull if you're sure that the values are not null.</p>
@@ -33,7 +32,7 @@ import pers.solid.brrp.v1.model.ModelJsonBuilder;
 public interface ItemResourceGenerator {
 
   /**
-   * Query the id of the item. You have to <i>override</i> this method if your class that implements this method is not a subtype of {@link Item}.
+   * Query the id of the item. You have to <em>override</em> this method if your class that implements this method is not a subtype of {@link Item}.
    *
    * @return The id of the item.
    */
@@ -47,7 +46,7 @@ public interface ItemResourceGenerator {
   // It's recommended to annotate @Environment(EnvType.CLIENT) when overriding following methods.
 
   /**
-   * The id of the model of its block item. It is usually <code><i>namespace</i>:item/<i>path</i></code>.
+   * The id of the model of its block item. It is usually <code><var>namespace</var>:item/<var>path</var></code>.
    *
    * @return The id of the item model.
    */
@@ -58,15 +57,15 @@ public interface ItemResourceGenerator {
   }
 
   /**
-   * The texture of the item. It is usually the format of <code><i>namespace</i>:item/<i>path</i></code>, which <i>mostly</i> equals to the item id. This is mainly used in {@link #getItemModel()}, but you can also bypass this method when overriding it.
+   * The texture of the item. It is usually the format of <code><var>namespace</var>:item/<var>path</var></code>, which <em>mostly</em> equals to the item id. This is mainly used in {@link #getItemModel()}, but you can also bypass this method when overriding it.
    *
    * @return The id of the item texture.
    * @see BlockResourceGenerator#getTextureId(net.minecraft.data.client.model.TextureKey)
    */
   @PreferredEnvironment(EnvType.CLIENT)
   @Contract(pure = true)
-  default String getTextureId() {
-    return getItemId().brrp_prefixed("item/").toString();
+  default Identifier getTextureId() {
+    return getItemId().brrp_prefixed("item/");
   }
 
   /**
@@ -76,7 +75,7 @@ public interface ItemResourceGenerator {
    */
   @PreferredEnvironment(EnvType.CLIENT)
   @Contract(pure = true)
-  default @UnknownNullability ModelJsonBuilder getItemModel() {
+  default ModelJsonBuilder getItemModel() {
     return new ModelJsonBuilder().parent(Models.GENERATED).addTexture(TextureKey.LAYER0, getTextureId());
   }
 
@@ -119,13 +118,13 @@ public interface ItemResourceGenerator {
    * @return The crafting recipe of this item.
    */
   @Contract(pure = true)
-  default @Nullable CraftingRecipeJsonFactory getCraftingRecipe() {
+  default CraftingRecipeJsonFactory getCraftingRecipe() {
     return null;
   }
 
   /**
    * <p>Get the identifier of its recipe. It is usually the same of the item id.</p>
-   * <p>It can be the id for any form of recipe: crafting, smelting, stonecutting, etc. If an item has multiple recipes to make, different ids are distinguished by suffix. For example, a blackstone stairs block can either be crafted or be stone-cut; the crafting recipe id is <span style="color:maroon">{@code minecraft:blackstone_stairs}</span> and the stonecutting id is <span style="color:maroon">{@code minecraft:blackstone_stairs_from_stonecutting}</span>.</p>
+   * <p>It can be the id for any form of recipe: crafting, smelting, stonecutting, etc. If an item has multiple recipes to make, different ids are distinguished by suffix. For example, a blackstone stairs block can either be crafted or be stone-cut; the crafting recipe id is <span">{@code minecraft:blackstone_stairs}</span> and the stonecutting id is <span>{@code minecraft:blackstone_stairs_from_stonecutting}</span>.</p>
    *
    * @return The id of the recipe.
    */
