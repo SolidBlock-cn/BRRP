@@ -2,6 +2,8 @@ package pers.solid.brrp.v1.api;
 
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Either;
+import com.mojang.logging.LogUtils;
+import com.mojang.serialization.JsonOps;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.fabricmc.api.EnvType;
@@ -15,10 +17,7 @@ import net.minecraft.data.server.recipe.*;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.book.RecipeCategory;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.registry.tag.TagBuilder;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.registry.tag.*;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
@@ -32,6 +31,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import org.slf4j.Logger;
 import pers.solid.brrp.v1.JsonSerializers;
 import pers.solid.brrp.v1.RRPEventHelper;
 import pers.solid.brrp.v1.gui.DumpScreen;
@@ -101,6 +101,7 @@ public interface RuntimeResourcePack extends ResourcePack {
       .registerTypeHierarchyAdapter(RecipeJsonProvider.class, JsonSerializers.RECIPE_JSON_PROVIDER)
       .setPrettyPrinting()
       .create();
+  Logger LOGGER = LogUtils.getLogger();
 
   /**
    * Create a new runtime resource pack with the default supported resource pack version
@@ -321,7 +322,7 @@ public interface RuntimeResourcePack extends ResourcePack {
 
   @Contract(mutates = "this")
   default byte[] addTag(Identifier fullId, TagBuilder tagBuilder) {
-    return addTag(fullId, serialize(tagBuilder));
+    return addTag(fullId, serialize(TagFile.CODEC.encodeStart(JsonOps.INSTANCE, new TagFile(tagBuilder.build(), false)).getOrThrow(false, LOGGER::error)));
   }
 
   /**
