@@ -21,8 +21,6 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 
 import javax.imageio.ImageIO;
@@ -51,8 +49,6 @@ import java.util.zip.ZipOutputStream;
 @ApiStatus.Internal
 public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack implements ResourcePack {
   public static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setDaemon(true).setNameFormat("BRRP-Workers-%s").build());
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(RuntimeResourcePackImpl.class);
   private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
   private final Map<List<String>, Supplier<byte[]>> root = new ConcurrentHashMap<>();
