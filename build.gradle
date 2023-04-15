@@ -73,6 +73,10 @@ subprojects {
 
 loom {
     accessWidenerPath = file("src/main/resources/fabric-data-generation-api.accesswidener")
+
+    mixin {
+        defaultRefmapName = "brrp-v1-common-refmap.json"
+    }
 }
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
