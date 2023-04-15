@@ -17,11 +17,15 @@ import pers.solid.brrp.v1.recipe.ShapedRecipeJsonBuilderExtension;
 
 @Mixin(ShapedRecipeJsonBuilder.class)
 public abstract class ShapedRecipeJsonBuilderMixin implements ShapedRecipeJsonBuilderExtension {
-  @Shadow public abstract ShapedRecipeJsonBuilder criterion(String string, CriterionConditions arg);
+  @Shadow
+  public abstract ShapedRecipeJsonBuilder criterion(String string, CriterionConditions arg);
 
-  @Shadow public abstract ShapedRecipeJsonBuilder pattern(String patternStr);
+  @Shadow
+  public abstract ShapedRecipeJsonBuilder pattern(String patternStr);
 
-  @Shadow @Final private RecipeCategory category;
+  @Shadow
+  @Final
+  private RecipeCategory category;
   private boolean bypassesValidation;
   private @Nullable String customRecipeCategory;
 
@@ -62,7 +66,7 @@ public abstract class ShapedRecipeJsonBuilderMixin implements ShapedRecipeJsonBu
     return self();
   }
 
-  @ModifyArgs(method = "offerTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/data/server/recipe/ShapedRecipeJsonBuilder$ShapedRecipeJsonProvider;<init>(Lnet/minecraft/util/Identifier;Lnet/minecraft/item/Item;ILjava/lang/String;Lnet/minecraft/recipe/book/CraftingRecipeCategory;Ljava/util/List;Ljava/util/Map;Lnet/minecraft/advancement/Advancement$Builder;Lnet/minecraft/util/Identifier;Z)V"))
+  @ModifyArgs(method = "offerTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/data/server/recipe/ShapedRecipeJsonBuilder$ShapedRecipeJsonProvider;<init>(Lnet/minecraft/util/Identifier;Lnet/minecraft/item/Item;ILjava/lang/String;Lnet/minecraft/recipe/book/CraftingRecipeCategory;Ljava/util/List;Ljava/util/Map;Lnet/minecraft/advancement/Advancement$Builder;Lnet/minecraft/util/Identifier;)V"))
   public void modifyOfferTo(Args args) {
     if (customRecipeCategory != null) {
       args.set(8, args.<Identifier>get(0).withPrefixedPath("recipes/" + this.customRecipeCategory + (this.customRecipeCategory.isEmpty() ? "" : "/")));
