@@ -15,9 +15,9 @@ import pers.solid.brrp.v1.generator.ItemResourceGenerator;
 import pers.solid.brrp.v1.generator.TextureRegistry;
 
 /**
- * <p>It's similar to {@link ItemResourceGenerator} and {@link BlockResourceGenerator}, but it provides more <i>static</i> methods so that they can be used for blocks and items that do not implement {@link ItemResourceGenerator}, which are usually vanilla blocks.</p>
+ * <p>It's similar to {@link ItemResourceGenerator} and {@link BlockResourceGenerator}, but it provides more <em>static</em> methods so that they can be used for blocks and items that do not implement {@link ItemResourceGenerator}, which are usually vanilla blocks.</p>
  * <p>It's not recommended to inject the interfaces above to vanilla classes using mixins.</p>
- * <p>If your sure that the instance <i>is</i> a {@link ItemResourceGenerator}, you should use their methods instead, instead of these static methods.</p>
+ * <p>If your sure that the instance <em>is</em> a {@link ItemResourceGenerator}, you should use their methods instead, instead of these static methods.</p>
  *
  * @author SolidBlock
  */
@@ -36,7 +36,7 @@ public final class BRRPUtils {
   }
 
   /**
-   * Get the identifier of the item model, which is usually in the format of <code><i>namespace</i>:item/<i>path</i></code>. It works for items that do not implement {@link ItemResourceGenerator}, but may fail to be accurate in cases other mods modify the item model (which are not usually supposed to happen).
+   * Get the identifier of the item model, which is usually in the format of <code><var>namespace</var>:item/<var>path</var></code>. It works for items that do not implement {@link ItemResourceGenerator}, but may fail to be accurate in cases other mods modify the item model (which are not usually supposed to happen).
    *
    * @return The id of the item model.
    * @since 0.6.2 Fixed the issue that the item model id is not correct.
@@ -57,7 +57,7 @@ public final class BRRPUtils {
   }
 
   /**
-   * Get the identifier of the block model, which is usually in the format of <code><i>namespace</i>:block/<i>path</i></code>. It works for blocks that do not implement {@link BlockResourceGenerator}, but may fail to be accurate in cases other mods modify the block model (which are not usually supposed to happen), or the model is already not in other formats (possibly specified in the block states).
+   * Get the identifier of the block model, which is usually in the format of <code><var>namespace</var>:block/<var>path</var></code>. It works for blocks that do not implement {@link BlockResourceGenerator}, but may fail to be accurate in cases other mods modify the block model (which are not usually supposed to happen), or the model is already not in other formats (possibly specified in the block states).
    *
    * @return The id of the block model.
    */
@@ -68,7 +68,7 @@ public final class BRRPUtils {
   }
 
   /**
-   * Get the texture of a block with a specified texture key, which respects {@link TextureRegistry}. Note that <em>it may not correctly return the real texture used</em>, as they are specified in block models, instead of {@code TextureRegistry}. The method <b>only</b> respects {@link TextureRegistry}.
+   * Get the texture of a block with a specified texture key, which respects {@link TextureRegistry}. Note that <em>it may not correctly return the real texture used</em>, as they are specified in block models, instead of {@code TextureRegistry}. The method <strong>only</strong> respects {@link TextureRegistry}.
    *
    * @return The texture id of the block specified in {@link BlockResourceGenerator#getTextureId} or in the {@link TextureRegistry}.
    */
