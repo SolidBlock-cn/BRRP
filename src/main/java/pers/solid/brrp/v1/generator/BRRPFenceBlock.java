@@ -17,7 +17,6 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 import pers.solid.brrp.v1.model.ModelUtils;
@@ -47,7 +46,7 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability BlockStateSupplier getBlockStates() {
+  public BlockStateSupplier getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return BlockStateModelGenerator.createFenceBlockState(
         this,
@@ -58,7 +57,7 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability ModelJsonBuilder getBlockModel() {
+  public ModelJsonBuilder getBlockModel() {
     return ModelUtils.createModelWithVariants(this, Models.FENCE_POST);
   }
 
@@ -72,7 +71,7 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability ModelJsonBuilder getItemModel() {
+  public ModelJsonBuilder getItemModel() {
     return getBlockModel().parent(Models.FENCE_INVENTORY);
   }
 
@@ -82,7 +81,7 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
    * @see net.minecraft.data.server.RecipeProvider#createFenceRecipe(ItemConvertible, Ingredient)
    */
   @Override
-  public @Nullable CraftingRecipeJsonBuilder getCraftingRecipe() {
+  public CraftingRecipeJsonBuilder getCraftingRecipe() {
     final Item secondIngredient = getSecondIngredient();
     return baseBlock == null || secondIngredient == null ? null : ShapedRecipeJsonBuilder.create(this, 3)
         .pattern("W#W").pattern("W#W")

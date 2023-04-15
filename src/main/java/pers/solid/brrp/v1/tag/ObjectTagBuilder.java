@@ -6,6 +6,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import pers.solid.brrp.v1.mixin.TagBuilderAccessor;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -51,6 +52,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
     return (Self) this;
   }
 
+  @Contract(mutates = "this")
   public Self add(@NotNull Tag.TagEntry entry) {
     super.add(entry, "runtime");
     return self();
@@ -61,6 +63,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
    *
    * @param id The id of the entry to add. It is not a tag id.
    */
+  @Contract(mutates = "this")
   public Self add(@NotNull Identifier id) {
     super.add(id, "runtime");
     return self();
@@ -71,6 +74,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
    *
    * @param id The id of the entry to add. It is not a tag id.
    */
+  @Contract(mutates = "this")
   public Self addOptional(@NotNull Identifier id) {
     super.addOptional(id, "runtime");
     return self();
@@ -81,6 +85,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
    *
    * @param id The id of the tag to be added to this tag.
    */
+  @Contract(mutates = "this")
   public Self addTag(@NotNull Identifier id) {
     super.addTag(id, "runtime");
     return self();
@@ -91,6 +96,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
    *
    * @param tagKey The other tag to be added to this tag.
    */
+  @Contract(mutates = "this")
   public Self addTag(@NotNull TagKey<T> tagKey) {
     return addTag(tagKey.id());
   }
@@ -101,9 +107,24 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
    * @param tagKeys The other tags to be added to this tag.
    */
   @SafeVarargs
+  @Contract(mutates = "this")
   public final Self addTag(@NotNull TagKey<T>... tagKeys) {
     for (TagKey<T> tagKey : tagKeys) {
       this.addTag(tagKey);
+    }
+    return self();
+  }
+
+  @Contract(mutates = "this")
+  public Self addTag(@NotNull IdentifiedTagBuilder<T> tagBuilder) {
+    return addTag(tagBuilder.identifier);
+  }
+
+  @Contract(mutates = "this")
+  @SafeVarargs
+  public final Self addTag(@NotNull IdentifiedTagBuilder<T>... tagBuilders) {
+    for (IdentifiedTagBuilder<T> tagBuilder : tagBuilders) {
+      this.addTag(tagBuilder);
     }
     return self();
   }
@@ -113,6 +134,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
    *
    * @param id The id of the tag to be added to this tag.
    */
+  @Contract(mutates = "this")
   public Self addOptionalTag(@NotNull Identifier id) {
     super.addOptionalTag(id, "runtime");
     return self();
@@ -123,6 +145,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
    *
    * @param value The object to be added to this tag.
    */
+  @Contract(mutates = "this")
   public Self add(T value) {
     return add(valueToId.apply(value));
   }
@@ -132,9 +155,16 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
    *
    * @param value The objects to be added to this tag.
    */
+  @Contract(mutates = "this")
   @SafeVarargs
   public final Self add(T... value) {
     Arrays.stream(value).map(valueToId).forEach(this::add);
+    return self();
+  }
+
+  @Contract(mutates = "this")
+  public Self copy(TagBuilder copyFrom) {
+    ((TagBuilderAccessor) copyFrom).getEntries().forEach(this::add);
     return self();
   }
 
