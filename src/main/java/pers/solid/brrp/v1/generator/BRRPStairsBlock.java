@@ -13,8 +13,6 @@ import net.minecraft.data.server.recipe.ShapedRecipeJsonFactory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 import pers.solid.brrp.v1.model.ModelUtils;
@@ -50,14 +48,14 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability BlockStateSupplier getBlockStates() {
+  public BlockStateSupplier getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return BlockStateModelGenerator.createStairsBlockState(this, ModelUtils.appendVariant(blockModelId, Models.INNER_STAIRS), blockModelId, ModelUtils.appendVariant(blockModelId, Models.OUTER_STAIRS));
   }
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability ModelJsonBuilder getBlockModel() {
+  public ModelJsonBuilder getBlockModel() {
     return ModelUtils.createModelWithVariants(this, Models.STAIRS);
   }
 
@@ -70,7 +68,7 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
   }
 
   @Override
-  public @Nullable RecipeJsonFactory getCraftingRecipe() {
+  public RecipeJsonFactory getCraftingRecipe() {
     return ShapedRecipeJsonFactory.create(this, 4)
         .input('#', baseBlock)
         .pattern("#  ").pattern("## ").pattern("###")

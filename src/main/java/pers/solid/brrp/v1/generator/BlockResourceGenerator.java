@@ -15,7 +15,10 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.v1.BRRPUtils;
 import pers.solid.brrp.v1.annotations.PreferredEnvironment;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
@@ -23,7 +26,7 @@ import pers.solid.brrp.v1.model.ModelJsonBuilder;
 
 /**
  * <p>The interface is used for blocks. Your custom block class can implement this interface, and override some methods you need.</p>
- * <p>This interface simply <i>extends</i> {@link ItemResourceGenerator}, as the resources of the block item related to it will be also generated. It's also possible that the block does not have a block item; in this case the recipe and item model should be ignored. <b>Please notice that the "{@code get}" methods are used for data generation. instead of being directly used in the gameplay.</b></p>
+ * <p>This interface simply <em>extends</em> {@link ItemResourceGenerator}, as the resources of the block item related to it will be also generated. It's also possible that the block does not have a block item; in this case the recipe and item model should be ignored. <strong>Please notice that the "{@code get}" methods are used for data generation. instead of being directly used in the gameplay.</strong></p>
  * <p>You can override the methods so that it can generate data in your specified ways. Here is an example:</p>
  * <pre>{@code
  * public class MyBlock extends Block implements BlockResourceGenerator {
@@ -39,7 +42,7 @@ import pers.solid.brrp.v1.model.ModelJsonBuilder;
  *   [...]
  * }
  * }</pre>
- * <p>Also, your custom class (if not extending {@code Block}) can implement this interface. In this case, you <i>must</i> override {@link #getBlockId()} method, as it cannot be casted to {@code Block}.</p>
+ * <p>Also, your custom class (if not extending {@code Block}) can implement this interface. In this case, you <em>have to</em> override {@link #getBlockId()} method, as it cannot be casted to {@code Block}.</p>
  * <p>It's highly recommended but not required to annotate methods related to client (block states, block models, item models) with {@code @}{@link net.fabricmc.api.Environment Environment}<code>({@link net.fabricmc.api.EnvType#CLIENT EnvType.CLIENT})</code> or {@code @OnlyIn(Dist.CLIENT)}, as they are only used in the client environment. The interface itself does not annotate it, in consideration of rare situations where the server really needs. But mostly these client-related methods are not needed in the server side.</p>
  * <p>After implementing this interface and appropriately overriding some methods, you can do the following to quickly add resources to a runtime resource pack:</p>
  * <pre>{@code
@@ -52,7 +55,7 @@ import pers.solid.brrp.v1.model.ModelJsonBuilder;
  */
 public interface BlockResourceGenerator extends ItemResourceGenerator {
   /**
-   * The base block of this block. You <i>should override</i> this method for block-based blocks, like stairs, slab, etc.
+   * The base block of this block. You <em>should override</em> this method for block-based blocks, like stairs, slab, etc.
    *
    * @return The base block of this block.
    */
@@ -63,7 +66,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
 
   /**
    * Query the id of the block in {@link Registry#BLOCK}.<br>
-   * You <i>must</i> override this method if you're implementing this interface on a non-{@code Block} class, or you intend to generate resources before registration.
+   * You <em>have to</em> override this method if you're implementing this interface on a non-{@code Block} class, or you intend to generate resources before registration.
    *
    * @return The id of the block.
    */
@@ -106,7 +109,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
 
 
   /**
-   * The id of the block model. It is usually <code style="color: maroon"><i>namespace</i>:block/<i>path</i></code>. For example, the model id of stone is {@code minecraft:block/stone}.
+   * The id of the block model. It is usually <code><var>namespace</var>:block/<var>path</var></code>. For example, the model id of stone is {@code minecraft:block/stone}.
    *
    * @return The id of the block model.
    */
@@ -116,8 +119,8 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * <p>The texture used in models. It's usually in the format of <code><i>namespace</i>:block/<i>path</i></code>, which <i>mostly</i> equals to the block id. However, sometimes they differ. For example, the texture of <code style="color:maroon">minecraft:smooth_sandstone</code> is not <code style="color:maroon">minecraft:block/smooth_sandstone</code>; it's <code style="color:maroon">minecraft:block/sandstone_top</code>.</p>
-   * <p><b>The method is used for data generation, and just respects the block's id and {@link TextureRegistry}. It does not consider what texture is actually used in the game.</b> Of course, you can override this method to apply different behaviours.</p>
+   * <p>The texture used in models. It's usually in the format of <code><var>namespace</var>:block/<var>path</var></code>, which <em>mostly</em> equals to the block id. However, sometimes they differ. For example, the texture of <code>minecraft:smooth_sandstone</code> is not <code>minecraft:block/smooth_sandstone</code>; it's <code>minecraft:block/sandstone_top</code>.</p>
+   * <p><strong>The method is used for data generation, and just respects the block's id and {@link TextureRegistry}. It does not consider what texture is actually used in the game.</strong> Of course, you can override this method to apply different behaviours.</p>
    * <p>Some blocks have different textures in different parts. In this case, the parameter {@code type} is used. For example, a quartz pillar can have the following methods:</p>
    * <pre>{@code
    *   @Environment(EnvType.CLIENT) @Override
@@ -158,7 +161,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @PreferredEnvironment(EnvType.CLIENT)
   @Contract(pure = true)
-  default @UnknownNullability BlockStateSupplier getBlockStates() {
+  default BlockStateSupplier getBlockStates() {
     return null;
   }
 
@@ -182,7 +185,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @PreferredEnvironment(EnvType.CLIENT)
   @Contract(pure = true)
-  default @UnknownNullability ModelJsonBuilder getBlockModel() {
+  default ModelJsonBuilder getBlockModel() {
     return null;
   }
 
@@ -221,7 +224,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   @Override
   @PreferredEnvironment(EnvType.CLIENT)
   @Contract(pure = true)
-  default @UnknownNullability ModelJsonBuilder getItemModel() {
+  default ModelJsonBuilder getItemModel() {
     return ModelJsonBuilder.create(getBlockModelId());
   }
 
@@ -261,7 +264,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   // SERVER PART
 
   /**
-   * Get the id of the block loot table. It's by default in the format of <code><i>namespace:</i>blocks/<i>path</i></code>, note its "{@code blocks}" instead of "{@code block}". The loot table is used when the block is broken. This method respects {@link Block#getLootTableId()}, which may be influenced by {@link Block.Settings#dropsNothing()} or {@link Block.Settings#dropsLike(Block)}.
+   * Get the id of the block loot table. It's by default in the format of <code><var>namespace:</var>blocks/<var>path</var></code>, note its "{@code blocks}" instead of "{@code block}". The loot table is used when the block is broken. This method respects {@link Block#getLootTableId()}, which may be influenced by {@link Block.Settings#dropsNothing()} or {@link Block.Settings#dropsLike(Block)}.
    *
    * @return The id of the block loot table.
    */
@@ -276,17 +279,17 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * Get the block loot table. It's by default the simplest loot table, which means one block of itself will be dropped when broken. <i>Note that this method is used just for data generation, instead of real usage in the gameplay. You should override this if this object is not {@link Block} or {@link Item}.</i>
+   * Get the block loot table. It's by default the simplest loot table, which means one block of itself will be dropped when broken. <em>Note that this method is used just for data generation, instead of real usage in the gameplay. You should override this if this object is not {@link Block} or {@link Item}.</em>
    *
    * @return The block loot table. If you do not need to generate the loot table, you can make it return {@code null}.
    */
   @Contract(pure = true)
-  default LootTable.@UnknownNullability Builder getLootTable() {
+  default LootTable.Builder getLootTable() {
     return BlockLootTableGenerator.drops((ItemConvertible) this);
   }
 
   /**
-   * Write the block loot table to the runtime resource pack. If the block drops nothing ({@link Block.Settings#dropsNothing()}, the loot table will not be generated. However, if the block drops other's loot table ({@link Block.Settings#dropsLike(Block)}, the loot table will be written in <i>that</i> id, and please notice of potential duplication.
+   * Write the block loot table to the runtime resource pack. If the block drops nothing ({@link Block.Settings#dropsNothing()}, the loot table will not be generated. However, if the block drops other's loot table ({@link Block.Settings#dropsLike(Block)}, the loot table will be written in <em>that</em> id, and please notice of potential duplication.
    *
    * @param pack The runtime resource pack.
    */
@@ -306,17 +309,17 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   /**
    * Get the stonecutting recipe of the block. This is quite useful for block-based blocks, like stairs, slabs and fences.
    * <p>
-   * <b>Note:</b> Stonecutting recipes will not be generated unless {@link #shouldWriteStonecuttingRecipe()} returns {@code true}.
+   * <strong>Note:</strong> Stonecutting recipes will not be generated unless {@link #shouldWriteStonecuttingRecipe()} returns {@code true}.
    *
    * @return The stonecutting recipe.
    */
   @Contract(pure = true)
-  default @Nullable SingleItemRecipeJsonFactory getStonecuttingRecipe() {
+  default SingleItemRecipeJsonFactory getStonecuttingRecipe() {
     return null;
   }
 
   /**
-   * Whether to write stonecutting recipe. <b>It's by default <code>false</code></b> and you can override this method according to your actual need.
+   * Whether to write stonecutting recipe. <strong>It's by default <code>false</code></strong> and you can override this method according to your actual need.
    *
    * @return The boolean value indicating whether to write stonecutting recipes of the block in {@link #writeRecipes(RuntimeResourcePack)}.
    */

@@ -43,7 +43,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability BlockStateSupplier getBlockStates() {
+  public BlockStateSupplier getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return BlockStateModelGenerator.createFenceGateBlockState(
         this,
@@ -56,7 +56,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability ModelJsonBuilder getBlockModel() {
+  public ModelJsonBuilder getBlockModel() {
     return ModelUtils.createModelWithVariants(this, Models.TEMPLATE_FENCE_GATE);
   }
 
@@ -74,7 +74,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
    * @see RecipesProvider#method_24482
    */
   @Override
-  public @Nullable RecipeJsonFactory getCraftingRecipe() {
+  public RecipeJsonFactory getCraftingRecipe() {
     final Item secondIngredient = getSecondIngredient();
     return baseBlock == null || secondIngredient == null ? null : ShapedRecipeJsonFactory.create(this).input('#', secondIngredient).input('W', baseBlock).pattern("#W#").pattern("#W#").criterion("has_" + Registry.ITEM.getId(baseBlock.asItem()), RecipesProvider.conditionsFromItem(baseBlock))::offerTo;
   }

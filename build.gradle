@@ -31,8 +31,6 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
         mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
-        // 由于新版的 Loom 没有 @CanIgnoreReturnValue 等注解，故在这里手动添加。
-        modCompileOnly "com.google.errorprone:error_prone_annotations:+"
     }
 
     tasks.withType(JavaCompile) {

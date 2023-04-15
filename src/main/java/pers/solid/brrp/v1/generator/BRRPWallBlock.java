@@ -43,7 +43,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability BlockStateSupplier getBlockStates() {
+  public BlockStateSupplier getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return BlockStateModelGenerator.createWallBlockState(
         this,
@@ -55,7 +55,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability ModelJsonBuilder getBlockModel() {
+  public ModelJsonBuilder getBlockModel() {
     return ModelUtils.createModelWithVariants(this, Models.TEMPLATE_WALL_POST);
   }
 
@@ -69,7 +69,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability ModelJsonBuilder getItemModel() {
+  public ModelJsonBuilder getItemModel() {
     return ModelUtils.createModelWithVariants(this, Models.WALL_INVENTORY);
   }
 
@@ -77,7 +77,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
    *
    */
   @Override
-  public @Nullable RecipeJsonFactory getCraftingRecipe() {
+  public RecipeJsonFactory getCraftingRecipe() {
     return baseBlock == null ? null : ShapedRecipeJsonFactory.create(this, 6).input('#', baseBlock).pattern("###").pattern("###").criterion("has_" + Registry.ITEM.getId(baseBlock.asItem()).getPath(), RecipesProvider.conditionsFromItem(Blocks.BRICKS))::offerTo;
   }
 }

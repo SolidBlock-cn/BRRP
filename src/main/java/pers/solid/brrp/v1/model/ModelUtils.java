@@ -1,6 +1,5 @@
 package pers.solid.brrp.v1.model;
 
-import com.mojang.datafixers.util.Either;
 import net.fabricmc.api.EnvType;
 import net.minecraft.data.client.model.Model;
 import net.minecraft.data.client.model.TextureKey;
@@ -59,11 +58,11 @@ public final class ModelUtils {
    *
    * @see net.minecraft.data.client.model.Texture
    */
-  @Contract(pure = true)
-  public static HashMap<String, Either<Identifier, String>> getTextureMap(BlockResourceGenerator blockResourceGenerator, @NotNull TextureKey... textureKeys) {
-    final HashMap<String, Either<Identifier, String>> map = new HashMap<>();
+  @Contract(pure = true, value = "_, _ -> new")
+  public static HashMap<String, String> getTextureMap(BlockResourceGenerator blockResourceGenerator, @NotNull TextureKey... textureKeys) {
+    final HashMap<String, String> map = new HashMap<>();
     for (TextureKey textureKey : textureKeys) {
-      map.put(textureKey.getName(), Either.left(blockResourceGenerator.getTextureId(textureKey)));
+      map.put(textureKey.getName(), blockResourceGenerator.getTextureId(textureKey).toString());
     }
     return map;
   }

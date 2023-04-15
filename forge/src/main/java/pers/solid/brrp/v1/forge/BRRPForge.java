@@ -10,6 +10,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
 import pers.solid.brrp.v1.BRRPTest;
 import pers.solid.brrp.v1.gui.RRPConfigScreen;
 
@@ -17,7 +18,7 @@ import pers.solid.brrp.v1.gui.RRPConfigScreen;
 public class BRRPForge {
   public BRRPForge() {
     DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> BRRPForge::registerConfigScreen);
-    if (!FMLLoader.isProduction()) {
+    if (!FMLLoader.isProduction() && FMLPaths.CONFIGDIR.get().resolve("brrp-test-features.json").toFile().exists()) {
       FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, (RegistryEvent<Block> event) -> BRRPTest.registerPacks());
     }
   }

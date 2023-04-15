@@ -16,7 +16,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
 import pers.solid.brrp.v1.BRRPUtils;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
@@ -59,7 +58,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability BlockStateSupplier getBlockStates() {
+  public BlockStateSupplier getBlockStates() {
     final Identifier id = getBlockModelId();
     final Identifier baseBlockModelId = baseBlock != null ? BRRPUtils.getBlockModelId(baseBlock) : id.brrp_suffixed("_double");
     final Identifier topSlabModelId = id.brrp_suffixed("_top");
@@ -68,7 +67,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability ModelJsonBuilder getBlockModel() {
+  public ModelJsonBuilder getBlockModel() {
     return ModelUtils.createModelWithVariants(this, Models.SLAB);
   }
 
@@ -84,12 +83,12 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
   }
 
   @Override
-  public LootTable.@UnknownNullability Builder getLootTable() {
+  public LootTable.Builder getLootTable() {
     return BlockLootTableGenerator.slabDrops(this);
   }
 
   @Override
-  public @Nullable RecipeJsonFactory getCraftingRecipe() {
+  public RecipeJsonFactory getCraftingRecipe() {
     return baseBlock == null ? null : ShapedRecipeJsonFactory.create(this, 6)
         .input('#', baseBlock).pattern("###")
         .criterion("has_" + Registry.ITEM.getId(baseBlock.asItem()).getPath(), RecipesProvider.conditionsFromItem(Blocks.SANDSTONE))::offerTo;
