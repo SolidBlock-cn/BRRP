@@ -42,7 +42,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability BlockStateSupplier getBlockStates() {
+  public BlockStateSupplier getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return BlockStateModelGenerator.createWallBlockState(
         this,
@@ -54,7 +54,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability ModelJsonBuilder getBlockModel() {
+  public ModelJsonBuilder getBlockModel() {
     return ModelUtils.createModelWithVariants(this, Models.TEMPLATE_WALL_POST);
   }
 
@@ -68,7 +68,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability ModelJsonBuilder getItemModel() {
+  public ModelJsonBuilder getItemModel() {
     return ModelUtils.createModelWithVariants(this, Models.WALL_INVENTORY);
   }
 
@@ -76,7 +76,7 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
    * @see net.minecraft.data.server.RecipeProvider#getWallRecipe(ItemConvertible, Ingredient)
    */
   @Override
-  public @Nullable CraftingRecipeJsonBuilder getCraftingRecipe() {
+  public CraftingRecipeJsonBuilder getCraftingRecipe() {
     return baseBlock == null ? null : RecipeProvider.getWallRecipe(this, Ingredient.ofItems(baseBlock)).criterion(RecipeProvider.hasItem(baseBlock), RecipeProvider.conditionsFromItem(baseBlock));
   }
 }
