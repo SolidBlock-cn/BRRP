@@ -28,12 +28,24 @@ public class ModelOverrideBuilder implements Cloneable {
     this.modelId = modelId;
   }
 
-  @NotNull
+  public ModelOverrideBuilder(String namespace, String value) {
+    this(new Identifier(namespace, value));
+  }
+
+  public ModelOverrideBuilder(String modelId) {
+    this(new Identifier(modelId));
+  }
+
   @Contract(pure = true)
   public static ModelOverrideBuilder of(Identifier modelId, Object2FloatMap<Identifier> conditions) {
     final ModelOverrideBuilder builder = new ModelOverrideBuilder(modelId);
     builder.conditions = conditions;
     return builder;
+  }
+
+  @Contract(pure = true)
+  public static ModelOverrideBuilder of(Identifier modelId, Identifier type, float threshold) {
+    return new ModelOverrideBuilder(modelId).addCondition(type, threshold);
   }
 
   @Contract(value = "_ -> this", mutates = "this")
@@ -49,6 +61,16 @@ public class ModelOverrideBuilder implements Cloneable {
     }
     conditions.put(type, threshold);
     return this;
+  }
+
+  @Contract(value = "_, _, _ -> this", mutates = "this")
+  public ModelOverrideBuilder addCondition(String namespace, String value, float threshold) {
+    return addCondition(new Identifier(namespace, value), threshold);
+  }
+
+  @Contract(value = "_, _ -> this", mutates = "this")
+  public ModelOverrideBuilder addCondition(String identifier, float threshold) {
+    return addCondition(new Identifier(identifier), threshold);
   }
 
   /**

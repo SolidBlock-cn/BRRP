@@ -1,6 +1,5 @@
 package pers.solid.brrp.v1.api;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Either;
 import io.netty.buffer.ByteBufInputStream;
@@ -16,8 +15,8 @@ import net.minecraft.data.server.LootTableProvider;
 import net.minecraft.data.server.RecipeProvider;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.data.server.recipe.SmithingRecipeJsonBuilder;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.data.server.recipe.*;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootTable;
 import net.minecraft.resource.ResourcePack;
@@ -133,8 +132,15 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Serialize an object to a byte array, using the default GSON for the runtime resource pack.
    */
-  static byte[] serialize(Object object) {
+  static byte[] defaultSerialize(Object object) {
     return serialize(object, GSON);
+  }
+
+  /**
+   * Serialize the object to a byte array. You can override this method for your own serialization.
+   */
+  default byte[] serialize(Object object) {
+    return defaultSerialize(object);
   }
 
   /**
@@ -206,7 +212,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @Contract(mutates = "this")
   default byte[] addLootTable(Identifier identifier, LootTable lootTable) {
-    return addLootTable(identifier, serialize(lootTable, GSON));
+    return addLootTable(identifier, serialize(lootTable));
   }
 
   /**
@@ -247,7 +253,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add an async root resource, which is evaluated off-thread and does not hold all resource retrieval unlike.
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta.
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, default mcmeta will be generated.
    *
    * @see #async(Consumer)
    */
@@ -258,7 +264,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a root resource that is lazily evaluated.
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta.
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, default mcmeta will be generated.
    */
   @Contract(mutates = "this")
   void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data);
@@ -266,7 +272,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a raw resource to the root path
    * <p>
-   * A root resource is something like pack.png, pack.mcmeta, etc. By default, ARRP generates a default mcmeta.
+   * A root resource is something like pack.png, pack.mcmeta, etc. By default, default mcmeta will be generated.
    */
   @Contract(mutates = "this")
   byte[] addRootResource(String path, byte[] data);
@@ -311,11 +317,16 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a tag to the pack.
    *
-   * @param id             The full resource location of the pack. For example, <code>new Identifier("minecraft", "blocks/stairs")</code>, <code>new Identifier("minecraft", "functions/tick")</code>.
+   * @param fullId         The full resource location of the pack. For example, <code>new Identifier("minecraft", "blocks/stairs")</code>, <code>new Identifier("minecraft", "functions/tick")</code>.
    * @param serializedData The serialized tag data.
    */
   @Contract(mutates = "this")
-  byte[] addTag(Identifier id, byte[] serializedData);
+  byte[] addTag(Identifier fullId, byte[] serializedData);
+
+  @Contract(mutates = "this")
+  default byte[] addTag(Identifier fullId, TagBuilder tagBuilder) {
+    return addTag(fullId, serialize(tagBuilder));
+  }
 
   /**
    * Add a tag to the pack. It uses the vanilla {@link TagKey} object, which contains the registry type and the identifier, so the full resource location can be determined.
@@ -392,7 +403,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull CraftingRecipeJsonBuilder recipeJsonBuilder) {
-    Preconditions.checkNotNull(recipeJsonBuilder.getOutputItem().getGroup(), "According to vanilla Minecraft code, the item must have an item group, or the recipe and advancement cannot be correctly written.");
     recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
   }
 
@@ -400,21 +410,10 @@ public interface RuntimeResourcePack extends ResourcePack {
    * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. You may confirm it has a criterion to obtain the recipe of it will throw an error, unless you call {@link pers.solid.brrp.v1.recipe.RecipeJsonBuilderExtension#setBypassesValidation(boolean)} to bypass it.
    *
    * @param recipeId          The id of the recipe.
-   * @param recipeJsonBuilder The {@link RecipeJsonBuilder}. The id of the advancement will be determined by {@link SmithingTransformRecipeJsonBuilder#offerTo}.
+   * @param recipeJsonBuilder The {@link SmithingRecipeJsonBuilder}. The id of the advancement will be determined by {@link SmithingRecipeJsonBuilder#offerTo}.
    */
   @Contract(mutates = "this")
-  default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingTransformRecipeJsonBuilder recipeJsonBuilder) {
-    recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
-  }
-
-  /**
-   * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. You may confirm it has a criterion to obtain the recipe of it will throw an error, unless you call {@link pers.solid.brrp.v1.recipe.RecipeJsonBuilderExtension#setBypassesValidation(boolean)} to bypass it.
-   *
-   * @param recipeId          The id of the recipe.
-   * @param recipeJsonBuilder The {@link RecipeJsonBuilder}. The id of the advancement will be determined by {@link SmithingTrimRecipeJsonBuilder#offerTo}.
-   */
-  @Contract(mutates = "this")
-  default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingTrimRecipeJsonBuilder recipeJsonBuilder) {
+  default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingRecipeJsonBuilder recipeJsonBuilder) {
     recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
   }
 
@@ -664,7 +663,8 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @return The description of the pac, which may be shown in the {@link RRPConfigScreen}.
    */
   @Contract(pure = true)
-  @Nullable Text getDescription();
+  @Nullable
+  Text getDescription();
 
   /**
    * Set the description of the pack, which may be shown in the {@link RRPConfigScreen}.

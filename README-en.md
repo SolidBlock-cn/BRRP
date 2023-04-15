@@ -6,6 +6,8 @@ BRRP (Better Runtime Resource Pack), is a library mod used for generate resource
 
 Welcome to join Tencent QQ group **587928350** or KOOK (KaiHeiLa) channel invitation code **KlFS0n** to experience the latest update of this mod.
 
+Notice: Since version 1.0.0, the ID of the mod was changed from `better_runtime_resource_pack` to `brrp_v1`, and modified the code without compatibility for older versions, but can co-exist with older versions. Unless needed, please do not used old version.
+
 ## What is a runtime resource pack?
 
 Runtime resource pack (RRP) refers to asset and data files generated when Minecraft is running, in avoidance of some repetitive works. For mods with masses of similar blocks and items, runtime resource pack helps to significantly reduce the size of mod file.
