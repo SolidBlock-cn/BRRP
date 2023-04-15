@@ -72,8 +72,8 @@ public interface ItemResourceGenerator {
    */
   @PreferredEnvironment(EnvType.CLIENT)
   @Contract(pure = true)
-  default String getTextureId() {
-    return getItemId().brrp_prefixed("item/").toString();
+  default Identifier getTextureId() {
+    return getItemId().brrp_prefixed("item/");
   }
 
   /**
@@ -138,9 +138,9 @@ public interface ItemResourceGenerator {
   @Contract(pure = true)
   default RecipeCategory getRecipeCategory() {
     if (this instanceof ItemConvertible itemConvertible) {
-      return ITEM_TO_RECIPE_CATEGORY.get(itemConvertible.asItem());
+      return ITEM_TO_RECIPE_CATEGORY.getOrDefault(itemConvertible.asItem(), RecipeCategory.MISC);
     } else {
-      return null;
+      return RecipeCategory.MISC;
     }
   }
 

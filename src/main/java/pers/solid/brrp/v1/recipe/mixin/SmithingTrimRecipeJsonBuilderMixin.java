@@ -16,7 +16,8 @@ import pers.solid.brrp.v1.recipe.SmithingTrimRecipeJsonBuilderExtension;
 @Mixin(SmithingTrimRecipeJsonBuilder.class)
 public abstract class SmithingTrimRecipeJsonBuilderMixin implements SmithingTrimRecipeJsonBuilderExtension {
 
-  @Shadow public abstract SmithingTrimRecipeJsonBuilder criterion(String name, CriterionConditions conditions);
+  @Shadow
+  public abstract SmithingTrimRecipeJsonBuilder criterion(String name, CriterionConditions conditions);
 
   private boolean bypassesValidation;
   private @Nullable String customRecipeCategory;
@@ -50,7 +51,7 @@ public abstract class SmithingTrimRecipeJsonBuilderMixin implements SmithingTrim
     return self();
   }
 
-  @ModifyArgs(method = "offerTo(Ljava/util/function/Consumer;Lnet/minecraft/util/Identifier;)V", at = @At(value = "INVOKE",target = "Lnet/minecraft/data/server/recipe/SmithingTrimRecipeJsonBuilder$SmithingTrimRecipeJsonProvider;<init>(Lnet/minecraft/util/Identifier;Lnet/minecraft/recipe/RecipeSerializer;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/advancement/Advancement$Builder;Lnet/minecraft/util/Identifier;)V"))
+  @ModifyArgs(method = "offerTo(Ljava/util/function/Consumer;Lnet/minecraft/util/Identifier;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/data/server/recipe/SmithingTrimRecipeJsonBuilder$SmithingTrimRecipeJsonProvider;<init>(Lnet/minecraft/util/Identifier;Lnet/minecraft/recipe/RecipeSerializer;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/advancement/Advancement$Builder;Lnet/minecraft/util/Identifier;)V"))
   public void modifyOfferTo(Args args) {
     if (customRecipeCategory != null) {
       args.set(6, args.<Identifier>get(0).withPrefixedPath("recipes/" + this.customRecipeCategory + (this.customRecipeCategory.isEmpty() ? "" : "/")));

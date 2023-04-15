@@ -17,11 +17,15 @@ import pers.solid.brrp.v1.recipe.ShapedRecipeJsonBuilderExtension;
 
 @Mixin(ShapedRecipeJsonBuilder.class)
 public abstract class ShapedRecipeJsonBuilderMixin implements ShapedRecipeJsonBuilderExtension {
-  @Shadow public abstract ShapedRecipeJsonBuilder criterion(String string, CriterionConditions arg);
+  @Shadow
+  public abstract ShapedRecipeJsonBuilder criterion(String string, CriterionConditions arg);
 
-  @Shadow public abstract ShapedRecipeJsonBuilder pattern(String patternStr);
+  @Shadow
+  public abstract ShapedRecipeJsonBuilder pattern(String patternStr);
 
-  @Shadow @Final private RecipeCategory category;
+  @Shadow
+  @Final
+  private RecipeCategory category;
   private boolean bypassesValidation;
   private @Nullable String customRecipeCategory;
 

@@ -15,13 +15,14 @@ import pers.solid.brrp.v1.recipe.ShapelessRecipeJsonBuilderExtension;
 
 @Mixin(ShapelessRecipeJsonBuilder.class)
 public abstract class ShapelessRecipeJsonBuilderMixin implements ShapelessRecipeJsonBuilderExtension {
-  @Shadow public abstract ShapelessRecipeJsonBuilder criterion(String string, CriterionConditions criterionConditions);
+  @Shadow
+  public abstract ShapelessRecipeJsonBuilder criterion(String string, CriterionConditions criterionConditions);
 
   private boolean bypassesValidation;
   private @Nullable String customRecipeCategory;
 
   private ShapelessRecipeJsonBuilder self() {
-    return (ShapelessRecipeJsonBuilder) (Object)this;
+    return (ShapelessRecipeJsonBuilder) (Object) this;
   }
 
   @Override
@@ -41,6 +42,7 @@ public abstract class ShapelessRecipeJsonBuilderMixin implements ShapelessRecipe
       ci.cancel();
     }
   }
+
   @Override
   public ShapelessRecipeJsonBuilder setCustomRecipeCategory(@Nullable String recipeCategory) {
     this.customRecipeCategory = recipeCategory;

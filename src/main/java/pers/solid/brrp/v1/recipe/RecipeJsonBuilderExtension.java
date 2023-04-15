@@ -50,7 +50,7 @@ public interface RecipeJsonBuilderExtension<Self> {
   /**
    * Add a criterion of obtaining the item predicate ({@link RecipeProvider#conditionsFromItemPredicates(ItemPredicate...)} with the specified criterion name.
    */
-  default Self criterionFromItemPredicate(String criterionName, ItemPredicate ... predicates) {
+  default Self criterionFromItemPredicate(String criterionName, ItemPredicate... predicates) {
     return criterionMethodBridge(criterionName, RecipeProvider.conditionsFromItemPredicates(predicates));
   }
 
@@ -71,6 +71,7 @@ public interface RecipeJsonBuilderExtension<Self> {
    * <tr><td><code>namespace:path</code></td><td><code><var>customRecipeCategory</var></code</td><td><code>namespace:recipes/<var>customRecipeCategory</var>/path</code></td></tr>
    * <tr><td><code>namespace:path</code></td><td>empty string</td><td><code>namespace:recipes/path</code></td></tr>
    * </table>
+   *
    * @param recipeCategory Your custom recipe category.
    */
   default Self setCustomRecipeCategory(@Nullable String recipeCategory) {

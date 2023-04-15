@@ -16,7 +16,8 @@ import pers.solid.brrp.v1.recipe.SmithingTransformRecipeJsonBuilderExtension;
 @Mixin(SmithingTransformRecipeJsonBuilder.class)
 public abstract class SmithingTransformRecipeJsonBuilderMixin implements SmithingTransformRecipeJsonBuilderExtension {
 
-  @Shadow public abstract SmithingTransformRecipeJsonBuilder criterion(String name, CriterionConditions conditions);
+  @Shadow
+  public abstract SmithingTransformRecipeJsonBuilder criterion(String name, CriterionConditions conditions);
 
   private boolean bypassesValidation;
   private @Nullable String customRecipeCategory;
@@ -50,7 +51,7 @@ public abstract class SmithingTransformRecipeJsonBuilderMixin implements Smithin
     return self();
   }
 
-  @ModifyArgs(method = "offerTo(Ljava/util/function/Consumer;Lnet/minecraft/util/Identifier;)V", at = @At(value = "INVOKE",target = "Lnet/minecraft/data/server/recipe/SmithingTransformRecipeJsonBuilder$SmithingTransformRecipeJsonProvider;<init>(Lnet/minecraft/util/Identifier;Lnet/minecraft/recipe/RecipeSerializer;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/item/Item;Lnet/minecraft/advancement/Advancement$Builder;Lnet/minecraft/util/Identifier;)V"))
+  @ModifyArgs(method = "offerTo(Ljava/util/function/Consumer;Lnet/minecraft/util/Identifier;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/data/server/recipe/SmithingTransformRecipeJsonBuilder$SmithingTransformRecipeJsonProvider;<init>(Lnet/minecraft/util/Identifier;Lnet/minecraft/recipe/RecipeSerializer;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/item/Item;Lnet/minecraft/advancement/Advancement$Builder;Lnet/minecraft/util/Identifier;)V"))
   public void modifyOfferTo(Args args) {
     if (customRecipeCategory != null) {
       args.set(7, args.<Identifier>get(0).withPrefixedPath("recipes/" + this.customRecipeCategory + (this.customRecipeCategory.isEmpty() ? "" : "/")));

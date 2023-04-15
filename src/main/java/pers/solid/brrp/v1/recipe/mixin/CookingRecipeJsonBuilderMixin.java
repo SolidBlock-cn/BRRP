@@ -16,7 +16,8 @@ import pers.solid.brrp.v1.recipe.CookingRecipeJsonBuilderExtension;
 @Mixin(CookingRecipeJsonBuilder.class)
 public abstract class CookingRecipeJsonBuilderMixin implements CookingRecipeJsonBuilderExtension {
 
-  @Shadow public abstract CookingRecipeJsonBuilder criterion(String string, CriterionConditions criterionConditions);
+  @Shadow
+  public abstract CookingRecipeJsonBuilder criterion(String string, CriterionConditions criterionConditions);
 
   private boolean bypassesValidation;
   private @Nullable String customRecipeCategory;
@@ -50,7 +51,7 @@ public abstract class CookingRecipeJsonBuilderMixin implements CookingRecipeJson
     return self();
   }
 
-  @ModifyArgs(method = "offerTo", at = @At(value = "INVOKE",target = "Lnet/minecraft/data/server/recipe/CookingRecipeJsonBuilder$CookingRecipeJsonProvider;<init>(Lnet/minecraft/util/Identifier;Ljava/lang/String;Lnet/minecraft/recipe/book/CookingRecipeCategory;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/item/Item;FILnet/minecraft/advancement/Advancement$Builder;Lnet/minecraft/util/Identifier;Lnet/minecraft/recipe/RecipeSerializer;)V"))
+  @ModifyArgs(method = "offerTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/data/server/recipe/CookingRecipeJsonBuilder$CookingRecipeJsonProvider;<init>(Lnet/minecraft/util/Identifier;Ljava/lang/String;Lnet/minecraft/recipe/book/CookingRecipeCategory;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/item/Item;FILnet/minecraft/advancement/Advancement$Builder;Lnet/minecraft/util/Identifier;Lnet/minecraft/recipe/RecipeSerializer;)V"))
   public void modifyOfferTo(Args args) {
     if (customRecipeCategory != null) {
       args.set(8, args.<Identifier>get(0).withPrefixedPath("recipes/" + this.customRecipeCategory + (this.customRecipeCategory.isEmpty() ? "" : "/")));
