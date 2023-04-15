@@ -28,7 +28,7 @@ public class IdentifiedTagBuilder<T> extends ObjectTagBuilder<T, IdentifiedTagBu
   /**
    * Create a builder with a specified registry and identifier.
    *
-   * @param registry   The registry used to get the id of objects..
+   * @param registry   The registry used to get the id of objects.
    * @param identifier The identifier of the tag.
    */
   public IdentifiedTagBuilder(Registry<T> registry, Identifier identifier) {

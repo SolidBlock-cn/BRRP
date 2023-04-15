@@ -4,10 +4,6 @@ import net.minecraft.block.*;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.data.server.BlockLootTableGenerator;
-import net.minecraft.data.server.RecipeProvider;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.SingleItemRecipeJsonBuilder;
-import net.minecraft.data.server.loottable.VanillaBlockLootTableGenerator;
 import net.minecraft.data.server.recipe.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -44,6 +40,10 @@ import pers.solid.brrp.v1.tag.IdentifiedTagBuilder;
 @TestOnly
 @ApiStatus.Internal
 public class BRRPTest {
+  /**
+   * <p>The block specifies the texture of top, side and bottom via parameters of {@link BRRPCubeBlock#cubeBottomTop(AbstractBlock.Settings, Identifier, Identifier, Identifier)}  {@link BRRPCubeBlock#getBlockModel()} will directly use the textures.</p>
+   */
+  public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE), new Identifier("block/smooth_stone"), new Identifier("block/smooth_stone_slab_side"), new Identifier("block/smooth_stone")), "smooth_stone");
   private static final BlockSoundGroup LAVA_SOUND_GROUP = new BlockSoundGroup(1, 1, SoundEvents.ITEM_BUCKET_EMPTY_LAVA, SoundEvents.BLOCK_LAVA_POP, SoundEvents.ITEM_BUCKET_FILL_LAVA, SoundEvents.BLOCK_LAVA_POP, SoundEvents.BLOCK_POINTED_DRIPSTONE_DRIP_LAVA);
   /**
    * <p>The block, as its name indicates, is a block with a texture of lava. It is an instance of {@link BRRPCubeBlock}, which can directly specify textures and can conveniently generation all resources of it, taking the convenience of {@link BlockResourceGenerator} interface, which is implemented by {@code BRRPCubeBlock}.</p>
@@ -58,10 +58,6 @@ public class BRRPTest {
   public static final BRRPFenceBlock LAVA_FENCE = register(new BRRPFenceBlock(LAVA_BLOCK), "lava_fence");
   public static final BRRPFenceGateBlock LAVA_FENCE_GATE = register(new BRRPFenceGateBlock(LAVA_BLOCK), "lava_fence_gate");
   public static final BRRPWallBlock LAVA_WALL = register(new BRRPWallBlock(LAVA_BLOCK), "lava_wall");
-  /**
-   * <p>The block specifies the texture of top, side and bottom via parameters of {@link BRRPCubeBlock#cubeBottomTop(AbstractBlock.Settings, Identifier, Identifier, Identifier)}  {@link BRRPCubeBlock#getBlockModel()} will directly use the textures.</p>
-   */
-  public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE), new Identifier("block/smooth_stone"), new Identifier("block/smooth_stone_slab_side"), new Identifier("block/smooth_stone")), "smooth_stone");
   /**
    * <p>The runtime resource pack that will be used in development environment, as a simple example. The object is created in the initialization of this class.</p>
    */
@@ -162,12 +158,11 @@ public class BRRPTest {
       PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_slab"), ShapedRecipeJsonBuilder.create(Blocks.SMOOTH_STONE_SLAB, 6).pattern("###").input('#', SMOOTH_STONE).criterionFromItem(SMOOTH_STONE));
       PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_slab_from_stonecutting"), SingleItemRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(SMOOTH_STONE), Blocks.SMOOTH_STONE_SLAB).criterionFromItem(SMOOTH_STONE));
 
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "cook_bedrock"), CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(Items.BEDROCK), RecipeCategory.BUILDING_BLOCKS, Items.BARRIER, 1000, 2).setCustomRecipeCategory("brrp_custom").criterionFromItem(Items.BEDROCK));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shaped"), ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, Items.BEDROCK).patterns("xx", "xx").input('x', Items.BEDROCK).setBypassesValidation(true).setCustomRecipeCategory("brrp_custom"));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shapeless"), ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, Items.BEDROCK).input(Items.STONE, 5).criterionFromItem(Items.STONE).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_single_item"), SingleItemRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(Items.STONE), RecipeCategory.BUILDING_BLOCKS, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smithing_transform"), SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.LAPIS_LAZULI), RecipeCategory.BUILDING_BLOCKS, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smithing_trim"), SmithingTrimRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.REDSTONE), RecipeCategory.BUILDING_BLOCKS).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "cook_bedrock"), CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(Items.BEDROCK), Items.BARRIER, 1000, 2).setCustomRecipeCategory("brrp_custom").criterionFromItem(Items.BEDROCK));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shaped"), ShapedRecipeJsonBuilder.create(Items.BEDROCK).patterns("xx", "xx").input('x', Items.BEDROCK).setBypassesValidation(true).setCustomRecipeCategory("brrp_custom"));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shapeless"), ShapelessRecipeJsonBuilder.create(Items.BEDROCK).input(Items.STONE, 5).criterionFromItem(Items.STONE).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_single_item"), SingleItemRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(Items.STONE), Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smithing_transform"), SmithingRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
     }
 
     // The following code will generate all resources (including block states, block models, item models, loot tables, and optional recipes with the corresponding advancements) for the blocks.

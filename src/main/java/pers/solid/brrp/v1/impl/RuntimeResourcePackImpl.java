@@ -209,13 +209,13 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   @Override
-  public byte[] addTag(Identifier id, byte[] serializedData) {
-    return new byte[0];
+  public byte[] addTag(Identifier fullId, byte[] serializedData) {
+    return this.addData(fix(fullId, "tags", "json"), serializedData);
   }
 
   @Override
   public <T> byte[] addTag(TagKey<T> tagKey, TagBuilder tagBuilder) {
-    return addData(new Identifier(tagKey.id().getNamespace(), TagManagerLoader.getPath(tagKey.registry()) + "/" + tagKey.id().getPath() + ".json"), RuntimeResourcePack.serialize(TagFile.CODEC.encodeStart(JsonOps.INSTANCE, new TagFile(tagBuilder.build(), false)).getOrThrow(false, LOGGER::error)));
+    return addData(new Identifier(tagKey.id().getNamespace(), TagManagerLoader.getPath(tagKey.registry()) + "/" + tagKey.id().getPath() + ".json"), serialize(TagFile.CODEC.encodeStart(JsonOps.INSTANCE, new TagFile(tagBuilder.build(), false)).getOrThrow(false, LOGGER::error)));
   }
 
   @Override
@@ -250,7 +250,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
       }
       if (stat != null) {
         stat[0] = stat[1] = stat[2] = 0;
-      };
+      }
       if (!root.isEmpty()) {
         for (Map.Entry<String, Supplier<byte[]>> e : this.root.entrySet()) {
           Path root = output.resolve(String.join("/", e.getKey()));
@@ -397,7 +397,9 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   /**
-   * 本方法与 BRRP 0.7.0 版本根据 ARRP 0.6.2 进行了修改，作者 Devan Kerman。
+   * modified according to ARRP
+   *
+   * @author Devan Kerman。
    */
   @Override
   public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
@@ -435,7 +437,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public void close() {
-    LOGGER.info("Closing {}.", getName());
+    LOGGER.debug("Closing {}.", getName());
   }
 
   protected byte[] read(ZipEntry entry, InputStream stream) throws IOException {

@@ -64,8 +64,8 @@ public interface ItemResourceGenerator {
    */
   @PreferredEnvironment(EnvType.CLIENT)
   @Contract(pure = true)
-  default String getTextureId() {
-    return getItemId().brrp_prefixed("item/").toString();
+  default Identifier getTextureId() {
+    return getItemId().brrp_prefixed("item/");
   }
 
   /**
