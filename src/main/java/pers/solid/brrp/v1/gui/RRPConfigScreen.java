@@ -17,6 +17,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -232,7 +233,14 @@ public class RRPConfigScreen extends Screen {
         }
         @NotNull Set<String> namespaces = Sets.newLinkedHashSet(Iterables.concat(resourcePack.getNamespaces(ResourceType.CLIENT_RESOURCES), resourcePack.getNamespaces(ResourceType.SERVER_DATA)));
         descriptionList.add(new TranslatableText("brrp.configScreen.namespaces", namespaces.isEmpty() ? new TranslatableText("gui.none") : new LiteralText(String.join(", ", namespaces)).styled(style -> style.withColor(TextColor.fromRgb(0xddc4aa)))).styled(style -> style.withColor(TextColor.fromRgb(0x909090))));
-        this.description = Texts.join(descriptionList, text -> text.shallowCopy().append("\n"));
+        this.description = Util.make(new LiteralText(StringUtils.EMPTY), literalText -> {
+          boolean shouldBreak = false;
+          for (Text element : descriptionList) {
+            if (shouldBreak) literalText.append(new LiteralText("\n"));
+            literalText.append(element);
+            shouldBreak = true;
+          }
+        });
       }
 
       @Override
