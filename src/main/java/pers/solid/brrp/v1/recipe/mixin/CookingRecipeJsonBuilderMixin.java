@@ -61,6 +61,7 @@ public abstract class CookingRecipeJsonBuilderMixin implements CookingRecipeJson
       args.set(7, new Identifier(recipeId.getNamespace(), "recipes/" + this.customRecipeCategory + (this.customRecipeCategory.isEmpty() ? "" : "/") + recipeId.getPath()));
     }
   }
+
   @Redirect(method = "offerTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;getGroup()Lnet/minecraft/item/ItemGroup;"))
   public ItemGroup redirectGetName(Item instance) {
     if (instance.getGroup() == null && customRecipeCategory != null) {

@@ -61,6 +61,7 @@ public abstract class SmithingRecipeJsonBuilderMixin implements SmithingRecipeJs
       args.set(6, new Identifier(recipeId.getNamespace(), "recipes/" + this.customRecipeCategory + (this.customRecipeCategory.isEmpty() ? "" : "/") + recipeId.getPath()));
     }
   }
+
   @Redirect(method = "offerTo(Ljava/util/function/Consumer;Lnet/minecraft/util/Identifier;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;getGroup()Lnet/minecraft/item/ItemGroup;"))
   public ItemGroup redirectGetName(Item instance) {
     if (instance.getGroup() == null && customRecipeCategory != null) {

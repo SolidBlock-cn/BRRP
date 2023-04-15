@@ -163,7 +163,7 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
   }
 
   @Contract(mutates = "this")
-  public Self copy(TagBuilder copyFrom) {
+  public Self copy(Tag.Builder copyFrom) {
     ((TagBuilderAccessor) copyFrom).getEntries().forEach(this::add);
     return self();
   }

@@ -25,7 +25,9 @@ public abstract class ShapedRecipeJsonBuilderMixin implements ShapedRecipeJsonBu
   @Shadow
   public abstract ShapedRecipeJsonBuilder pattern(String patternStr);
 
-  @Shadow @Final private Item output;
+  @Shadow
+  @Final
+  private Item output;
   private boolean bypassesValidation;
   private @Nullable String customRecipeCategory;
 

@@ -2,6 +2,7 @@ package pers.solid.brrp.v1.api;
 
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Either;
+import com.mojang.logging.LogUtils;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.fabricmc.api.EnvType;
@@ -22,7 +23,10 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.tag.*;
+import net.minecraft.tag.BlockTags;
+import net.minecraft.tag.ItemTags;
+import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -35,6 +39,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 import pers.solid.brrp.v1.JsonSerializers;
 import pers.solid.brrp.v1.RRPEventHelper;
 import pers.solid.brrp.v1.gui.DumpScreen;
@@ -105,6 +110,7 @@ public interface RuntimeResourcePack extends ResourcePack {
       .setPrettyPrinting()
       .create();
   ResourcePackSource RUNTIME = ResourcePackSource.nameAndSource("pack.source.runtime");
+  Logger LOGGER = LogUtils.getLogger();
 
   /**
    * Create a new runtime resource pack with the default supported resource pack version
@@ -324,8 +330,8 @@ public interface RuntimeResourcePack extends ResourcePack {
   byte[] addTag(Identifier fullId, byte[] serializedData);
 
   @Contract(mutates = "this")
-  default byte[] addTag(Identifier fullId, TagBuilder tagBuilder) {
-    return addTag(fullId, serialize(tagBuilder));
+  default byte[] addTag(Identifier fullId, Tag.Builder tagBuilder) {
+    return addTag(fullId, serialize(tagBuilder.toJson()));
   }
 
   /**
