@@ -11,10 +11,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.client.resource.metadata.AnimationResourceMetadata;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.BlockStateSupplier;
-import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeJsonProvider;
-import net.minecraft.data.server.recipe.RecipeProvider;
+import net.minecraft.data.server.recipe.*;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.book.RecipeCategory;
@@ -156,8 +153,8 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Reads, clones, and recolors the texture at the given path, and puts the newly created image in the given id.
    * <p>
-   * <b>If your resource pack is registered at a higher priority than where you expect the texture to be in, Minecraft will
-   * be unable to find the asset you are looking for.</b>
+   * <strong>If your resource pack is registered at a higher priority than where you expect the texture to be in, Minecraft will
+   * be unable to find the asset you are looking for.</strong>
    *
    * @param identifier the place to put the new texture
    * @param target     the input stream of the original texture
@@ -175,7 +172,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <pre>{@code
    * pack.addLang(new Identifier("my_mod", "zh_cn"), LanguageProvider.create().add(...));
    * }</pre>
-   * <p><i>Do not</i> call this method multiple times for a same language, as they will override each other!</pre>
+   * <p><em>Do not</em> call this method multiple times for a same language, as they will override each other!</pre>
    * <pre>{@code
    * // wrong:
    * pack.addLang(new Identifier("my_mod", "zh_cn"), LanguageProvider.create().add("key1", "value1");
@@ -339,7 +336,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   byte[] addAnimation(Identifier id, byte[] serializedData);
 
   /**
-   * Add an animation json for a texture. <b>Note: {@link AnimationResourceMetadata} is client-only, so you should only use it in the client distribution.</b> There is an example:
+   * Add an animation json for a texture. <strong>Note: {@link AnimationResourceMetadata} is client-only, so you should only use it in the client distribution.</strong> There is an example:
    * <pre>{@code
    * if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
    *   AnimationResourceMetadata metadata = new AnimationResourceMetadata(...);
@@ -372,7 +369,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
-   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe. Both the recipe id and the advancement id are stored in the {@link RecipeJsonProvider}, so you do not need to specify it here. The recipe must have a {@link RecipeCategory}, or it will throw an error when fetching the advancement id.
+   * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. Both the recipe id and the advancement id are stored in the {@link RecipeJsonProvider}, so you do not need to specify it here. The recipe must have a {@link RecipeCategory}, or it will throw an error when fetching the advancement id.
    *
    * @param recipeJsonProvider The {@link RecipeJsonProvider} object. You may conveniently create it using methods in {@link RecipeProvider}.
    */
@@ -383,13 +380,35 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
-   * Add a recipe <i>as well as</i> a corresponding advancement to obtain that recipe. The {@link CraftingRecipeJsonBuilder} must have a {@link RecipeCategory} or it will throw an error.
+   * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. You may confirm it has a criterion to obtain the recipe of it will throw an error, unless you call {@link pers.solid.brrp.v1.recipe.RecipeJsonBuilderExtension#setBypassesValidation(boolean)} to bypass it.
    *
    * @param recipeId          The id of the recipe.
    * @param recipeJsonBuilder The {@link RecipeJsonBuilder}. The id of the advancement will be determined by {@link CraftingRecipeJsonBuilder#offerTo}.
    */
   @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull CraftingRecipeJsonBuilder recipeJsonBuilder) {
+    recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
+  }
+
+  /**
+   * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. You may confirm it has a criterion to obtain the recipe of it will throw an error, unless you call {@link pers.solid.brrp.v1.recipe.RecipeJsonBuilderExtension#setBypassesValidation(boolean)} to bypass it.
+   *
+   * @param recipeId          The id of the recipe.
+   * @param recipeJsonBuilder The {@link RecipeJsonBuilder}. The id of the advancement will be determined by {@link SmithingTransformRecipeJsonBuilder#offerTo}.
+   */
+  @Contract(mutates = "this")
+  default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingTransformRecipeJsonBuilder recipeJsonBuilder) {
+    recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
+  }
+
+  /**
+   * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. You may confirm it has a criterion to obtain the recipe of it will throw an error, unless you call {@link pers.solid.brrp.v1.recipe.RecipeJsonBuilderExtension#setBypassesValidation(boolean)} to bypass it.
+   *
+   * @param recipeId          The id of the recipe.
+   * @param recipeJsonBuilder The {@link RecipeJsonBuilder}. The id of the advancement will be determined by {@link SmithingTrimRecipeJsonBuilder#offerTo}.
+   */
+  @Contract(mutates = "this")
+  default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingTrimRecipeJsonBuilder recipeJsonBuilder) {
     recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
   }
 

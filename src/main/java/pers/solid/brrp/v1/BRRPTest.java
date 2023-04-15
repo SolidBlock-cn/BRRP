@@ -5,12 +5,11 @@ import net.minecraft.block.*;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.data.server.loottable.vanilla.VanillaBlockLootTableGenerator;
-import net.minecraft.data.server.recipe.RecipeProvider;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.SingleItemRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
@@ -38,7 +37,7 @@ import pers.solid.brrp.v1.tag.IdentifiedTagBuilder;
 import java.util.List;
 
 /**
- * <p><b>This class is loaded only in development environment. </b>Therefore, it is just for testing, and should not be seen as the real part of this mod. This class also serves as a simple example of the usage of APIs of this mod. Therefore, you can read the sources of the class to have a simple understanding of the usage.</p>
+ * <p><strong>This class is loaded only in development environment. </strong>Therefore, it is just for testing, and should not be seen as the real part of this mod. This class also serves as a simple example of the usage of APIs of this mod. Therefore, you can read the sources of the class to have a simple understanding of the usage.</p>
  * <p>For Fabric, this class can be seen as implemented {@code ModInitializer}, and {@link #registerPacks()} is the initialization method. Because the special structure of the mod, the implementation of interfaces is not shown in this code, but is implemented via mixin.</p>
  * <p>For Forge, the class is initialized when blocks are registered, because registries are not frozen at this time.</p>
  */
@@ -171,9 +170,15 @@ public class BRRPTest {
       PACK.addTag(IdentifiedTagBuilder.createItemCopy(ItemTags.WALLS, walls));
       PACK.addTag(IdentifiedTagBuilder.createBlock(BlockTags.PICKAXE_MINEABLE).add(SMOOTH_STONE));
 
-      // The recipe of smooth stone is not generated in `BlockResourceGenerator#writeRecipes`, and there is also no need to create a subclass for it. Therefore, we just generate the recipe here.
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone"), ShapedRecipeJsonBuilder.create(RecipeCategory.TRANSPORTATION, Blocks.SMOOTH_STONE_SLAB, 6).pattern("###").input('#', SMOOTH_STONE).criterion("has_smooth_stone", RecipeProvider.conditionsFromItem(SMOOTH_STONE)));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_from_stonecutting"), SingleItemRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(SMOOTH_STONE), RecipeCategory.TRANSPORTATION, Blocks.SMOOTH_STONE_SLAB).criterion("has_smooth_stone", RecipeProvider.conditionsFromItem(SMOOTH_STONE)));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_slab"), ShapedRecipeJsonBuilder.create(RecipeCategory.TRANSPORTATION, Blocks.SMOOTH_STONE_SLAB, 6).pattern("###").input('#', SMOOTH_STONE).criterionFromItem(SMOOTH_STONE));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_slab_from_stonecutting"), SingleItemRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(SMOOTH_STONE), RecipeCategory.TRANSPORTATION, Blocks.SMOOTH_STONE_SLAB).criterionFromItem(SMOOTH_STONE));
+
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "cook_bedrock"), CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(Items.BEDROCK), RecipeCategory.BUILDING_BLOCKS, Items.BARRIER, 1000, 2).setCustomRecipeCategory("brrp_custom").criterionFromItem(Items.BEDROCK));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shaped"), ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, Items.BEDROCK).patterns("xx", "xx").input('x', Items.BEDROCK).setBypassesValidation(true).setCustomRecipeCategory("brrp_custom"));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shapeless"), ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, Items.BEDROCK).input(Items.STONE, 5).criterionFromItem(Items.STONE).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_single_item"), SingleItemRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(Items.STONE), RecipeCategory.BUILDING_BLOCKS, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smithing_transform"), SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.LAPIS_LAZULI), RecipeCategory.BUILDING_BLOCKS, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smithing_trim"), SmithingTrimRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.REDSTONE), RecipeCategory.BUILDING_BLOCKS).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
     }
 
     // The following code will generate all resources (including block states, block models, item models, loot tables, and optional recipes with the corresponding advancements) for the blocks.

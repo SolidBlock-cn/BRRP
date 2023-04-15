@@ -23,7 +23,8 @@
     ]
   },
   "mixins": [
-    "brrp-v1.mixins.json"
+    "brrp-v1.mixins.json",
+    "brrp-v1-recipes.mixins.json"
   ],
   "depends": {
     "fabricloader": "*",
@@ -37,6 +38,5 @@
     "loom:injected_interfaces": {
       "net/minecraft/class_2960": ["pers/solid/brrp/v1/IdentifierExtension"]
     }
-  },
-  "provides": []
+  }
 }
