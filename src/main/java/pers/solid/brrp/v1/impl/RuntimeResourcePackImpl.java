@@ -15,8 +15,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.function.FailableFunction;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
@@ -47,8 +45,6 @@ import java.util.zip.ZipOutputStream;
 @ApiStatus.Internal
 public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack implements ResourcePack {
   public static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setDaemon(true).setNameFormat("BRRP-Workers-%s").build());
-
-  private static final Logger LOGGER = LogManager.getLogger(RuntimeResourcePackImpl.class);
   private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
   private final Map<String, Supplier<byte[]>> root = new ConcurrentHashMap<>();
@@ -206,13 +202,13 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   @Override
-  public byte[] addTag(Identifier id, byte[] serializedData) {
-    return new byte[0];
+  public byte[] addTag(Identifier fullId, byte[] serializedData) {
+    return this.addData(fix(fullId, "tags", "json"), serializedData);
   }
 
   @Override
   public <T> byte[] addTag(Tag.Identified<T> tagKey, Tag.Builder tagBuilder, String outputPath) {
-    return addData(new Identifier(tagKey.getId().getNamespace(), "tags/" + outputPath + "/" + tagKey.getId().getPath() + ".json"), RuntimeResourcePack.serialize(tagBuilder.toJson()));
+    return addData(new Identifier(tagKey.getId().getNamespace(), "tags/" + outputPath + "/" + tagKey.getId().getPath() + ".json"), serialize(tagBuilder.toJson()));
   }
 
   @Override
@@ -395,7 +391,9 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   /**
-   * 本方法与 BRRP 0.7.0 版本根据 ARRP 0.6.2 进行了修改，作者 Devan Kerman。
+   * modified according to ARRP
+   *
+   * @author Devan Kerman。
    */
   @Override
   public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) {
@@ -433,7 +431,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public void close() {
-    LOGGER.info("Closing {}.", getName());
+    LOGGER.debug("Closing {}.", getName());
   }
 
   protected byte[] read(ZipEntry entry, InputStream stream) throws IOException {

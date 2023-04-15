@@ -44,7 +44,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability BlockStateSupplier getBlockStates() {
+  public BlockStateSupplier getBlockStates() {
     final Identifier blockModelId = getBlockModelId();
     return BlockStateModelGenerator.createFenceGateBlockState(
         this,
@@ -57,7 +57,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability ModelJsonBuilder getBlockModel() {
+  public ModelJsonBuilder getBlockModel() {
     return ModelUtils.createModelWithVariants(this, Models.TEMPLATE_FENCE_GATE);
   }
 
@@ -75,7 +75,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
    * @see RecipesProvider#createFenceGateRecipe(ItemConvertible, Ingredient)
    */
   @Override
-  public @Nullable CraftingRecipeJsonFactory getCraftingRecipe() {
+  public CraftingRecipeJsonFactory getCraftingRecipe() {
     final Item secondIngredient = getSecondIngredient();
     return baseBlock == null || secondIngredient == null ? null : ShapedRecipeJsonFactory.create(this).input('#', secondIngredient).input('W', baseBlock).pattern("#W#").pattern("#W#").criterion(RecipesProvider.hasItem(baseBlock), RecipesProvider.conditionsFromItem(baseBlock));
   }

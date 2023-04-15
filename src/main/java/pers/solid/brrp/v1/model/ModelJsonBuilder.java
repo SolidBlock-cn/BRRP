@@ -1,7 +1,6 @@
 package pers.solid.brrp.v1.model;
 
 import com.google.gson.annotations.SerializedName;
-import com.mojang.datafixers.util.Either;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
@@ -31,10 +30,8 @@ import java.util.*;
 public class ModelJsonBuilder implements Cloneable {
 
   public List<ModelElementBuilder> elements;
-  @Nullable
   @SerializedName("gui_light")
   public GuiLight guiLight;
-  @Nullable
   @SerializedName("ambientocclusion")
   public Boolean ambientOcclusion;
   @SerializedName("display")
@@ -43,10 +40,9 @@ public class ModelJsonBuilder implements Cloneable {
   /**
    * The textures of this model. The key is texture variable name (prefixed with '#"). The value is the identifier of the texture, of a reference to another model texture (prefixed with '#').
    */
-  public Map<String, Either<Identifier, String>> textures;
-  @Nullable
+  public Map<String, String> textures;
   @SerializedName("parent")
-  protected Identifier parentId;
+  public Identifier parentId;
 
   /**
    * Create a {@link ModelJsonBuilder} with a specified parent model id.
@@ -63,6 +59,18 @@ public class ModelJsonBuilder implements Cloneable {
   }
 
   /**
+   * Create a {@link ModelJsonBuilder} with a specified parent model id.
+   *
+   * @param parentId The id of the parent model.
+   * @return The new {@link ModelJsonBuilder} object.
+   */
+  @NotNull
+  @Contract(pure = true, value = "_ -> new")
+  public static ModelJsonBuilder create(String parentId) {
+    return create(new Identifier(parentId));
+  }
+
+  /**
    * Create a {@link ModelJsonBuilder} with a specific parent model id defined in {@link Model}.
    *
    * @param parentModel The parent model.
@@ -75,12 +83,33 @@ public class ModelJsonBuilder implements Cloneable {
     return create(ModelUtils.getId(parentModel));
   }
 
+  /**
+   * Create a {@link ModelJsonBuilder} with a specific identifier of the parent
+   *
+   * @return The new {@link ModelJsonBuilder} object.
+   */
+  @NotNull
+  @Contract(pure = true, value = "_, _ -> new")
+  public static ModelJsonBuilder create(String namespace, String path) {
+    return create(new Identifier(namespace, path));
+  }
+
+  /**
+   * Set the all override rules of the model, replacing existing ones (if any). The parameter will be directly used.
+   *
+   * @param overrides The list of model overrides, which will be used directly.
+   */
   @Contract(mutates = "this", value = "_ -> this")
-  public ModelJsonBuilder overrides(List<ModelOverrideBuilder> overrides) {
+  public ModelJsonBuilder setOverrides(List<ModelOverrideBuilder> overrides) {
     this.overrides = overrides;
     return this;
   }
 
+  /**
+   * Add an override rule.
+   *
+   * @param override The override rule to be added.
+   */
   @Contract(mutates = "this", value = "_ -> this")
   public ModelJsonBuilder addOverride(ModelOverrideBuilder override) {
     if (overrides == null) {
@@ -90,16 +119,26 @@ public class ModelJsonBuilder implements Cloneable {
     return this;
   }
 
+  /**
+   * Set the list of model element, replacing existing ones (if any). The parameter will be directly used.
+   *
+   * @param elements The list of model elements, which will be directly used.
+   */
+  @Contract(mutates = "this", value = "_ -> this")
+  public ModelJsonBuilder setElements(List<ModelElementBuilder> elements) {
+    this.elements = elements;
+    return this;
+  }
+
+  /**
+   * Add a model element.
+   *
+   * @param element The model element.
+   */
   @Contract(mutates = "this", value = "_ -> this")
   public ModelJsonBuilder addElement(ModelElementBuilder element) {
     if (elements == null) elements = new ArrayList<>();
     elements.add(element);
-    return this;
-  }
-
-  @Contract(mutates = "this", value = "_ -> this")
-  public ModelJsonBuilder setElements(List<ModelElementBuilder> elements) {
-    this.elements = elements;
     return this;
   }
 
@@ -117,7 +156,7 @@ public class ModelJsonBuilder implements Cloneable {
 
   @Contract(mutates = "this", value = "_, _ -> this")
   public ModelJsonBuilder transformation(ModelTransformationMode modelTransformationMode, TransformationBuilder transformation) {
-    if (transformations == null) transformations = new HashMap<>();
+    if (transformations == null) transformations = new LinkedHashMap<>();
     transformations.put(modelTransformationMode, transformation);
     return this;
   }
@@ -128,41 +167,70 @@ public class ModelJsonBuilder implements Cloneable {
     return this;
   }
 
+  /**
+   * Add a texture using the specific id of the texture. If you want to refer to a texture variable, please use {@link #addTexture(TextureKey, String)} instead.
+   *
+   * @param textureKey      The texture key.
+   * @param textureLocation The id of the texture, such as {@code new Identifier("minecraft", "stone")}.
+   */
   @Contract(mutates = "this", value = "_, _ -> this")
-  public ModelJsonBuilder addTexture(@NotNull TextureKey textureKey, @NotNull Identifier textureLocation) {
+  public ModelJsonBuilder addTexture(@NotNull TextureKey textureKey, @Nullable Identifier textureLocation) {
     return addTexture(textureKey.getName(), textureLocation);
   }
 
+  /**
+   * Add a texture using a reference to another texture. The texture reference can be prefixed with {@code "#"}. It will refer to another texture variable. If you are adding id of a texture directly, please use {@link #addTexture(TextureKey, Identifier)} instead.
+   *
+   * @param textureKey       The texture key.
+   * @param textureReference The reference to another texture, with is the texture variable name prefixed with {@code "#"}.
+   */
   @Contract(mutates = "this", value = "_, _ -> this")
-  public ModelJsonBuilder addTexture(@NotNull TextureKey textureKey, @NotNull String textureReference) {
+  public ModelJsonBuilder addTexture(@NotNull TextureKey textureKey, @Nullable String textureReference) {
     return addTexture(textureKey.getName(), textureReference);
   }
 
+  /**
+   * Add a texture using the specific id of the texture. If you want to refer to a texture variable, please use {@link #addTexture(String, String)} instead.
+   *
+   * @param key             The texture key.
+   * @param textureLocation The id of the texture, such as {@code new Identifier("minecraft", "stone")}.
+   */
   @Contract(mutates = "this", value = "_, _ -> this")
-  public ModelJsonBuilder addTexture(@NotNull String key, @NotNull Identifier textureLocation) {
-    return addTexture(key, Either.left(textureLocation));
+  public ModelJsonBuilder addTexture(@NotNull String key, @Nullable Identifier textureLocation) {
+    return addTexture(key, textureLocation == null ? null : textureLocation.toString());
   }
 
+  /**
+   * Add a texture using a reference to another texture. The texture reference can be prefixed with {@code "#"}. It will refer to another texture variable. If you are adding id of a texture directly, please use {@link #addTexture(String, Identifier)} instead.
+   *
+   * @param key              The texture key.
+   * @param textureReference The reference to another texture, with is the texture variable name prefixed with {@code "#"}.
+   */
   @Contract(mutates = "this", value = "_, _ -> this")
-  public ModelJsonBuilder addTexture(@NotNull String key, @NotNull String textureReference) {
-    return addTexture(key, Either.right(textureReference));
-  }
-
-  @Contract(mutates = "this", value = "_, _ -> this")
-  protected ModelJsonBuilder addTexture(@NotNull String key, @NotNull Either<Identifier, String> value) {
-    if (textures == null) textures = new HashMap<>();
-    textures.put(key, value);
+  public ModelJsonBuilder addTexture(@NotNull String key, @Nullable String textureReference) {
+    if (textures == null) {
+      textures = new LinkedHashMap<>();
+    }
+    this.textures.put(key, textureReference);
     return this;
   }
 
+  /**
+   * Set the textures from a specified {@link Texture}.
+   *
+   * @param textures The texture map.
+   */
   @Contract(mutates = "this", value = "_ -> this")
   public ModelJsonBuilder setTextures(Texture textures) {
     ((TextureMapAccessor) textures).getEntries().forEach(this::addTexture);
     return this;
   }
 
+  /**
+   * Set the texture from a specified simple string map. The map will be directly used.
+   */
   @Contract(mutates = "this", value = "_ -> this")
-  public ModelJsonBuilder setTextures(Map<String, Either<Identifier, String>> textures) {
+  public ModelJsonBuilder setTextures(Map<String, String> textures) {
     this.textures = textures;
     return this;
   }
@@ -179,15 +247,32 @@ public class ModelJsonBuilder implements Cloneable {
   }
 
   /**
-   * Set the id of the model parent. Common vanilla models can be found in {@link Models}.
+   * Set the id of the model parent.
    *
    * @param parentId The parent model id.
-   * @see Models
    */
   @Contract(mutates = "this", value = "_ -> this")
   public ModelJsonBuilder parent(Identifier parentId) {
     this.parentId = parentId;
     return this;
+  }
+
+  /**
+   * Set the id of the model parent.
+   *
+   * @param parentId The parent model id.
+   */
+  @Contract(mutates = "this", value = "_ -> this")
+  public ModelJsonBuilder parent(String parentId) {
+    return parent(new Identifier(parentId));
+  }
+
+  /**
+   * Set the id of the model parent.
+   */
+  @Contract(mutates = "this", value = "_ -> this")
+  public ModelJsonBuilder parent(String namespace, String path) {
+    return parent(new Identifier(namespace, path));
   }
 
   /**
@@ -204,6 +289,16 @@ public class ModelJsonBuilder implements Cloneable {
   /**
    * Return a new model with a specified parent id. If it equals the current parent id, the current one will be returned.
    *
+   * @return A new model with the specified parent id, or the current object.
+   */
+  @Contract(pure = true)
+  public ModelJsonBuilder withParent(String namespace, String path) {
+    return this.withParent(new Identifier(namespace, path));
+  }
+
+  /**
+   * Return a new model with a specified parent id. If it equals the current parent id, the current one will be returned.
+   *
    * @param parentId The id of the parent.
    * @return A new model with the specified parent id, or the current object.
    */
@@ -213,6 +308,17 @@ public class ModelJsonBuilder implements Cloneable {
       return this;
     }
     return clone().parent(parentId);
+  }
+
+  /**
+   * Return a new model with a specified parent id. If it equals the current parent id, the current one will be returned.
+   *
+   * @param parentId The id of the parent.
+   * @return A new model with the specified parent id, or the current object.
+   */
+  @Contract(pure = true)
+  public ModelJsonBuilder withParent(String parentId) {
+    return withParent(new Identifier(parentId));
   }
 
   @Override

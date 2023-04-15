@@ -1,5 +1,10 @@
 {
   "injected_interfaces": {
-    "net/minecraft/class_2960": ["pers/solid/brrp/v1/IdentifierExtension"]
+    "net/minecraft/class_2960": ["pers/solid/brrp/v1/IdentifierExtension"],
+    "net/minecraft/class_2454": ["pers/solid/brrp/v1/recipe/CookingRecipeJsonBuilderExtension"],
+    "net/minecraft/class_2447": ["pers/solid/brrp/v1/recipe/ShapedRecipeJsonBuilderExtension"],
+    "net/minecraft/class_2450": ["pers/solid/brrp/v1/recipe/ShapelessRecipeJsonBuilderExtension"],
+    "net/minecraft/class_3981": ["pers/solid/brrp/v1/recipe/SingleItemRecipeJsonBuilderExtension"],
+    "net/minecraft/class_5377": ["pers/solid/brrp/v1/recipe/SmithingRecipeJsonBuilderExtension"]
   }
 }

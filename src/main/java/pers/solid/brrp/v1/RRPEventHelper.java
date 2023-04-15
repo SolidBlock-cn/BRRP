@@ -15,14 +15,14 @@ import java.util.function.Function;
  */
 public abstract class RRPEventHelper {
   /**
-   * Register your resource pack that will be read <b>before</b> Minecraft and regular resources are loaded. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, that will be used instead. Therefore, resource packs registered here cannot override non-runtime resources.
+   * Register your resource pack that will be read <strong>before</strong> Minecraft and regular resources are loaded. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, that will be used instead. Therefore, resource packs registered here cannot override non-runtime resources.
    */
   public static final RRPEventHelper BEFORE_VANILLA = getBeforeVanilla();
   @ApiStatus.Experimental
   public static final RRPEventHelper BEFORE_USER = getBeforeUser();
 
   /**
-   * Register your resource pack that will be read <b>after</b> Minecraft and regular resources are loaded. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, they will be overridden by this runtime resource. Therefore, if you want to override Minecraft vanilla resources and other non-runtime resources, you can register here.
+   * Register your resource pack that will be read <strong>after</strong> Minecraft and regular resources are loaded. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, they will be overridden by this runtime resource. Therefore, if you want to override Minecraft vanilla resources and other non-runtime resources, you can register here.
    */
   public static final RRPEventHelper AFTER_VANILLA = getAfterVanilla();
 

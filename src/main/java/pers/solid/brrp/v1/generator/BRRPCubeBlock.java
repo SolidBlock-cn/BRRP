@@ -6,7 +6,6 @@ import net.minecraft.block.Block;
 import net.minecraft.data.client.model.*;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnknownNullability;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 import pers.solid.brrp.v1.model.ModelUtils;
 
@@ -68,13 +67,13 @@ public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability BlockStateSupplier getBlockStates() {
+  public BlockStateSupplier getBlockStates() {
     return BlockStateModelGenerator.createSingletonBlockState(asBlock(), getBlockModelId());
   }
 
   @Environment(EnvType.CLIENT)
   @Override
-  public @UnknownNullability ModelJsonBuilder getBlockModel() {
+  public ModelJsonBuilder getBlockModel() {
     return ModelJsonBuilder.create(parent).setTextures(textures);
   }
 

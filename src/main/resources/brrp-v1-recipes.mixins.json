@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "pers.solid.brrp.v1.recipe.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "CookingRecipeJsonBuilderMixin",
+    "ShapedRecipeJsonBuilderMixin",
+    "ShapelessRecipeJsonBuilderMixin",
+    "SingleItemRecipeJsonBuilderMixin",
+    "SmithingRecipeJsonBuilderMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
