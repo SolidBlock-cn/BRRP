@@ -14,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,5 +98,10 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
    */
   public @Nullable Item getSecondIngredient() {
     return Items.STICK;
+  }
+
+  @Override
+  public RecipeCategory getRecipeCategory() {
+    return ITEM_TO_RECIPE_CATEGORY.getOrDefault(asItem(), RecipeCategory.DECORATIONS);
   }
 }

@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.*;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
@@ -89,5 +90,10 @@ public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
       return texture0;
     }
     return BlockResourceGenerator.super.getTextureId(textureKey);
+  }
+
+  @Override
+  public RecipeCategory getRecipeCategory() {
+    return ITEM_TO_RECIPE_CATEGORY.getOrDefault(asItem(), RecipeCategory.BUILDING_BLOCKS);
   }
 }

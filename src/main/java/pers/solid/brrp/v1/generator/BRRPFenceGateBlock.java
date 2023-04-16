@@ -80,7 +80,17 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
   @Override
   public CraftingRecipeJsonBuilder getCraftingRecipe() {
     final Item secondIngredient = getSecondIngredient();
-    return baseBlock == null || secondIngredient == null ? null : ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, this).input('#', secondIngredient).input('W', baseBlock).pattern("#W#").pattern("#W#").criterion(RecipeProvider.hasItem(baseBlock), RecipeProvider.conditionsFromItem(baseBlock));
+    return baseBlock == null || secondIngredient == null ? null : ShapedRecipeJsonBuilder.create(getRecipeCategory(), this)
+        .input('#', secondIngredient)
+        .input('W', baseBlock)
+        .pattern("#W#")
+        .pattern("#W#")
+        .criterion(RecipeProvider.hasItem(baseBlock), RecipeProvider.conditionsFromItem(baseBlock));
+  }
+
+  @Override
+  public RecipeCategory getRecipeCategory() {
+    return ITEM_TO_RECIPE_CATEGORY.getOrDefault(asItem(), RecipeCategory.REDSTONE);
   }
 
   /**
