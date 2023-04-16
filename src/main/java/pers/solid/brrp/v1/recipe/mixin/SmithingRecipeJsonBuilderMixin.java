@@ -2,15 +2,14 @@ package pers.solid.brrp.v1.recipe.mixin;
 
 import net.minecraft.advancement.criterion.CriterionConditions;
 import net.minecraft.data.server.recipe.SmithingRecipeJsonBuilder;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import pers.solid.brrp.v1.recipe.SmithingRecipeJsonBuilderExtension;
 
 @Mixin(SmithingRecipeJsonBuilder.class)
@@ -51,10 +50,21 @@ public abstract class SmithingRecipeJsonBuilderMixin implements SmithingRecipeJs
     return self();
   }
 
-  @ModifyArgs(method = "offerTo(Ljava/util/function/Consumer;Lnet/minecraft/util/Identifier;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/data/server/recipe/SmithingRecipeJsonBuilder$SmithingRecipeJsonProvider;<init>(Lnet/minecraft/util/Identifier;Lnet/minecraft/recipe/RecipeSerializer;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/item/Item;Lnet/minecraft/advancement/Advancement$Builder;Lnet/minecraft/util/Identifier;)V"))
-  public void modifyOfferTo(Args args) {
+  @Redirect(method = "offerTo(Ljava/util/function/Consumer;Lnet/minecraft/util/Identifier;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemGroup;getName()Ljava/lang/String;"))
+  public String redirectGetName(ItemGroup instance) {
     if (customRecipeCategory != null) {
-      args.set(6, args.<Identifier>get(0).withPrefixedPath("recipes/" + this.customRecipeCategory + (this.customRecipeCategory.isEmpty() ? "" : "/")));
+      return customRecipeCategory;
+    } else {
+      return instance.getName();
+    }
+  }
+
+  @ModifyArg(method = "offerTo(Ljava/util/function/Consumer;Lnet/minecraft/util/Identifier;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Identifier;<init>(Ljava/lang/String;Ljava/lang/String;)V"), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/util/Identifier;getPath()Ljava/lang/String;")), index = 1)
+  public String redundantSlash(String path) {
+    if (customRecipeCategory != null && customRecipeCategory.isEmpty()) {
+      return StringUtils.replaceOnce(path, "recipes//", "recipes/");
+    } else {
+      return path;
     }
   }
 }
