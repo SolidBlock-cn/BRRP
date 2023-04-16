@@ -270,7 +270,7 @@ public class ModelJsonBuilder implements Cloneable {
   /**
    * Set the id of the model parent.
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(mutates = "this", value = "_, _ -> this")
   public ModelJsonBuilder parent(String namespace, String path) {
     return parent(new Identifier(namespace, path));
   }

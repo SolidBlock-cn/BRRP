@@ -77,7 +77,6 @@ public final class TextureRegistry {
    * @param block      The block you register.
    * @param textureKey The texture key. Vanilla texture keys can be found in {@link TextureKey}.
    * @param suffix     The suffix to append to the block id.
-   * @since 0.8.0 Fixed the incorrect identifier.
    */
   public static void registerSuffixed(Block block, TextureKey textureKey, String suffix) {
     register(block, textureKey, Registry.BLOCK.getId(block).brrp_prefix_and_suffixed("block/", suffix));
@@ -91,7 +90,6 @@ public final class TextureRegistry {
    * @param block      The block you register.
    * @param textureKey The texture key. Vanilla texture keys can be found in {@link TextureKey}.
    * @param path       The path of the identifier (not including {@code "blocks/"}).
-   * @since 0.8.0 Fixed the incorrect identifier.
    */
   public static void registerWithName(Block block, TextureKey textureKey, String path) {
     final Identifier id = Registry.BLOCK.getId(block);
