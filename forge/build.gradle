@@ -13,7 +13,7 @@ loom {
     forge {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
-        mixinConfig "brrp-v1.mixins.json", "brrp-v1-forge.mixins.json", "brrp-v1.mixins.json", "brrp-v1-recipes.mixin.json"
+        mixinConfig "brrp-v1.mixins.json", "brrp-v1-forge.mixins.json", "brrp-v1-recipes.mixins.json"
     }
 }
 
