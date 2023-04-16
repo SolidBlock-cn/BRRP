@@ -14,6 +14,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.v1.PlatformBridge;
 import pers.solid.brrp.v1.annotations.PreferredEnvironment;
@@ -35,9 +36,11 @@ import pers.solid.brrp.v1.model.ModelJsonBuilder;
 @SuppressWarnings("unused")
 public interface ItemResourceGenerator {
   /**
-   * This map is used for {@link #getRecipeCategory()}, in cases you don't want to override that category. It will be used only for data generation.
+   * This map is used for {@link #getRecipeCategory()}, in cases you don't want to override that category. It will be used only for data generation, and allows {@code null} values. Notice that other mods may use it.
+   * @see #getRecipeCategory()
+   * @see #setRecipeCategory(RecipeCategory)
    */
-  Object2ObjectMap<Item, RecipeCategory> ITEM_TO_RECIPE_CATEGORY = new Object2ObjectOpenHashMap<>();
+  Object2ObjectMap<@NotNull Item, @Nullable RecipeCategory> ITEM_TO_RECIPE_CATEGORY = new Object2ObjectOpenHashMap<>();
 
   /**
    * Query the id of the item. You have to <em>override</em> this method if your class that implements this method is not a subtype of {@link Item}.
@@ -131,7 +134,7 @@ public interface ItemResourceGenerator {
   }
 
   /**
-   * Get the recipe category of this item. You can just override this method so that you do not need to modify {@link #ITEM_TO_RECIPE_CATEGORY}.
+   * Get the recipe category of this item. You can just override this method so that you do not need to modify {@link #ITEM_TO_RECIPE_CATEGORY}. The return value is by default not null, but may be null if you have invoked {@link #setRecipeCategory(RecipeCategory)} with a null value.
    *
    * @return The recipe category of this item. It may be used in {@link #getCraftingRecipe()}.
    */

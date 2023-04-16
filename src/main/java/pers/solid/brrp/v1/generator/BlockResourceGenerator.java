@@ -76,12 +76,12 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * Query the id of the corresponding block item. You can override when needed, but most time there is no need.
-   * <p>
-   * Usually the block id is the same as the item id, but we do not assume that here.
+   * <p>Query the id of the corresponding block item. You can override when needed, but most time there is no need.</p>
+   *
+   * <p>Usually the block id is the same as the item id, but we do not assume that here. Sometimes multiple blocks may correspond to a same item.</p>
    *
    * @return The id of the block item, or {@code null} if the block has no item.
-   * @since 0.8.0 It respects {@link Block#asItem()} now.
+   * @see Block#asItem()
    */
   @Override
   @Contract(pure = true)

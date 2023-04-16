@@ -94,7 +94,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
   }
 
   /**
-   * The second ingredient used in the crafting recipe. It's by default a stick. In {@link #getCraftingRecipe()}, the crafting recipe is composed of 6 base blocks and 2 second ingredients. <em>If it returns null, the crafting recipe will not be generated, unless you override {@link #getCraftingRecipe()}.</em>
+   * The second ingredient used in the crafting recipe. It's by default a stick. In {@link #getCraftingRecipe()}, the crafting recipe is composed of 2 base blocks and 4 second ingredients. <em>If it returns null, the crafting recipe will not be generated, unless you override {@link #getCraftingRecipe()}.</em>
    *
    * @return The second ingredient to craft.
    */
