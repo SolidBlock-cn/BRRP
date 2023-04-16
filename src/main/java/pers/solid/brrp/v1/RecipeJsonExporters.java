@@ -3,14 +3,13 @@ package pers.solid.brrp.v1;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonFactory;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.SingleItemRecipeJsonFactory;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-@ApiStatus.Experimental
+
 public final class RecipeJsonExporters {
   private RecipeJsonExporters() {
   }

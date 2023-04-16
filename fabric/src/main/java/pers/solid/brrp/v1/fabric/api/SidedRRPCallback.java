@@ -14,7 +14,7 @@ import java.util.function.Function;
  * Similar to {@link RRPCallback} but can specify resource types. It is also supported by {@link RRPEventHelper}.
  *
  * @author Deman Kervan
- * @since 0.6.4
+ * @since 0.6.4 of ARRP
  */
 public interface SidedRRPCallback {
   Function<SidedRRPCallback[], SidedRRPCallback> CALLBACK_FUNCTION = callbacks -> (type, resourcePacks) -> {
