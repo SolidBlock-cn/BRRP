@@ -80,4 +80,9 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
   public CraftingRecipeJsonBuilder getCraftingRecipe() {
     return baseBlock == null ? null : RecipeProvider.getWallRecipe(getRecipeCategory(), this, Ingredient.ofItems(baseBlock)).criterion(RecipeProvider.hasItem(baseBlock), RecipeProvider.conditionsFromItem(baseBlock));
   }
+
+  @Override
+  public RecipeCategory getRecipeCategory() {
+    return ITEM_TO_RECIPE_CATEGORY.getOrDefault(asItem(), RecipeCategory.DECORATIONS);
+  }
 }
