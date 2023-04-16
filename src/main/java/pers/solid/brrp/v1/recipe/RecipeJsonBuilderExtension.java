@@ -43,7 +43,7 @@ public interface RecipeJsonBuilderExtension<Self> {
   /**
    * Add a criterion of obtaining the item predicate ({@link RecipesProvider#conditionsFromItemPredicates(ItemPredicate...)} with the specified criterion name.
    */
-  default Self criterionFromItemPredicate(String criterionName, ItemPredicate... predicates) {
+  default Self criterionFromItemPredicates(String criterionName, ItemPredicate... predicates) {
     return criterionMethodBridge(criterionName, RecipesProvider.conditionsFromItemPredicates(predicates));
   }
 

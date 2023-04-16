@@ -13,7 +13,6 @@ import net.minecraft.data.client.model.BlockStateSupplier;
 import net.minecraft.data.server.LootTablesProvider;
 import net.minecraft.data.server.RecipesProvider;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
-import net.minecraft.data.server.recipe.SmithingRecipeJsonFactory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootTable;

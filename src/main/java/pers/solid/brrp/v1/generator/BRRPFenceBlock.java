@@ -88,7 +88,7 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
   }
 
   /**
-   * The second ingredient used in the crafting recipe. It's by default a stick. In {@link #getCraftingRecipe()}, the crafting recipe is composed of 6 base blocks and 2 second ingredients.
+   * The second ingredient used in the crafting recipe. It's by default a stick. In {@link #getCraftingRecipe()}, the crafting recipe is composed of 4 base blocks and 2 second ingredients.
    *
    * @return The second ingredient to craft.
    */

@@ -15,7 +15,8 @@ import pers.solid.brrp.v1.recipe.SingleItemRecipeJsonBuilderExtension;
 @Mixin(SingleItemRecipeJsonFactory.class)
 public abstract class SingleItemRecipeJsonBuilderMixin implements SingleItemRecipeJsonBuilderExtension {
 
-  @Shadow public abstract SingleItemRecipeJsonFactory create(String criterionName, CriterionConditions conditions);
+  @Shadow
+  public abstract SingleItemRecipeJsonFactory create(String criterionName, CriterionConditions conditions);
 
   private boolean bypassesValidation;
   private @Nullable String customRecipeCategory;
