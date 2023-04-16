@@ -19,10 +19,11 @@ public interface RecipeJsonBuilderExtension<Self> {
   /**
    * The common bridge for various methods to call "criterion".
    */
+  @SuppressWarnings("unchecked")
   @Contract("_, _ -> this")
   @ApiStatus.Internal
   default Self criterionMethodBridge(String criterionName, CriterionConditions criterionConditions) {
-    throw new AssertionError();
+    return (Self) this;
   }
 
   /**
@@ -73,14 +74,16 @@ public interface RecipeJsonBuilderExtension<Self> {
    *
    * @param recipeCategory Your custom recipe category.
    */
+  @SuppressWarnings("unchecked")
   default Self setCustomRecipeCategory(@Nullable String recipeCategory) {
-    throw new UnsupportedOperationException();
+    return (Self) this;
   }
 
   /**
    * Bypass validation when offering the recipe to the output. Usually when calling "offerTo" methods, the "validate" method will be called, such as checking whether the recipe is the advancement criterions so that you can obtain the recipe. If you set it to {@code true}, the validation will be skipped.
    */
+  @SuppressWarnings("unchecked")
   default Self setBypassesValidation(boolean bypassesValidation) {
-    throw new UnsupportedOperationException();
+    return (Self) this;
   }
 }
