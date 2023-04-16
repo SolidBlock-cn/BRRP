@@ -1,17 +1,20 @@
 package pers.solid.brrp.v1.recipe;
 
 import net.minecraft.advancement.criterion.CriterionConditions;
+import net.minecraft.data.server.recipe.RecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.RecipeProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.item.ItemPredicate;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -20,10 +23,11 @@ public interface RecipeJsonBuilderExtension<Self> {
   /**
    * The common bridge for various methods to call "criterion".
    */
+  @SuppressWarnings("unchecked")
   @Contract("_, _ -> this")
   @ApiStatus.Internal
   default Self criterionMethodBridge(String criterionName, CriterionConditions criterionConditions) {
-    throw new AssertionError();
+    return (Self) this;
   }
 
   /**
@@ -74,14 +78,41 @@ public interface RecipeJsonBuilderExtension<Self> {
    *
    * @param recipeCategory Your custom recipe category.
    */
+  @SuppressWarnings("unchecked")
   default Self setCustomRecipeCategory(@Nullable String recipeCategory) {
-    throw new UnsupportedOperationException();
+    return (Self) this;
+  }
+
+  /**
+   * <p>Set a custom crafting recipe category. Note that it differs from the "recipe category".</p>
+   * <p>Usually, for versions 1.19.3 and above, the crafting category is dependent on its recipe category, according to {@link RecipeJsonBuilder#getCraftingCategory(RecipeCategory)}. However, if it is {@code null}, it will throw an NPE.</p>
+   * <p>The recipe category is given when you create a new recipe builder, and you can also config a custom recipe category. In this case, the crafting category is determined by the vanilla recipe category you provided initially, and the custom recipe category does not affect the crafting category. If your vanilla recipe category is null, you <em>have to</em> specify the custom recipe category.</p>
+   *
+   * @param customCraftingCategory Your custom crafting category.
+   * @see RecipeJsonBuilder#getCraftingCategory(RecipeCategory)
+   */
+  @SuppressWarnings("unchecked")
+  default Self setCustomCraftingCategory(@Nullable CraftingRecipeCategory customCraftingCategory) {
+    return (Self) this;
   }
 
   /**
    * Bypass validation when offering the recipe to the output. Usually when calling "offerTo" methods, the "validate" method will be called, such as checking whether the recipe is the advancement criteria so that you can obtain the recipe. If you set it to {@code true}, the validation will be skipped.
    */
+  @SuppressWarnings("unchecked")
   default Self setBypassesValidation(boolean bypassesValidation) {
-    throw new UnsupportedOperationException();
+    return (Self) this;
+  }
+
+  /**
+   * The method is used for mixins to call to {@link RecipeJsonBuilder#getCraftingCategory(RecipeCategory)}.
+   */
+  static @NotNull RecipeCategory invertGetCraftingCategory(@NotNull CraftingRecipeCategory craftingRecipeCategory) {
+    return switch (craftingRecipeCategory) {
+      case BUILDING -> RecipeCategory.BUILDING_BLOCKS;
+      case EQUIPMENT -> RecipeCategory.TOOLS;
+      case REDSTONE -> RecipeCategory.REDSTONE;
+      default -> RecipeCategory.MISC;
+    };
   }
 }
