@@ -10,7 +10,7 @@ import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.server.RecipeProvider;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
-import net.minecraft.recipe.Ingredient;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
@@ -68,6 +68,6 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
 
   @Override
   public CraftingRecipeJsonBuilder getCraftingRecipe() {
-    return RecipeProvider.createStairsRecipe(this, Ingredient.ofItems(baseBlock)).criterion(RecipeProvider.hasItem(baseBlock), RecipeProvider.conditionsFromItem(baseBlock));
+    return ShapedRecipeJsonBuilder.create(this, 4).input('#', baseBlock).pattern("#  ").pattern("## ").pattern("###").criterion(RecipeProvider.hasItem(baseBlock), RecipeProvider.conditionsFromItem(baseBlock));
   }
 }

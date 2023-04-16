@@ -18,7 +18,6 @@ public interface IdentifierExtension {
    *
    * @param suffix The string to be appended.
    * @return A new identifier.
-   * @since 0.8.0 Fixed the wrong parameter name.
    */
   @Contract("_ -> new")
   default Identifier brrp_suffixed(@NotNull String suffix) {
@@ -31,8 +30,6 @@ public interface IdentifierExtension {
    *
    * @param prefix The string to be prepended.
    * @return A new identifier.
-   * @see Identifier#withPrefixedPath(String)
-   * @since 0.8.0 Fixed the wrong parameter name.
    */
   @Contract("_ -> new")
   default Identifier brrp_prefixed(@NotNull String prefix) {
