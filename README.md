@@ -126,6 +126,20 @@ dependencies {
 }
 ```
 
+注意：自从 1.0.0 版本开始，对于 Fabric 版本，本模组开始依赖 Mod Menu，因此在 Fabric 的情况下，你还需要：
+- 在上面的 `repositories` 中再加入以下内容：
+```groovy
+    // Mod Menu 所需要的存储库（仅限 Fabric）
+    maven { url "https://maven.terraformersmc.com/releases/" }
+```
+- **或者**将 `dependencies` 中的内容改为：
+```groovy
+    // 不加载 Mod Menu
+    modImplementation("pers.solid:brrp-fabric:模组版本-MC版本") {
+        transitive false
+    }
+```
+
 ### 方法二：将文件下载到本地
 
 您需要先下载 <code>**brrp-模组版本-MC版本.jar**</code> 和 <code>**brrp-模组版本-MC版本-sources.jar**</code> 这两个文件（可以在 GitHub 的 releases 部分，或者从 Modrinth 中下载），并放在您的设备存储的任意地方（建议直接存储在项目文件夹内或者附近，两个文件都应该放在同一个文件夹内，并且，如有需要，可将下载到的文件加入 `.gitignore`）。
@@ -141,9 +155,9 @@ repositories {
 
 dependencies {
     modImplementation "pers.solid:brrp-fabric:模组版本-MC版本"
-    // 注意事项可参见上面的方法一。
 }
 ```
+上面的“方法一”中的注意事项，对“方法二”也适用。
 
 ### 检查项目是否配置完成
 
