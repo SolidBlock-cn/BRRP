@@ -126,6 +126,20 @@ dependencies {
 }
 ```
 
+**Note:** Since 1.0.0, for Fabric versions, this mod has been depending on Mod Menu. Therefore, for Fabric, you may also do any of the following:
+- Add following content to the `repositories` in the code above:
+```groovy
+    // The repository that Mod Menu depends on (for Fabric only)
+    maven { url "https://maven.terraformersmc.com/releases/" }
+```
+- **or** change the content in `dependencies` into:
+```groovy
+    // Not depending on Mod Menu
+    modImplementation("pers.solid:brrp-fabric:<mod-version>-<Minecraft version>") {
+        transitive false
+    }
+```
+
 ### Method 2: Download files to local
 
 You can at first download these two files: **`brrp-<mod version>-<Minecraft version>.jar`** and **`brrp-<mod version>-<Minecraft version>-sources.jar`**, which may be accessible in the "release" part of GitHub or in Modrinth. Save the two files in any place in your device (places inside or nearby your project folder are preferred, the two files should be in the same folder, and, if needed, you can add the downloaded files to `.gitignore`).
@@ -141,9 +155,11 @@ repositories {
 
 dependencies {
     modImplementation("pers.solid:brrp-fabric:<mod version>-<minecraft_version>")
-    // the note can be found in the "Way 1" section
 }
 ```
+The note in the "Method 1" also applies to "Method 2".
+
+### Check whether the configuration is finished
 
 Refresh the project, and check if this library is normally loaded. For example, in IntelliJ IDEA, you can double-click Shift, input `RuntimeResourcePack`. If you can find this class, and codes and comments are correctly loaded, you can conclude that the project is correctly loaded.
 

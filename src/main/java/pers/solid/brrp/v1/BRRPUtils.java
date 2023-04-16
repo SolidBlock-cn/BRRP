@@ -3,7 +3,9 @@ package pers.solid.brrp.v1;
 import net.fabricmc.api.EnvType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.data.client.ModelIds;
 import net.minecraft.data.client.TextureKey;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -16,8 +18,7 @@ import pers.solid.brrp.v1.generator.TextureRegistry;
 
 /**
  * <p>It's similar to {@link ItemResourceGenerator} and {@link BlockResourceGenerator}, but it provides more <em>static</em> methods so that they can be used for blocks and items that do not implement {@link ItemResourceGenerator}, which are usually vanilla blocks.</p>
- * <p>It's not recommended to inject the interfaces above to vanilla classes using mixins.</p>
- * <p>If your sure that the instance <em>is</em> a {@link ItemResourceGenerator}, you should use their methods instead, instead of these static methods.</p>
+ * <p>If your sure that the instance <em>is</em> a {@link ItemResourceGenerator}, you can use their methods instead, instead of these static methods. Also, notice that these methods may not reflect the actual usage. For example, {@link #getTextureId(Block, TextureKey)} just respects the {@link TextureRegistry} in this mod, or overrides to {@link BlockResourceGenerator#getTextureId(TextureKey)}, instead of what is actually used.</p>
  *
  * @author SolidBlock
  */
@@ -39,12 +40,12 @@ public final class BRRPUtils {
    * Get the identifier of the item model, which is usually in the format of <code><var>namespace</var>:item/<var>path</var></code>. It works for items that do not implement {@link ItemResourceGenerator}, but may fail to be accurate in cases other mods modify the item model (which are not usually supposed to happen).
    *
    * @return The id of the item model.
-   * @since 0.6.2 Fixed the issue that the item model id is not correct.
+   * @see net.minecraft.data.client.ModelIds#getItemModelId(Item)
    */
   @Contract(pure = true)
   @PreferredEnvironment(EnvType.CLIENT)
   public static Identifier getItemModelId(@NotNull ItemConvertible item) {
-    return (item instanceof ItemResourceGenerator generator) ? generator.getItemModelId() : Registry.ITEM.getId(item.asItem()).brrp_prefixed("item/");
+    return (item instanceof ItemResourceGenerator generator) ? generator.getItemModelId() : ModelIds.getItemModelId(item.asItem());
   }
 
   /**
@@ -60,11 +61,12 @@ public final class BRRPUtils {
    * Get the identifier of the block model, which is usually in the format of <code><var>namespace</var>:block/<var>path</var></code>. It works for blocks that do not implement {@link BlockResourceGenerator}, but may fail to be accurate in cases other mods modify the block model (which are not usually supposed to happen), or the model is already not in other formats (possibly specified in the block states).
    *
    * @return The id of the block model.
+   * @see ModelIds#getBlockModelId(Block)
    */
   @Contract(pure = true)
   @PreferredEnvironment(EnvType.CLIENT)
   public static Identifier getBlockModelId(@NotNull Block block) {
-    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockModelId() : Registry.BLOCK.getId(block).brrp_prefixed("block/");
+    return (block instanceof BlockResourceGenerator generator) ? generator.getBlockModelId() : ModelIds.getBlockModelId(block);
   }
 
   /**
