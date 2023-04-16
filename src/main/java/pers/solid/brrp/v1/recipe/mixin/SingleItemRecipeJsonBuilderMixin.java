@@ -2,15 +2,14 @@ package pers.solid.brrp.v1.recipe.mixin;
 
 import net.minecraft.advancement.criterion.CriterionConditions;
 import net.minecraft.data.server.recipe.SingleItemRecipeJsonBuilder;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import pers.solid.brrp.v1.recipe.SingleItemRecipeJsonBuilderExtension;
 
 @Mixin(SingleItemRecipeJsonBuilder.class)
@@ -51,10 +50,21 @@ public abstract class SingleItemRecipeJsonBuilderMixin implements SingleItemReci
     return self();
   }
 
-  @ModifyArgs(method = "offerTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/data/server/recipe/SingleItemRecipeJsonBuilder$SingleItemRecipeJsonProvider;<init>(Lnet/minecraft/util/Identifier;Lnet/minecraft/recipe/RecipeSerializer;Ljava/lang/String;Lnet/minecraft/recipe/Ingredient;Lnet/minecraft/item/Item;ILnet/minecraft/advancement/Advancement$Builder;Lnet/minecraft/util/Identifier;)V"))
-  public void modifyOfferTo(Args args) {
+  @Redirect(method = "offerTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/book/RecipeCategory;getName()Ljava/lang/String;"))
+  public String redirectGetName(RecipeCategory instance) {
     if (customRecipeCategory != null) {
-      args.set(7, args.<Identifier>get(0).withPrefixedPath("recipes/" + this.customRecipeCategory + (this.customRecipeCategory.isEmpty() ? "" : "/")));
+      return customRecipeCategory;
+    } else {
+      return instance.getName();
+    }
+  }
+
+  @ModifyArg(method = "offerTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Identifier;withPrefixedPath(Ljava/lang/String;)Lnet/minecraft/util/Identifier;"), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/book/RecipeCategory;getName()Ljava/lang/String;")))
+  public String redundantSlash(String path) {
+    if (customRecipeCategory != null && customRecipeCategory.isEmpty()) {
+      return StringUtils.replaceOnce(path, "recipes//", "recipes/");
+    } else {
+      return path;
     }
   }
 }

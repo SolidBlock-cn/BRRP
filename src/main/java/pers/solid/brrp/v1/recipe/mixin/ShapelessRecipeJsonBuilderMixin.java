@@ -2,15 +2,16 @@ package pers.solid.brrp.v1.recipe.mixin;
 
 import net.minecraft.advancement.criterion.CriterionConditions;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
+import pers.solid.brrp.v1.recipe.RecipeJsonBuilderExtension;
 import pers.solid.brrp.v1.recipe.ShapelessRecipeJsonBuilderExtension;
 
 @Mixin(ShapelessRecipeJsonBuilder.class)
@@ -49,10 +50,38 @@ public abstract class ShapelessRecipeJsonBuilderMixin implements ShapelessRecipe
     return self();
   }
 
-  @ModifyArgs(method = "offerTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/data/server/recipe/ShapelessRecipeJsonBuilder$ShapelessRecipeJsonProvider;<init>(Lnet/minecraft/util/Identifier;Lnet/minecraft/item/Item;ILjava/lang/String;Lnet/minecraft/recipe/book/CraftingRecipeCategory;Ljava/util/List;Lnet/minecraft/advancement/Advancement$Builder;Lnet/minecraft/util/Identifier;)V"))
-  public void modifyOfferTo(Args args) {
+  @Redirect(method = "offerTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/book/RecipeCategory;getName()Ljava/lang/String;"))
+  public String redirectGetName(RecipeCategory instance) {
     if (customRecipeCategory != null) {
-      args.set(7, args.<Identifier>get(0).withPrefixedPath("recipes/" + this.customRecipeCategory + (this.customRecipeCategory.isEmpty() ? "" : "/")));
+      return customRecipeCategory;
+    } else {
+      return instance.getName();
+    }
+  }
+
+  @ModifyArg(method = "offerTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Identifier;withPrefixedPath(Ljava/lang/String;)Lnet/minecraft/util/Identifier;"), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/book/RecipeCategory;getName()Ljava/lang/String;")))
+  public String redundantSlash(String path) {
+    if (customRecipeCategory != null && customRecipeCategory.isEmpty()) {
+      return StringUtils.replaceOnce(path, "recipes//", "recipes/");
+    } else {
+      return path;
+    }
+  }
+
+  private CraftingRecipeCategory customCraftingCategory;
+
+  @Override
+  public ShapelessRecipeJsonBuilder setCustomCraftingCategory(CraftingRecipeCategory customCraftingCategory) {
+    this.customCraftingCategory = customCraftingCategory;
+    return self();
+  }
+
+  @ModifyArg(method = "offerTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/data/server/recipe/ShapelessRecipeJsonBuilder;getCraftingCategory(Lnet/minecraft/recipe/book/RecipeCategory;)Lnet/minecraft/recipe/book/CraftingRecipeCategory;"))
+  public RecipeCategory applyCustomCraftingCategory(RecipeCategory par1) {
+    if (par1 == null && customCraftingCategory != null) {
+      return RecipeJsonBuilderExtension.invertGetCraftingCategory(customCraftingCategory);
+    } else {
+      return par1;
     }
   }
 }
