@@ -2,12 +2,12 @@ package pers.solid.brrp.v1.gui;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.MultilineTextWidget;
 import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
@@ -75,9 +75,9 @@ public class RegenerateScreen extends Screen {
   }
 
   @Override
-  public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-    renderBackground(matrices);
-    drawCenteredTextWithShadow(matrices, this.textRenderer, this.title, this.width / 2, 8, 0xFFFFFF);
+  public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    renderBackground(context);
+    context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 8, 0xFFFFFF);
     summaryText.setX(width / 2 - summaryText.getWidth() / 2);
     boolean isIdle = currentThread == null || !currentThread.isAlive();
     onlyRegenClientButton.active = isIdle && pack.hasSidedRegenerationCallback(ResourceType.CLIENT_RESOURCES);
@@ -88,7 +88,7 @@ public class RegenerateScreen extends Screen {
     if (isIdle) {
       stateText.setMessage(STATE_IDLE);
     }
-    super.render(matrices, mouseX, mouseY, delta);
+    super.render(context, mouseX, mouseY, delta);
   }
 
   private void regenClientOnly() {

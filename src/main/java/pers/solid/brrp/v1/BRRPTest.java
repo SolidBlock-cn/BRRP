@@ -50,7 +50,7 @@ public class BRRPTest {
    * <p>The block, as its name indicates, is a block with a texture of lava. It is an instance of {@link BRRPCubeBlock}, which can directly specify textures and can conveniently generation all resources of it, taking the convenience of {@link BlockResourceGenerator} interface, which is implemented by {@code BRRPCubeBlock}.</p>
    * <p>Please do not think that objects that implement {@link BlockResourceGenerator} can auto generate resources. It just provides methods such as {@code writeResources} so you do not need to manually specify how to generate models, loot tables, etc. You still should invoke the methods that write resources into the runtime resource pack.</p>
    */
-  public static final BRRPCubeBlock LAVA_BLOCK = register(BRRPCubeBlock.cubeAll(AbstractBlock.Settings.of(new Material.Builder(MapColor.BRIGHT_RED).allowsMovement().notSolid().liquid().build()).luminance(state -> 15).sounds(LAVA_SOUND_GROUP), new Identifier("block/lava_still")), "lava_block");
+  public static final BRRPCubeBlock LAVA_BLOCK = register(BRRPCubeBlock.cubeAll(AbstractBlock.Settings.create().liquid().luminance(state -> 15).sounds(LAVA_SOUND_GROUP), new Identifier("block/lava_still")), "lava_block");
   /**
    * <p>The block is the stairs of {@link #LAVA_BLOCK}. When generating models, the textures identifier will be those of the base block. The generation of the block states, and model and recipe of stairs is defined in {@link BRRPStairsBlock}.</p>
    */

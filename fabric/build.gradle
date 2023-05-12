@@ -34,7 +34,7 @@ dependencies {
     common(project(path: ":", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":", configuration: "transformProductionFabric")) { transitive false }
 
-    modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
+//    modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 }
 
 processResources {
@@ -48,18 +48,18 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+//    classifier "dev-shadow" todo check
 }
 
 remapJar {
     injectAccessWidener = true
     inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
+//    classifier null todo check
 }
 
 jar {
-    classifier "dev"
+//    classifier "dev" todo check
 }
 
 sourcesJar {

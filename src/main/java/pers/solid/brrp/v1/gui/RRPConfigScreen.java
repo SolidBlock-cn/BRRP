@@ -7,6 +7,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.MultilineText;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,7 +18,6 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.screen.ScreenTexts;
@@ -142,16 +142,16 @@ public class RRPConfigScreen extends Screen {
   }
 
   @Override
-  public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-    this.renderBackgroundTexture(matrices);
+  public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    this.renderBackgroundTexture(context);
 
     switch (currentTab) {
-      case 0 -> beforeVanillaListWidget.render(matrices, mouseX, mouseY, delta);
-      case 1 -> beforeUserListWidget.render(matrices, mouseX, mouseY, delta);
-      case 2 -> afterVanillaListWidget.render(matrices, mouseX, mouseY, delta);
+      case 0 -> beforeVanillaListWidget.render(context, mouseX, mouseY, delta);
+      case 1 -> beforeUserListWidget.render(context, mouseX, mouseY, delta);
+      case 2 -> afterVanillaListWidget.render(context, mouseX, mouseY, delta);
     }
-    drawCenteredTextWithShadow(matrices, this.textRenderer, this.title, this.width / 2, 8, 0xFFFFFF);
-    super.render(matrices, mouseX, mouseY, delta);
+    context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 8, 0xFFFFFF);
+    super.render(context, mouseX, mouseY, delta);
   }
 
   @Environment(EnvType.CLIENT)
@@ -192,11 +192,11 @@ public class RRPConfigScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-      super.render(matrices, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+      super.render(context, mouseX, mouseY, delta);
       if (nothingHereText != null) {
         nothingHereText.setPosition(0, height / 2 - 8);
-        nothingHereText.render(matrices, mouseX, mouseY, delta);
+        nothingHereText.render(context, mouseX, mouseY, delta);
       }
     }
 
@@ -262,11 +262,11 @@ public class RRPConfigScreen extends Screen {
       }
 
       @Override
-      public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        enableScissor(5, y, width - 141, y + entryHeight);
-        drawTextWithShadow(matrices, textRenderer, titleText, x + 5, y + 2, 0xFFFFFF);
-        MultilineText.create(textRenderer, description, width - 151).draw(matrices, x + 5, y + 12, 10, 0xaaaaaa);
-        disableScissor();
+      public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        context.enableScissor(5, y, width - 141, y + entryHeight);
+        context.drawTextWithShadow(textRenderer, titleText, x + 5, y + 2, 0xFFFFFF);
+        MultilineText.create(textRenderer, description, width - 151).draw(context, x + 5, y + 12, 10, 0xaaaaaa);
+        context.disableScissor();
 
         area.setPosition(width / 2 - entryWidth / 2, y);
         area.setWidth(entryWidth);
@@ -284,10 +284,10 @@ public class RRPConfigScreen extends Screen {
 
         regenerateButton.setPosition(width - 136, y + entryHeight / 2 - regenerateButton.getHeight() / 2);
         regenerateButton.active = resourcePack instanceof RuntimeResourcePack runtimeResourcePack && runtimeResourcePack.hasRegenerationCallback();
-        regenerateButton.render(matrices, mouseX, mouseY, tickDelta);
+        regenerateButton.render(context, mouseX, mouseY, tickDelta);
         regenerateButton.active = true;
         dumpButton.setPosition(width - 76, y + entryHeight / 2 - dumpButton.getHeight() / 2);
-        dumpButton.render(matrices, mouseX, mouseY, tickDelta);
+        dumpButton.render(context, mouseX, mouseY, tickDelta);
       }
 
       @Override
