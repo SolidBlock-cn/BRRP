@@ -18,6 +18,9 @@
     "main": [
       "pers.solid.brrp.v1.fabric.BRRPFabricInitialize"
     ],
+    "client": [
+      "pers.solid.brrp.v1.fabric.BRRPFabricClientInitialize"
+    ],
     "modmenu":[
       "pers.solid.brrp.v1.fabric.RRPModMenu"
     ]
