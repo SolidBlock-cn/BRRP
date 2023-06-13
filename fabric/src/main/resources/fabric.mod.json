@@ -32,11 +32,15 @@
   "depends": {
     "fabricloader": "*",
     "fabric-api": "*",
-    "minecraft": ">=1.19.4"
+    "minecraft": "1.20.x"
   },
   "custom": {
     "modmenu": {
-      "badges": ["library"]
+      "badges": ["library"],
+      "links": {
+        "modmenu.modrinth": "https://modrinth.com/mod/brrp",
+        "modmenu.curseforge": "https://www.curseforge.com/minecraft/mc-mods/better-runtime-resource-pack"
+      }
     },
     "loom:injected_interfaces": {
       "net/minecraft/class_2960": ["pers/solid/brrp/v1/IdentifierExtension"],

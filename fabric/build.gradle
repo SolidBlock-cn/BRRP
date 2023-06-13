@@ -34,7 +34,7 @@ dependencies {
     common(project(path: ":", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":", configuration: "transformProductionFabric")) { transitive false }
 
-//    modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
+    modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 }
 
 processResources {
