@@ -1,6 +1,10 @@
 package pers.solid.brrp.v1;
 
-import net.minecraft.block.*;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.WoodType;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.data.server.BlockLootTableGenerator;
@@ -30,6 +34,7 @@ import pers.solid.brrp.v1.api.LanguageProvider;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.generator.*;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
+import pers.solid.brrp.v1.model.TransformationBuilder;
 import pers.solid.brrp.v1.tag.IdentifiedTagBuilder;
 
 /**
@@ -204,6 +209,7 @@ public class BRRPTest {
     beforeUser.setDisplayName(Text.translatable("brrp.pack.test_before_user.name"));
     beforeUser.setDescription(Text.translatable("brrp.pack.test_before_user.description"));
     beforeUser.addModel(new Identifier("minecraft", "item/yellow_wool"), ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, new Identifier("block/yellow_wool")));
+    beforeUser.addModel(new Identifier("item/diamond"),ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, new Identifier("item/diamond")).transformation(ModelTransformationMode.GROUND, new TransformationBuilder().translation(0, 4.5f, 0).scale(10.85f, 10.85f, 10.6f)));
     beforeUser.addLang(new Identifier("minecraft", "en_us"), LanguageProvider.create().add(Blocks.YELLOW_WOOL, "The model is modified by a 'before-user' runtime resource pack."));
     beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableId(), BlockLootTableGenerator.drops(Blocks.YELLOW_WOOL, ConstantLootNumberProvider.create(3)));
     RRPEventHelper.BEFORE_USER.registerPack(beforeUser);

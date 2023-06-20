@@ -98,6 +98,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   Gson GSON = LootGsons.getTableGsonBuilder()
       .setPrettyPrinting()
       .disableHtmlEscaping()
+      .enableComplexMapKeySerialization()
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, new Identifier.Serializer())
       .registerTypeHierarchyAdapter(StringIdentifiable.class, JsonSerializers.STRING_IDENTIFIABLE)
