@@ -226,7 +226,14 @@ public class BRRPTest {
     beforeUser.setDisplayName(Text.translatable("brrp.pack.test_before_user.name"));
     beforeUser.setDescription(Text.translatable("brrp.pack.test_before_user.description"));
     beforeUser.addModel(new Identifier("minecraft", "item/yellow_wool"), ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, new Identifier("block/yellow_wool")));
-    beforeUser.addModel(new Identifier("item/diamond"),ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, new Identifier("item/diamond")).transformation(ModelTransformationMode.GROUND, new TransformationBuilder().translation(0, 4.5f, 0).scale(10.85f, 10.85f, 10.6f)));
+    beforeUser.addAsyncResource(ResourceType.CLIENT_RESOURCES, new Identifier("models/item/gold_ingot.json"), input -> {
+      LOGGER.info("async resource!");
+      return beforeUser.serialize(ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, new Identifier("item/gold_ingot")).transformation(ModelTransformationMode.GROUND, new TransformationBuilder().translation(0, 4.5f, 0).scale(9f, 9, 9f)));
+    });
+    beforeUser.addLazyResource(ResourceType.CLIENT_RESOURCES, new Identifier("models/item/diamond.json"), (pack, identifier) -> {
+      LOGGER.info("lazy resource!");
+      return beforeUser.serialize(ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, new Identifier("item/diamond")).transformation(ModelTransformationMode.GROUND, new TransformationBuilder().translation(0, 4.5f, 0).scale(10.85f, 10.85f, 10.6f)));
+    });
     beforeUser.addLang(new Identifier("minecraft", "en_us"), LanguageProvider.create().add(Blocks.YELLOW_WOOL, "The model is modified by a 'before-user' runtime resource pack."));
     beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableId(), new VanillaBlockLootTableGenerator().drops(Blocks.YELLOW_WOOL, ConstantLootNumberProvider.create(3)));
     RRPEventHelper.BEFORE_USER.registerPack(beforeUser);

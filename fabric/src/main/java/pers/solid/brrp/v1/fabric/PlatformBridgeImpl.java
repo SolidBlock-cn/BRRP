@@ -12,7 +12,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.ApiStatus;
 import pers.solid.brrp.v1.PlatformBridge;
 import pers.solid.brrp.v1.fabric.api.SidedRRPCallback;
 
@@ -35,7 +34,6 @@ public class PlatformBridgeImpl extends PlatformBridge {
     SidedRRPCallback.BEFORE_VANILLA.invoker().insert(type, packs);
   }
 
-  @ApiStatus.Experimental
   @Override
   public void postBeforeUser(ResourceType type, List<ResourcePack> packs) {
     SidedRRPCallback.BEFORE_USER.invoker().insert(type, packs);
