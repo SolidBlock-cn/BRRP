@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
-import org.jetbrains.annotations.ApiStatus;
 import pers.solid.brrp.v1.RRPEventHelper;
 
 import java.util.List;
@@ -30,7 +29,11 @@ public interface SidedRRPCallback {
    */
   Event<SidedRRPCallback> BEFORE_VANILLA = EventFactory.createArrayBacked(SidedRRPCallback.class, CALLBACK_FUNCTION);
 
-  @ApiStatus.Experimental
+  /**
+   * Register your resource pack at a higher priority than minecraft and mod resources, but lower priority than user resources. The resources will be recognized in the Resource Pack / Data Pack screen and the {@code /data} command.
+   *
+   * @see RRPEventHelper#BEFORE_USER
+   */
   Event<SidedRRPCallback> BEFORE_USER = EventFactory.createArrayBacked(SidedRRPCallback.class, CALLBACK_FUNCTION);
 
   /**

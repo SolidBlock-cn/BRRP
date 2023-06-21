@@ -1,8 +1,12 @@
+import com.modrinth.minotaur.dependencies.ModDependency
+
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.2-SNAPSHOT"
     id "com.modrinth.minotaur" version "2.+" apply false
+    id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
     id 'io.github.juuxel.loom-quiltflower' version '1.8.0'
+    id "com.github.breadmoirai.github-release" version "2.4.1" apply false
 }
 
 architectury {
@@ -33,7 +37,7 @@ allprojects {
         mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
     }
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"
         options.release = 17
     }
@@ -47,6 +51,8 @@ archivesBaseName += '-common'
 
 subprojects {
     apply plugin: "com.modrinth.minotaur"
+    apply plugin: 'com.matthewprenger.cursegradle'
+    apply plugin: 'com.github.breadmoirai.github-release'
 
     loom {
         runs {
@@ -67,6 +73,71 @@ subprojects {
             }
         }
     }
+
+    String platform = project.properties.getOrDefault 'loom.platform', 'fabric'
+    final String changelogContent = rootProject.file('changelog.md').text
+    modrinth {
+        println "Modrinth token: ${token.get()}"
+        projectId = 'JnrDtPAE'
+        versionNumber = "${rootProject.mod_version}-mc${rootProject.minecraft_version}-$platform"
+        versionType = 'release'
+        uploadFile = remapJar
+        gameVersions = List.of(project.supported_minecraft_versions.split(","))
+        loaders = ['fabric']
+        changelog = changelogContent
+        dependencies = platform.equals('fabric') ? [
+                new ModDependency('P7dR8mSH', 'required') // Fabric API
+        ] : []
+    }
+
+    curseforge {
+        // The api key is store in my environment variable.
+        def getenv = System.getenv("CURSEFORGE_TOKEN")
+        println("CurseForge token: $getenv")
+        if (getenv) apiKey = getenv
+        project {
+            id = '618156'
+            changelog = changelogContent
+            releaseType = 'release'
+
+            gameVersionStrings.addAll project.supported_minecraft_versions.split(',')
+            addGameVersion platform.capitalize()
+
+            mainArtifact(remapJar) {
+                it.displayName = "brrp-$platform-${rootProject.mod_version}-mc${rootProject.minecraft_version}"
+            }
+            relations {
+                requiredDependency 'fabric-api'
+            }
+            afterEvaluate {
+                mainArtifact remapJar
+                uploadTask.dependsOn remapJar
+            }
+        }
+        options {
+            forgeGradleIntegration = false
+        }
+    }
+
+    githubRelease {
+        def getenv = System.getenv("GITHUB_TOKEN")
+        println "GitHub token: $getenv"
+        if (getenv) token getenv
+        owner "SolidBlock-cn"
+        repo "BRRP"
+        tagName "v$project.mod_version"
+        targetCommitish "1.20.1"
+        body changelogContent
+        draft true
+        prerelease false
+        releaseAssets remapJar, remapSourcesJar
+        allowUploadToExisting true
+        apiEndpoint "https://api.github.com"
+    }
+
+    publish {
+        dependsOn tasks.modrinth, tasks.curseforge, tasks.githubRelease, tasks.publishToMavenLocal
+    }
 }
 
 loom {
@@ -76,6 +147,7 @@ loom {
         defaultRefmapName = "brrp-v1-common-refmap.json"
     }
 }
+
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
