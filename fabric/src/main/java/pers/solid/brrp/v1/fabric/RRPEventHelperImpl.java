@@ -33,7 +33,6 @@ public class RRPEventHelperImpl extends RRPEventHelper {
     return AFTER_VANILLA;
   }
 
-  @ApiStatus.Experimental
   @ApiStatus.Internal
   public static RRPEventHelper getBeforeUser() {
     return BEFORE_USER;
