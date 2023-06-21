@@ -236,16 +236,14 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @see #async(Consumer)
    */
   @Contract(mutates = "this")
-  @ApiStatus.Experimental
   Future<byte[]> addAsyncResource(ResourceType type,
                                   Identifier identifier,
                                   FailableFunction<Identifier, byte[], Exception> data);
 
   /**
-   * Add resource that is lazily evaluated, which is, evaluated only when required to get, and will not be evaluated again if required to get again.
+   * Add a resource that is lazily evaluated, which is, evaluated only when required to get, and will not be evaluated again if required to get again.
    */
   @Contract(mutates = "this")
-  @ApiStatus.Experimental
   void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> data);
 
   /**
@@ -455,7 +453,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @see #addAsyncResource(ResourceType, Identifier, FailableFunction)
    */
-  @ApiStatus.Experimental
   Future<?> async(Consumer<RuntimeResourcePack> action);
 
   /**

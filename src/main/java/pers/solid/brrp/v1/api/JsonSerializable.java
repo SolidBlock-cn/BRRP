@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
  *       new GsonBuilder()
  *        .registerTypeHierarchyAdapter(JSONSerializable.class, JSONSerializable.SERIALIZER)}
  * </pre>
- * <p>Do not implement this method in anonymous classes, as GSON may fail to correctly serialize it.
+ * <p>Be careful when you implement this method in anonymous classes, as GSON may fail to correctly serialize it.
  */
 public interface JsonSerializable {
   /**

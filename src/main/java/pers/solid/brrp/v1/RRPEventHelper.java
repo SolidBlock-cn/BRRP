@@ -18,7 +18,9 @@ public abstract class RRPEventHelper {
    * Register your resource pack that will be read <strong>before</strong> Minecraft and regular resources are loaded. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, that will be used instead. Therefore, resource packs registered here cannot override non-runtime resources.
    */
   public static final RRPEventHelper BEFORE_VANILLA = getBeforeVanilla();
-  @ApiStatus.Experimental
+  /**
+   * Register your resource pack at a higher priority than minecraft and mod resources, but lower priority than user resources. The resources will be recognized in the Resource Pack / Data Pack screen and the {@code /data} command.
+   */
   public static final RRPEventHelper BEFORE_USER = getBeforeUser();
 
   /**
@@ -33,7 +35,6 @@ public abstract class RRPEventHelper {
   }
 
   @ApiStatus.Internal
-  @ApiStatus.Experimental
   @ExpectPlatform
   public static RRPEventHelper getBeforeUser() {
     throw new AssertionError();

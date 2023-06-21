@@ -30,7 +30,6 @@ public class PlatformBridgeImpl extends PlatformBridge {
     SidedRRPCallback.BEFORE_VANILLA.invoker().insert(type, packs);
   }
 
-  @ApiStatus.Experimental
   @Override
   public void postBeforeUser(ResourceType type, List<ResourcePack> packs) {
     SidedRRPCallback.BEFORE_USER.invoker().insert(type, packs);
