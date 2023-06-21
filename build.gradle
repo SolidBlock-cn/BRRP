@@ -83,7 +83,7 @@ subprojects {
         versionType = 'release'
         uploadFile = remapJar
         gameVersions = List.of(project.supported_minecraft_versions.split(","))
-        loaders = ['fabric']
+        loaders = [platform]
         changelog = changelogContent
         dependencies = platform.equals('fabric') ? [
                 new ModDependency('P7dR8mSH', 'required') // Fabric API
