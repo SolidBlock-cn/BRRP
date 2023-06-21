@@ -27,7 +27,6 @@ public interface RRPCallback {
   /**
    * Register your resource pack at a higher priority than minecraft and mod resources, but lower priority than user resources. The resources will be recognized in the Resource Pack / Data Pack screen and the {@code /data} command.
    */
-  @ApiStatus.Experimental
   Event<RRPCallback> BEFORE_USER = new ForwardingEvent<>(FORWARDING_FUNCTION, SidedRRPCallback.BEFORE_USER, INVOKER_FUNCTION);
 
   /**

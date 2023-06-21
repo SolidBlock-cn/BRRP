@@ -44,17 +44,17 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier.set "dev-shadow"
 }
 
 remapJar {
     inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
+    archiveClassifier.set null
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier.set "dev"
 }
 
 sourcesJar {
@@ -81,20 +81,4 @@ publishing {
     repositories {
         // Add repositories to publish to here.
     }
-}
-
-modrinth {
-    projectId = 'JnrDtPAE'
-    versionNumber = "${rootProject.mod_version}-mc${rootProject.minecraft_version}-forge"
-    uploadFile = remapJar
-    gameVersions = (project.supported_minecraft_versions as String).split(',') as List<String>
-    loaders = ['forge']
-    dependencies = [
-    ]
-}
-
-
-remapJar {
-    // 将 remapJar 的结果放在主项目中
-    archiveFile.set rootProject.buildDir.toPath().resolve(project.buildDir.relativePath(archiveFile.asFile.get())).toFile()
 }
