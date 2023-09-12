@@ -1,11 +1,11 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
-
+/*
 architectury {
     platformSetupLoomIde()
     fabric()
-}
+}*/
 
 loom {
     accessWidenerPath = project(":").loom.accessWidenerPath
@@ -47,17 +47,20 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowCommon]
 //    classifier "dev-shadow" todo check
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
-    injectAccessWidener = true
+//    injectAccessWidener = true
     inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
 //    classifier null todo check
+    archiveClassifier = null
 }
 
 jar {
 //    classifier "dev" todo check
+    archiveClassifier = "dev"
 }
 
 sourcesJar {

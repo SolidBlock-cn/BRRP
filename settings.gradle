@@ -1,10 +1,6 @@
 pluginManagement {
     repositories {
         maven {
-            name 'Quilt'
-            url 'https://maven.quiltmc.org/repository/release'
-        }
-        maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
@@ -16,5 +12,5 @@ pluginManagement {
 }
 rootProject.name = 'brrp'
 
-include '', 'fabric'//, 'forge'
+include '', 'fabric'
 
