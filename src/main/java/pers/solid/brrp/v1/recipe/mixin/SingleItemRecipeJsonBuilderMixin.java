@@ -1,5 +1,6 @@
 package pers.solid.brrp.v1.recipe.mixin;
 
+import net.minecraft.advancement.AdvancementCriterion;
 import net.minecraft.advancement.criterion.CriterionConditions;
 import net.minecraft.data.server.recipe.SingleItemRecipeJsonBuilder;
 import net.minecraft.recipe.book.RecipeCategory;
@@ -8,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pers.solid.brrp.v1.recipe.SingleItemRecipeJsonBuilderExtension;
@@ -15,20 +17,22 @@ import pers.solid.brrp.v1.recipe.SingleItemRecipeJsonBuilderExtension;
 @Mixin(SingleItemRecipeJsonBuilder.class)
 public abstract class SingleItemRecipeJsonBuilderMixin implements SingleItemRecipeJsonBuilderExtension {
 
-  @Shadow
-  public abstract SingleItemRecipeJsonBuilder criterion(String string, CriterionConditions criterionConditions);
+  @Shadow public abstract SingleItemRecipeJsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion);
 
+  @Unique
   private boolean bypassesValidation;
+  @Unique
   private @Nullable String customRecipeCategory;
 
+  @Unique
   @SuppressWarnings("DataFlowIssue")
   private SingleItemRecipeJsonBuilder self() {
     return (SingleItemRecipeJsonBuilder) (Object) this;
   }
 
   @Override
-  public SingleItemRecipeJsonBuilder criterionMethodBridge(String criterionName, CriterionConditions criterionConditions) {
-    return criterion(criterionName, criterionConditions);
+  public SingleItemRecipeJsonBuilder criterionMethodBridge(String criterionName, AdvancementCriterion<?> criterion) {
+    return criterion(criterionName, criterion);
   }
 
   @Override

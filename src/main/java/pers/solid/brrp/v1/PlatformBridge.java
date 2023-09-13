@@ -1,6 +1,5 @@
 package pers.solid.brrp.v1;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -8,7 +7,6 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.TestOnly;
 
 import java.nio.file.Path;
@@ -21,11 +19,10 @@ import java.util.List;
 @ApiStatus.Internal
 public abstract class PlatformBridge {
 
-  @SuppressWarnings("Contract")
-  @Contract("-> _")
-  @ExpectPlatform
+  @ApiStatus.Internal public static PlatformBridge __instance = null;
+
   public static PlatformBridge getInstance() {
-    throw new AssertionError();
+    return __instance;
   }
 
   public abstract void postBefore(ResourceType type, List<ResourcePack> packs);

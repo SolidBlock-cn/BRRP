@@ -1,6 +1,8 @@
 package pers.solid.brrp.v1.api;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSerializer;
 import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
@@ -9,12 +11,12 @@ import io.netty.buffer.ByteBufOutputStream;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.client.resource.metadata.AnimationResourceMetadata;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.server.recipe.*;
-import net.minecraft.loot.LootGsons;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.tag.*;
@@ -23,6 +25,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.Util;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.commons.lang3.function.FailableRunnable;
@@ -33,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import pers.solid.brrp.v1.JsonSerializers;
-import pers.solid.brrp.v1.RRPEventHelper;
 import pers.solid.brrp.v1.gui.DumpScreen;
 import pers.solid.brrp.v1.gui.RRPConfigScreen;
 import pers.solid.brrp.v1.gui.RegenerateScreen;
@@ -58,7 +60,7 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * <p>A resource pack whose assets and data are evaluated at runtime. You can use {@link #create} to create it.</p>
- * <p>After creating a runtime resource pack, you should register it in {@link RRPEventHelper}, or {@code RRPCallback}, {@code SidedRRPCallback}, or {@code RRPEvent} so that it can take effect when loading resources. Here hs an example:</pre>
+ * <p>After creating a runtime resource pack, you should register it in {@code RRPCallback}, {@code SidedRRPCallback}, or {@code RRPEvent} so that it can take effect when loading resources. Here hs an example:</pre>
  * <pre>{@code
  * // create the runtime resource pack
  * RuntimeResourcePack myModPack = RuntimeResourcePack.create(new Identifier("my_mod", "example_pack"));
@@ -90,10 +92,12 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * The GSONs used to serialize objects to JSON.
    */
-  Gson GSON = LootGsons.getTableGsonBuilder()
+  Gson GSON = new GsonBuilder()
       .setPrettyPrinting()
       .disableHtmlEscaping()
       .enableComplexMapKeySerialization()
+      .registerTypeHierarchyAdapter(LootTable.class, (JsonSerializer<LootTable>) (src, typeOfSrc, context) -> Util.getResult(LootTable.CODEC.encodeStart(JsonOps.INSTANCE, src), IllegalStateException::new))
+      .registerTypeHierarchyAdapter(Advancement.class, (JsonSerializer<Advancement>) (src, typeOfSrc, context) -> src.toJson())
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, new Identifier.Serializer())
       .registerTypeHierarchyAdapter(StringIdentifiable.class, JsonSerializers.STRING_IDENTIFIABLE)
@@ -387,8 +391,26 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @Contract(mutates = "this")
   default void addRecipeAndAdvancement(@NotNull RecipeJsonProvider recipeJsonProvider) {
-    addRecipe(recipeJsonProvider.getRecipeId(), recipeJsonProvider);
-    addAdvancement(recipeJsonProvider.getAdvancementId(), serialize(recipeJsonProvider.toAdvancementJson()));
+    addRecipe(recipeJsonProvider.id(), recipeJsonProvider);
+    final AdvancementEntry advancementEntry = recipeJsonProvider.advancement();
+    if (advancementEntry != null) {
+      addAdvancement(advancementEntry.id(), serialize(advancementEntry.value()));
+    }
+  }
+
+  default RecipeExporter getRecipeExporter() {
+    return new RecipeExporter() {
+      @Override
+      public void accept(RecipeJsonProvider recipeJsonProvider) {
+        addRecipeAndAdvancement(recipeJsonProvider);
+      }
+
+      @Override
+      public Advancement.Builder getAdvancementBuilder() {
+        // FIXME: 2023/9/13, 013 parent(Identifier) is deprecated for removal.
+        return Advancement.Builder.createUntelemetered().parent(new AdvancementEntry(CraftingRecipeJsonBuilder.ROOT, null));
+      }
+    };
   }
 
   /**
@@ -399,7 +421,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull CraftingRecipeJsonBuilder recipeJsonBuilder) {
-    recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
+    recipeJsonBuilder.offerTo(getRecipeExporter(), recipeId);
   }
 
   /**
@@ -410,7 +432,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingTransformRecipeJsonBuilder recipeJsonBuilder) {
-    recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
+    recipeJsonBuilder.offerTo(getRecipeExporter(), recipeId);
   }
 
   /**
@@ -421,7 +443,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingTrimRecipeJsonBuilder recipeJsonBuilder) {
-    recipeJsonBuilder.offerTo(this::addRecipeAndAdvancement, recipeId);
+    recipeJsonBuilder.offerTo(getRecipeExporter(), recipeId);
   }
 
   /**
@@ -446,7 +468,8 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @Contract(mutates = "this")
   default byte[] addAdvancement(Identifier id, Advancement.Builder advancement) {
-    return addAdvancement(id, serialize(advancement.toJson()));
+    // TODO: 2023/9/13, 013 verify
+    return addAdvancement(id, serialize(advancement.build(id).value()));
   }
 
   @Contract(mutates = "this")

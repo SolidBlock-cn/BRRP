@@ -3,9 +3,11 @@ import com.modrinth.minotaur.dependencies.ModDependency
 plugins {
 //    id "architectury-plugin" version "3.4-SNAPSHOT"
     id "fabric-loom" version "1.3-SNAPSHOT"
+    id 'maven-publish'
+    id 'io.github.juuxel.loom-vineflower' version '1.11.0'
+
     id "com.modrinth.minotaur" version "2.+" apply false
     id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
-    id 'io.github.juuxel.loom-vineflower' version '1.11.0'
     id "com.github.breadmoirai.github-release" version "2.4.1" apply false
 }
 /*
@@ -16,11 +18,9 @@ architectury {
 
 allprojects {
     apply plugin: "fabric-loom"
-    apply plugin: "java"
-//    apply plugin: "architectury-plugin"
-    apply plugin: "maven-publish"
-
-    archivesBaseName = rootProject.archives_base_name
+    base {
+        archivesName = rootProject.archives_base_name
+    }
     version = rootProject.mod_version + "-" + project.minecraft_version
     group = rootProject.maven_group
 
@@ -42,14 +42,21 @@ allprojects {
     java {
         withSourcesJar()
     }
+    loom {
+        runConfigs.configureEach {
+            ideConfigGenerated = (project != rootProject)
+        }
+    }
 }
-
-archivesBaseName += '-common'
+base {
+    archivesName = archivesName.get() + '-common'
+}
 
 subprojects {
     apply plugin: "com.modrinth.minotaur"
     apply plugin: 'com.matthewprenger.cursegradle'
     apply plugin: 'com.github.breadmoirai.github-release'
+    apply plugin: "maven-publish"
 
     loom {
         runs {
@@ -137,16 +144,10 @@ subprojects {
     }
 }
 
-loom {
-    mixin {
-        defaultRefmapName = "brrp-v1-common-refmap.json"
-    }
-}
-
 dependencies {
-    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
-    // Do NOT use other classes from fabric loader
+    // 用于在 common 部分使用与 @Environment 有关的注解，以及 Fabric Data Generation API 中的 access widener。
     modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 }
 
 publishing {

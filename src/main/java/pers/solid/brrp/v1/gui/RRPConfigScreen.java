@@ -143,7 +143,7 @@ public class RRPConfigScreen extends Screen {
 
   @Override
   public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-    this.renderBackgroundTexture(context);
+    super.render(context, mouseX, mouseY, delta);
 
     switch (currentTab) {
       case 0 -> beforeVanillaListWidget.render(context, mouseX, mouseY, delta);
@@ -151,7 +151,6 @@ public class RRPConfigScreen extends Screen {
       case 2 -> afterVanillaListWidget.render(context, mouseX, mouseY, delta);
     }
     context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 8, 0xFFFFFF);
-    super.render(context, mouseX, mouseY, delta);
   }
 
   @Environment(EnvType.CLIENT)
@@ -233,7 +232,8 @@ public class RRPConfigScreen extends Screen {
           }
         }).dimensions(0, 0, 60, 20).tooltip(Tooltip.of(Text.translatable("brrp.configScreen.regenerate.tooltip").append(resourcePack instanceof RuntimeResourcePack runtimeResourcePack && runtimeResourcePack.hasRegenerationCallback() ? Text.empty() : Text.literal("\n").formatted(Formatting.RED).append(Text.translatable("brrp.configScreen.regenerate.notSupported"))))).build();
         this.dumpButton = ButtonWidget.builder(Text.translatable("brrp.configScreen.dump"), button -> {
-          if (resourcePack instanceof RuntimeResourcePack runtimeResourcePack) client.setScreen(new DumpScreen(RRPConfigScreen.this, runtimeResourcePack));
+          if (resourcePack instanceof RuntimeResourcePack runtimeResourcePack)
+            client.setScreen(new DumpScreen(RRPConfigScreen.this, runtimeResourcePack));
         }).tooltip(Tooltip.of(Text.translatable("brrp.configScreen.dump.tooltip"))).dimensions(0, 0, 60, 20).build();
         List<Text> descriptionList = new ArrayList<>();
         if (resourcePack instanceof RuntimeResourcePack runtimeResourcePack) {

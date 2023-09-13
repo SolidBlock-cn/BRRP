@@ -1,6 +1,6 @@
 package pers.solid.brrp.v1.recipe;
 
-import net.minecraft.advancement.criterion.CriterionConditions;
+import net.minecraft.advancement.AdvancementCriterion;
 import net.minecraft.data.server.recipe.RecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.RecipeProvider;
@@ -26,7 +26,7 @@ public interface RecipeJsonBuilderExtension<Self> {
   @SuppressWarnings("unchecked")
   @Contract("_, _ -> this")
   @ApiStatus.Internal
-  default Self criterionMethodBridge(String criterionName, CriterionConditions criterionConditions) {
+  default Self criterionMethodBridge(String criterionName, AdvancementCriterion<?> criterion) {
     return (Self) this;
   }
 

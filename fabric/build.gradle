@@ -10,8 +10,9 @@ architectury {
 loom {
     accessWidenerPath = project(":").loom.accessWidenerPath
 }
-
-archivesBaseName += '-fabric'
+base {
+    archivesName = archivesName.get() + '-fabric'
+}
 
 configurations {
     common
@@ -30,7 +31,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 
     common(project(path: ":", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":", configuration: "transformProductionFabric")) { transitive false }
+    shadowCommon(project(path: ":", configuration: "namedElements")) { transitive false }
 
     modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 }
@@ -46,26 +47,23 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
-//    classifier "dev-shadow" todo check
     archiveClassifier = "dev-shadow"
 }
 
 remapJar {
-//    injectAccessWidener = true
     inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
-//    classifier null todo check
     archiveClassifier = null
 }
 
 jar {
-//    classifier "dev" todo check
     archiveClassifier = "dev"
 }
 
 sourcesJar {
     def commonSources = rootProject.sourcesJar
     dependsOn commonSources
+    duplicatesStrategy DuplicatesStrategy.INCLUDE
 
     from commonSources.archiveFile.map { zipTree(it) }
 }

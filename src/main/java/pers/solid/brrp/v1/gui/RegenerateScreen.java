@@ -76,7 +76,7 @@ public class RegenerateScreen extends Screen {
 
   @Override
   public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-    renderBackground(context);
+    super.render(context, mouseX, mouseY, delta);
     context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 8, 0xFFFFFF);
     summaryText.setX(width / 2 - summaryText.getWidth() / 2);
     boolean isIdle = currentThread == null || !currentThread.isAlive();
@@ -88,7 +88,6 @@ public class RegenerateScreen extends Screen {
     if (isIdle) {
       stateText.setMessage(STATE_IDLE);
     }
-    super.render(context, mouseX, mouseY, delta);
   }
 
   private void regenClientOnly() {

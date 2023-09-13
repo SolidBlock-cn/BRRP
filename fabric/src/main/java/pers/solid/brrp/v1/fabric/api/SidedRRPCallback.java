@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
-import pers.solid.brrp.v1.RRPEventHelper;
 
 import java.util.List;
 import java.util.function.Function;

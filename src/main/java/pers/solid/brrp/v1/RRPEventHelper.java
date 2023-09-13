@@ -1,8 +1,6 @@
 package pers.solid.brrp.v1;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.resource.ResourceType;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
@@ -17,34 +15,16 @@ public abstract class RRPEventHelper {
   /**
    * Register your resource pack that will be read <strong>before</strong> Minecraft and regular resources are loaded. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, that will be used instead. Therefore, resource packs registered here cannot override non-runtime resources.
    */
-  public static final RRPEventHelper BEFORE_VANILLA = getBeforeVanilla();
+  public static RRPEventHelper BEFORE_VANILLA = null;
   /**
    * Register your resource pack at a higher priority than minecraft and mod resources, but lower priority than user resources. The resources will be recognized in the Resource Pack / Data Pack screen and the {@code /data} command.
    */
-  public static final RRPEventHelper BEFORE_USER = getBeforeUser();
+  public static RRPEventHelper BEFORE_USER = null;
 
   /**
    * Register your resource pack that will be read <strong>after</strong> Minecraft and regular resources are loaded. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, they will be overridden by this runtime resource. Therefore, if you want to override Minecraft vanilla resources and other non-runtime resources, you can register here.
    */
-  public static final RRPEventHelper AFTER_VANILLA = getAfterVanilla();
-
-  @ApiStatus.Internal
-  @ExpectPlatform
-  public static RRPEventHelper getBeforeVanilla() {
-    throw new AssertionError();
-  }
-
-  @ApiStatus.Internal
-  @ExpectPlatform
-  public static RRPEventHelper getBeforeUser() {
-    throw new AssertionError();
-  }
-
-  @ApiStatus.Internal
-  @ExpectPlatform
-  public static RRPEventHelper getAfterVanilla() {
-    throw new AssertionError();
-  }
+  public static RRPEventHelper AFTER_VANILLA = null;
 
   /**
    * Register a simple resource pack regardless of the resource type.

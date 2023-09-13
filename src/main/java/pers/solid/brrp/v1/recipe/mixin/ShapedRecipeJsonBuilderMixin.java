@@ -1,5 +1,6 @@
 package pers.solid.brrp.v1.recipe.mixin;
 
+import net.minecraft.advancement.AdvancementCriterion;
 import net.minecraft.advancement.criterion.CriterionConditions;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pers.solid.brrp.v1.recipe.RecipeJsonBuilderExtension;
@@ -18,17 +20,20 @@ import pers.solid.brrp.v1.recipe.ShapedRecipeJsonBuilderExtension;
 @Mixin(ShapedRecipeJsonBuilder.class)
 public abstract class ShapedRecipeJsonBuilderMixin implements ShapedRecipeJsonBuilderExtension {
   @Shadow
-  public abstract ShapedRecipeJsonBuilder criterion(String string, CriterionConditions arg);
-
-  @Shadow
   public abstract ShapedRecipeJsonBuilder pattern(String patternStr);
 
   @Shadow
   @Final
   private RecipeCategory category;
+
+  @Shadow public abstract ShapedRecipeJsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion);
+
+  @Unique
   private boolean bypassesValidation;
+  @Unique
   private @Nullable String customRecipeCategory;
 
+  @Unique
   @SuppressWarnings("DataFlowIssue")
   private ShapedRecipeJsonBuilder self() {
     return (ShapedRecipeJsonBuilder) (Object) this;
@@ -43,8 +48,8 @@ public abstract class ShapedRecipeJsonBuilderMixin implements ShapedRecipeJsonBu
   }
 
   @Override
-  public ShapedRecipeJsonBuilder criterionMethodBridge(String criterionName, CriterionConditions criterionConditions) {
-    return criterion(criterionName, criterionConditions);
+  public ShapedRecipeJsonBuilder criterionMethodBridge(String criterionName, AdvancementCriterion<?> criterion) {
+    return criterion(criterionName, criterion);
   }
 
   @Override

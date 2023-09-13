@@ -7,6 +7,7 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.registry.Registries;
 import net.minecraft.stat.StatType;
 import net.minecraft.text.TextContent;
 import net.minecraft.text.TranslatableTextContent;
@@ -157,7 +158,7 @@ public interface LanguageProvider {
    */
   @Contract(mutates = "this", value = "_, _ -> this")
   default LanguageProvider add(@NotNull StatType<?> statType, String value) {
-    return add(statType.getTranslationKey(), value);
+    return add("stat_type." + Registries.STAT_TYPE.getId(statType).toString().replace(':', '.'), value);
   }
 
   /**
