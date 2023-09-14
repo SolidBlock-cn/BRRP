@@ -1,4 +1,1 @@
-- Fixed the version that specifying transformations may result in malformed serialization.
-- Runtime resource packs registered on `RRPCallback.BEFORE_USER` are no longer experimental.
-- Async and lazy resources are no longer experimental.
-- (About developing) Since this version, all publications are implemented in Gradle tasks.
+For 1.20.2 snapshot versions
