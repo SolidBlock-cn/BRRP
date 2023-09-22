@@ -26,7 +26,6 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -41,6 +40,7 @@ import pers.solid.brrp.v1.model.TransformationBuilder;
 import pers.solid.brrp.v1.tag.IdentifiedTagBuilder;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * <p><strong>This class is loaded only in development environment. </strong>Therefore, it is just for testing, and should not be seen as the real part of this mod. This class also serves as a simple example of the usage of APIs of this mod. Therefore, you can read the sources of the class to have a simple understanding of the usage.</p>
@@ -242,15 +242,15 @@ public class BRRPTest {
     test2.setSidedRegenerationCallback(ResourceType.CLIENT_RESOURCES, () -> {
       test2.clearResources(ResourceType.CLIENT_RESOURCES);
       for (int i = 0; i < 1024; i++) {
-        Thread.sleep(RandomUtils.nextLong(0, 20));
-        test2.addAsset(new Identifier("brrp", "test/" + RandomUtils.nextInt()), new byte[16]);
+        Thread.sleep(ThreadLocalRandom.current().nextLong(20));
+        test2.addAsset(new Identifier("brrp", "test/" + ThreadLocalRandom.current().nextInt()), new byte[16]);
       }
     });
     test2.setSidedRegenerationCallback(ResourceType.SERVER_DATA, () -> {
       test2.clearResources(ResourceType.SERVER_DATA);
       for (int i = 0; i < 1024; i++) {
-        Thread.sleep(RandomUtils.nextLong(0, 20));
-        test2.addData(new Identifier("brrp", "test/" + RandomUtils.nextInt()), new byte[16]);
+        Thread.sleep(ThreadLocalRandom.current().nextLong(20));
+        test2.addData(new Identifier("brrp", "test/" + ThreadLocalRandom.current().nextInt()), new byte[16]);
       }
     });
     RRPEventHelper.BEFORE_VANILLA.registerPack(test2);

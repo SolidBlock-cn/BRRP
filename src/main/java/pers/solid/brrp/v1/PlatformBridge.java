@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.TestOnly;
 
@@ -19,10 +20,21 @@ import java.util.List;
 @ApiStatus.Internal
 public abstract class PlatformBridge {
 
-  @ApiStatus.Internal public static PlatformBridge __instance = null;
+  private static final class InstanceHolder {
+    private static final PlatformBridge INSTANCE;
+
+    static {
+      try {
+        final Class<?> c = Class.forName("pers.solid.brrp.v1.fabric.PlatformBridgeImpl");
+        INSTANCE = (PlatformBridge) c.getMethod("getInstance").invoke(null, ArrayUtils.EMPTY_OBJECT_ARRAY);
+      } catch (ReflectiveOperationException | ClassCastException e) {
+        throw new RuntimeException("The Better Runtime Resource Pack mod is not correctly loaded. Please contact the mod author.", e);
+      }
+    }
+  }
 
   public static PlatformBridge getInstance() {
-    return __instance;
+    return InstanceHolder.INSTANCE;
   }
 
   public abstract void postBefore(ResourceType type, List<ResourcePack> packs);

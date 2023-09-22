@@ -153,6 +153,11 @@ public class RRPConfigScreen extends Screen {
     context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 8, 0xFFFFFF);
   }
 
+  @Override
+  public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+    renderBackgroundTexture(context);
+  }
+
   @Environment(EnvType.CLIENT)
   public class PackListWidget extends ElementListWidget<PackListWidget.Entry> {
     private static final Text NOTHING_HERE = Text.translatable("brrp.configScreen.nothing");

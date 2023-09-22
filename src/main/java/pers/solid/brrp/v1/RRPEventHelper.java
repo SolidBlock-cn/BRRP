@@ -1,6 +1,7 @@
 package pers.solid.brrp.v1;
 
 import net.minecraft.resource.ResourceType;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
@@ -15,16 +16,27 @@ public abstract class RRPEventHelper {
   /**
    * Register your resource pack that will be read <strong>before</strong> Minecraft and regular resources are loaded. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, that will be used instead. Therefore, resource packs registered here cannot override non-runtime resources.
    */
-  public static RRPEventHelper BEFORE_VANILLA = null;
+  public static final RRPEventHelper BEFORE_VANILLA;
   /**
    * Register your resource pack at a higher priority than minecraft and mod resources, but lower priority than user resources. The resources will be recognized in the Resource Pack / Data Pack screen and the {@code /data} command.
    */
-  public static RRPEventHelper BEFORE_USER = null;
+  public static final RRPEventHelper BEFORE_USER;
 
   /**
    * Register your resource pack that will be read <strong>after</strong> Minecraft and regular resources are loaded. If Minecraft vanilla resources or other non-runtime resources exist in the same resource location, they will be overridden by this runtime resource. Therefore, if you want to override Minecraft vanilla resources and other non-runtime resources, you can register here.
    */
-  public static RRPEventHelper AFTER_VANILLA = null;
+  public static final RRPEventHelper AFTER_VANILLA;
+
+  static {
+    try {
+      final Class<?> c = Class.forName("pers.solid.brrp.v1.fabric.RRPEventHelperImpl");
+      BEFORE_VANILLA = (RRPEventHelper) c.getMethod("getBeforeVanilla").invoke(null, ArrayUtils.EMPTY_OBJECT_ARRAY);
+      BEFORE_USER = (RRPEventHelper) c.getMethod("getBeforeUser").invoke(null, ArrayUtils.EMPTY_OBJECT_ARRAY);
+      AFTER_VANILLA = (RRPEventHelper) c.getMethod("getAfterVanilla").invoke(null);
+    } catch (ReflectiveOperationException | ClassCastException e) {
+      throw new RuntimeException("The Better Runtime Resource Pack mod is not correctly loaded. Please contact the mod author.", e);
+    }
+  }
 
   /**
    * Register a simple resource pack regardless of the resource type.
