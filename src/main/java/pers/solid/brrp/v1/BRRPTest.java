@@ -36,6 +36,7 @@ import pers.solid.brrp.v1.api.LanguageProvider;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.generator.*;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
+import pers.solid.brrp.v1.model.ModelOverrideBuilder;
 import pers.solid.brrp.v1.model.TransformationBuilder;
 import pers.solid.brrp.v1.tag.IdentifiedTagBuilder;
 
@@ -236,6 +237,10 @@ public class BRRPTest {
     });
     beforeUser.addLang(new Identifier("minecraft", "en_us"), LanguageProvider.create().add(Blocks.YELLOW_WOOL, "The model is modified by a 'before-user' runtime resource pack."));
     beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableId(), new VanillaBlockLootTableGenerator().drops(Blocks.YELLOW_WOOL, ConstantLootNumberProvider.create(3)));
+    beforeUser.addModel(new Identifier("minecraft", "item/bow"), ModelJsonBuilder.create(new Identifier("minecraft", "item/white_concrete"))
+        .addOverride(ModelOverrideBuilder.of(new Identifier("item/yellow_concrete"), new Identifier("pulling"), 1))
+        .addOverride(ModelOverrideBuilder.of(new Identifier("item/orange_concrete"), new Identifier("pulling"), 1).addCondition(new Identifier("pull"), 0.65f))
+        .addOverride(ModelOverrideBuilder.of(new Identifier("item/red_concrete"), new Identifier("pulling"), 1).addCondition(new Identifier("pull"), 0.9f)));
     RRPEventHelper.BEFORE_USER.registerPack(beforeUser);
 
     final RuntimeResourcePack test2 = RuntimeResourcePack.create(new Identifier("brrp", "test2"));
@@ -253,6 +258,7 @@ public class BRRPTest {
         test2.addData(new Identifier("brrp", "test/" + ThreadLocalRandom.current().nextInt()), new byte[16]);
       }
     });
+
     RRPEventHelper.BEFORE_VANILLA.registerPack(test2);
   }
 }

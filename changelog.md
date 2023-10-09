@@ -1,1 +1,1 @@
-For 1.20.2 snapshot versions
+- Fixed the issue that the mod cannot launch under non-development environment

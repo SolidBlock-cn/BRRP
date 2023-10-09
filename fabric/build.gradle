@@ -32,6 +32,7 @@ dependencies {
 
     common(project(path: ":", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":", configuration: "namedElements")) { transitive false }
+    // fixme 此 shadowCommon 在 Architectury Plugin 中的 configuration 为 transformProductionFabric，这在 Fabric Loom 中不存在，这会导致 shadow 中的 mixin 无法自动添加 refmap，需要手动添加。
 
     modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 }

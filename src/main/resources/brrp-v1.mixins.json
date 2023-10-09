@@ -13,5 +13,6 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "refmap": "brrp-v1-common-refmap.json"
 }

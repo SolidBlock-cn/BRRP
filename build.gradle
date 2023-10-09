@@ -83,7 +83,7 @@ subprojects {
     modrinth {
         println "Modrinth token: ${token.get()}"
         projectId = 'JnrDtPAE'
-        versionNumber = "${rootProject.mod_version}-mc${rootProject.minecraft_version}" //fixme change since release
+        versionNumber = "${rootProject.mod_version}-mc${rootProject.minecraft_version}-$platform"
         versionType = 'release'
         uploadFile = remapJar
         gameVersions = List.of(project.supported_minecraft_versions.split(","))
@@ -104,8 +104,7 @@ subprojects {
             changelog = changelogContent
             releaseType = 'release'
 
-            addGameVersion '1.20.2-Snapshot' // fixme change since release
-//            gameVersionStrings.addAll project.supported_minecraft_versions.split(',')
+            gameVersionStrings.addAll project.supported_minecraft_versions.split(',')
             addGameVersion platform.capitalize()
 
             mainArtifact(remapJar) {
@@ -132,7 +131,7 @@ subprojects {
         repo "BRRP"
         tagName "v$project.mod_version"
         targetCommitish "1.20.1"
-//        body changelogContent fixme change since release
+        body changelogContent
         draft true
         prerelease false
         releaseAssets remapJar, remapSourcesJar
@@ -142,6 +141,12 @@ subprojects {
 
     publish {
         dependsOn tasks.modrinth, tasks.curseforge, tasks.githubRelease, tasks.publishToMavenLocal
+    }
+}
+
+loom {
+    mixin {
+        defaultRefmapName = "brrp-v1-common-refmap.json"
     }
 }
 
