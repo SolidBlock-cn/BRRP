@@ -18,7 +18,8 @@ import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.server.recipe.*;
 import net.minecraft.loot.LootTable;
-import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.tag.*;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
@@ -97,13 +98,13 @@ public interface RuntimeResourcePack extends ResourcePack {
       .disableHtmlEscaping()
       .enableComplexMapKeySerialization()
       .registerTypeHierarchyAdapter(LootTable.class, (JsonSerializer<LootTable>) (src, typeOfSrc, context) -> Util.getResult(LootTable.CODEC.encodeStart(JsonOps.INSTANCE, src), IllegalStateException::new))
-      .registerTypeHierarchyAdapter(Advancement.class, (JsonSerializer<Advancement>) (src, typeOfSrc, context) -> src.toJson())
+      .registerTypeHierarchyAdapter(Advancement.class, (JsonSerializer<Advancement>) (src, typeOfSrc, context) -> Util.getResult(Advancement.CODEC.encodeStart(JsonOps.INSTANCE, src), IllegalStateException::new))
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, new Identifier.Serializer())
       .registerTypeHierarchyAdapter(StringIdentifiable.class, JsonSerializers.STRING_IDENTIFIABLE)
       .registerTypeHierarchyAdapter(Vector3f.class, JsonSerializers.VECTOR_3F)
       .registerTypeHierarchyAdapter(Either.class, JsonSerializers.EITHER)
-      .registerTypeHierarchyAdapter(RecipeJsonProvider.class, JsonSerializers.RECIPE_JSON_PROVIDER)
+      .registerTypeHierarchyAdapter(Recipe.class, JsonSerializers.RECIPE_JSON_PROVIDER)
       .setPrettyPrinting()
       .create();
   Logger LOGGER = LogUtils.getLogger();
@@ -377,37 +378,28 @@ public interface RuntimeResourcePack extends ResourcePack {
    * Add a recipe to the runtime resource pack. The recipe id is usually same to the item id, but sometimes append with some extra information.
    *
    * @param id     The id of the recipe, which is usually same to the item id, but can sometimes be suffixed with other string. Example: {@code new Identifier("my_mod", "strange_stone_stairs"}}, {@code new Identifier("my_mod", "strange_stone_from_stonecutting")}.
-   * @param recipe The {@link RecipeJsonProvider} object. You may conveniently create it using methods in {@link RecipeProvider}.
+   * @param recipe The {@link Recipe} object. You may conveniently create it using methods in {@link RecipeProvider}.
    */
   @Contract(mutates = "this")
-  default byte[] addRecipe(Identifier id, RecipeJsonProvider recipe) {
+  default byte[] addRecipe(Identifier id, Recipe<?> recipe) {
     return addRecipe(id, serialize(recipe));
   }
 
-  /**
-   * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. Both the recipe id and the advancement id are stored in the {@link RecipeJsonProvider}, so you do not need to specify it here. The recipe must have a {@link RecipeCategory}, or it will throw an error when fetching the advancement id.
-   *
-   * @param recipeJsonProvider The {@link RecipeJsonProvider} object. You may conveniently create it using methods in {@link RecipeProvider}.
-   */
   @Contract(mutates = "this")
-  default void addRecipeAndAdvancement(@NotNull RecipeJsonProvider recipeJsonProvider) {
-    addRecipe(recipeJsonProvider.id(), recipeJsonProvider);
-    final AdvancementEntry advancementEntry = recipeJsonProvider.advancement();
-    if (advancementEntry != null) {
-      addAdvancement(advancementEntry.id(), serialize(advancementEntry.value()));
-    }
+  default byte[] addRecipe(@NotNull RecipeEntry<?> recipeEntry) {
+    return addRecipe(recipeEntry.id(), recipeEntry.value());
   }
 
   default RecipeExporter getRecipeExporter() {
     return new RecipeExporter() {
       @Override
-      public void accept(RecipeJsonProvider recipeJsonProvider) {
-        addRecipeAndAdvancement(recipeJsonProvider);
+      public void accept(Identifier recipeId, Recipe<?> recipe, @Nullable AdvancementEntry advancement) {
+        addRecipe(recipeId, recipe);
+        if (advancement != null) addAdvancement(advancement);
       }
 
       @Override
       public Advancement.Builder getAdvancementBuilder() {
-        // FIXME: 2023/9/13, 013 parent(Identifier) is deprecated for removal.
         return Advancement.Builder.createUntelemetered().parent(new AdvancementEntry(CraftingRecipeJsonBuilder.ROOT, null));
       }
     };
@@ -417,7 +409,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. You may confirm it has a criterion to obtain the recipe of it will throw an error, unless you call {@link pers.solid.brrp.v1.recipe.RecipeJsonBuilderExtension#setBypassesValidation(boolean)} to bypass it.
    *
    * @param recipeId          The id of the recipe.
-   * @param recipeJsonBuilder The {@link RecipeJsonBuilder}. The id of the advancement will be determined by {@link CraftingRecipeJsonBuilder#offerTo}.
+   * @param recipeJsonBuilder The {@link Recipe}. The id of the advancement will be determined by {@link CraftingRecipeJsonBuilder#offerTo}.
    */
   @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull CraftingRecipeJsonBuilder recipeJsonBuilder) {
@@ -428,7 +420,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. You may confirm it has a criterion to obtain the recipe of it will throw an error, unless you call {@link pers.solid.brrp.v1.recipe.RecipeJsonBuilderExtension#setBypassesValidation(boolean)} to bypass it.
    *
    * @param recipeId          The id of the recipe.
-   * @param recipeJsonBuilder The {@link RecipeJsonBuilder}. The id of the advancement will be determined by {@link SmithingTransformRecipeJsonBuilder#offerTo}.
+   * @param recipeJsonBuilder The {@link Recipe}. The id of the advancement will be determined by {@link SmithingTransformRecipeJsonBuilder#offerTo}.
    */
   @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingTransformRecipeJsonBuilder recipeJsonBuilder) {
@@ -439,7 +431,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * Add a recipe <em>as well as</em> a corresponding advancement to obtain that recipe. You may confirm it has a criterion to obtain the recipe of it will throw an error, unless you call {@link pers.solid.brrp.v1.recipe.RecipeJsonBuilderExtension#setBypassesValidation(boolean)} to bypass it.
    *
    * @param recipeId          The id of the recipe.
-   * @param recipeJsonBuilder The {@link RecipeJsonBuilder}. The id of the advancement will be determined by {@link SmithingTrimRecipeJsonBuilder#offerTo}.
+   * @param recipeJsonBuilder The {@link Recipe}. The id of the advancement will be determined by {@link SmithingTrimRecipeJsonBuilder#offerTo}.
    */
   @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingTrimRecipeJsonBuilder recipeJsonBuilder) {
@@ -468,8 +460,15 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @Contract(mutates = "this")
   default byte[] addAdvancement(Identifier id, Advancement.Builder advancement) {
-    // TODO: 2023/9/13, 013 verify
     return addAdvancement(id, serialize(advancement.build(id).value()));
+  }
+
+  default byte[] addAdvancement(Identifier id, Advancement advancement) {
+    return addAdvancement(id, serialize(advancement));
+  }
+
+  default byte[] addAdvancement(@NotNull AdvancementEntry advancementEntry) {
+    return addAdvancement(advancementEntry.id(), advancementEntry.value());
   }
 
   @Contract(mutates = "this")

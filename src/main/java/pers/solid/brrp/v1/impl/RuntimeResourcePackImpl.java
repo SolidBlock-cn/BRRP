@@ -3,6 +3,7 @@ package pers.solid.brrp.v1.impl;
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.registry.tag.TagBuilder;
 import net.minecraft.registry.tag.TagFile;
@@ -14,7 +15,9 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -411,9 +414,9 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
         object.addProperty("pack_format", this.packVersion);
         final Text description = getDescription();
         if (description != null) {
-          object.add("description", Text.Serializer.toJsonTree(description));
+          object.add("description", Util.getResult(TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, description), JsonParseException::new));
         } else {
-          object.add("description", Text.Serializer.toJsonTree(Text.translatable("brrp.pack.defaultDescription", getId())));
+          object.add("description", Util.getResult(TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, Text.translatable("brrp.pack.defaultDescription", getId())), JsonParseException::new));
         }
         return metaReader.fromJson(object);
       }

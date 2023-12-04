@@ -31,7 +31,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
   public final @Nullable Block baseBlock;
 
   public BRRPFenceGateBlock(@Nullable Block baseBlock, Settings settings, WoodType woodType) {
-    super(settings, woodType);
+    super(woodType, settings);
     this.baseBlock = baseBlock;
   }
 

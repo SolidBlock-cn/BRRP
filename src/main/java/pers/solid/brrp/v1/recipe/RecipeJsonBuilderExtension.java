@@ -1,8 +1,8 @@
 package pers.solid.brrp.v1.recipe;
 
 import net.minecraft.advancement.AdvancementCriterion;
-import net.minecraft.data.server.recipe.RecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.RecipeProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -16,8 +16,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Consumer;
 
 public interface RecipeJsonBuilderExtension<Self> {
   /**
@@ -67,7 +65,7 @@ public interface RecipeJsonBuilderExtension<Self> {
 
   /**
    * <p>Set a custom recipe category. The recipe category is used in the id of advancement. In vanilla minecraft, the id of the advancement of obtaining the recipe is the id of the recipe prefixed with <code>recipes/<var>recipeCategory</var>/</code>. However, {@link RecipeCategory} is an enum, and only supports specified values.</p>
-   * <p>If you need to specify a custom recipe category so that the advancement will be in the specified location, you may call this method. BRRP has made it possible to recognize your custom recipe category, which will be used in {@link RecipeJsonProvider#getAdvancementId()} via "offerTo" methods, such as {@link net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder#offerTo(Consumer, Identifier)}.</p>
+   * <p>If you need to specify a custom recipe category so that the advancement will be in the specified location, you may call this method. BRRP has made it possible to recognize your custom recipe category, which will be used via "offerTo" methods, such as {@link CraftingRecipeJsonBuilder#offerTo(RecipeExporter, Identifier)}.</p>
    * <p>If the custom recipe category is {@code null}, it will perform as vanilla does. If it is an empty string (not null), the location of the advancement will not be suffixed with any recipe category.</p>
    * <table><caption>Recipe id and advancement id</caption>
    * <tr><th>Recipe id</th><th>Custom recipe category</th><th>Advancement id</th></tr>
@@ -85,11 +83,11 @@ public interface RecipeJsonBuilderExtension<Self> {
 
   /**
    * <p>Set a custom crafting recipe category. Note that it differs from the "recipe category".</p>
-   * <p>Usually, for versions 1.19.3 and above, the crafting category is dependent on its recipe category, according to {@link RecipeJsonBuilder#getCraftingCategory(RecipeCategory)}. However, if it is {@code null}, it will throw an NPE.</p>
+   * <p>Usually, for versions 1.19.3 and above, the crafting category is dependent on its recipe category, according to {@link CraftingRecipeJsonBuilder#toCraftingCategory(RecipeCategory)}. However, if it is {@code null}, it will throw an NPE.</p>
    * <p>The recipe category is given when you create a new recipe builder, and you can also config a custom recipe category. In this case, the crafting category is determined by the vanilla recipe category you provided initially, and the custom recipe category does not affect the crafting category. If your vanilla recipe category is null, you <em>have to</em> specify the custom recipe category.</p>
    *
    * @param customCraftingCategory Your custom crafting category.
-   * @see RecipeJsonBuilder#getCraftingCategory(RecipeCategory)
+   * @see CraftingRecipeJsonBuilder#toCraftingCategory(RecipeCategory)
    */
   @SuppressWarnings("unchecked")
   default Self setCustomCraftingCategory(@Nullable CraftingRecipeCategory customCraftingCategory) {
@@ -105,7 +103,7 @@ public interface RecipeJsonBuilderExtension<Self> {
   }
 
   /**
-   * The method is used for mixins to call to {@link RecipeJsonBuilder#getCraftingCategory(RecipeCategory)}.
+   * The method is used for mixins to call to {@link CraftingRecipeJsonBuilder#toCraftingCategory(RecipeCategory)}.
    */
   static @NotNull RecipeCategory invertGetCraftingCategory(@NotNull CraftingRecipeCategory craftingRecipeCategory) {
     return switch (craftingRecipeCategory) {

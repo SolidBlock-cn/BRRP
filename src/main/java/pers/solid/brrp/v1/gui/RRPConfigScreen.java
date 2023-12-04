@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -165,7 +166,7 @@ public class RRPConfigScreen extends Screen {
     private final @Nullable TextWidget nothingHereText;
 
     public PackListWidget(List<ResourcePack> packList) {
-      super(RRPConfigScreen.this.client, RRPConfigScreen.this.width, RRPConfigScreen.this.height, 40, RRPConfigScreen.this.height - 37, 36);
+      super(RRPConfigScreen.this.client, RRPConfigScreen.this.width, RRPConfigScreen.this.height, 40, 36);
       this.packList = packList;
       for (ResourcePack resourcePack : packList) {
         addEntry(new Entry(resourcePack));
@@ -196,8 +197,8 @@ public class RRPConfigScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-      super.render(context, mouseX, mouseY, delta);
+    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+      super.renderWidget(context, mouseX, mouseY, delta);
       if (nothingHereText != null) {
         nothingHereText.setPosition(0, height / 2 - 8);
         nothingHereText.render(context, mouseX, mouseY, delta);
@@ -205,8 +206,8 @@ public class RRPConfigScreen extends Screen {
     }
 
     @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
-      super.appendNarrations(builder);
+    public void appendClickableNarrations(NarrationMessageBuilder builder) {
+      super.appendClickableNarrations(builder);
       if (getFocused() != null && (getFocused().getFocused() == null || getFocused().getFocused() == getFocused().keyboardPlaceHolder)) {
         builder.put(NarrationPart.TITLE, getFocused().titleText);
         builder.put(NarrationPart.USAGE, getFocused().description);
@@ -225,7 +226,7 @@ public class RRPConfigScreen extends Screen {
 
       private final Text titleText;
       private final Text description;
-      private final TextWidget area;
+      private ScreenRect area;
 
       public Entry(ResourcePack resourcePack) {
         this.resourcePack = resourcePack;
@@ -259,7 +260,7 @@ public class RRPConfigScreen extends Screen {
         this.description = Texts.join(descriptionList, ScreenTexts.LINE_BREAK);
         keyboardPlaceHolder.setTooltip(Tooltip.of(description));
 
-        area = new TextWidget(width / 2 - getRowWidth() / 2, 0, getRowWidth(), itemHeight, Text.empty(), textRenderer);
+        area = new ScreenRect(width / 2 - getRowWidth() / 2, 0, getRowWidth(), itemHeight);
       }
 
       static MutableText singleOrPlural(String prefix, int number) {
@@ -273,17 +274,16 @@ public class RRPConfigScreen extends Screen {
         MultilineText.create(textRenderer, description, width - 151).draw(context, x + 5, y + 12, 10, 0xaaaaaa);
         context.disableScissor();
 
-        area.setPosition(width / 2 - entryWidth / 2, y);
-        area.setWidth(entryWidth);
+        area = new ScreenRect(width / 2 - entryWidth / 2, y, entryWidth, itemHeight);
         MutableText tooltipContent = Text.empty().append(titleText).append(ScreenTexts.LINE_BREAK);
         if (resourcePack instanceof RuntimeResourcePack runtimeResourcePack) {
           tooltipContent.append(Text.literal(runtimeResourcePack.getId().toString()).formatted(Formatting.GRAY)).append(ScreenTexts.LINE_BREAK);
         }
         tooltipContent.append(description.copy().formatted(Formatting.GRAY));
         if (isMouseOver(mouseX, mouseY) && !regenerateButton.isMouseOver(mouseX, mouseY) && !dumpButton.isMouseOver(mouseX, mouseY)) {
-          setTooltip(tooltipContent);
+          setTooltip(Tooltip.of(tooltipContent));
         } else if (this.isFocused() && MinecraftClient.getInstance().getNavigationType().isKeyboard() && (getFocused() == null || keyboardPlaceHolder.isFocused())) {
-          setTooltip(Tooltip.of(tooltipContent), new FocusedTooltipPositioner(area), true);
+          RRPConfigScreen.this.setTooltip(Tooltip.of(tooltipContent), new FocusedTooltipPositioner(area), true);
         }
         keyboardPlaceHolder.setPosition(width - 196, y + entryHeight / 2 - keyboardPlaceHolder.getHeight() / 2);   // don't render it;
 
