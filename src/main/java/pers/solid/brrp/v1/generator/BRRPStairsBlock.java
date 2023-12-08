@@ -1,5 +1,6 @@
 package pers.solid.brrp.v1.generator;
 
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -14,6 +15,7 @@ import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+import pers.solid.brrp.v1.BRRPUtils;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 import pers.solid.brrp.v1.model.ModelUtils;
@@ -22,6 +24,7 @@ import pers.solid.brrp.v1.model.ModelUtils;
  * A stairs block that implements {@link BlockResourceGenerator} so that you can conveniently generate resources. By default, a stairs block has four block models: common model, inner model, and an outer model. Each stairs block should be specified a base block, which cannot be {@code null}.
  */
 public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerator {
+  public static final MapCodec<BRRPStairsBlock> CODEC = BRRPUtils.createCodecWithBaseBlock(createSettingsCodec(), BRRPStairsBlock::new);
   public final @NotNull Block baseBlock;
 
   /**
@@ -75,5 +78,10 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
   @Override
   public RecipeCategory getRecipeCategory() {
     return ITEM_TO_RECIPE_CATEGORY.getOrDefault(asItem(), RecipeCategory.BUILDING_BLOCKS);
+  }
+
+  @Override
+  public MapCodec<? extends BRRPStairsBlock> getCodec() {
+    return CODEC;
   }
 }

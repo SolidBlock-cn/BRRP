@@ -1,5 +1,6 @@
 package pers.solid.brrp.v1.generator;
 
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -25,6 +26,7 @@ import pers.solid.brrp.v1.model.ModelUtils;
  * This is a simple extension of {@link SlabBlock} with the resource generation provided.
  */
 public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
+  public static final MapCodec<BRRPSlabBlock> CODEC = BRRPUtils.createCodecWithBaseBlock(createSettingsCodec(), BRRPSlabBlock::new);
   /**
    * The base block will be used to generate some files. It can be null.<p>
    * When the base block is null, the double-slab creates and uses the model or "slab_double" model, instead of directly using the model of base block.
@@ -94,5 +96,10 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
   @Override
   public RecipeCategory getRecipeCategory() {
     return ITEM_TO_RECIPE_CATEGORY.getOrDefault(asItem(), RecipeCategory.BUILDING_BLOCKS);
+  }
+
+  @Override
+  public MapCodec<? extends BRRPSlabBlock> getCodec() {
+    return CODEC;
   }
 }

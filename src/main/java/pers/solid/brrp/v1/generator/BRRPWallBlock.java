@@ -1,5 +1,6 @@
 package pers.solid.brrp.v1.generator;
 
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -16,6 +17,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
+import pers.solid.brrp.v1.BRRPUtils;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 import pers.solid.brrp.v1.model.ModelUtils;
@@ -24,6 +26,7 @@ import pers.solid.brrp.v1.model.ModelUtils;
  * A wall block by default has three block models. You can specify its texture (if different from base block) through {@link TextureRegistry}.
  */
 public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
+  public static final MapCodec<BRRPWallBlock> CODEC = BRRPUtils.createCodecWithBaseBlock(createSettingsCodec(), BRRPWallBlock::new);
   public final @Nullable Block baseBlock;
 
   public BRRPWallBlock(@Nullable Block baseBlock, Settings settings) {
@@ -84,5 +87,11 @@ public class BRRPWallBlock extends WallBlock implements BlockResourceGenerator {
   @Override
   public RecipeCategory getRecipeCategory() {
     return ITEM_TO_RECIPE_CATEGORY.getOrDefault(asItem(), RecipeCategory.DECORATIONS);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public MapCodec<WallBlock> getCodec() {
+    return (MapCodec<WallBlock>) (MapCodec<?>) CODEC;
   }
 }

@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.tooltip.FocusedTooltipPositioner;
+import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
@@ -166,7 +167,7 @@ public class RRPConfigScreen extends Screen {
     private final @Nullable TextWidget nothingHereText;
 
     public PackListWidget(List<ResourcePack> packList) {
-      super(RRPConfigScreen.this.client, RRPConfigScreen.this.width, RRPConfigScreen.this.height, 40, 36);
+      super(RRPConfigScreen.this.client, RRPConfigScreen.this.width, RRPConfigScreen.this.height - 77, 40, 36);
       this.packList = packList;
       for (ResourcePack resourcePack : packList) {
         addEntry(new Entry(resourcePack));
@@ -281,7 +282,7 @@ public class RRPConfigScreen extends Screen {
         }
         tooltipContent.append(description.copy().formatted(Formatting.GRAY));
         if (isMouseOver(mouseX, mouseY) && !regenerateButton.isMouseOver(mouseX, mouseY) && !dumpButton.isMouseOver(mouseX, mouseY)) {
-          setTooltip(Tooltip.of(tooltipContent));
+          RRPConfigScreen.this.setTooltip(Tooltip.of(tooltipContent), HoveredTooltipPositioner.INSTANCE, false);
         } else if (this.isFocused() && MinecraftClient.getInstance().getNavigationType().isKeyboard() && (getFocused() == null || keyboardPlaceHolder.isFocused())) {
           RRPConfigScreen.this.setTooltip(Tooltip.of(tooltipContent), new FocusedTooltipPositioner(area), true);
         }

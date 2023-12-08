@@ -1,5 +1,7 @@
 package pers.solid.brrp.v1.generator;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -20,6 +22,10 @@ import pers.solid.brrp.v1.model.ModelUtils;
  * </pre>
  */
 public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
+  /**
+   * The codec for {@link BRRPCubeBlock}. The {@link #textures} are ignored because it only impacts data generation.
+   */
+  public static final MapCodec<BRRPCubeBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(createSettingsCodec(), Identifier.CODEC.fieldOf("parent").forGetter(o -> o.parent)).apply(instance, (settings1, identifier) -> new BRRPCubeBlock(settings1, identifier, new TextureMap())));
   /**
    * The id of the parent model.
    */
@@ -95,5 +101,10 @@ public class BRRPCubeBlock extends Block implements BlockResourceGenerator {
   @Override
   public RecipeCategory getRecipeCategory() {
     return ITEM_TO_RECIPE_CATEGORY.getOrDefault(asItem(), RecipeCategory.BUILDING_BLOCKS);
+  }
+
+  @Override
+  protected MapCodec<? extends BRRPCubeBlock> getCodec() {
+    return CODEC;
   }
 }

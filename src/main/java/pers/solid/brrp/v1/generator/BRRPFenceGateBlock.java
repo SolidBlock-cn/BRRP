@@ -1,5 +1,7 @@
 package pers.solid.brrp.v1.generator;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -28,11 +30,14 @@ import pers.solid.brrp.v1.model.ModelUtils;
  * The fence gate which can be used for data generation. By default, a fence gate has four block models: common model, open-gate model, in-wall model, and in-wall open-gate model.
  */
 public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceGenerator {
+  public static final MapCodec<BRRPFenceGateBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(Block.CODEC.fieldOf("base_block").forGetter(BRRPFenceGateBlock::getBaseBlock), createSettingsCodec(), WoodType.CODEC.fieldOf("wood_type").forGetter(o -> o.type)).apply(instance, BRRPFenceGateBlock::new));
   public final @Nullable Block baseBlock;
+  private final WoodType type;
 
   public BRRPFenceGateBlock(@Nullable Block baseBlock, Settings settings, WoodType woodType) {
     super(woodType, settings);
     this.baseBlock = baseBlock;
+    this.type = woodType;
   }
 
   public BRRPFenceGateBlock(@NotNull Block baseBlock, WoodType woodType) {
@@ -100,5 +105,11 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
    */
   public @Nullable Item getSecondIngredient() {
     return Items.STICK;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public MapCodec<FenceGateBlock> getCodec() {
+    return (MapCodec<FenceGateBlock>) (MapCodec<?>) CODEC;
   }
 }

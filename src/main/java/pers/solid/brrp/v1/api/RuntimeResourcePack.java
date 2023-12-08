@@ -385,6 +385,11 @@ public interface RuntimeResourcePack extends ResourcePack {
     return addRecipe(id, serialize(recipe));
   }
 
+  /**
+   * Add a recipe to the runtime resource pack. The recipe id is specified in the {@link RecipeEntry}.
+   *
+   * @param recipeEntry The recipe as well as its id..
+   */
   @Contract(mutates = "this")
   default byte[] addRecipe(@NotNull RecipeEntry<?> recipeEntry) {
     return addRecipe(recipeEntry.id(), recipeEntry.value());
@@ -463,10 +468,21 @@ public interface RuntimeResourcePack extends ResourcePack {
     return addAdvancement(id, serialize(advancement.build(id).value()));
   }
 
+  /**
+   * Add an advancement to the runtime resource pack. The extension {@code ".json"} is automatically appended to the path.
+   *
+   * @param id          The {@linkplain Identifier identifier} of the advancement.
+   * @param advancement The advancement to be added.
+   */
   default byte[] addAdvancement(Identifier id, Advancement advancement) {
     return addAdvancement(id, serialize(advancement));
   }
 
+  /**
+   * Add an advancement to the runtime resource pack. The extension {@code ".json"} is automatically appended to the path.
+   *
+   * @param advancementEntry The id and advancement to be added.
+   */
   default byte[] addAdvancement(@NotNull AdvancementEntry advancementEntry) {
     return addAdvancement(advancementEntry.id(), advancementEntry.value());
   }

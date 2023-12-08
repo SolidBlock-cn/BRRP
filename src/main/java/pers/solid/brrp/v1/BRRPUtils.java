@@ -1,5 +1,7 @@
 package pers.solid.brrp.v1;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.api.EnvType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -15,6 +17,8 @@ import pers.solid.brrp.v1.annotations.PreferredEnvironment;
 import pers.solid.brrp.v1.generator.BlockResourceGenerator;
 import pers.solid.brrp.v1.generator.ItemResourceGenerator;
 import pers.solid.brrp.v1.generator.TextureRegistry;
+
+import java.util.function.BiFunction;
 
 /**
  * <p>It's similar to {@link ItemResourceGenerator} and {@link BlockResourceGenerator}, but it provides more <em>static</em> methods so that they can be used for blocks and items that do not implement {@link ItemResourceGenerator}, which are usually vanilla blocks.</p>
@@ -110,5 +114,9 @@ public final class BRRPUtils {
     } else {
       return block.getLootTableId();
     }
+  }
+
+  public static <B extends Block & BlockResourceGenerator> MapCodec<B> createCodecWithBaseBlock(RecordCodecBuilder<B, AbstractBlock.Settings> settingsCodec, BiFunction<Block, AbstractBlock.Settings, B> function) {
+    return RecordCodecBuilder.mapCodec(instance -> instance.group(Block.CODEC.fieldOf("base_block").forGetter(BlockResourceGenerator::getBaseBlock), settingsCodec).apply(instance, function));
   }
 }

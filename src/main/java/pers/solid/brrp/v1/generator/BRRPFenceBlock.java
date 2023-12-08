@@ -1,5 +1,6 @@
 package pers.solid.brrp.v1.generator;
 
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -18,6 +19,7 @@ import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pers.solid.brrp.v1.BRRPUtils;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 import pers.solid.brrp.v1.model.ModelUtils;
@@ -26,6 +28,7 @@ import pers.solid.brrp.v1.model.ModelUtils;
  * This is a simple fence block which can be used for {@link BlockResourceGenerator}. You may modify its texture with {@link TextureRegistry}.
  */
 public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator {
+  public static final MapCodec<BRRPFenceBlock> CODEC = BRRPUtils.createCodecWithBaseBlock(createSettingsCodec(), BRRPFenceBlock::new);
   /**
    * The base block of the fence block.
    */
@@ -103,5 +106,11 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
   @Override
   public RecipeCategory getRecipeCategory() {
     return ITEM_TO_RECIPE_CATEGORY.getOrDefault(asItem(), RecipeCategory.DECORATIONS);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public MapCodec<FenceBlock> getCodec() {
+    return (MapCodec<FenceBlock>) (MapCodec<?>) CODEC;
   }
 }
