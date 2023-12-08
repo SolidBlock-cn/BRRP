@@ -117,6 +117,6 @@ public final class BRRPUtils {
   }
 
   public static <B extends Block & BlockResourceGenerator> MapCodec<B> createCodecWithBaseBlock(RecordCodecBuilder<B, AbstractBlock.Settings> settingsCodec, BiFunction<Block, AbstractBlock.Settings, B> function) {
-    return RecordCodecBuilder.mapCodec(instance -> instance.group(Block.CODEC.fieldOf("base_block").forGetter(BlockResourceGenerator::getBaseBlock), settingsCodec).apply(instance, function));
+    return RecordCodecBuilder.mapCodec(instance -> instance.group(Registries.BLOCK.getCodec().fieldOf("base_block").forGetter(BlockResourceGenerator::getBaseBlock), settingsCodec).apply(instance, function));
   }
 }

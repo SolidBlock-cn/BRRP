@@ -18,6 +18,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +31,7 @@ import pers.solid.brrp.v1.model.ModelUtils;
  * The fence gate which can be used for data generation. By default, a fence gate has four block models: common model, open-gate model, in-wall model, and in-wall open-gate model.
  */
 public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceGenerator {
-  public static final MapCodec<BRRPFenceGateBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(Block.CODEC.fieldOf("base_block").forGetter(BRRPFenceGateBlock::getBaseBlock), createSettingsCodec(), WoodType.CODEC.fieldOf("wood_type").forGetter(o -> o.type)).apply(instance, BRRPFenceGateBlock::new));
+  public static final MapCodec<BRRPFenceGateBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(Registries.BLOCK.getCodec().fieldOf("base_block").forGetter(BRRPFenceGateBlock::getBaseBlock), createSettingsCodec(), WoodType.CODEC.fieldOf("wood_type").forGetter(o -> o.type)).apply(instance, BRRPFenceGateBlock::new));
   public final @Nullable Block baseBlock;
   private final WoodType type;
 
