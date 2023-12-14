@@ -1,8 +1,9 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.1-SNAPSHOT"
+    id "dev.architectury.loom" version "1.4-SNAPSHOT"
     id "com.modrinth.minotaur" version "2.+" apply false
-    id 'io.github.juuxel.loom-quiltflower' version '1.8.0'
+    id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
+    id "com.github.breadmoirai.github-release" version "2.5.2" apply false
 }
 
 architectury {
@@ -24,9 +25,6 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_16
 
     repositories {
-        maven {
-            url 'https://maven.aliyun.com/nexus/content/groups/public'
-        }
     }
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
@@ -42,11 +40,15 @@ allprojects {
         withSourcesJar()
     }
 }
-
-archivesBaseName += '-common'
+base {
+    archivesName = archivesName.get() + '-common'
+}
 
 subprojects {
     apply plugin: "com.modrinth.minotaur"
+    apply plugin: 'com.matthewprenger.cursegradle'
+    apply plugin: 'com.github.breadmoirai.github-release'
+    apply plugin: "maven-publish"
 
     loom {
         runs {
@@ -66,6 +68,71 @@ subprojects {
                 url = rootProject.file('../mvn-repo').path
             }
         }
+    }
+
+    String platform = project.properties.getOrDefault 'loom.platform', 'fabric'
+    final String changelogContent = rootProject.file('changelog.md').text
+    modrinth {
+        println "Modrinth token: ${token.get()}"
+        projectId = 'JnrDtPAE'
+        versionNumber = "${rootProject.mod_version}-mc${rootProject.minecraft_version}-$platform"
+        versionType = 'release'
+        uploadFile = remapJar
+        gameVersions = List.of(project.supported_minecraft_versions.split(","))
+        loaders = [platform]
+        changelog = changelogContent
+        dependencies = platform.equals('fabric') ? [
+                new ModDependency('P7dR8mSH', 'required') // Fabric API
+        ] : []
+    }
+
+    curseforge {
+        // The api key is store in my environment variable.
+        def getenv = System.getenv("CURSEFORGE_TOKEN")
+        println("CurseForge token: $getenv")
+        if (getenv) apiKey = getenv
+        project {
+            id = '618156'
+            changelog = changelogContent
+            releaseType = 'release'
+
+            gameVersionStrings.addAll project.supported_minecraft_versions.split(',')
+            addGameVersion platform.capitalize()
+
+            mainArtifact(remapJar) {
+                it.displayName = "brrp-$platform-${rootProject.mod_version}-mc${rootProject.minecraft_version}"
+            }
+            relations {
+                requiredDependency 'fabric-api'
+            }
+            afterEvaluate {
+                mainArtifact remapJar
+                uploadTask.dependsOn remapJar
+            }
+        }
+        options {
+            forgeGradleIntegration = false
+        }
+    }
+
+    githubRelease {
+        def getenv = System.getenv("GITHUB_TOKEN")
+        println "GitHub token: $getenv"
+        if (getenv) token getenv
+        owner = "SolidBlock-cn"
+        repo = "BRRP"
+        tagName = "v$project.mod_version"
+        targetCommitish = "1.20.2"
+        body = changelogContent
+        draft = true
+        prerelease = false
+        releaseAssets remapJar, remapSourcesJar
+        allowUploadToExisting = true
+        apiEndpoint = "https://api.github.com"
+    }
+
+    publish {
+        dependsOn tasks.modrinth, tasks.curseforge, tasks.githubRelease, tasks.publishToMavenLocal
     }
 }
 
