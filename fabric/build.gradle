@@ -1,11 +1,11 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
-/*
+
 architectury {
     platformSetupLoomIde()
     fabric()
-}*/
+}
 
 loom {
     accessWidenerPath = project(":").loom.accessWidenerPath
@@ -31,8 +31,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 
     common(project(path: ":", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":", configuration: "namedElements")) { transitive false }
-    // fixme 此 shadowCommon 在 Architectury Plugin 中的 configuration 为 transformProductionFabric，这在 Fabric Loom 中不存在，这会导致 shadow 中的 mixin 无法自动添加 refmap，需要手动添加。
+    shadowCommon(project(path: ":", configuration: "transformProductionFabric")) { transitive false }
 
     modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 }
@@ -48,23 +47,18 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
-    archiveClassifier = "dev-shadow"
+    archiveClassifier.set "dev-shadow"
 }
 
 remapJar {
+    injectAccessWidener = true
     inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
-    archiveClassifier = null
-}
-
-jar {
-    archiveClassifier = "dev"
 }
 
 sourcesJar {
     def commonSources = rootProject.sourcesJar
     dependsOn commonSources
-    duplicatesStrategy DuplicatesStrategy.INCLUDE
 
     from commonSources.archiveFile.map { zipTree(it) }
 }

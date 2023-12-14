@@ -1,13 +1,14 @@
 package pers.solid.brrp.v1;
 
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.TestOnly;
 
 import java.nio.file.Path;
@@ -20,21 +21,11 @@ import java.util.List;
 @ApiStatus.Internal
 public abstract class PlatformBridge {
 
-  private static final class InstanceHolder {
-    private static final PlatformBridge INSTANCE;
-
-    static {
-      try {
-        final Class<?> c = Class.forName("pers.solid.brrp.v1.fabric.PlatformBridgeImpl");
-        INSTANCE = (PlatformBridge) c.getMethod("getInstance").invoke(null, ArrayUtils.EMPTY_OBJECT_ARRAY);
-      } catch (ReflectiveOperationException | ClassCastException e) {
-        throw new RuntimeException("The Better Runtime Resource Pack mod is not correctly loaded. Please contact the mod author.", e);
-      }
-    }
-  }
-
+  @SuppressWarnings("Contract")
+  @Contract("-> _")
+  @ExpectPlatform
   public static PlatformBridge getInstance() {
-    return InstanceHolder.INSTANCE;
+    throw new AssertionError();
   }
 
   public abstract void postBefore(ResourceType type, List<ResourcePack> packs);
