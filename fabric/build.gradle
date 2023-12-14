@@ -12,8 +12,9 @@ architectury {
 loom {
     accessWidenerPath = project(":").loom.accessWidenerPath
 }
-
-archivesBaseName += '-fabric'
+base {
+    archivesName = archivesName.get() + '-fabric'
+}
 
 configurations {
     common
