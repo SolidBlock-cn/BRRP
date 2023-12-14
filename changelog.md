@@ -1,1 +1,1 @@
-- Fixed the issue that the mod cannot launch under non-development environment
+- 利用 MixinExtras，优化一些 mixin

@@ -1,25 +1,25 @@
 import com.modrinth.minotaur.dependencies.ModDependency
 
 plugins {
-//    id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "fabric-loom" version "1.4-SNAPSHOT"
-    id 'maven-publish'
-
+    id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "dev.architectury.loom" version "1.4-SNAPSHOT"
     id "com.modrinth.minotaur" version "2.+" apply false
     id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
     id "com.github.breadmoirai.github-release" version "2.5.2" apply false
 }
-/*
+
 architectury {
     minecraft = rootProject.minecraft_version
     common((rootProject.enabled_platforms as String).split(","))
-}*/
+}
 
 allprojects {
-    apply plugin: "fabric-loom"
-    base {
-        archivesName = rootProject.archives_base_name
-    }
+    apply plugin: "dev.architectury.loom"
+    apply plugin: "java"
+    apply plugin: "architectury-plugin"
+    apply plugin: "maven-publish"
+
+    archivesBaseName = rootProject.archives_base_name
     version = rootProject.mod_version + "-" + project.minecraft_version
     group = rootProject.maven_group
 
@@ -40,11 +40,6 @@ allprojects {
 
     java {
         withSourcesJar()
-    }
-    loom {
-        runConfigs.configureEach {
-            ideConfigGenerated = (project != rootProject)
-        }
     }
 }
 base {
