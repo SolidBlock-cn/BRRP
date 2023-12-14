@@ -21,7 +21,7 @@
     "client": [
       "pers.solid.brrp.v1.fabric.BRRPFabricClientInitialize"
     ],
-    "modmenu":[
+    "modmenu": [
       "pers.solid.brrp.v1.fabric.RRPModMenu"
     ]
   },
@@ -32,7 +32,8 @@
   "depends": {
     "fabricloader": "*",
     "fabric-api": "*",
-    "minecraft": "1.20.x"
+    "minecraft": "~1.20.2",
+    "mixinextras": ">=0.3.0+【\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14You　can　also　update　Fabric　Loader　to　0.15　which　bundles　MixinExtras!\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14】"
   },
   "custom": {
     "modmenu": {

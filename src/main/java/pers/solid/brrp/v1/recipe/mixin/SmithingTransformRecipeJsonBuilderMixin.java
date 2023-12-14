@@ -1,22 +1,26 @@
 package pers.solid.brrp.v1.recipe.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.advancement.AdvancementCriterion;
 import net.minecraft.data.server.recipe.SmithingTransformRecipeJsonBuilder;
 import net.minecraft.recipe.book.RecipeCategory;
-import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Slice;
 import pers.solid.brrp.v1.recipe.SmithingTransformRecipeJsonBuilderExtension;
 
 @Mixin(SmithingTransformRecipeJsonBuilder.class)
 public abstract class SmithingTransformRecipeJsonBuilderMixin implements SmithingTransformRecipeJsonBuilderExtension {
 
-  @Shadow public abstract SmithingTransformRecipeJsonBuilder criterion(String name, AdvancementCriterion<?> criterion);
+  @Shadow
+  public abstract SmithingTransformRecipeJsonBuilder criterion(String name, AdvancementCriterion<?> criterion);
 
   @Unique
   private boolean bypassesValidation;
@@ -40,11 +44,9 @@ public abstract class SmithingTransformRecipeJsonBuilderMixin implements Smithin
     return self();
   }
 
-  @Inject(method = "validate", at = @At("HEAD"), cancellable = true)
-  private void bypassValidation(Identifier recipeId, CallbackInfo ci) {
-    if (bypassesValidation) {
-      ci.cancel();
-    }
+  @ModifyExpressionValue(method = "validate", at = @At(value = "INVOKE", target = "Ljava/util/Map;isEmpty()Z"))
+  private boolean bypassValidation(boolean original) {
+    return !bypassesValidation && original;
   }
 
   @Override
@@ -53,12 +55,12 @@ public abstract class SmithingTransformRecipeJsonBuilderMixin implements Smithin
     return self();
   }
 
-  @Redirect(method = "offerTo(Lnet/minecraft/data/server/recipe/RecipeExporter;Lnet/minecraft/util/Identifier;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/book/RecipeCategory;getName()Ljava/lang/String;"))
-  public String redirectGetName(RecipeCategory instance) {
+  @WrapOperation(method = "offerTo(Lnet/minecraft/data/server/recipe/RecipeExporter;Lnet/minecraft/util/Identifier;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/book/RecipeCategory;getName()Ljava/lang/String;"))
+  public String redirectGetName(RecipeCategory instance, Operation<String> original) {
     if (customRecipeCategory != null) {
       return customRecipeCategory;
     } else {
-      return instance.getName();
+      return original.call(instance);
     }
   }
 
