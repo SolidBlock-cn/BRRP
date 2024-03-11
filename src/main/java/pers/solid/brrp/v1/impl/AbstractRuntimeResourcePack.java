@@ -72,8 +72,8 @@ public abstract class AbstractRuntimeResourcePack implements RuntimeResourcePack
   }
 
   @Override
-  public Identifier getId() {
-    return this.id;
+  public String getId() {
+    return this.id.toString();
   }
 
   @Override

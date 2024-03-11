@@ -20,6 +20,8 @@ import net.minecraft.data.server.recipe.*;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.*;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
@@ -91,14 +93,20 @@ public interface RuntimeResourcePack extends ResourcePack {
   Path DEFAULT_OUTPUT = Paths.get("rrp.debug");
 
   /**
+   * todo check if this correct
+   */
+  RegistryWrapper.WrapperLookup WRAPPER_LOOKUP = BuiltinRegistries.createWrapperLookup();
+
+  /**
    * The GSONs used to serialize objects to JSON.
+   * todo check if all serializations are correct
    */
   Gson GSON = new GsonBuilder()
       .setPrettyPrinting()
       .disableHtmlEscaping()
       .enableComplexMapKeySerialization()
       .registerTypeHierarchyAdapter(LootTable.class, (JsonSerializer<LootTable>) (src, typeOfSrc, context) -> Util.getResult(LootTable.CODEC.encodeStart(JsonOps.INSTANCE, src), IllegalStateException::new))
-      .registerTypeHierarchyAdapter(Advancement.class, (JsonSerializer<Advancement>) (src, typeOfSrc, context) -> Util.getResult(Advancement.CODEC.encodeStart(JsonOps.INSTANCE, src), IllegalStateException::new))
+      .registerTypeHierarchyAdapter(Advancement.class, (JsonSerializer<Advancement>) (src, typeOfSrc, context) -> Util.getResult(Advancement.CODEC.encodeStart(WRAPPER_LOOKUP.getOps(JsonOps.INSTANCE), src), IllegalStateException::new))
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, new Identifier.Serializer())
       .registerTypeHierarchyAdapter(StringIdentifiable.class, JsonSerializers.STRING_IDENTIFIABLE)
@@ -536,8 +544,8 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param path The path to write the resource pack. In the path, the folder named with identifier will be created.
    */
   default void dump(@NotNull Path path) {
-    Identifier id = this.getId();
-    this.dumpInPath(path.resolve(id.getNamespace() + '/' + id.getPath()), null, null);
+    String id = this.getId();
+    this.dumpInPath(path.resolve(id.replace(':', '/')), null, null);
   }
 
   /**
@@ -665,7 +673,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   void regenerateSided(@NotNull ResourceType resourceType) throws InterruptedException;
 
   @Contract(pure = true)
-  Identifier getId();
+  String getId();
 
   /**
    * Clear the resources of the runtime resource pack in the specified side. Root resources will not be cleared. Language files are treated as client resources.

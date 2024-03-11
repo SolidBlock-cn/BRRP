@@ -155,11 +155,6 @@ public class RRPConfigScreen extends Screen {
     context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 8, 0xFFFFFF);
   }
 
-  @Override
-  public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-    renderBackgroundTexture(context);
-  }
-
   @Environment(EnvType.CLIENT)
   public class PackListWidget extends ElementListWidget<PackListWidget.Entry> {
     private static final Text NOTHING_HERE = Text.translatable("brrp.configScreen.nothing");
@@ -254,7 +249,7 @@ public class RRPConfigScreen extends Screen {
               singleOrPlural("brrp.configScreen.summary.clientResources.", runtimeResourcePack.numberOfClientResources()),
               singleOrPlural("brrp.configScreen.summary.serverData.", runtimeResourcePack.numberOfServerData())));
         } else {
-          titleText = Text.literal(resourcePack.getName());
+          titleText = resourcePack.getInfo().title();
         }
         @NotNull Set<String> namespaces = Sets.newLinkedHashSet(Iterables.concat(resourcePack.getNamespaces(ResourceType.CLIENT_RESOURCES), resourcePack.getNamespaces(ResourceType.SERVER_DATA)));
         descriptionList.add(Text.translatable("brrp.configScreen.namespaces", namespaces.isEmpty() ? Text.translatable("gui.none") : Texts.join(namespaces, Texts.GRAY_DEFAULT_SEPARATOR_TEXT, Text::literal).styled(style -> style.withColor(0xddc4aa))).styled(style -> style.withColor(0x909090)));
@@ -278,7 +273,7 @@ public class RRPConfigScreen extends Screen {
         area = new ScreenRect(width / 2 - entryWidth / 2, y, entryWidth, itemHeight);
         MutableText tooltipContent = Text.empty().append(titleText).append(ScreenTexts.LINE_BREAK);
         if (resourcePack instanceof RuntimeResourcePack runtimeResourcePack) {
-          tooltipContent.append(Text.literal(runtimeResourcePack.getId().toString()).formatted(Formatting.GRAY)).append(ScreenTexts.LINE_BREAK);
+          tooltipContent.append(Text.literal(runtimeResourcePack.getId()).formatted(Formatting.GRAY)).append(ScreenTexts.LINE_BREAK);
         }
         tooltipContent.append(description.copy().formatted(Formatting.GRAY));
         if (isMouseOver(mouseX, mouseY) && !regenerateButton.isMouseOver(mouseX, mouseY) && !dumpButton.isMouseOver(mouseX, mouseY)) {

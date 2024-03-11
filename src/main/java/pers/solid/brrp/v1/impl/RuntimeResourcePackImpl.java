@@ -3,18 +3,20 @@ package pers.solid.brrp.v1.impl;
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.registry.tag.TagBuilder;
 import net.minecraft.registry.tag.TagFile;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.registry.tag.TagManagerLoader;
-import net.minecraft.resource.AbstractFileResourcePack;
-import net.minecraft.resource.InputSupplier;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.*;
+import net.minecraft.resource.metadata.PackResourceMetadata;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -102,7 +104,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.apply(path));
     final Map<Identifier, Supplier<byte[]>> sys = this.getSys(type);
     if (!allowsDuplicateResource && sys.containsKey(path)) {
-      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getName()));
+      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getDisplayName().getString()));
     }
     sys.put(path, () -> {
       try {
@@ -118,7 +120,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   public void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> func) {
     final Map<Identifier, Supplier<byte[]>> sys = this.getSys(type);
     if (!allowsDuplicateResource && sys.containsKey(path)) {
-      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getName()));
+      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getDisplayName().getString()));
     }
     sys.put(path, Suppliers.memoize(() -> func.apply(this, path)));
   }
@@ -127,7 +129,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   public byte[] addResource(ResourceType type, Identifier path, byte[] data) {
     final Map<Identifier, Supplier<byte[]>> sys = this.getSys(type);
     if (!allowsDuplicateResource && sys.containsKey(path)) {
-      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getName()));
+      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getDisplayName().getString()));
     }
     sys.put(path, Suppliers.ofInstance(data));
     return data;
@@ -136,7 +138,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Override
   public Future<byte[]> addAsyncRootResource(String path, FailableFunction<String, byte[], Exception> data) {
     if (!allowsDuplicateResource && root.containsKey(Arrays.asList(path.split("/")))) {
-      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getName()));
+      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getDisplayName().getString()));
     }
     Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.apply(path));
     this.root.put(Arrays.asList(path.split("/")), () -> {
@@ -152,7 +154,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Override
   public void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data) {
     if (!allowsDuplicateResource && root.containsKey(Arrays.asList(path.split("/")))) {
-      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getName()));
+      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getDisplayName().getString()));
     }
     this.root.put(Arrays.asList(path.split("/")), Suppliers.memoize(() -> data.apply(this, path)));
   }
@@ -160,7 +162,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Override
   public byte[] addRootResource(String path, byte[] data) {
     if (!allowsDuplicateResource && root.containsKey(Arrays.asList(path.split("/")))) {
-      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getName()));
+      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getDisplayName().getString()));
     }
     this.root.put(Arrays.asList(path.split("/")), () -> data);
     return data;
@@ -169,7 +171,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Override
   public byte[] addAsset(Identifier id, byte[] data) {
     if (!allowsDuplicateResource && assets.containsKey(id)) {
-      throw new IllegalArgumentException(String.format("Duplicate asset id %s in runtime resource pack %s!", id, getName()));
+      throw new IllegalArgumentException(String.format("Duplicate asset id %s in runtime resource pack %s!", id, getDisplayName().getString()));
     }
     assets.put(id, Suppliers.ofInstance(data));
     return data;
@@ -178,7 +180,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Override
   public byte[] addData(Identifier id, byte[] data) {
     if (!allowsDuplicateResource && this.data.containsKey(id)) {
-      throw new IllegalArgumentException(String.format("Duplicate data id %s in runtime resource pack %s!", id, getName()));
+      throw new IllegalArgumentException(String.format("Duplicate data id %s in runtime resource pack %s!", id, getDisplayName().getString()));
     }
     this.data.put(id, Suppliers.ofInstance(data));
     return data;
@@ -237,7 +239,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public void dumpInPath(Path output, @Nullable ResourceType dumpResourceType, int @Nullable [] stat) {
-    LOGGER.info("Dumping {} in the path {}. The path will be cleared.", getName(), output);
+    LOGGER.info("Dumping {} in the path {}. The path will be cleared.", getDisplayName().getString(), output);
     try {
       if (stat != null) stat[0] = -1;
       if (output.toFile().exists()) {
@@ -278,7 +280,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
           if (Thread.interrupted()) throw new InterruptedException("Dumping client resources");
         }
       }
-      LOGGER.info("Dumping {} finished.", getName());
+      LOGGER.info("Dumping {} finished.", getDisplayName().getString());
     } catch (IOException exception) {
       throw new RuntimeException(exception);
     } catch (InterruptedException e) {
@@ -406,29 +408,31 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     if (stream != null) {
       return AbstractFileResourcePack.parseMetadata(metaReader, stream);
     } else {
+      if (metaReader == PackResourceMetadata.SERIALIZER) {
+        return (T) new PackResourceMetadata(getDescription(), packVersion, Optional.empty());
+      }
       if (metaReader.getKey().equals("pack")) {
         JsonObject object = new JsonObject();
         object.addProperty("pack_format", this.packVersion);
         final Text description = getDescription();
-        if (description != null) {
-          object.add("description", Text.Serialization.toJsonTree(description));
-        } else {
-          object.add("description", Text.Serialization.toJsonTree(Text.translatable("brrp.pack.defaultDescription", getId())));
-        }
+        // todo check if the text serialization is simple suitable
+        object.add("description", Util.getResult(TextCodecs.CODEC.encodeStart(WRAPPER_LOOKUP.getOps(JsonOps.INSTANCE), description == null ? Text.translatable("brrp.pack.defaultDescription", getId()) : description), JsonParseException::new));
         return metaReader.fromJson(object);
       }
       return null;
     }
   }
 
+  private static final ResourcePackSource RUNTIME = ResourcePackSource.create(name -> Text.translatable("pack.nameAndSource", name, Text.translatable("pack.source.runtime")).formatted(Formatting.GRAY), true);
+
   @Override
-  public String getName() {
-    return "Runtime Resource Pack " + this.getId().toString();
+  public ResourcePackInfo getInfo() {
+    return new ResourcePackInfo(getId(), getDisplayName(), RUNTIME, Optional.empty());
   }
 
   @Override
   public void close() {
-    LOGGER.debug("Closing {}.", getName());
+    LOGGER.debug("Closing Runtime Resource Pack {}.", getDisplayName().getString());
   }
 
   protected byte[] read(ZipEntry entry, InputStream stream) throws IOException {

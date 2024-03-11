@@ -52,7 +52,7 @@ public class DumpScreen extends Screen {
     super(Text.translatable("brrp.dumpScreen.title", pack.getDisplayName()));
     this.parent = parent;
     this.pack = pack;
-    dumpPath = RuntimeResourcePack.DEFAULT_OUTPUT.resolve(pack.getId().getNamespace() + "/" + pack.getId().getPath());
+    dumpPath = RuntimeResourcePack.DEFAULT_OUTPUT.resolve(pack.getId().replace(':', '/'));
     dumpPathString = dumpPath.toString();
   }
 
