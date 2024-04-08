@@ -183,7 +183,7 @@ public class RRPConfigScreen extends Screen {
     }
 
     @Override
-    protected int getScrollbarPositionX() {
+    protected int getScrollbarX() {
       return width - 6;
     }
 

@@ -10,13 +10,11 @@ import net.minecraft.registry.tag.TagFile;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.resource.*;
-import net.minecraft.resource.metadata.PackResourceMetadata;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -214,7 +212,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public <T> byte[] addTag(TagKey<T> tagKey, TagBuilder tagBuilder) {
-    return addData(new Identifier(tagKey.id().getNamespace(), TagManagerLoader.getPath(tagKey.registry()) + "/" + tagKey.id().getPath() + ".json"), serialize(TagFile.CODEC.encodeStart(JsonOps.INSTANCE, new TagFile(tagBuilder.build(), false)).getOrThrow(false, LOGGER::error)));
+    return addData(new Identifier(tagKey.id().getNamespace(), TagManagerLoader.getPath(tagKey.registry()) + "/" + tagKey.id().getPath() + ".json"), serialize(new TagFile(tagBuilder.build(), false)));
   }
 
   @Override
@@ -408,15 +406,11 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     if (stream != null) {
       return AbstractFileResourcePack.parseMetadata(metaReader, stream);
     } else {
-      if (metaReader == PackResourceMetadata.SERIALIZER) {
-        return (T) new PackResourceMetadata(getDescription(), packVersion, Optional.empty());
-      }
       if (metaReader.getKey().equals("pack")) {
         JsonObject object = new JsonObject();
         object.addProperty("pack_format", this.packVersion);
         final Text description = getDescription();
-        // todo check if the text serialization is simple suitable
-        object.add("description", Util.getResult(TextCodecs.CODEC.encodeStart(WRAPPER_LOOKUP.getOps(JsonOps.INSTANCE), description == null ? Text.translatable("brrp.pack.defaultDescription", getId()) : description), JsonParseException::new));
+        object.add("description", TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, description == null ? Text.translatable("brrp.pack.defaultDescription", getId()) : description).getOrThrow(JsonParseException::new));
         return metaReader.fromJson(object);
       }
       return null;

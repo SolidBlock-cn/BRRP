@@ -103,16 +103,16 @@ public final class BRRPUtils {
   }
 
   /**
-   * Get the id of the block loot table, which respects both {@link BlockResourceGenerator#getLootTableId()} and {@link Block#getLootTableId()}. Note that {@link BlockResourceGenerator#getLootTableId()} usually should not be overridden, and {@link Block#getLootTableId()} is a final method.
+   * Get the id of the block loot table, which respects {@link BlockResourceGenerator#getLootTableId()}. Note that {@link BlockResourceGenerator#getLootTableId()} usually should not be overridden.
    *
    * @return The id of the block loot table.
    */
   @Contract(pure = true)
-  public static Identifier getLootTableId(@NotNull AbstractBlock block) {
+  public static Identifier getLootTableId(@NotNull Block block) {
     if (block instanceof BlockResourceGenerator generator) {
       return generator.getLootTableId();
     } else {
-      return block.getLootTableId();
+      return Registries.BLOCK.getId(block).withPrefixedPath("blocks/");
     }
   }
 

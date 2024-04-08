@@ -28,7 +28,6 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.Util;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.commons.lang3.function.FailableRunnable;
@@ -92,9 +91,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   Path DEFAULT_OUTPUT = Paths.get("rrp.debug");
 
-  /**
-   * todo check if this correct
-   */
+  // todo try substitute wrapperLookup
   RegistryWrapper.WrapperLookup WRAPPER_LOOKUP = BuiltinRegistries.createWrapperLookup();
 
   /**
@@ -105,8 +102,9 @@ public interface RuntimeResourcePack extends ResourcePack {
       .setPrettyPrinting()
       .disableHtmlEscaping()
       .enableComplexMapKeySerialization()
-      .registerTypeHierarchyAdapter(LootTable.class, (JsonSerializer<LootTable>) (src, typeOfSrc, context) -> Util.getResult(LootTable.CODEC.encodeStart(JsonOps.INSTANCE, src), IllegalStateException::new))
-      .registerTypeHierarchyAdapter(Advancement.class, (JsonSerializer<Advancement>) (src, typeOfSrc, context) -> Util.getResult(Advancement.CODEC.encodeStart(WRAPPER_LOOKUP.getOps(JsonOps.INSTANCE), src), IllegalStateException::new))
+      .registerTypeHierarchyAdapter(LootTable.class, JsonSerializers.forCodec(LootTable.CODEC))
+      .registerTypeHierarchyAdapter(Advancement.class, (JsonSerializer<Advancement>) (src, typeOfSrc, context) -> Advancement.CODEC.encodeStart(WRAPPER_LOOKUP.getOps(JsonOps.INSTANCE), src).getOrThrow(IllegalStateException::new))
+      .registerTypeHierarchyAdapter(TagFile.class, JsonSerializers.forCodec(TagFile.CODEC))
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, new Identifier.Serializer())
       .registerTypeHierarchyAdapter(StringIdentifiable.class, JsonSerializers.STRING_IDENTIFIABLE)
@@ -218,7 +216,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a loot table. It is usually used to provide loot tables for your mod.
    *
-   * @param identifier The identifier of the loot table. Please refer to {@link AbstractBlock#getLootTableId()}.
+   * @param identifier The identifier of the loot table. Please refer to {@link AbstractBlock#getLootTableKey()}.
    * @param lootTable  The loot table object. It can be created through {@link LootTable#builder()}. Please also refer to {@link net.minecraft.data.server.loottable.LootTableProvider} for some methods to conveniently create loot tables.
    */
   @Contract(mutates = "this")
@@ -229,7 +227,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a loot table. It is usually used to provide loot tables for your mod.
    *
-   * @param identifier The identifier of the loot table. Please refer to {@link AbstractBlock#getLootTableId()}.
+   * @param identifier The identifier of the loot table. Please refer to {@link AbstractBlock#getLootTableKey()}.
    * @param lootTable  The loot table (builder) object. It can be created through {@link LootTable#builder()}. Please also refer to {@link net.minecraft.data.server.loottable.LootTableProvider} for some methods to conveniently create loot tables.
    */
   @Contract(mutates = "this")
@@ -334,7 +332,7 @@ public interface RuntimeResourcePack extends ResourcePack {
 
   @Contract(mutates = "this")
   default byte[] addTag(Identifier fullId, TagBuilder tagBuilder) {
-    return addTag(fullId, serialize(TagFile.CODEC.encodeStart(JsonOps.INSTANCE, new TagFile(tagBuilder.build(), false)).getOrThrow(false, LOGGER::error)));
+    return addTag(fullId, serialize(new TagFile(tagBuilder.build(), false)));
   }
 
   /**

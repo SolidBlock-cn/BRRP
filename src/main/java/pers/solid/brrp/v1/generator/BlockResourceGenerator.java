@@ -1,7 +1,6 @@
 package pers.solid.brrp.v1.generator;
 
 import net.fabricmc.api.EnvType;
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.client.TextureKey;
@@ -269,9 +268,8 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   @Contract(pure = true)
   @ApiStatus.NonExtendable
   default Identifier getLootTableId() {
-    if (this instanceof AbstractBlock block) {
-      return block.getLootTableId();
-    }
+    // Since 1.20.5, block#getLootTableId was changed into block#getLootTableKey.
+    // I avoided using it here to reduce redundant calculation.
     return getBlockId().brrp_prefixed("blocks/");
   }
 

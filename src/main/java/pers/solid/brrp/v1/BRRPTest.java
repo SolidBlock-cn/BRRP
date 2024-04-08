@@ -217,11 +217,12 @@ public class BRRPTest {
     PACK.setDescription(Text.translatable("brrp.pack.test.description"));
     PACK.setSidedRegenerationCallback(ResourceType.CLIENT_RESOURCES, () -> refreshPack(true, false));
     PACK.setSidedRegenerationCallback(ResourceType.SERVER_DATA, () -> refreshPack(false, true));
-
-    RuntimeResourcePack testEmptyPack = RuntimeResourcePack.create(new Identifier("brrp", "empty"));
-    testEmptyPack.setDisplayName(Text.translatable("brrp.pack.empty.name"));
-    testEmptyPack.setDescription(Text.translatable("brrp.pack.empty.description"));
-    RRPEventHelper.BEFORE_VANILLA.registerPack(testEmptyPack);
+    for (int i = 0; i < 20; i++) {
+      RuntimeResourcePack emptyPack = RuntimeResourcePack.create(new Identifier("brrp", "empty" + i));
+      emptyPack.setDisplayName(Text.translatable("brrp.pack.empty.name"));
+      emptyPack.setDescription(Text.translatable("brrp.pack.empty.description"));
+      RRPEventHelper.BEFORE_VANILLA.registerPack(emptyPack);
+    }
 
     final RuntimeResourcePack beforeUser = RuntimeResourcePack.create(new Identifier("brrp", "test_before_user"));
     beforeUser.setDisplayName(Text.translatable("brrp.pack.test_before_user.name"));
@@ -236,7 +237,7 @@ public class BRRPTest {
       return beforeUser.serialize(ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, new Identifier("item/diamond")).transformation(ModelTransformationMode.GROUND, new TransformationBuilder().translation(0, 4.5f, 0).scale(10.85f, 10.85f, 10.6f)));
     });
     beforeUser.addLang(new Identifier("minecraft", "en_us"), LanguageProvider.create().add(Blocks.YELLOW_WOOL, "The model is modified by a 'before-user' runtime resource pack."));
-    beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableId(), new VanillaBlockLootTableGenerator().drops(Blocks.YELLOW_WOOL, ConstantLootNumberProvider.create(3)));
+    beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableKey().getValue(), new VanillaBlockLootTableGenerator().drops(Blocks.YELLOW_WOOL, ConstantLootNumberProvider.create(3)));
     beforeUser.addModel(new Identifier("minecraft", "item/bow"), ModelJsonBuilder.create(new Identifier("minecraft", "item/white_concrete"))
         .addOverride(ModelOverrideBuilder.of(new Identifier("item/yellow_concrete"), new Identifier("pulling"), 1))
         .addOverride(ModelOverrideBuilder.of(new Identifier("item/orange_concrete"), new Identifier("pulling"), 1).addCondition(new Identifier("pull"), 0.65f))
