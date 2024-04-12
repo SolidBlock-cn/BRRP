@@ -2,10 +2,8 @@ package pers.solid.brrp.v1.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSerializer;
 import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.JsonOps;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.fabricmc.api.EnvType;
@@ -20,7 +18,6 @@ import net.minecraft.data.server.recipe.*;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.*;
 import net.minecraft.resource.ResourcePack;
@@ -91,9 +88,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   Path DEFAULT_OUTPUT = Paths.get("rrp.debug");
 
-  // todo try substitute wrapperLookup
-  RegistryWrapper.WrapperLookup WRAPPER_LOOKUP = BuiltinRegistries.createWrapperLookup();
-
   /**
    * The GSONs used to serialize objects to JSON.
    * todo check if all serializations are correct
@@ -103,24 +97,32 @@ public interface RuntimeResourcePack extends ResourcePack {
       .disableHtmlEscaping()
       .enableComplexMapKeySerialization()
       .registerTypeHierarchyAdapter(LootTable.class, JsonSerializers.forCodec(LootTable.CODEC))
-      .registerTypeHierarchyAdapter(Advancement.class, (JsonSerializer<Advancement>) (src, typeOfSrc, context) -> Advancement.CODEC.encodeStart(WRAPPER_LOOKUP.getOps(JsonOps.INSTANCE), src).getOrThrow(IllegalStateException::new))
+      .registerTypeHierarchyAdapter(Advancement.class, JsonSerializers.forCodec(Advancement.CODEC))
       .registerTypeHierarchyAdapter(TagFile.class, JsonSerializers.forCodec(TagFile.CODEC))
+      .registerTypeHierarchyAdapter(Recipe.class, JsonSerializers.forCodec(Recipe.CODEC))
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, new Identifier.Serializer())
       .registerTypeHierarchyAdapter(StringIdentifiable.class, JsonSerializers.STRING_IDENTIFIABLE)
       .registerTypeHierarchyAdapter(Vector3f.class, JsonSerializers.VECTOR_3F)
       .registerTypeHierarchyAdapter(Either.class, JsonSerializers.EITHER)
-      .registerTypeHierarchyAdapter(Recipe.class, JsonSerializers.RECIPE_JSON_PROVIDER)
       .setPrettyPrinting()
       .create();
   Logger LOGGER = LogUtils.getLogger();
 
   /**
-   * Create a new runtime resource pack with the default supported resource pack version
+   * Create a new runtime resource pack.
    */
   @Contract("_ -> new")
   static RuntimeResourcePack create(Identifier id) {
     return new RuntimeResourcePackImpl(id);
+  }
+
+  /**
+   * Create a new runtime resource pack with a special {@code registryLookup}.
+   */
+  @Contract("_, _ -> new")
+  static RuntimeResourcePack create(Identifier id, @NotNull RegistryWrapper.WrapperLookup registryLookup) {
+    return new RuntimeResourcePackImpl(id, registryLookup);
   }
 
   /**
@@ -713,7 +715,8 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @return The description of the pac, which may be shown in the {@link RRPConfigScreen}.
    */
   @Contract(pure = true)
-  @Nullable Text getDescription();
+  @Nullable
+  Text getDescription();
 
   /**
    * Set the description of the pack, which may be shown in the {@link RRPConfigScreen}.

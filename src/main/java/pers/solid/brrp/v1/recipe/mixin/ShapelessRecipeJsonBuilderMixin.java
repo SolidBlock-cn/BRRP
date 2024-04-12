@@ -4,7 +4,9 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.advancement.AdvancementCriterion;
+import net.minecraft.component.ComponentChanges;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
+import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +30,8 @@ public abstract class ShapelessRecipeJsonBuilderMixin implements ShapelessRecipe
   private boolean bypassesValidation;
   @Unique
   private @Nullable String customRecipeCategory;
+  @Unique
+  private @Nullable ComponentChanges componentChanges;
 
   @Unique
   private ShapelessRecipeJsonBuilder self() {
@@ -90,5 +94,20 @@ public abstract class ShapelessRecipeJsonBuilderMixin implements ShapelessRecipe
     } else {
       return par1;
     }
+  }
+
+
+  @Override
+  public ShapelessRecipeJsonBuilder setComponentChanges(ComponentChanges componentChanges) {
+    this.componentChanges = componentChanges;
+    return self();
+  }
+
+  @ModifyExpressionValue(method = "offerTo", at = @At(value = "NEW", target = "(Lnet/minecraft/item/ItemConvertible;I)Lnet/minecraft/item/ItemStack;"))
+  public ItemStack applyComponents(ItemStack itemStack) {
+    if (componentChanges != null) {
+      itemStack.applyChanges(componentChanges);
+    }
+    return itemStack;
   }
 }

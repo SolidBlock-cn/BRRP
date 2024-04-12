@@ -6,10 +6,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.WoodType;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.component.ComponentChanges;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.data.server.loottable.vanilla.VanillaBlockLootTableGenerator;
 import net.minecraft.data.server.recipe.*;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -180,11 +185,16 @@ public class BRRPTest {
       PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_slab"), ShapedRecipeJsonBuilder.create(null, Blocks.SMOOTH_STONE_SLAB, 6).pattern("###").input('#', SMOOTH_STONE).criterionFromItem(SMOOTH_STONE).setCustomCraftingCategory(CraftingRecipeCategory.MISC).setCustomRecipeCategory("brrp_custom"));
       PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_slab_from_stonecutting"), SingleItemRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(SMOOTH_STONE), null, Blocks.SMOOTH_STONE_SLAB).criterionFromItem(SMOOTH_STONE).setCustomRecipeCategory("brrp_custom"));
 
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "cook_bedrock"), CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(Items.BEDROCK), null, Items.BARRIER, 1000, 2).setCustomRecipeCategory("brrp_custom").criterionFromItem(Items.BEDROCK));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shaped"), ShapedRecipeJsonBuilder.create(null, Items.BEDROCK).patterns("xx", "xx").input('x', Items.BEDROCK).setBypassesValidation(true).setCustomRecipeCategory("brrp_custom").setCustomCraftingCategory(CraftingRecipeCategory.MISC));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shapeless"), ShapelessRecipeJsonBuilder.create(null, Items.BEDROCK).input(Items.STONE, 5).criterionFromItem(Items.STONE).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setCustomCraftingCategory(CraftingRecipeCategory.MISC));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_single_item"), SingleItemRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(Items.STONE), null, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smithing_transform"), SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.LAPIS_LAZULI), null, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
+      final ComponentChanges bedrockTestComponentChanges = ComponentChanges.builder()
+          .add(DataComponentTypes.FOOD, new FoodComponent.Builder().nutrition(20).saturationModifier(20).alwaysEdible().snack().statusEffect(new StatusEffectInstance(StatusEffects.WIND_CHARGED, 60), 1).build())
+          .add(DataComponentTypes.ITEM_NAME, Text.literal("Unobtainable!"))
+          .build();
+
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "cook_bedrock"), CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(Items.BEDROCK), null, Items.BARRIER, 1000, 2).setCustomRecipeCategory("brrp_custom").criterionFromItem(Items.BEDROCK).setComponentChanges(bedrockTestComponentChanges));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shaped"), ShapedRecipeJsonBuilder.create(null, Items.BEDROCK).patterns("xx", "xx").input('x', Items.BEDROCK).setBypassesValidation(true).setCustomRecipeCategory("brrp_custom").setCustomCraftingCategory(CraftingRecipeCategory.MISC).setComponentChanges(bedrockTestComponentChanges));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shapeless"), ShapelessRecipeJsonBuilder.create(null, Items.BEDROCK).input(Items.STONE, 5).criterionFromItem(Items.STONE).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setCustomCraftingCategory(CraftingRecipeCategory.MISC).setComponentChanges(bedrockTestComponentChanges));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_single_item"), SingleItemRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(Items.STONE), null, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setComponentChanges(bedrockTestComponentChanges));
+      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smithing_transform"), SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.LAPIS_LAZULI), null, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setComponentChanges(bedrockTestComponentChanges));
       PACK.addRecipeAndAdvancement(new Identifier("brrp", "smithing_trim"), SmithingTrimRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.REDSTONE), RecipeCategory.BUILDING_BLOCKS).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
     }
 
@@ -217,12 +227,10 @@ public class BRRPTest {
     PACK.setDescription(Text.translatable("brrp.pack.test.description"));
     PACK.setSidedRegenerationCallback(ResourceType.CLIENT_RESOURCES, () -> refreshPack(true, false));
     PACK.setSidedRegenerationCallback(ResourceType.SERVER_DATA, () -> refreshPack(false, true));
-    for (int i = 0; i < 20; i++) {
-      RuntimeResourcePack emptyPack = RuntimeResourcePack.create(new Identifier("brrp", "empty" + i));
-      emptyPack.setDisplayName(Text.translatable("brrp.pack.empty.name"));
-      emptyPack.setDescription(Text.translatable("brrp.pack.empty.description"));
-      RRPEventHelper.BEFORE_VANILLA.registerPack(emptyPack);
-    }
+    RuntimeResourcePack emptyPack = RuntimeResourcePack.create(new Identifier("brrp", "empty"));
+    emptyPack.setDisplayName(Text.translatable("brrp.pack.empty.name"));
+    emptyPack.setDescription(Text.translatable("brrp.pack.empty.description"));
+    RRPEventHelper.BEFORE_VANILLA.registerPack(emptyPack);
 
     final RuntimeResourcePack beforeUser = RuntimeResourcePack.create(new Identifier("brrp", "test_before_user"));
     beforeUser.setDisplayName(Text.translatable("brrp.pack.test_before_user.name"));

@@ -2,9 +2,15 @@ package pers.solid.brrp.v1.impl;
 
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.loot.LootTable;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.TagBuilder;
 import net.minecraft.registry.tag.TagFile;
 import net.minecraft.registry.tag.TagKey;
@@ -20,7 +26,9 @@ import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pers.solid.brrp.v1.JsonSerializers;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 
 import javax.imageio.ImageIO;
@@ -53,10 +61,51 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
   private final Map<List<String>, Supplier<byte[]>> root = new ConcurrentHashMap<>();
 
-  public RuntimeResourcePackImpl(Identifier id) {
-    super(id);
+  /**
+   * This is required for many data pack elements since 1.20.5
+   */
+  private final RegistryWrapper.WrapperLookup registryLookup;
+  /**
+   * The special GSON that uses {@code registryLookup} to serialize data.
+   */
+  private final Gson gson;
+
+  /**
+   * This class holds some shared {@code registryLookup} and {@code gson} that many runtime resource packs may use in common.
+   */
+  private static final class Holder {
+    private static final RegistryWrapper.WrapperLookup registryLookup = BuiltinRegistries.createWrapperLookup();
+    private static final Gson gson = createGson(registryLookup);
   }
 
+  /**
+   * Creates a GSON that uses {@code registryLookup} to serialize data. If not provided, exceptions may be thrown for some registries.
+   */
+  private static Gson createGson(RegistryWrapper.WrapperLookup registryLookup) {
+    return GSON.newBuilder()
+        .registerTypeHierarchyAdapter(LootTable.class, JsonSerializers.forCodec(LootTable.CODEC, registryLookup))
+        .registerTypeHierarchyAdapter(Advancement.class, JsonSerializers.forCodec(Advancement.CODEC, registryLookup))
+        .registerTypeHierarchyAdapter(TagFile.class, JsonSerializers.forCodec(TagFile.CODEC, registryLookup))
+        .registerTypeHierarchyAdapter(Recipe.class, JsonSerializers.forCodec(Recipe.CODEC, registryLookup))
+        .create();
+  }
+
+  public RuntimeResourcePackImpl(Identifier id, @NotNull RegistryWrapper.WrapperLookup registryLookup) {
+    super(id);
+    this.registryLookup = registryLookup;
+    this.gson = createGson(registryLookup);
+  }
+
+  public RuntimeResourcePackImpl(Identifier id) {
+    super(id);
+    this.registryLookup = Holder.registryLookup;
+    this.gson = Holder.gson;
+  }
+
+  @Override
+  public byte[] serialize(Object object) {
+    return RuntimeResourcePack.serialize(object, gson);
+  }
 
   private static Identifier fix(Identifier identifier, String prefix, String append) {
     return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);

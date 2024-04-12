@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.advancement.AdvancementCriterion;
+import net.minecraft.component.ComponentChanges;
 import net.minecraft.data.server.recipe.SmithingTrimRecipeJsonBuilder;
 import net.minecraft.recipe.book.RecipeCategory;
 import org.apache.commons.lang3.StringUtils;
@@ -71,5 +72,10 @@ public abstract class SmithingTrimRecipeJsonBuilderMixin implements SmithingTrim
     } else {
       return path;
     }
+  }
+
+  @Override
+  public SmithingTrimRecipeJsonBuilder setComponentChanges(ComponentChanges componentChanges) {
+    throw new UnsupportedOperationException("SmithingTrimRecipeJsonBuilder does not support component changes! (Reported by BRRP mod.)");
   }
 }

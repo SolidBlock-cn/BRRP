@@ -1,6 +1,7 @@
 package pers.solid.brrp.v1.recipe;
 
 import net.minecraft.advancement.AdvancementCriterion;
+import net.minecraft.component.ComponentChanges;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.RecipeProvider;
@@ -99,6 +100,14 @@ public interface RecipeJsonBuilderExtension<Self> {
    */
   @SuppressWarnings("unchecked")
   default Self setBypassesValidation(boolean bypassesValidation) {
+    return (Self) this;
+  }
+
+  /**
+   * This is used to add components for the output item. In vanilla, the builders do not support components, although those are supported in JSONs. In this mod, components are affected in {@code offerTo} methods of those classes.
+   */
+  @SuppressWarnings("unchecked")
+  default Self setComponentChanges(ComponentChanges componentChanges) {
     return (Self) this;
   }
 

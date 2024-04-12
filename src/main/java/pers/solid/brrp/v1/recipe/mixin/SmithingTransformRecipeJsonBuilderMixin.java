@@ -4,7 +4,9 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.advancement.AdvancementCriterion;
+import net.minecraft.component.ComponentChanges;
 import net.minecraft.data.server.recipe.SmithingTransformRecipeJsonBuilder;
+import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.book.RecipeCategory;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +28,8 @@ public abstract class SmithingTransformRecipeJsonBuilderMixin implements Smithin
   private boolean bypassesValidation;
   @Unique
   private @Nullable String customRecipeCategory;
+  @Unique
+  private @Nullable ComponentChanges componentChanges;
 
   @Unique
   @SuppressWarnings("DataFlowIssue")
@@ -71,5 +75,19 @@ public abstract class SmithingTransformRecipeJsonBuilderMixin implements Smithin
     } else {
       return path;
     }
+  }
+
+  @Override
+  public SmithingTransformRecipeJsonBuilder setComponentChanges(ComponentChanges componentChanges) {
+    this.componentChanges = componentChanges;
+    return self();
+  }
+
+  @ModifyExpressionValue(method = "offerTo(Lnet/minecraft/data/server/recipe/RecipeExporter;Lnet/minecraft/util/Identifier;)V", at = @At(value = "NEW", target = "(Lnet/minecraft/item/ItemConvertible;)Lnet/minecraft/item/ItemStack;"))
+  public ItemStack applyComponents(ItemStack itemStack) {
+    if (componentChanges != null) {
+      itemStack.applyChanges(componentChanges);
+    }
+    return itemStack;
   }
 }
