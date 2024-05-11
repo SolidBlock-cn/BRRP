@@ -78,7 +78,7 @@ subprojects {
         println "Modrinth token: ${token.get()}"
         projectId = 'JnrDtPAE'
         versionNumber = "${rootProject.mod_version}-mc${rootProject.minecraft_version}-$platform"
-        versionType = 'alpha' // change to release later
+        versionType = 'release'
         uploadFile = remapJar
         gameVersions = List.of(project.supported_minecraft_versions.split(","))
         loaders = [platform]
@@ -96,7 +96,7 @@ subprojects {
         project {
             id = '618156'
             changelog = changelogContent
-            releaseType = 'beta' // todo change to release later
+            releaseType = 'release'
 
             addGameVersion '1.20.5'
             // gameVersionStrings.addAll project.supported_minecraft_versions.split(',')
@@ -125,7 +125,7 @@ subprojects {
         owner = "SolidBlock-cn"
         repo = "BRRP"
         tagName = "v$project.mod_version"
-        targetCommitish = "1.20.2"
+        targetCommitish = "1.20.6"
         body = changelogContent
         draft = true
         prerelease = false

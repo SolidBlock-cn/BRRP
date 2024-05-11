@@ -90,7 +90,6 @@ public interface RuntimeResourcePack extends ResourcePack {
 
   /**
    * The GSONs used to serialize objects to JSON.
-   * todo check if all serializations are correct
    */
   Gson GSON = new GsonBuilder()
       .setPrettyPrinting()

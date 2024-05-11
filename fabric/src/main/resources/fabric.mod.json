@@ -32,7 +32,7 @@
   "depends": {
     "fabricloader": "*",
     "fabric-api": "*",
-    "minecraft": ">=1.20.3-0",
+    "minecraft": ">=1.20.5",
     "mixinextras": ">=0.3.0+【\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14You　can　also　update　Fabric　Loader　to　0.15　which　bundles　MixinExtras!\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14】"
   },
   "custom": {
