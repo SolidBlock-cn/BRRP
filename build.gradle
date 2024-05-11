@@ -23,8 +23,8 @@ allprojects {
     version = rootProject.mod_version + "-" + project.minecraft_version
     group = rootProject.maven_group
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 
     repositories {
     }
@@ -35,7 +35,7 @@ allprojects {
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"
-        options.release = 17
+        options.release = 21
     }
 
     java {
@@ -65,6 +65,12 @@ subprojects {
     }
 
     publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId = base.archivesName.get()
+                from components.java
+            }
+        }
         repositories {
             maven {
                 url = rootProject.file('../mvn-repo').path
@@ -149,15 +155,4 @@ dependencies {
     // 用于在 common 部分使用与 @Environment 有关的注解，以及 Fabric Data Generation API 中的 access widener。
     modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-}
-
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = rootProject.archives_base_name
-            from components.java
-        }
-    }
-    repositories {
-    }
 }
