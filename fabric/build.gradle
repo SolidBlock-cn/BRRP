@@ -10,9 +10,6 @@ architectury {
 loom {
     accessWidenerPath = project(":").loom.accessWidenerPath
 }
-base {
-    archivesName = archivesName.get() + '-fabric'
-}
 
 configurations {
     common {
