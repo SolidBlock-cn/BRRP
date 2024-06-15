@@ -733,4 +733,7 @@ public interface RuntimeResourcePack extends ResourcePack {
 
   @Contract(pure = true)
   int numberOfRootResources();
+
+  @Contract(pure = true)
+  RegistryWrapper.WrapperLookup getRegistryLookup();
 }

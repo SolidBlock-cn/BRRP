@@ -61,7 +61,7 @@ public class BRRPTest {
    * <p>The block, as its name indicates, is a block with a texture of lava. It is an instance of {@link BRRPCubeBlock}, which can directly specify textures and can conveniently generation all resources of it, taking the convenience of {@link BlockResourceGenerator} interface, which is implemented by {@code BRRPCubeBlock}.</p>
    * <p>Please do not think that objects that implement {@link BlockResourceGenerator} can auto generate resources. It just provides methods such as {@code writeResources} so you do not need to manually specify how to generate models, loot tables, etc. You still should invoke the methods that write resources into the runtime resource pack.</p>
    */
-  public static final BRRPCubeBlock LAVA_BLOCK = register(BRRPCubeBlock.cubeAll(AbstractBlock.Settings.create().liquid().luminance(state -> 15).sounds(LAVA_SOUND_GROUP), new Identifier("block/lava_still")), "lava_block");
+  public static final BRRPCubeBlock LAVA_BLOCK = register(BRRPCubeBlock.cubeAll(AbstractBlock.Settings.create().liquid().luminance(state -> 15).sounds(LAVA_SOUND_GROUP), Identifier.of("block/lava_still")), "lava_block");
   /**
    * <p>The block is the stairs of {@link #LAVA_BLOCK}. When generating models, the textures identifier will be those of the base block. The generation of the block states, and model and recipe of stairs is defined in {@link BRRPStairsBlock}.</p>
    */
@@ -73,11 +73,11 @@ public class BRRPTest {
   /**
    * <p>The block specifies the texture of top, side and bottom via parameters of {@link BRRPCubeBlock#cubeBottomTop(AbstractBlock.Settings, Identifier, Identifier, Identifier)}. {@link BRRPCubeBlock#getBlockModel()} will directly use the textures.</p>
    */
-  public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE), new Identifier("block/smooth_stone"), new Identifier("block/smooth_stone_slab_side"), new Identifier("block/smooth_stone")), "smooth_stone");
+  public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE), Identifier.of("block/smooth_stone"), Identifier.of("block/smooth_stone_slab_side"), Identifier.of("block/smooth_stone")), "smooth_stone");
   /**
    * <p>The runtime resource pack that will be used in development environment, as a simple example. The object is created in the initialization of this class.</p>
    */
-  private static final RuntimeResourcePack PACK = RuntimeResourcePack.create(new Identifier("brrp", "test"));
+  private static final RuntimeResourcePack PACK = RuntimeResourcePack.create(Identifier.of("brrp", "test"));
   private static final Logger LOGGER = LoggerFactory.getLogger(BRRPTest.class);
 
   static {
@@ -128,7 +128,7 @@ public class BRRPTest {
       PACK.clearResources(ResourceType.CLIENT_RESOURCES);
       // add language files to the runtime resource pack.
       // 往运行时资源包添加语言文件。
-      PACK.addLang(new Identifier("brrp", "en_us"), LanguageProvider.create()
+      PACK.addLang(Identifier.of("brrp", "en_us"), LanguageProvider.create()
           .add(LAVA_BLOCK, "Lava Block (Development Environment Only)")
           .add(LAVA_STAIRS, "Lava Stairs (Development Environment Only)")
           .add(LAVA_SLAB, "Lava Slab (Development Environment Only)")
@@ -139,7 +139,7 @@ public class BRRPTest {
       );
       // The difference of 'mergeLang' or 'addLang' is, if the same resource pack has already had a language file with a same name, 'addLang' will override the whole existing one, while 'mergeLang' simply merges it. You may refer to the source codes.
       // mergeLang 和 addLang 的不同之处在于，如果同一个资源包已经有了相同名称的语言文件，addLang 会直接将原有的全部覆盖，而 mergeLang 是将其合并。参见其方法的源代码。
-      PACK.addLang(new Identifier("brrp", "zh_cn"), LanguageProvider.create()
+      PACK.addLang(Identifier.of("brrp", "zh_cn"), LanguageProvider.create()
           .add(LAVA_BLOCK, "熔岩方块（仅限开发环境）")
           .add(LAVA_STAIRS, "熔岩楼梯（仅限开发环境）")
           .add(LAVA_SLAB, "熔岩台阶（仅限开发环境）")
@@ -156,8 +156,8 @@ public class BRRPTest {
           .add(LAVA_FENCE_GATE, "熔岩柵欄門（僅限開發環境）")
           .add(LAVA_WALL, "熔岩墻（僅限開發環境）")
           .add(SMOOTH_STONE, "平滑石頭（僅限開發環境）");
-      PACK.addLang(new Identifier("brrp", "zh_tw"), twLang);
-      PACK.addLang(new Identifier("brrp", "zh_hk"), twLang
+      PACK.addLang(Identifier.of("brrp", "zh_tw"), twLang);
+      PACK.addLang(Identifier.of("brrp", "zh_hk"), twLang
           .add(LAVA_FENCE, "熔岩欄杆（僅限開發環境）")
           .add(LAVA_FENCE_GATE, "熔岩閘門（僅限開發環境）")
       );
@@ -182,20 +182,20 @@ public class BRRPTest {
       PACK.addTag(IdentifiedTagBuilder.createItemCopy(ItemTags.WALLS, walls));
       PACK.addTag(IdentifiedTagBuilder.createBlock(BlockTags.PICKAXE_MINEABLE).add(SMOOTH_STONE));
 
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_slab"), ShapedRecipeJsonBuilder.create(null, Blocks.SMOOTH_STONE_SLAB, 6).pattern("###").input('#', SMOOTH_STONE).criterionFromItem(SMOOTH_STONE).setCustomCraftingCategory(CraftingRecipeCategory.MISC).setCustomRecipeCategory("brrp_custom"));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smooth_stone_slab_from_stonecutting"), SingleItemRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(SMOOTH_STONE), null, Blocks.SMOOTH_STONE_SLAB).criterionFromItem(SMOOTH_STONE).setCustomRecipeCategory("brrp_custom"));
+      PACK.addRecipeAndAdvancement(Identifier.of("brrp", "smooth_stone_slab"), ShapedRecipeJsonBuilder.create(null, Blocks.SMOOTH_STONE_SLAB, 6).pattern("###").input('#', SMOOTH_STONE).criterionFromItem(SMOOTH_STONE).setCustomCraftingCategory(CraftingRecipeCategory.MISC).setCustomRecipeCategory("brrp_custom"));
+      PACK.addRecipeAndAdvancement(Identifier.of("brrp", "smooth_stone_slab_from_stonecutting"), StonecuttingRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(SMOOTH_STONE), null, Blocks.SMOOTH_STONE_SLAB).criterionFromItem(SMOOTH_STONE).setCustomRecipeCategory("brrp_custom"));
 
       final ComponentChanges bedrockTestComponentChanges = ComponentChanges.builder()
           .add(DataComponentTypes.FOOD, new FoodComponent.Builder().nutrition(20).saturationModifier(20).alwaysEdible().snack().statusEffect(new StatusEffectInstance(StatusEffects.WIND_CHARGED, 60), 1).build())
           .add(DataComponentTypes.ITEM_NAME, Text.literal("Unobtainable!"))
           .build();
 
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "cook_bedrock"), CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(Items.BEDROCK), null, Items.BARRIER, 1000, 2).setCustomRecipeCategory("brrp_custom").criterionFromItem(Items.BEDROCK).setComponentChanges(bedrockTestComponentChanges));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shaped"), ShapedRecipeJsonBuilder.create(null, Items.BEDROCK).patterns("xx", "xx").input('x', Items.BEDROCK).setBypassesValidation(true).setCustomRecipeCategory("brrp_custom").setCustomCraftingCategory(CraftingRecipeCategory.MISC).setComponentChanges(bedrockTestComponentChanges));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_shapeless"), ShapelessRecipeJsonBuilder.create(null, Items.BEDROCK).input(Items.STONE, 5).criterionFromItem(Items.STONE).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setCustomCraftingCategory(CraftingRecipeCategory.MISC).setComponentChanges(bedrockTestComponentChanges));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "unobtainable_single_item"), SingleItemRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(Items.STONE), null, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setComponentChanges(bedrockTestComponentChanges));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smithing_transform"), SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.LAPIS_LAZULI), null, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setComponentChanges(bedrockTestComponentChanges));
-      PACK.addRecipeAndAdvancement(new Identifier("brrp", "smithing_trim"), SmithingTrimRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.REDSTONE), RecipeCategory.BUILDING_BLOCKS).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
+      PACK.addRecipeAndAdvancement(Identifier.of("brrp", "cook_bedrock"), CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(Items.BEDROCK), null, Items.BARRIER, 1000, 2).setCustomRecipeCategory("brrp_custom").criterionFromItem(Items.BEDROCK).setComponentChanges(bedrockTestComponentChanges));
+      PACK.addRecipeAndAdvancement(Identifier.of("brrp", "unobtainable_shaped"), ShapedRecipeJsonBuilder.create(null, Items.BEDROCK).patterns("xx", "xx").input('x', Items.BEDROCK).setBypassesValidation(true).setCustomRecipeCategory("brrp_custom").setCustomCraftingCategory(CraftingRecipeCategory.MISC).setComponentChanges(bedrockTestComponentChanges));
+      PACK.addRecipeAndAdvancement(Identifier.of("brrp", "unobtainable_shapeless"), ShapelessRecipeJsonBuilder.create(null, Items.BEDROCK).input(Items.STONE, 5).criterionFromItem(Items.STONE).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setCustomCraftingCategory(CraftingRecipeCategory.MISC).setComponentChanges(bedrockTestComponentChanges));
+      PACK.addRecipeAndAdvancement(Identifier.of("brrp", "unobtainable_single_item"), StonecuttingRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(Items.STONE), null, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setComponentChanges(bedrockTestComponentChanges));
+      PACK.addRecipeAndAdvancement(Identifier.of("brrp", "smithing_transform"), SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.LAPIS_LAZULI), null, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setComponentChanges(bedrockTestComponentChanges));
+      PACK.addRecipeAndAdvancement(Identifier.of("brrp", "smithing_trim"), SmithingTrimRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.REDSTONE), RecipeCategory.BUILDING_BLOCKS).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
     }
 
     // The following code will generate all resources (including block states, block models, item models, loot tables, and optional recipes with the corresponding advancements) for the blocks.
@@ -213,7 +213,7 @@ public class BRRPTest {
 
   @Contract("_,_ -> param1")
   private static <T extends Block> T register(T block, String name) {
-    PlatformBridge.getInstance().registerBlock(new Identifier("brrp", name), block);
+    PlatformBridge.getInstance().registerBlock(Identifier.of("brrp", name), block);
     return block;
   }
 
@@ -227,44 +227,44 @@ public class BRRPTest {
     PACK.setDescription(Text.translatable("brrp.pack.test.description"));
     PACK.setSidedRegenerationCallback(ResourceType.CLIENT_RESOURCES, () -> refreshPack(true, false));
     PACK.setSidedRegenerationCallback(ResourceType.SERVER_DATA, () -> refreshPack(false, true));
-    RuntimeResourcePack emptyPack = RuntimeResourcePack.create(new Identifier("brrp", "empty"));
+    RuntimeResourcePack emptyPack = RuntimeResourcePack.create(Identifier.of("brrp", "empty"));
     emptyPack.setDisplayName(Text.translatable("brrp.pack.empty.name"));
     emptyPack.setDescription(Text.translatable("brrp.pack.empty.description"));
     RRPEventHelper.BEFORE_VANILLA.registerPack(emptyPack);
 
-    final RuntimeResourcePack beforeUser = RuntimeResourcePack.create(new Identifier("brrp", "test_before_user"));
+    final RuntimeResourcePack beforeUser = RuntimeResourcePack.create(Identifier.of("brrp", "test_before_user"));
     beforeUser.setDisplayName(Text.translatable("brrp.pack.test_before_user.name"));
     beforeUser.setDescription(Text.translatable("brrp.pack.test_before_user.description"));
-    beforeUser.addModel(new Identifier("minecraft", "item/yellow_wool"), ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, new Identifier("block/yellow_wool")));
-    beforeUser.addAsyncResource(ResourceType.CLIENT_RESOURCES, new Identifier("models/item/gold_ingot.json"), input -> {
+    beforeUser.addModel(Identifier.of("minecraft", "item/yellow_wool"), ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, Identifier.of("block/yellow_wool")));
+    beforeUser.addAsyncResource(ResourceType.CLIENT_RESOURCES, Identifier.of("models/item/gold_ingot.json"), input -> {
       LOGGER.info("async resource!");
-      return beforeUser.serialize(ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, new Identifier("item/gold_ingot")).transformation(ModelTransformationMode.GROUND, new TransformationBuilder().translation(0, 4.5f, 0).scale(9f, 9, 9f)));
+      return beforeUser.serialize(ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, Identifier.of("item/gold_ingot")).transformation(ModelTransformationMode.GROUND, new TransformationBuilder().translation(0, 4.5f, 0).scale(9f, 9, 9f)));
     });
-    beforeUser.addLazyResource(ResourceType.CLIENT_RESOURCES, new Identifier("models/item/diamond.json"), (pack, identifier) -> {
+    beforeUser.addLazyResource(ResourceType.CLIENT_RESOURCES, Identifier.of("models/item/diamond.json"), (pack, identifier) -> {
       LOGGER.info("lazy resource!");
-      return beforeUser.serialize(ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, new Identifier("item/diamond")).transformation(ModelTransformationMode.GROUND, new TransformationBuilder().translation(0, 4.5f, 0).scale(10.85f, 10.85f, 10.6f)));
+      return beforeUser.serialize(ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, Identifier.of("item/diamond")).transformation(ModelTransformationMode.GROUND, new TransformationBuilder().translation(0, 4.5f, 0).scale(10.85f, 10.85f, 10.6f)));
     });
-    beforeUser.addLang(new Identifier("minecraft", "en_us"), LanguageProvider.create().add(Blocks.YELLOW_WOOL, "The model is modified by a 'before-user' runtime resource pack."));
-    beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableKey().getValue(), new VanillaBlockLootTableGenerator().drops(Blocks.YELLOW_WOOL, ConstantLootNumberProvider.create(3)));
-    beforeUser.addModel(new Identifier("minecraft", "item/bow"), ModelJsonBuilder.create(new Identifier("minecraft", "item/white_concrete"))
-        .addOverride(ModelOverrideBuilder.of(new Identifier("item/yellow_concrete"), new Identifier("pulling"), 1))
-        .addOverride(ModelOverrideBuilder.of(new Identifier("item/orange_concrete"), new Identifier("pulling"), 1).addCondition(new Identifier("pull"), 0.65f))
-        .addOverride(ModelOverrideBuilder.of(new Identifier("item/red_concrete"), new Identifier("pulling"), 1).addCondition(new Identifier("pull"), 0.9f)));
+    beforeUser.addLang(Identifier.of("minecraft", "en_us"), LanguageProvider.create().add(Blocks.YELLOW_WOOL, "The model is modified by a 'before-user' runtime resource pack."));
+    beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableKey().getValue(), new VanillaBlockLootTableGenerator(beforeUser.getRegistryLookup()).drops(Blocks.YELLOW_WOOL, ConstantLootNumberProvider.create(3)));
+    beforeUser.addModel(Identifier.of("minecraft", "item/bow"), ModelJsonBuilder.create(Identifier.of("minecraft", "item/white_concrete"))
+        .addOverride(ModelOverrideBuilder.of(Identifier.of("item/yellow_concrete"), Identifier.of("pulling"), 1))
+        .addOverride(ModelOverrideBuilder.of(Identifier.of("item/orange_concrete"), Identifier.of("pulling"), 1).addCondition(Identifier.of("pull"), 0.65f))
+        .addOverride(ModelOverrideBuilder.of(Identifier.of("item/red_concrete"), Identifier.of("pulling"), 1).addCondition(Identifier.of("pull"), 0.9f)));
     RRPEventHelper.BEFORE_USER.registerPack(beforeUser);
 
-    final RuntimeResourcePack test2 = RuntimeResourcePack.create(new Identifier("brrp", "test2"));
+    final RuntimeResourcePack test2 = RuntimeResourcePack.create(Identifier.of("brrp", "test2"));
     test2.setSidedRegenerationCallback(ResourceType.CLIENT_RESOURCES, () -> {
       test2.clearResources(ResourceType.CLIENT_RESOURCES);
       for (int i = 0; i < 1024; i++) {
         Thread.sleep(ThreadLocalRandom.current().nextLong(20));
-        test2.addAsset(new Identifier("brrp", "test/" + ThreadLocalRandom.current().nextInt()), new byte[16]);
+        test2.addAsset(Identifier.of("brrp", "test/" + ThreadLocalRandom.current().nextInt()), new byte[16]);
       }
     });
     test2.setSidedRegenerationCallback(ResourceType.SERVER_DATA, () -> {
       test2.clearResources(ResourceType.SERVER_DATA);
       for (int i = 0; i < 1024; i++) {
         Thread.sleep(ThreadLocalRandom.current().nextLong(20));
-        test2.addData(new Identifier("brrp", "test/" + ThreadLocalRandom.current().nextInt()), new byte[16]);
+        test2.addData(Identifier.of("brrp", "test/" + ThreadLocalRandom.current().nextInt()), new byte[16]);
       }
     });
 

@@ -93,7 +93,7 @@ public final class TextureRegistry {
    */
   public static void registerWithName(Block block, TextureKey textureKey, String path) {
     final Identifier id = Registries.BLOCK.getId(block);
-    register(block, textureKey, new Identifier(id.getNamespace(), "block/" + path));
+    register(block, textureKey, Identifier.of(id.getNamespace(), "block/" + path));
   }
 
   /**

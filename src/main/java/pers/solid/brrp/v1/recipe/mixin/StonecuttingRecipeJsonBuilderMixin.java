@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.advancement.AdvancementCriterion;
 import net.minecraft.component.ComponentChanges;
-import net.minecraft.data.server.recipe.SingleItemRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.StonecuttingRecipeJsonBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.book.RecipeCategory;
 import org.apache.commons.lang3.StringUtils;
@@ -16,13 +16,13 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Slice;
-import pers.solid.brrp.v1.recipe.SingleItemRecipeJsonBuilderExtension;
+import pers.solid.brrp.v1.recipe.StonecuttingRecipeJsonBuilderExtension;
 
-@Mixin(SingleItemRecipeJsonBuilder.class)
-public abstract class SingleItemRecipeJsonBuilderMixin implements SingleItemRecipeJsonBuilderExtension {
+@Mixin(StonecuttingRecipeJsonBuilder.class)
+public abstract class StonecuttingRecipeJsonBuilderMixin implements StonecuttingRecipeJsonBuilderExtension {
 
   @Shadow
-  public abstract SingleItemRecipeJsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion);
+  public abstract StonecuttingRecipeJsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion);
 
   @Unique
   private boolean bypassesValidation;
@@ -33,17 +33,17 @@ public abstract class SingleItemRecipeJsonBuilderMixin implements SingleItemReci
 
   @Unique
   @SuppressWarnings("DataFlowIssue")
-  private SingleItemRecipeJsonBuilder self() {
-    return (SingleItemRecipeJsonBuilder) (Object) this;
+  private StonecuttingRecipeJsonBuilder self() {
+    return (StonecuttingRecipeJsonBuilder) (Object) this;
   }
 
   @Override
-  public SingleItemRecipeJsonBuilder criterionMethodBridge(String criterionName, AdvancementCriterion<?> criterion) {
+  public StonecuttingRecipeJsonBuilder criterionMethodBridge(String criterionName, AdvancementCriterion<?> criterion) {
     return criterion(criterionName, criterion);
   }
 
   @Override
-  public SingleItemRecipeJsonBuilder setBypassesValidation(boolean bypassesValidation) {
+  public StonecuttingRecipeJsonBuilder setBypassesValidation(boolean bypassesValidation) {
     this.bypassesValidation = bypassesValidation;
     return self();
   }
@@ -54,7 +54,7 @@ public abstract class SingleItemRecipeJsonBuilderMixin implements SingleItemReci
   }
 
   @Override
-  public SingleItemRecipeJsonBuilder setCustomRecipeCategory(@Nullable String recipeCategory) {
+  public StonecuttingRecipeJsonBuilder setCustomRecipeCategory(@Nullable String recipeCategory) {
     this.customRecipeCategory = recipeCategory;
     return self();
   }
@@ -79,7 +79,7 @@ public abstract class SingleItemRecipeJsonBuilderMixin implements SingleItemReci
 
 
   @Override
-  public SingleItemRecipeJsonBuilder setComponentChanges(ComponentChanges componentChanges) {
+  public StonecuttingRecipeJsonBuilder setComponentChanges(ComponentChanges componentChanges) {
     this.componentChanges = componentChanges;
     return self();
   }

@@ -85,7 +85,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
 
   @Override
   public LootTable.Builder getLootTable() {
-    return new VanillaBlockLootTableGenerator().slabDrops(this);
+    return new VanillaBlockLootTableGenerator(null).slabDrops(this);
   }
 
   @Override

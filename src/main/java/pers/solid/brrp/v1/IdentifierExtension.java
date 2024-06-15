@@ -22,7 +22,7 @@ public interface IdentifierExtension {
   @Contract("_ -> new")
   default Identifier brrp_suffixed(@NotNull String suffix) {
     Identifier identifier = (Identifier) this;
-    return new Identifier(identifier.getNamespace(), identifier.getPath() + suffix);
+    return Identifier.of(identifier.getNamespace(), identifier.getPath() + suffix);
   }
 
   /**
@@ -35,7 +35,7 @@ public interface IdentifierExtension {
   @Contract("_ -> new")
   default Identifier brrp_prefixed(@NotNull String prefix) {
     Identifier identifier = (Identifier) this;
-    return new Identifier(identifier.getNamespace(), prefix + identifier.getPath());
+    return Identifier.of(identifier.getNamespace(), prefix + identifier.getPath());
   }
 
   /**
@@ -48,6 +48,6 @@ public interface IdentifierExtension {
   @Contract("_, _ -> new")
   default Identifier brrp_prefix_and_suffixed(@NotNull String prefix, @NotNull String suffix) {
     Identifier identifier = (Identifier) this;
-    return new Identifier(identifier.getNamespace(), prefix + identifier.getPath() + suffix);
+    return Identifier.of(identifier.getNamespace(), prefix + identifier.getPath() + suffix);
   }
 }

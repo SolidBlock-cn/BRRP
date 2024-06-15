@@ -27,7 +27,7 @@ public abstract class IdentifierMixin implements IdentifierExtension {
    */
   @Override
   public Identifier brrp_suffixed(@Pattern("[a-z\\d/._-]+") @NotNull String suffix) {
-    return new Identifier(namespace, path + suffix);
+    return Identifier.of(namespace, path + suffix);
   }
 
   /**
@@ -38,7 +38,7 @@ public abstract class IdentifierMixin implements IdentifierExtension {
    */
   @Override
   public Identifier brrp_prefixed(@Pattern("[a-z\\d/._-]+") @NotNull String prefix) {
-    return new Identifier(namespace, prefix + path);
+    return Identifier.of(namespace, prefix + path);
   }
 
   /**
@@ -50,6 +50,6 @@ public abstract class IdentifierMixin implements IdentifierExtension {
    */
   @Override
   public Identifier brrp_prefix_and_suffixed(@Pattern("[a-z\\d/._-]+") @NotNull String prefix, @NotNull String suffix) {
-    return new Identifier(namespace, prefix + path + suffix);
+    return Identifier.of(namespace, prefix + path + suffix);
   }
 }

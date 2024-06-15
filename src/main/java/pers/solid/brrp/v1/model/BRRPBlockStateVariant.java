@@ -31,11 +31,11 @@ public class BRRPBlockStateVariant extends BlockStateVariant {
   }
 
   public static BRRPBlockStateVariant create(String namespace, String path) {
-    return create(new Identifier(namespace, path));
+    return create(Identifier.of(namespace, path));
   }
 
   public static BRRPBlockStateVariant create(String modelId) {
-    return create(new Identifier(modelId));
+    return create(Identifier.of(modelId));
   }
 
   @Override

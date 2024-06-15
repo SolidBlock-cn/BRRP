@@ -7,9 +7,9 @@
     "CookingRecipeJsonBuilderMixin",
     "ShapedRecipeJsonBuilderMixin",
     "ShapelessRecipeJsonBuilderMixin",
-    "SingleItemRecipeJsonBuilderMixin",
     "SmithingTransformRecipeJsonBuilderMixin",
-    "SmithingTrimRecipeJsonBuilderMixin"
+    "SmithingTrimRecipeJsonBuilderMixin",
+    "StonecuttingRecipeJsonBuilderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

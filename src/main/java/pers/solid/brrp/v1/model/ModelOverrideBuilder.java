@@ -29,11 +29,11 @@ public class ModelOverrideBuilder implements Cloneable {
   }
 
   public ModelOverrideBuilder(String namespace, String value) {
-    this(new Identifier(namespace, value));
+    this(Identifier.of(namespace, value));
   }
 
   public ModelOverrideBuilder(String modelId) {
-    this(new Identifier(modelId));
+    this(Identifier.of(modelId));
   }
 
   @Contract(pure = true)
@@ -65,12 +65,12 @@ public class ModelOverrideBuilder implements Cloneable {
 
   @Contract(value = "_, _, _ -> this", mutates = "this")
   public ModelOverrideBuilder addCondition(String namespace, String value, float threshold) {
-    return addCondition(new Identifier(namespace, value), threshold);
+    return addCondition(Identifier.of(namespace, value), threshold);
   }
 
   @Contract(value = "_, _ -> this", mutates = "this")
   public ModelOverrideBuilder addCondition(String identifier, float threshold) {
-    return addCondition(new Identifier(identifier), threshold);
+    return addCondition(Identifier.of(identifier), threshold);
   }
 
   /**

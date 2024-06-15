@@ -10,11 +10,11 @@ import net.minecraft.advancement.Advancement;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.TagBuilder;
 import net.minecraft.registry.tag.TagFile;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.resource.*;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
@@ -108,7 +108,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   private static Identifier fix(Identifier identifier, String prefix, String append) {
-    return new Identifier(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
+    return Identifier.of(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
   }
 
   @Override
@@ -143,7 +143,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public byte[] addLootTable(Identifier identifier, byte[] serializedData) {
-    return this.addData(fix(identifier, "loot_tables", "json"), serializedData);
+    return this.addData(fix(identifier, "loot_table", "json"), serializedData);
   }
 
   @Override
@@ -261,7 +261,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public <T> byte[] addTag(TagKey<T> tagKey, TagBuilder tagBuilder) {
-    return addData(new Identifier(tagKey.id().getNamespace(), TagManagerLoader.getPath(tagKey.registry()) + "/" + tagKey.id().getPath() + ".json"), serialize(new TagFile(tagBuilder.build(), false)));
+    return addData(Identifier.of(tagKey.id().getNamespace(), RegistryKeys.getTagPath(tagKey.registry()) + "/" + tagKey.id().getPath() + ".json"), serialize(new TagFile(tagBuilder.build(), false)));
   }
 
   @Override
@@ -271,12 +271,12 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public byte[] addRecipe(Identifier id, byte[] serializedData) {
-    return this.addData(fix(id, "recipes", "json"), serializedData);
+    return this.addData(fix(id, "recipe", "json"), serializedData);
   }
 
   @Override
   public byte[] addAdvancement(Identifier id, byte[] serializedData) {
-    return this.addData(fix(id, "advancements", "json"), serializedData);
+    return this.addData(fix(id, "advancement", "json"), serializedData);
   }
 
   @Override
@@ -490,7 +490,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     int sep = fullPath.indexOf('/');
     String namespace = fullPath.substring(0, sep);
     String path = fullPath.substring(sep + 1);
-    map.put(new Identifier(namespace, path), () -> data);
+    map.put(Identifier.of(namespace, path), () -> data);
   }
 
   private void write(Path dir, Identifier identifier, byte[] data) {
@@ -535,6 +535,11 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Override
   public int numberOfRootResources() {
     return root.size();
+  }
+
+  @Override
+  public RegistryWrapper.WrapperLookup getRegistryLookup() {
+    return registryLookup;
   }
 
 

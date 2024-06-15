@@ -8,10 +8,12 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.stat.StatType;
 import net.minecraft.text.TextContent;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -135,8 +137,8 @@ public interface LanguageProvider {
    * @param value       The translated name of the enchantment.
    */
   @Contract(mutates = "this", value = "_, _ -> this")
-  default LanguageProvider add(@NotNull Enchantment enchantment, String value) {
-    return add(enchantment.getTranslationKey(), value);
+  default LanguageProvider add(@NotNull RegistryKey<Enchantment> enchantment, String value) {
+    return add(Util.createTranslationKey("enchantment", enchantment.getValue()), value);
   }
 
   /**
