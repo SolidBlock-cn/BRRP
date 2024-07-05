@@ -1,1 +1,1 @@
-- 利用 MixinExtras，优化一些 mixin
+Fixed the conflict with some mods that modify data driven contents.

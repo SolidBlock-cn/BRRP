@@ -9,9 +9,7 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.Recipe;
-import net.minecraft.registry.BuiltinRegistries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.*;
 import net.minecraft.registry.tag.TagBuilder;
 import net.minecraft.registry.tag.TagFile;
 import net.minecraft.registry.tag.TagKey;
@@ -21,15 +19,19 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.v1.JsonSerializers;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
+import pers.solid.brrp.v1.mixin.BuiltinRegistriesAccessor;
+import pers.solid.brrp.v1.mixin.RegistryBuilderAccessor;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -70,11 +72,26 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
    */
   private final Gson gson;
 
+  public static class Workaround extends RegistryBuilder {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Contract(pure = true)
+    public static Workaround copy(RegistryBuilder from) {
+      final Workaround rb = new Workaround();
+      final List vanilla = ((RegistryBuilderAccessor) from).getRegistries();
+      ((RegistryBuilderAccessor) rb).getRegistries().addAll(vanilla);
+      return rb;
+    }
+  }
+
   /**
    * This class holds some shared {@code registryLookup} and {@code gson} that many runtime resource packs may use in common.
    */
   private static final class Holder {
-    private static final RegistryWrapper.WrapperLookup registryLookup = BuiltinRegistries.createWrapperLookup();
+    private static final RegistryWrapper.WrapperLookup registryLookup = Util.make(() -> {
+      final RegistryBuilder rb = Workaround.copy(BuiltinRegistriesAccessor.getRegistryBuilder());
+      return rb.createWrapperLookup(DynamicRegistryManager.of(Registries.REGISTRIES));
+    });
+
     private static final Gson gson = createGson(registryLookup);
   }
 
