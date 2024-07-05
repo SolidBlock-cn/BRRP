@@ -2,7 +2,7 @@ import com.modrinth.minotaur.dependencies.ModDependency
 
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.6-SNAPSHOT"
+    id "dev.architectury.loom" version "1.7-SNAPSHOT"
     id "com.modrinth.minotaur" version "2.+" apply false
     id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
     id "com.github.breadmoirai.github-release" version "2.5.2" apply false
@@ -90,7 +90,7 @@ subprojects {
         println "Modrinth token: ${token.get()}"
         projectId = 'JnrDtPAE'
         versionNumber = "${rootProject.mod_version}-mc${rootProject.minecraft_version}-$platform"
-        versionType = 'release'
+        versionType = 'beta'
         uploadFile = remapJar
         gameVersions = List.of(project.supported_minecraft_versions.split(","))
         loaders = [platform]
@@ -108,7 +108,7 @@ subprojects {
         project {
             id = '618156'
             changelog = changelogContent
-            releaseType = 'release'
+            releaseType = 'beta'
 
             addGameVersion '1.20.5'
             // gameVersionStrings.addAll project.supported_minecraft_versions.split(',')
