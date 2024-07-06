@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.client.TextureKey;
-import net.minecraft.data.server.loottable.vanilla.VanillaBlockLootTableGenerator;
+import net.minecraft.data.server.loottable.BlockLootTableGenerator;
 import net.minecraft.data.server.recipe.StonecuttingRecipeJsonBuilder;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -49,7 +49,7 @@ import pers.solid.brrp.v1.model.ModelJsonBuilder;
  * // 'pack' is an instance of RuntimeResourcePack
  * block.writeAssets(pack);
  * block.writeData(pack);}</pre>
- * <p>Note that some methods (such as {@link #getLootTable()}) will have values by default. If you do not want to generate some resources within that method, you can override it and make it return {@code null}.</pre>
+ * <p>Note that some methods (such as {@link #getLootTable(BlockLootTableGenerator)}) will have values by default. If you do not want to generate some resources within that method, you can override it and make it return {@code null}.</pre>
  * }
  */
 public interface BlockResourceGenerator extends ItemResourceGenerator {
@@ -279,8 +279,8 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @return The block loot table. If you do not need to generate the loot table, you can make it return {@code null}.
    */
   @Contract(pure = true)
-  default LootTable.Builder getLootTable() {
-    return new VanillaBlockLootTableGenerator(null).drops((ItemConvertible) this);
+  default LootTable.Builder getLootTable(BlockLootTableGenerator blockLootTableGenerator) {
+    return blockLootTableGenerator.drops((ItemConvertible) this);
   }
 
   /**
@@ -295,7 +295,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
       // If the loot table is empty, don't write.
       return;
     }
-    final LootTable.Builder lootTable = getLootTable();
+    final LootTable.Builder lootTable = getLootTable(pack.getBlockLootTableGenerator());
     if (lootTable != null) {
       pack.addLootTable(lootTableId, lootTable);
     }

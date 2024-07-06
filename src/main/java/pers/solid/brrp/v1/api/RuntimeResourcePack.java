@@ -14,6 +14,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.client.resource.metadata.AnimationResourceMetadata;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.BlockStateSupplier;
+import net.minecraft.data.server.loottable.BlockLootTableGenerator;
 import net.minecraft.data.server.recipe.*;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.Recipe;
@@ -38,6 +39,7 @@ import pers.solid.brrp.v1.JsonSerializers;
 import pers.solid.brrp.v1.gui.DumpScreen;
 import pers.solid.brrp.v1.gui.RRPConfigScreen;
 import pers.solid.brrp.v1.gui.RegenerateScreen;
+import pers.solid.brrp.v1.impl.BRRPBlockLootTableGenerator;
 import pers.solid.brrp.v1.impl.RuntimeResourcePackImpl;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 import pers.solid.brrp.v1.tag.IdentifiedTagBuilder;
@@ -736,4 +738,9 @@ public interface RuntimeResourcePack extends ResourcePack {
 
   @Contract(pure = true)
   RegistryWrapper.WrapperLookup getRegistryLookup();
+
+  @Contract(pure = true)
+  default BlockLootTableGenerator getBlockLootTableGenerator() {
+    return new BRRPBlockLootTableGenerator(getRegistryLookup());
+  }
 }

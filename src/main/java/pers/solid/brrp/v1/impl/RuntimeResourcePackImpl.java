@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.advancement.Advancement;
+import net.minecraft.data.server.loottable.BlockLootTableGenerator;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.registry.*;
@@ -71,6 +72,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
    * The special GSON that uses {@code registryLookup} to serialize data.
    */
   private final Gson gson;
+  public final BlockLootTableGenerator blockLootTableGenerator;
 
   public static class Workaround extends RegistryBuilder {
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -93,6 +95,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     });
 
     private static final Gson gson = createGson(registryLookup);
+    private static final BlockLootTableGenerator blockLootTableGenerator = new BRRPBlockLootTableGenerator(registryLookup);
   }
 
   /**
@@ -111,12 +114,14 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     super(id);
     this.registryLookup = registryLookup;
     this.gson = createGson(registryLookup);
+    this.blockLootTableGenerator = new BRRPBlockLootTableGenerator(registryLookup);
   }
 
   public RuntimeResourcePackImpl(Identifier id) {
     super(id);
     this.registryLookup = Holder.registryLookup;
     this.gson = Holder.gson;
+    this.blockLootTableGenerator = Holder.blockLootTableGenerator;
   }
 
   @Override
@@ -559,6 +564,10 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     return registryLookup;
   }
 
+  @Override
+  public BlockLootTableGenerator getBlockLootTableGenerator() {
+    return blockLootTableGenerator;
+  }
 
   protected Map<Identifier, Supplier<byte[]>> getSys(ResourceType side) {
     return side == ResourceType.CLIENT_RESOURCES ? this.assets : this.data;
