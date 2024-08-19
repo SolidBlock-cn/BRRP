@@ -37,6 +37,7 @@ import pers.solid.brrp.v1.model.ModelJsonBuilder;
 public interface ItemResourceGenerator {
   /**
    * This map is used for {@link #getRecipeCategory()}, in cases you don't want to override that category. It will be used only for data generation, and allows {@code null} values. Notice that other mods may use it.
+   *
    * @see #getRecipeCategory()
    * @see #setRecipeCategory(RecipeCategory)
    */
