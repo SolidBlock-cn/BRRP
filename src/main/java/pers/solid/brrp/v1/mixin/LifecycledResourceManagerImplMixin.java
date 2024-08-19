@@ -7,6 +7,7 @@ import net.minecraft.resource.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import pers.solid.brrp.v1.PlatformBridge;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Mixin(LifecycledResourceManagerImpl.class)
 public abstract class LifecycledResourceManagerImplMixin {
+  @Unique
   private static final Logger LOGGER = LoggerFactory.getLogger("LifecycledResourceManagerImplMixin");
 
   @ModifyVariable(method = "<init>", at = @At("HEAD"), argsOnly = true)
