@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pers.solid.brrp.v1.recipe.SmithingTrimRecipeJsonBuilderExtension;
@@ -18,7 +19,9 @@ public abstract class SmithingTrimRecipeJsonBuilderMixin implements SmithingTrim
   @Shadow
   public abstract SmithingTrimRecipeJsonBuilder criterion(String name, CriterionConditions conditions);
 
+  @Unique
   private boolean bypassesValidation;
+  @Unique
   private @Nullable String customRecipeCategory;
 
   @SuppressWarnings("DataFlowIssue")

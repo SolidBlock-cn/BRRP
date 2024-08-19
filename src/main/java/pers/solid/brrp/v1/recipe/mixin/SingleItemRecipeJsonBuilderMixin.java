@@ -1,15 +1,12 @@
 package pers.solid.brrp.v1.recipe.mixin;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.advancement.criterion.CriterionConditions;
 import net.minecraft.data.server.recipe.SingleItemRecipeJsonBuilder;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pers.solid.brrp.v1.recipe.SingleItemRecipeJsonBuilderExtension;
@@ -19,6 +16,7 @@ public abstract class SingleItemRecipeJsonBuilderMixin implements SingleItemReci
 
   @Unique
   private boolean bypassesValidation;
+  @Unique
   private @Nullable String customRecipeCategory;
 
   @SuppressWarnings("DataFlowIssue")
