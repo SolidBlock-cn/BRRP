@@ -91,7 +91,7 @@ public class BRRPFenceGateBlock extends FenceGateBlock implements BlockResourceG
         .input('W', baseBlock)
         .pattern("#W#")
         .pattern("#W#")
-        .criterion(RecipeProvider.hasItem(baseBlock), RecipeProvider.conditionsFromItem(baseBlock));
+        .criterionFromItem(baseBlock);
   }
 
   @Override

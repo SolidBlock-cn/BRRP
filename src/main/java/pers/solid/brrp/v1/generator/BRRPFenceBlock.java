@@ -9,7 +9,6 @@ import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeProvider;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -91,7 +90,7 @@ public class BRRPFenceBlock extends FenceBlock implements BlockResourceGenerator
         .pattern("W#W").pattern("W#W")
         .input('W', baseBlock)
         .input('#', secondIngredient)
-        .criterion(RecipeProvider.hasItem(baseBlock), RecipeProvider.conditionsFromItem(baseBlock));
+        .criterionFromItem(baseBlock);
   }
 
   /**

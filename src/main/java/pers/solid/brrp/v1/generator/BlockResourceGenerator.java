@@ -5,7 +5,6 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.client.TextureKey;
-import net.minecraft.data.server.loottable.vanilla.VanillaBlockLootTableGenerator;
 import net.minecraft.data.server.recipe.SingleItemRecipeJsonBuilder;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -22,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.v1.BRRPUtils;
 import pers.solid.brrp.v1.annotations.PreferredEnvironment;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
+import pers.solid.brrp.v1.impl.BRRPBlockLootTableGenerator;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 
 /**
@@ -282,7 +282,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @Contract(pure = true)
   default LootTable.Builder getLootTable() {
-    return new VanillaBlockLootTableGenerator().drops((ItemConvertible) this);
+    return BRRPBlockLootTableGenerator.INSTANCE.drops((ItemConvertible) this);
   }
 
   /**

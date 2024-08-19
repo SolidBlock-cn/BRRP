@@ -490,7 +490,6 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     return root.size();
   }
 
-
   protected Map<Identifier, Supplier<byte[]>> getSys(ResourceType side) {
     return side == ResourceType.CLIENT_RESOURCES ? this.assets : this.data;
   }
