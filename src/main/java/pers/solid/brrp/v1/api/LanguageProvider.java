@@ -37,10 +37,12 @@ import java.util.TreeMap;
  *   .add(MyModBlocks.EXAMPLE_BLOCK, "示例方塊")
  *   .add(MyModBlocks.EXAMPLE_ITEM, "示例物品");
  *
- * myRuntimeResourcePack.add(Identifier.of("my_mod", "en_us"), enUs)
- * myRuntimeResourcePack.add(Identifier.of("my_mod", "zh_tw"), zhTw)
+ * myRuntimeResourcePack.addLang(Identifier.of("my_mod", "en_us"), enUs)
+ * myRuntimeResourcePack.addLang(Identifier.of("my_mod", "zh_tw"), zhTw)
  * }
  * </pre>
+ *
+ * @see RuntimeResourcePack#addLang(Identifier, LanguageProvider)
  */
 public interface LanguageProvider {
   /**
