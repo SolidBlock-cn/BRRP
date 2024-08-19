@@ -110,8 +110,7 @@ subprojects {
             changelog = changelogContent
             releaseType = 'release'
 
-            addGameVersion '1.20.5'
-            // gameVersionStrings.addAll project.supported_minecraft_versions.split(',')
+            gameVersionStrings.addAll project.supported_minecraft_versions.split(',')
             addGameVersion platform.capitalize()
 
             mainArtifact(remapJar) {
