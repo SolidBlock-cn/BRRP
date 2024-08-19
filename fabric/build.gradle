@@ -44,18 +44,13 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
-//    classifier "dev-shadow" todo check
+    archiveClassifier.set "dev-shadow"
 }
 
 remapJar {
     injectAccessWidener = true
     inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
-//    classifier null todo check
-}
-
-jar {
-//    classifier "dev" todo check
 }
 
 sourcesJar {

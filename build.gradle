@@ -5,8 +5,7 @@ plugins {
     id "dev.architectury.loom" version "1.7-SNAPSHOT"
     id "com.modrinth.minotaur" version "2.+" apply false
     id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
-    id 'io.github.juuxel.loom-vineflower' version '1.11.0'
-    id "com.github.breadmoirai.github-release" version "2.4.1" apply false
+    id "com.github.breadmoirai.github-release" version "2.5.2" apply false
 }
 
 architectury {
@@ -30,9 +29,6 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_17
 
     repositories {
-        maven {
-            url 'https://maven.aliyun.com/nexus/content/groups/public'
-        }
     }
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
@@ -48,13 +44,15 @@ allprojects {
         withSourcesJar()
     }
 }
-
-archivesBaseName += '-common'
+base {
+    archivesName = archivesName.get() + '-common'
+}
 
 subprojects {
     apply plugin: "com.modrinth.minotaur"
     apply plugin: 'com.matthewprenger.cursegradle'
     apply plugin: 'com.github.breadmoirai.github-release'
+    apply plugin: "maven-publish"
 
     base {
         archivesName = archivesName.get() + "-" + project.name
@@ -135,16 +133,16 @@ subprojects {
         def getenv = System.getenv("GITHUB_TOKEN")
         println "GitHub token: $getenv"
         if (getenv) token getenv
-        owner "SolidBlock-cn"
-        repo "BRRP"
-        tagName "v$project.mod_version"
-        targetCommitish "1.20.1"
-        body changelogContent
-        draft true
-        prerelease false
+        owner = "SolidBlock-cn"
+        repo = "BRRP"
+        tagName = "v$project.mod_version"
+        targetCommitish = "1.20.1"
+        body = changelogContent
+        draft = true
+        prerelease = false
         releaseAssets remapJar, remapSourcesJar
-        allowUploadToExisting true
-        apiEndpoint "https://api.github.com"
+        allowUploadToExisting = true
+        apiEndpoint = "https://api.github.com"
     }
 
     publish {
@@ -161,9 +159,9 @@ loom {
 }
 
 dependencies {
-    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
-    // Do NOT use other classes from fabric loader
+    // 用于在 common 部分使用与 @Environment 有关的注解，以及 Fabric Data Generation API 中的 access widener。
     modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 }
 
 publishing {
