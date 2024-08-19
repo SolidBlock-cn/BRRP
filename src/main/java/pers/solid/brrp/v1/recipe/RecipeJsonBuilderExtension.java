@@ -17,6 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pers.solid.brrp.v1.api.RuntimeResourcePack;
 
 public interface RecipeJsonBuilderExtension<Self> {
   /**
@@ -26,6 +27,7 @@ public interface RecipeJsonBuilderExtension<Self> {
   @Contract("_, _ -> this")
   @ApiStatus.Internal
   default Self criterionMethodBridge(String criterionName, AdvancementCriterion<?> criterion) {
+    RuntimeResourcePack.LOGGER.warn("Calling unimplemented 'criterionMethodBridge' for {}. Silently ignored.", this);
     return (Self) this;
   }
 

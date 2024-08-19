@@ -21,7 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.v1.BRRPUtils;
 import pers.solid.brrp.v1.annotations.PreferredEnvironment;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
+import pers.solid.brrp.v1.impl.BRRPBlockLootTableGenerator;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * <p>The interface is used for blocks. Your custom block class can implement this interface, and override some methods you need.</p>
@@ -274,17 +278,41 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
+   * Get the block loot table. It's by default the simplest loot table, which means one block of itself will be dropped when broken.
+   *
+   * @return The block loot table. If you do not need to generate the loot table, you can make it return {@code null}.
+   * @deprecated Please override or invoke {@link #getLootTable(BlockLootTableGenerator)}.
+   */
+  @Deprecated(forRemoval = true)
+  @Contract(pure = true)
+  default LootTable.Builder getLootTable() {
+    return new BRRPBlockLootTableGenerator(null).drops((ItemConvertible) this);
+  }
+
+  /**
    * Get the block loot table. It's by default the simplest loot table, which means one block of itself will be dropped when broken. <em>Note that this method is used just for data generation, instead of real usage in the gameplay. You should override this if this object is not {@link Block} or {@link Item}.</em>
    *
    * @return The block loot table. If you do not need to generate the loot table, you can make it return {@code null}.
+   * @since 1.0.4
    */
+  @ApiStatus.AvailableSince("1.0.4")
   @Contract(pure = true)
   default LootTable.Builder getLootTable(BlockLootTableGenerator blockLootTableGenerator) {
+    try {
+      final Method method = getClass().getMethod("getLootTable");
+      if (method.getDeclaringClass() != BlockResourceGenerator.class) {
+        method.setAccessible(true);
+        RuntimeResourcePack.LOGGER.warn("Runtime Resource Pack: Using deprecated 'getLootTable()' method for object {}!", this);
+        return (LootTable.Builder) method.invoke(this);
+      }
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassCastException e) {
+      RuntimeResourcePack.LOGGER.warn("Runtime Resource Pack: Cannot find deprecated method 'getLootTable' for {}:", this, e);
+    }
     return blockLootTableGenerator.drops((ItemConvertible) this);
   }
 
   /**
-   * Write the block loot table to the runtime resource pack. If the block drops nothing ({@link Block.Settings#dropsNothing()}, the loot table will not be generated. However, if the block drops other's loot table ({@link Block.Settings#dropsLike(Block)}, the loot table will be written in <em>that</em> id, and please notice of potential duplication.
+   * Write the block loot table to the runtime resource pack. If the block drops nothing ({@link Block.Settings#dropsNothing()}, the loot table will not be generated. However, if the block drops other's loot table ({@link Block.Settings#dropsLike(Block)}), the loot table will be written in <em>that</em> id, and please notice of potential duplication.
    *
    * @param pack The runtime resource pack.
    */

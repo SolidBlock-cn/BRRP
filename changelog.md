@@ -1,1 +1,2 @@
-Fixed the conflict with some mods that modify data driven contents.
+- Fixed the conflict with some mods that modify data driven contents.
+- Optimized the implementation of loot table generation.
