@@ -692,7 +692,8 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @return The description of the pac, which may be shown in the {@link RRPConfigScreen}.
    */
   @Contract(pure = true)
-  @Nullable Text getDescription();
+  @Nullable
+  Text getDescription();
 
   /**
    * Set the description of the pack, which may be shown in the {@link RRPConfigScreen}.
