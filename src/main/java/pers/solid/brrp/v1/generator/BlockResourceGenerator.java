@@ -128,9 +128,9 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *   @Environment(EnvType.CLIENT) @Override
    *   public getTextureId(TextureKey type) {
    *     if (type == TextureKey.END) {
-   *       return new Identifier("minecraft", "block/quartz_pillar_top");
+   *       return Identifier.ofVanilla("block/quartz_pillar_top");
    *     } else {
-   *       return new Identifier("minecraft", "block/quartz_pillar");
+   *       return Identifier.ofVanilla("block/quartz_pillar");
    *     }
    *   }
    * }</pre>

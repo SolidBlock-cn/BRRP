@@ -17,7 +17,7 @@ import pers.solid.brrp.v1.model.ModelUtils;
  * <p>Please loot at this example:</p>
  * <pre>{@code
  *   // create a block that uses the texture of lava_still
- *   public static final BRRPCubeBlock LAVA_BLOCK = BRRPCubeBlock.cubeAll(Settings.of(...), new Identifier("block/lava_still"));
+ *   public static final BRRPCubeBlock LAVA_BLOCK = BRRPCubeBlock.cubeAll(Settings.of(...), Identifier.ofVanilla("block/lava_still"));
  * }
  * </pre>
  */

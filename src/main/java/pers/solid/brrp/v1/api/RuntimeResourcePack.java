@@ -64,10 +64,10 @@ import java.util.zip.ZipOutputStream;
  * <p>After creating a runtime resource pack, you should register it in {@code RRPCallback}, {@code SidedRRPCallback}, or {@code RRPEvent} so that it can take effect when loading resources. Here hs an example:</pre>
  * <pre>{@code
  * // create the runtime resource pack
- * RuntimeResourcePack myModPack = RuntimeResourcePack.create(new Identifier("my_mod", "example_pack"));
+ * RuntimeResourcePack myModPack = RuntimeResourcePack.create(Identifier.of("my_mod", "example_pack"));
  *
  * // write some things into the pack
- * myModPack.addLang(new Identifier("my_mod", "zh_cn"), LanguageProvider.create().add(...);
+ * myModPack.addLang(Identifier.of("my_mod", "zh_cn"), LanguageProvider.create().add(...);
  * myModPack.addLootTable(MyModBlocks.EXAMPLE_BLOCK.getLootTableId(), LootTable.builder()...().build();
  * ...
  *
@@ -193,16 +193,16 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * <p>Add a language file for the given language. This is an example:</p>
    * <pre>{@code
-   * pack.addLang(new Identifier("my_mod", "zh_cn"), LanguageProvider.create().add(...));
+   * pack.addLang(Identifier.of("my_mod", "zh_cn"), LanguageProvider.create().add(...));
    * }</pre>
    * <p><em>Do not</em> call this method multiple times for a same language, as they will override each other!</pre>
    * <pre>{@code
    * // wrong:
-   * pack.addLang(new Identifier("my_mod", "zh_cn"), LanguageProvider.create().add("key1", "value1");
-   * pack.addLang(new Identifier("my_mod", "zh_cn"), LanguageProvider.create().add("key2", "value2");
+   * pack.addLang(Identifier.of("my_mod", "zh_cn"), LanguageProvider.create().add("key1", "value1");
+   * pack.addLang(Identifier.of("my_mod", "zh_cn"), LanguageProvider.create().add("key2", "value2");
    *
    * // correct:
-   * pack.addLang(new Identifier("my_mod", "zh_cn"), LanguageProvider.create().add("key1", "value1").add("key2", "value2"));
+   * pack.addLang(Identifier.of("my_mod", "zh_cn"), LanguageProvider.create().add("key1", "value1").add("key2", "value2"));
    * }</pre>
    *
    * @param identifier The identifier of the language file. Usually, the path is the language code (such as {@code en_us}, {@code zh_cn}). The namespace does not matter, but it usually should be your mod's namespace.
@@ -305,7 +305,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a block state to this runtime resource packs. Here is an example:
    * <pre>{@code
-   * pack.addBlockState(MyModBlocks.EXAMPLE_BLOCK, BlockStateModelGenerator.createSingletonBlockState(MyModBlocks.EXAMPLE_BLOCK, new Identifier("my_mod", "block/example_block"));
+   * pack.addBlockState(MyModBlocks.EXAMPLE_BLOCK, BlockStateModelGenerator.createSingletonBlockState(MyModBlocks.EXAMPLE_BLOCK, Identifier.of("my_mod", "block/example_block"));
    * }</pre>
    *
    * @param id    The id of the block state, usually identical to the id of the block.
@@ -327,7 +327,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a tag to the pack.
    *
-   * @param fullId         The full resource location of the pack. For example, <code>new Identifier("minecraft", "blocks/stairs")</code>, <code>new Identifier("minecraft", "functions/tick")</code>.
+   * @param fullId         The full resource location of the pack. For example, <code>Identifier.of("minecraft", "blocks/stairs")</code>, <code>Identifier.of("minecraft", "functions/tick")</code>.
    * @param serializedData The serialized tag data.
    */
   @Contract(mutates = "this")
@@ -366,7 +366,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <pre>{@code
    * if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
    *   AnimationResourceMetadata metadata = new AnimationResourceMetadata(...);
-   *   pack.addAnimation(new Identifier("my_mod", "block/my_texture"), metadata);
+   *   pack.addAnimation(Identifier.of("my_mod", "block/my_texture"), metadata);
    * }
    * </pre>
    * }
@@ -386,7 +386,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a recipe to the runtime resource pack. The recipe id is usually same to the item id, but sometimes append with some extra information.
    *
-   * @param id     The id of the recipe, which is usually same to the item id, but can sometimes be suffixed with other string. Example: {@code new Identifier("my_mod", "strange_stone_stairs"}}, {@code new Identifier("my_mod", "strange_stone_from_stonecutting")}.
+   * @param id     The id of the recipe, which is usually same to the item id, but can sometimes be suffixed with other string. Example: {@code Identifier.of("my_mod", "strange_stone_stairs"}}, {@code Identifier.of("my_mod", "strange_stone_from_stonecutting")}.
    * @param recipe The {@link Recipe} object. You may conveniently create it using methods in {@link RecipeProvider}.
    */
   @Contract(mutates = "this")
@@ -455,7 +455,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a model to the runtime resource pack. It is usually used in the client side.
    *
-   * @param id    The id of the model. For block models, it is referred to in the {@link BlockStateModelGenerator}. Some examples: {@code new Identifier("my_mod", "block/my_stone_slab_top")}, {@code new Identifier("my_mod", "item/my_item")}.
+   * @param id    The id of the model. For block models, it is referred to in the {@link BlockStateModelGenerator}. Some examples: {@code Identifier.of("my_mod", "block/my_stone_slab_top")}, {@code Identifier.of("my_mod", "item/my_item")}.
    * @param model The {@link ModelJsonBuilder} object.
    */
   @Contract(mutates = "this")

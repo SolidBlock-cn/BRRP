@@ -37,8 +37,8 @@ import java.util.TreeMap;
  *   .add(MyModBlocks.EXAMPLE_BLOCK, "示例方塊")
  *   .add(MyModBlocks.EXAMPLE_ITEM, "示例物品");
  *
- * myRuntimeResourcePack.add(new Identifier("my_mod", "en_us"), enUs)
- * myRuntimeResourcePack.add(new Identifier("my_mod", "zh_tw"), zhTw)
+ * myRuntimeResourcePack.add(Identifier.of("my_mod", "en_us"), enUs)
+ * myRuntimeResourcePack.add(Identifier.of("my_mod", "zh_tw"), zhTw)
  * }
  * </pre>
  */

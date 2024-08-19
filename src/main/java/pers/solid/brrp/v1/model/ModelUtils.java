@@ -24,7 +24,7 @@ public final class ModelUtils {
   /**
    * Get the id from a vanilla {@link Model} object. For example:
    * <pre>{@code
-   *   getId(Models.BUTTON_PRESSED); // returns new Identifier("minecraft", "block/button_pressed")
+   *   getId(Models.BUTTON_PRESSED); // returns Identifier.ofVanilla("block/button_pressed")
    * }</pre>
    *
    * @param model The vanilla {@link Model} object.
@@ -38,9 +38,9 @@ public final class ModelUtils {
   /**
    * Append the variant suffix to a model id, according to a vanilla {@link Model} object. If the vanilla {@link Model} object does not define a variant name, the id will not be modified. For example:
    * <pre>{@code
-   *   Identifier id = new Identifier("my_mod", "block/example");
+   *   Identifier id = Identifier.of("my_mod", "block/example");
    *   appendVariant(id, Models.BUTTON); // returns id itself
-   *   appendVariant(id, Models.BUTTON_PRESSED); // returns new Identifier("my_mod", "block/example_pressed");
+   *   appendVariant(id, Models.BUTTON_PRESSED); // returns Identifier.of("my_mod", "block/example_pressed");
    * }</pre>
    *
    * @param modelId The id of the model before adding suffix.
