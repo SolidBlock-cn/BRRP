@@ -4,7 +4,7 @@
 
 BRRP (Better Runtime Resource Pack), is a library mod used for generate resources at runtime, which is a branch of [ARRP](https://github.com/Devan-Kerman/ARRP) (Advanced Runtime Resource Pack) mod.
 
-Welcome to join Tencent QQ group **587928350** or KOOK (KaiHeiLa) channel invitation code **KlFS0n** to experience the latest update of this mod.
+Welcome to join Tencent QQ group **587928350** to experience the latest update of this mod.
 
 Notice: Since version 1.0.0, the ID of the mod was changed from `better_runtime_resource_pack` to `brrp_v1`, and modified the code without compatibility for older versions, but can co-exist with older versions. Unless needed, please do not used old version.
 
@@ -33,13 +33,15 @@ This mod is open-source and published under the MPLv2 license.
 
 ## How to register your runtime resource pack
 
+> The code `Identifier.of` is the usage after 1.21. For versions 1.20.6 and before, please use `new Identifier`.
+
 Runtime resource packs, after created and written, take effect only after registration. Registration is as follows:
 
 ### Fabric:
 
 ```java
 public class MyClass implements ModInitializer {
-  public static final RuntimeResourcePack pack = RuntimeResourePack.create(new Identifier("my_mod", "my_pack"));
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create(Identifier.of("my_mod", "my_pack"));
 
   @Override
   public void onInitialize() {
@@ -58,7 +60,7 @@ For Forge versions, you may use `RRPEvent` to register resource packs on your mo
 
 @Mod("my_mod_id")
 public class MyClass {
-  public static final RuntimeResourcePack pack = RuntimeResourePack.create(new Identifier("my_mod", "my_pack"));
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create(Identifier.of("my_mod", "my_pack"));
 
   public MyClass() {
     // you may invoke 'write' methods for 'pack' here to write something into it.
@@ -68,13 +70,15 @@ public class MyClass {
 }
 ```
 
+> Please note that Forge version is stopped updating.
+
 ### Supporting both Forge and Fabric
 
 The mod supports a `RRPEventHelper` that supports both Forge and Fabric. For example:
 
 ```java
 public class MyClass implements ModInitializer {
-  public static final RuntimeResourcePack pack = RuntimeResourePack.create(new Identifier("my_mod", "my_pack"));
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create(Identifier.of("my_mod", "my_pack"));
 
   @Override
   public void onInitialize() {
@@ -112,9 +116,7 @@ repositories {
     maven {
         url 'https://raw.githubusercontent.com/SolidBlock-cn/mvn-repo/main'
 
-        // If the website above is beyond reach, you may try mirror websites, such as:
-        // url 'https://raw.nuaa.cf/SolidBlock-cn/mvn-repo/main'
-        // Note that there is no guarantee that the mirror website can be connected stably and contents are not mutated, and that the mirror website above is only an example.
+        // If the website above is beyond reach, you may try mirror websites.
     }
 }
 
@@ -123,6 +125,7 @@ dependencies {
     // Note: For Forge versions, replace the word `fabric` with `forge`.
     // For version 0.8.1 and above, please replace `pers.solid` with `net.devtech`. Old version is not recommended.
     // The difference between `modImplementation` and `modApi` is, when other projects depend on your project, if your project uses `modApi`, that project will also load what you depend on; if uses `modImplementation` then not. You can choose by yourself.
+    // Please note that the 'Minecraft version' here is the MC version on which the mod is published, which may not always be the same as what you are using. Please refer to the version number in the mod release.
 }
 ```
 

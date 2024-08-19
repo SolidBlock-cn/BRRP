@@ -4,7 +4,7 @@
 
 BRRP（Better Runtime Resource Pack，更好的运行时资源包），是可用于在运行时创建游戏资源的前置模组，同时是 [ARRP](https://github.com/Devan-Kerman/ARRP)（高级运行时资源包）模组的一个分支。
 
-欢迎加入QQ群**587928350**或 KOOK（开黑啦）频道邀请码**KlFS0n**体验本模组的最新更新。
+欢迎加入QQ群 **587928350** 体验本模组的最新更新。
 
 注意：自版本 1.0.0 开始，本模组的 ID 由 `better_runtime_resource_pack` 更改为 `brrp_v1`，并进行大量重构，不向下兼容，但可以于旧版本共存。如非需要，请不要再使用旧版本的 BRRP 模组。
 
@@ -33,13 +33,15 @@ BRRP（Better Runtime Resource Pack，更好的运行时资源包），是可用
 
 ## 如何注册运行时资源包
 
+> 下面的例子中的 `Identifier.of` 是 1.21 之后的用法。对于 1.20.6 及之前的版本，请使用 `new Identifier`。
+
 运行时资源包在创建和写入内容后，需要注册才能在加载时生效。注册方法如下：
 
 ### Fabric
 
 ```java
 public class MyClass implements ModInitializer {
-  public static final RuntimeResourcePack pack = RuntimeResourePack.create(new Identifier("my_mod", "my_pack"));
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create(Identifier.of("my_mod", "my_pack"));
 
   @Override
   public void onInitialize() {
@@ -58,7 +60,7 @@ public class MyClass implements ModInitializer {
 
 @Mod("my_mod_id")
 public class MyClass {
-  public static final RuntimeResourcePack pack = RuntimeResourePack.create(new Identifier("my_mod", "my_pack"));
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create(Identifier.of("my_mod", "my_pack"));
 
   public MyClass() {
     // 你可以在此处调用 pack 的 write 方法以向资源包中写入内容。
@@ -68,13 +70,15 @@ public class MyClass {
 }
 ```
 
+> 请注意，Forge 版本已经停止更新。
+
 ### 同时支持 Forge 和 Fabric
 
 本模组提供的 `RRPEventHelper` 可以同时支持 Forge 和 Fabric。例如：
 
 ```java
 public class MyClass implements ModInitializer {
-  public static final RuntimeResourcePack pack = RuntimeResourePack.create(new Identifier("my_mod", "my_pack"));
+  public static final RuntimeResourcePack pack = RuntimeResourePack.create(Identifier.of("my_mod", "my_pack"));
 
   @Override
   public void onInitialize() {
@@ -87,7 +91,7 @@ public class MyClass implements ModInitializer {
 
 ## 什么是资源与数据
 
-通常，在 Minecraft 中资源（assets）包括客户端使用的一切用于渲染、显示或播放的文件，包括方块状态（"block states"）、模型（model）、纹理（texture）、语言文件（lang）、声音等。在 Minecraft 中，储存这些内容的包称为“资源包（resource pack）”。这里所说的资源包包括 Minecraft 自带的原版资源包以及 Fabric Loader 和模组提供的资源包，不一定是 `resourcepacks` 文件夹中的。资源包只会在客户端使用，服务器不使用，但是玩家加入服务器时可能会被要求使用服务器提供的资源包以在客户端安装。语言文件是唯一一个服务器需要使用的资源。
+通常，在 Minecraft 中资源（assets）包括客户端使用的一切用于渲染、显示或播放的文件，包括方块状态（"block states"）、模型（model）、纹理（texture）、语言文件（lang）、声音等。在 Minecraft 中，储存这些内容的包称为“资源包（resource pack）”。这里所说的资源包包括 Minecraft 自带的原版资源包以及 Fabric Loader 和模组提供的资源包，不一定是 `resourcepacks` 文件夹中的。资源包只会在客户端使用，服务器不使用，但是玩家加入服务器时可能会被要求使用服务器提供的资源包以在客户端安装。语言文件是唯一服务器需要使用的资源。
 
 而数据（data）则包括所有服务器使用的文件，包括配方、战利品表、标签、进度等。服务器创建时（包括单人游戏），数据才会加载。数据包（data pack）存储的数据是服务器使用的，这里所说的数据包包括 Minecraft 原版自带的数据包、Fabric Loader 和模组提供的数据包以及存储在服务器存档（包括玩家单人地图存档）的 `data` 文件夹中的可安装的自定义数据包。
 
@@ -112,9 +116,7 @@ repositories {
     maven {
         url 'https://raw.githubusercontent.com/SolidBlock-cn/mvn-repo/main'
 
-        // 如果上面的网址连接不成功，可以尝试使用镜像站，例如：
-        // url 'https://raw.nuaa.cf/SolidBlock-cn/mvn-repo/main'
-        // 注：不确保镜像站能稳定连接且内容不被篡改，上述镜像站地址亦只是示例。
+        // 如果上面的网址连接不成功，可以尝试使用镜像站。
     }
 }
 
@@ -123,6 +125,7 @@ dependencies {
     // 注意：对于 Forge 版本，请将上面的 fabric 改为 forge。
     // 对于 0.8.1 及以下的版本，请将 pers.solid 改为 net.devtech。但是，不建议使用旧版本。
     // modImplementation 和 modApi 的区别在于，当其他项目依赖你的项目，如果你的项目使用的是 modApi，那么其他项目会自动加载你依赖的内容，如果是 modImplementation 则不会。你可以自行选择。
+    // 请注意：这里的 MC 版本是模组发布时所使用的 MC 版本，与您开发模组时使用的 MC 版本不一定完全一致。请参考模组发布中的版本号。
 }
 ```
 

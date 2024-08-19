@@ -3,6 +3,7 @@ package pers.solid.brrp.v1.fabric.api;
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.resource.ResourcePack;
 import org.jetbrains.annotations.ApiStatus;
+import pers.solid.brrp.v1.RRPEventHelper;
 import pers.solid.brrp.v1.fabric.ForwardingEvent;
 
 import java.util.List;
