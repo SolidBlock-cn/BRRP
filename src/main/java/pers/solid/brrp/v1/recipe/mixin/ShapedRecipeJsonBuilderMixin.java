@@ -3,7 +3,6 @@ package pers.solid.brrp.v1.recipe.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.advancement.AdvancementCriterion;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.ItemStack;
@@ -25,9 +24,6 @@ public abstract class ShapedRecipeJsonBuilderMixin implements ShapedRecipeJsonBu
   @Shadow
   public abstract ShapedRecipeJsonBuilder pattern(String patternStr);
 
-  @Shadow
-  public abstract ShapedRecipeJsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion);
-
   @Unique
   private boolean bypassesValidation;
   @Unique
@@ -47,11 +43,6 @@ public abstract class ShapedRecipeJsonBuilderMixin implements ShapedRecipeJsonBu
       this.pattern(pattern);
     }
     return self();
-  }
-
-  @Override
-  public ShapedRecipeJsonBuilder criterionMethodBridge(String criterionName, AdvancementCriterion<?> criterion) {
-    return criterion(criterionName, criterion);
   }
 
   @Override

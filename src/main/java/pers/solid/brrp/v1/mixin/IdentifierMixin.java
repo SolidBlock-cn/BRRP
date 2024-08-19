@@ -13,11 +13,16 @@ public abstract class IdentifierMixin implements IdentifierExtension {
 
   @Shadow
   @Final
-  private String namespace;
+  private String path;
 
   @Shadow
-  @Final
-  private String path;
+  public abstract Identifier withSuffixedPath(String suffix);
+
+  @Shadow
+  public abstract Identifier withPrefixedPath(String prefix);
+
+  @Shadow
+  public abstract Identifier withPath(String path);
 
   /**
    * {@inheritDoc}
@@ -27,7 +32,7 @@ public abstract class IdentifierMixin implements IdentifierExtension {
    */
   @Override
   public Identifier brrp_suffixed(@Pattern("[a-z\\d/._-]+") @NotNull String suffix) {
-    return new Identifier(namespace, path + suffix);
+    return withSuffixedPath(suffix);
   }
 
   /**
@@ -38,7 +43,7 @@ public abstract class IdentifierMixin implements IdentifierExtension {
    */
   @Override
   public Identifier brrp_prefixed(@Pattern("[a-z\\d/._-]+") @NotNull String prefix) {
-    return new Identifier(namespace, prefix + path);
+    return withPrefixedPath(prefix);
   }
 
   /**
@@ -50,6 +55,6 @@ public abstract class IdentifierMixin implements IdentifierExtension {
    */
   @Override
   public Identifier brrp_prefix_and_suffixed(@Pattern("[a-z\\d/._-]+") @NotNull String prefix, @NotNull String suffix) {
-    return new Identifier(namespace, prefix + path + suffix);
+    return withPath(prefix + path + suffix);
   }
 }

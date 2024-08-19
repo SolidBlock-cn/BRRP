@@ -3,7 +3,6 @@ package pers.solid.brrp.v1.recipe.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.advancement.AdvancementCriterion;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.data.server.recipe.SingleItemRecipeJsonBuilder;
 import net.minecraft.item.ItemStack;
@@ -11,7 +10,6 @@ import net.minecraft.recipe.book.RecipeCategory;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -20,9 +18,6 @@ import pers.solid.brrp.v1.recipe.SingleItemRecipeJsonBuilderExtension;
 
 @Mixin(SingleItemRecipeJsonBuilder.class)
 public abstract class SingleItemRecipeJsonBuilderMixin implements SingleItemRecipeJsonBuilderExtension {
-
-  @Shadow
-  public abstract SingleItemRecipeJsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion);
 
   @Unique
   private boolean bypassesValidation;
@@ -35,11 +30,6 @@ public abstract class SingleItemRecipeJsonBuilderMixin implements SingleItemReci
   @SuppressWarnings("DataFlowIssue")
   private SingleItemRecipeJsonBuilder self() {
     return (SingleItemRecipeJsonBuilder) (Object) this;
-  }
-
-  @Override
-  public SingleItemRecipeJsonBuilder criterionMethodBridge(String criterionName, AdvancementCriterion<?> criterion) {
-    return criterion(criterionName, criterion);
   }
 
   @Override

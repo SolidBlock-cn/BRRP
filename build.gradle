@@ -2,7 +2,7 @@ import com.modrinth.minotaur.dependencies.ModDependency
 
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.6-SNAPSHOT"
+    id "dev.architectury.loom" version "1.7-SNAPSHOT"
     id "com.modrinth.minotaur" version "2.+" apply false
     id 'com.matthewprenger.cursegradle' version '1.4.0' apply false
     id "com.github.breadmoirai.github-release" version "2.5.2" apply false
@@ -19,7 +19,9 @@ allprojects {
     apply plugin: "architectury-plugin"
     apply plugin: "maven-publish"
 
-    archivesBaseName = rootProject.archives_base_name
+    base {
+        archivesName = rootProject.archives_base_name
+    }
     version = rootProject.mod_version + "-" + project.minecraft_version
     group = rootProject.maven_group
 
@@ -52,6 +54,10 @@ subprojects {
     apply plugin: 'com.github.breadmoirai.github-release'
     apply plugin: "maven-publish"
 
+    base {
+        archivesName = archivesName.get() + "-" + project.name
+    }
+
     loom {
         runs {
             client {
@@ -66,7 +72,7 @@ subprojects {
 
     publishing {
         publications {
-            mavenJava(MavenPublication) {
+            create("mavenJava", MavenPublication) {
                 artifactId = base.archivesName.get()
                 from components.java
             }
@@ -104,8 +110,7 @@ subprojects {
             changelog = changelogContent
             releaseType = 'release'
 
-            addGameVersion '1.20.5'
-            // gameVersionStrings.addAll project.supported_minecraft_versions.split(',')
+            gameVersionStrings.addAll project.supported_minecraft_versions.split(',')
             addGameVersion platform.capitalize()
 
             mainArtifact(remapJar) {

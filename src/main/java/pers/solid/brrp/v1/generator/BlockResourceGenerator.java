@@ -4,7 +4,6 @@ import net.fabricmc.api.EnvType;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.client.TextureKey;
-import net.minecraft.data.server.loottable.vanilla.VanillaBlockLootTableGenerator;
 import net.minecraft.data.server.recipe.SingleItemRecipeJsonBuilder;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -21,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.v1.BRRPUtils;
 import pers.solid.brrp.v1.annotations.PreferredEnvironment;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
+import pers.solid.brrp.v1.impl.BRRPBlockLootTableGenerator;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 
 /**
@@ -261,7 +261,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   // SERVER PART
 
   /**
-   * Get the id of the block loot table. It's by default in the format of <code><var>namespace:</var>blocks/<var>path</var></code>, note its "{@code blocks}" instead of "{@code block}". The loot table is used when the block is broken. This method respects {@link Block#getLootTableId()}, which may be influenced by {@link Block.Settings#dropsNothing()} or {@link Block.Settings#dropsLike(Block)}.
+   * Get the id of the block loot table. It's by default in the format of <code><var>namespace:</var>blocks/<var>path</var></code>, note its "{@code blocks}" instead of "{@code block}". The loot table is used when the block is broken. This method respects {@link Block#getLootTableKey()}, which may be influenced by {@link Block.Settings#dropsNothing()} or {@link Block.Settings#dropsLike(Block)}.
    *
    * @return The id of the block loot table.
    */
@@ -280,7 +280,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @Contract(pure = true)
   default LootTable.Builder getLootTable() {
-    return new VanillaBlockLootTableGenerator().drops((ItemConvertible) this);
+    return BRRPBlockLootTableGenerator.INSTANCE.drops((ItemConvertible) this);
   }
 
   /**
@@ -291,7 +291,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   @Contract(mutates = "param1")
   default void writeLootTable(RuntimeResourcePack pack) {
     final Identifier lootTableId = getLootTableId();
-    if (lootTableId.equals(LootTables.EMPTY)) {
+    if (lootTableId.equals(LootTables.EMPTY.getValue())) {
       // If the loot table is empty, don't write.
       return;
     }

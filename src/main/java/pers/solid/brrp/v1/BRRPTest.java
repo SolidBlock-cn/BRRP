@@ -11,7 +11,6 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.client.TextureKey;
-import net.minecraft.data.server.loottable.vanilla.VanillaBlockLootTableGenerator;
 import net.minecraft.data.server.recipe.*;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -40,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import pers.solid.brrp.v1.api.LanguageProvider;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.generator.*;
+import pers.solid.brrp.v1.impl.BRRPBlockLootTableGenerator;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 import pers.solid.brrp.v1.model.ModelOverrideBuilder;
 import pers.solid.brrp.v1.model.TransformationBuilder;
@@ -245,7 +245,7 @@ public class BRRPTest {
       return beforeUser.serialize(ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, new Identifier("item/diamond")).transformation(ModelTransformationMode.GROUND, new TransformationBuilder().translation(0, 4.5f, 0).scale(10.85f, 10.85f, 10.6f)));
     });
     beforeUser.addLang(new Identifier("minecraft", "en_us"), LanguageProvider.create().add(Blocks.YELLOW_WOOL, "The model is modified by a 'before-user' runtime resource pack."));
-    beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableKey().getValue(), new VanillaBlockLootTableGenerator().drops(Blocks.YELLOW_WOOL, ConstantLootNumberProvider.create(3)));
+    beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableKey().getValue(), BRRPBlockLootTableGenerator.INSTANCE.drops(Blocks.YELLOW_WOOL, ConstantLootNumberProvider.create(3)));
     beforeUser.addModel(new Identifier("minecraft", "item/bow"), ModelJsonBuilder.create(new Identifier("minecraft", "item/white_concrete"))
         .addOverride(ModelOverrideBuilder.of(new Identifier("item/yellow_concrete"), new Identifier("pulling"), 1))
         .addOverride(ModelOverrideBuilder.of(new Identifier("item/orange_concrete"), new Identifier("pulling"), 1).addCondition(new Identifier("pull"), 0.65f))

@@ -8,7 +8,6 @@ import net.minecraft.block.SlabBlock;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.client.Models;
-import net.minecraft.data.server.loottable.vanilla.VanillaBlockLootTableGenerator;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeProvider;
 import net.minecraft.loot.LootTable;
@@ -19,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pers.solid.brrp.v1.BRRPUtils;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
+import pers.solid.brrp.v1.impl.BRRPBlockLootTableGenerator;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 import pers.solid.brrp.v1.model.ModelUtils;
 
@@ -85,7 +85,7 @@ public class BRRPSlabBlock extends SlabBlock implements BlockResourceGenerator {
 
   @Override
   public LootTable.Builder getLootTable() {
-    return new VanillaBlockLootTableGenerator().slabDrops(this);
+    return BRRPBlockLootTableGenerator.INSTANCE.slabDrops(this);
   }
 
   @Override

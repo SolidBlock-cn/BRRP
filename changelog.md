@@ -1,1 +1,2 @@
-- 利用 MixinExtras，优化一些 mixin
+- Fixed the conflict with some mods that modify data driven contents.
+- Optimized the implementation of loot table generation.
