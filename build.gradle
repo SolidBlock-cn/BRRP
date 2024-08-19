@@ -20,7 +20,9 @@ allprojects {
     apply plugin: "architectury-plugin"
     apply plugin: "maven-publish"
 
-    archivesBaseName = rootProject.archives_base_name
+    base {
+        archivesName = rootProject.archives_base_name
+    }
     version = rootProject.mod_version + "-" + project.minecraft_version
     group = rootProject.maven_group
 
@@ -54,6 +56,10 @@ subprojects {
     apply plugin: 'com.matthewprenger.cursegradle'
     apply plugin: 'com.github.breadmoirai.github-release'
 
+    base {
+        archivesName = archivesName.get() + "-" + project.name
+    }
+
     loom {
         runs {
             client {
@@ -67,6 +73,12 @@ subprojects {
     }
 
     publishing {
+        publications {
+            create("mavenJava", MavenPublication) {
+                artifactId = base.archivesName.get()
+                from components.java
+            }
+        }
         repositories {
             maven {
                 url = rootProject.file('../mvn-repo').path

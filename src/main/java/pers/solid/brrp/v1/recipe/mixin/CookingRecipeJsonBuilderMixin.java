@@ -1,13 +1,11 @@
 package pers.solid.brrp.v1.recipe.mixin;
 
-import net.minecraft.advancement.criterion.CriterionConditions;
 import net.minecraft.data.server.recipe.CookingRecipeJsonBuilder;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pers.solid.brrp.v1.recipe.CookingRecipeJsonBuilderExtension;
@@ -15,20 +13,13 @@ import pers.solid.brrp.v1.recipe.CookingRecipeJsonBuilderExtension;
 @Mixin(CookingRecipeJsonBuilder.class)
 public abstract class CookingRecipeJsonBuilderMixin implements CookingRecipeJsonBuilderExtension {
 
-  @Shadow
-  public abstract CookingRecipeJsonBuilder criterion(String string, CriterionConditions criterionConditions);
-
+  @Unique
   private boolean bypassesValidation;
   private @Nullable String customRecipeCategory;
 
   @SuppressWarnings("DataFlowIssue")
   private CookingRecipeJsonBuilder self() {
     return (CookingRecipeJsonBuilder) (Object) this;
-  }
-
-  @Override
-  public CookingRecipeJsonBuilder criterionMethodBridge(String criterionName, CriterionConditions criterionConditions) {
-    return criterion(criterionName, criterionConditions);
   }
 
   @Override

@@ -1,4 +1,2 @@
-- Fixed the version that specifying transformations may result in malformed serialization.
-- Runtime resource packs registered on `RRPCallback.BEFORE_USER` are no longer experimental.
-- Async and lazy resources are no longer experimental.
-- (About developing) Since this version, all publications are implemented in Gradle tasks.
+- Fixed the conflict with some mods that modify data driven contents.
+- Optimized the implementation of loot table generation.

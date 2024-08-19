@@ -1,6 +1,8 @@
 package pers.solid.brrp.v1.recipe.mixin;
 
-import net.minecraft.advancement.criterion.CriterionConditions;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
@@ -23,9 +25,6 @@ public abstract class ShapedRecipeJsonBuilderMixin implements ShapedRecipeJsonBu
   @Shadow
   public abstract ShapedRecipeJsonBuilder pattern(String patternStr);
 
-  @Shadow
-  @Final
-  private RecipeCategory category;
   private boolean bypassesValidation;
   private @Nullable String customRecipeCategory;
 
@@ -40,11 +39,6 @@ public abstract class ShapedRecipeJsonBuilderMixin implements ShapedRecipeJsonBu
       this.pattern(pattern);
     }
     return self();
-  }
-
-  @Override
-  public ShapedRecipeJsonBuilder criterionMethodBridge(String criterionName, CriterionConditions criterionConditions) {
-    return criterion(criterionName, criterionConditions);
   }
 
   @Override
