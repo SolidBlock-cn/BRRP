@@ -1,6 +1,7 @@
 package pers.solid.brrp.v1.impl;
 
 import com.google.common.base.Suppliers;
+import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -24,6 +25,7 @@ import net.minecraft.util.Util;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -44,10 +46,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.IntUnaryOperator;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -63,6 +62,8 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
   private final Map<List<String>, Supplier<byte[]>> root = new ConcurrentHashMap<>();
+
+  private final Map<Identifier, Function<RegistryWrapper.WrapperLookup, ?>> immediateResources = new ConcurrentHashMap<>();
 
   /**
    * This is required for many data pack elements since 1.20.5
@@ -166,6 +167,17 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Override
   public byte[] addLootTable(Identifier identifier, byte[] serializedData) {
     return this.addData(fix(identifier, "loot_table", "json"), serializedData);
+  }
+
+  @Override
+  public byte[] addLootTable(Identifier identifier, LootTable lootTable) {
+    this.immediateResources.put(fix(identifier, "loot_table", "json"), wrapperLookup -> lootTable);
+    return ArrayUtils.EMPTY_BYTE_ARRAY;
+  }
+
+  public byte[] addLootTable(Identifier identifier, Function<RegistryWrapper.WrapperLookup, LootTable> lootTable) {
+    this.immediateResources.put(fix(identifier, "loot_table", "json"), lootTable);
+    return ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
   @Override
@@ -297,8 +309,20 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   @Override
+  public byte[] addRecipe(Identifier id, Recipe<?> recipe) {
+    this.immediateResources.put(fix(id, "recipe", "json"), r -> recipe);
+    return ArrayUtils.EMPTY_BYTE_ARRAY;
+  }
+
+  @Override
   public byte[] addAdvancement(Identifier id, byte[] serializedData) {
     return this.addData(fix(id, "advancement", "json"), serializedData);
+  }
+
+  @Override
+  public byte[] addAdvancement(Identifier id, Advancement advancement) {
+    this.immediateResources.put(fix(id, "advancement", "json"), r -> advancement);
+    return ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
   @Override
@@ -435,13 +459,27 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Nullable
   @Override
   public InputSupplier<InputStream> open(ResourceType type, Identifier id) {
+    if (immediateResources.containsKey(id)) {
+      final var immediateResource = immediateResources.get(id);
+      if (id.getPath().startsWith("loot_table/")) {
+        LOGGER.info("immediate loot table {}", id);
+        return ImmediateInputSupplier.OfCodec.ofTrusted(LootTable.CODEC, immediateResource);
+      } else if (id.getPath().startsWith("advancement/")) {
+        LOGGER.info("immediate advancement {}", id);
+        return ImmediateInputSupplier.OfCodec.ofTrusted(Advancement.CODEC, immediateResource);
+      } else if (id.getPath().startsWith("recipe/")) {
+        LOGGER.info("immediate recipe {}", id);
+        return ImmediateInputSupplier.OfCodec.ofTrusted(Recipe.CODEC, immediateResource);
+      }
+    }
     Supplier<byte[]> supplier = this.getSys(type).get(id);
     return supplier == null ? null : () -> new ByteArrayInputStream(supplier.get());
   }
 
   @Override
   public void findResources(ResourceType type, String namespace, String prefix, ResultConsumer consumer) {
-    for (Identifier identifier : this.getSys(type).keySet()) {
+    // todo optimize
+    for (Identifier identifier : Iterables.concat(this.getSys(type).keySet(), immediateResources.keySet())) {
       // deleted section: detecting "No resource found for..."
       if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix)) {
         consumer.accept(identifier, open(type, identifier));

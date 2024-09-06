@@ -6,6 +6,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.tag.TagBuilder;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -20,7 +21,8 @@ public class IdentifiedTagBuilder<T> extends ObjectTagBuilder<T, IdentifiedTagBu
   /**
    * The registry it belongs to, which will be used to get the id of objects.
    */
-  public final Registry<T> registry;
+  public final @Deprecated(forRemoval = true) Registry<T> registry;
+  public final RegistryKey<? extends Registry<T>> registryKey;
   /**
    * The identifier of the tag itself.
    */
@@ -35,6 +37,16 @@ public class IdentifiedTagBuilder<T> extends ObjectTagBuilder<T, IdentifiedTagBu
   public IdentifiedTagBuilder(Registry<T> registry, Identifier identifier) {
     super(registry::getId);
     this.registry = registry;
+    this.registryKey = registry.getKey();
+    this.identifier = identifier;
+  }
+
+  public IdentifiedTagBuilder(RegistryKey<Registry<T>> registryKey, Identifier identifier) {
+    super(t -> {
+      throw new UnsupportedOperationException("Can't add objects for IdentifierTagBuilder without builtin registry");
+    });
+    this.registry = null;
+    this.registryKey = registryKey;
     this.identifier = identifier;
   }
 

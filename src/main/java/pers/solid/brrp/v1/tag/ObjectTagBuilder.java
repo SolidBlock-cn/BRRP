@@ -1,10 +1,12 @@
 package pers.solid.brrp.v1.tag;
 
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.tag.TagBuilder;
 import net.minecraft.registry.tag.TagEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import pers.solid.brrp.v1.mixin.TagBuilderAccessor;
@@ -73,6 +75,17 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
   }
 
   /**
+   * Add an id from a registry key.
+   *
+   * @param registryKey The registry key of the entry to be added.
+   */
+  @ApiStatus.AvailableSince("1.1.0")
+  @Contract(mutates = "this")
+  public Self add(@NotNull RegistryKey<T> registryKey) {
+    return this.add(registryKey.getValue());
+  }
+
+  /**
    * Add an optional id of the entry.
    *
    * @param id The id of the entry to add. It is not a tag id.
@@ -82,6 +95,17 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
   public Self addOptional(@NotNull Identifier id) {
     super.addOptional(id);
     return self();
+  }
+
+  /**
+   * Add an optional id from a registry key.
+   *
+   * @param registryKey The registry key of the entry to add. It is not a tag id.
+   */
+  @ApiStatus.AvailableSince("1.1.0")
+  @Contract(mutates = "this")
+  public Self addOptional(@NotNull RegistryKey<T> registryKey) {
+    return addOptional(registryKey.getValue());
   }
 
   /**
@@ -165,6 +189,35 @@ public class ObjectTagBuilder<T, Self extends ObjectTagBuilder<T, Self>> extends
   @SafeVarargs
   public final Self add(T... value) {
     Arrays.stream(value).map(valueToId).forEach(this::add);
+    return self();
+  }
+
+  /**
+   * Add multiple identifiers to the tag.
+   *
+   * @param identifiers The identifiers to be added to this tag.
+   */
+  @ApiStatus.AvailableSince("1.1.0")
+  @Contract(mutates = "this")
+  public final Self add(Identifier... identifiers) {
+    for (Identifier identifier : identifiers) {
+      add(identifier);
+    }
+    return self();
+  }
+
+  /**
+   * Add multiple identifiers from registry keys to the tag.
+   *
+   * @param registryKeys The tag keys to be added to this tag.
+   */
+  @SafeVarargs
+  @ApiStatus.AvailableSince("1.1.0")
+  @Contract(mutates = "this")
+  public final Self add(RegistryKey<T>... registryKeys) {
+    for (RegistryKey<T> tagKey : registryKeys) {
+      add(tagKey);
+    }
     return self();
   }
 

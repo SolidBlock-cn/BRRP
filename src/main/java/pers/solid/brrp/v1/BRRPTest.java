@@ -23,6 +23,8 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.resource.ResourceType;
@@ -30,6 +32,7 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.biome.BiomeKeys;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -195,6 +198,8 @@ public class BRRPTest {
       PACK.addRecipeAndAdvancement(Identifier.of("brrp", "unobtainable_single_item"), StonecuttingRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(Items.STONE), null, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setComponentChanges(bedrockTestComponentChanges));
       PACK.addRecipeAndAdvancement(Identifier.of("brrp", "smithing_transform"), SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.LAPIS_LAZULI), null, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setComponentChanges(bedrockTestComponentChanges));
       PACK.addRecipeAndAdvancement(Identifier.of("brrp", "smithing_trim"), SmithingTrimRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.REDSTONE), RecipeCategory.BUILDING_BLOCKS).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
+
+      PACK.addTag(new IdentifiedTagBuilder<>(RegistryKeys.BIOME, Identifier.of("brrp", "some_biomes")).add(BiomeKeys.THE_VOID, BiomeKeys.PLAINS, BiomeKeys.DESERT).addTag(BiomeTags.NETHER_FORTRESS_HAS_STRUCTURE));
     }
 
     // The following code will generate all resources (including block states, block models, item models, loot tables, and optional recipes with the corresponding advancements) for the blocks.

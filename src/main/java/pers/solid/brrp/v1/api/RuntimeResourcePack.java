@@ -355,7 +355,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   @Contract(mutates = "this")
   default <T> byte[] addTag(IdentifiedTagBuilder<T> identifiedTagBuilder) {
-    return addTag(TagKey.of(identifiedTagBuilder.registry.getKey(), identifiedTagBuilder.identifier), identifiedTagBuilder);
+    return addTag(TagKey.of(identifiedTagBuilder.registryKey, identifiedTagBuilder.identifier), identifiedTagBuilder);
   }
 
   @Contract(mutates = "this")
