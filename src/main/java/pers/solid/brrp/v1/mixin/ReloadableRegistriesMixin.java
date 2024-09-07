@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import pers.solid.brrp.v1.ResourceExtension;
 import pers.solid.brrp.v1.impl.ReloadableWrapperLookup;
-import pers.solid.brrp.v1.impl.ResourceExtension;
 import pers.solid.brrp.v1.impl.RuntimeResourcePackImpl;
 
 import java.util.concurrent.CompletableFuture;

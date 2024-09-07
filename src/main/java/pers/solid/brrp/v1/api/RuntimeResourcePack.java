@@ -238,6 +238,9 @@ public interface RuntimeResourcePack extends ResourcePack {
     return this.addLootTable(identifier, lootTable.build());
   }
 
+  @ApiStatus.AvailableSince("1.1.0")
+  ImmediateResourceSupplier<LootTable> addLootTable(Identifier identifier, ImmediateResource<LootTable> lootTable);
+
   /**
    * Add an async resource, which is evaluated off-thread, and does not hold all resource retrieval unlike.
    *
@@ -293,11 +296,15 @@ public interface RuntimeResourcePack extends ResourcePack {
   @Contract(mutates = "this")
   byte[] addAsset(Identifier id, byte[] data);
 
+  <T> ImmediateResourceSupplier<T> addImmediateAsset(Identifier id, ImmediateResourceSupplier<T> data);
+
   /**
    * Add a custom server data.
    */
   @Contract(mutates = "this")
   byte[] addData(Identifier id, byte[] data);
+
+  <T> ImmediateResourceSupplier<T> addImmediateData(Identifier id, ImmediateResourceSupplier<T> data);
 
   @Contract(mutates = "this")
   byte[] addBlockState(Identifier id, byte[] serializedData);
@@ -739,6 +746,7 @@ public interface RuntimeResourcePack extends ResourcePack {
   @Contract(pure = true)
   RegistryWrapper.WrapperLookup getRegistryLookup();
 
+  @Deprecated(since = "1.1.0")
   @Contract(pure = true)
   default BlockLootTableGenerator getBlockLootTableGenerator() {
     return new BRRPBlockLootTableGenerator(getRegistryLookup());

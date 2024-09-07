@@ -19,6 +19,7 @@
     "ServerAdvancementLoaderMixin",
     "SinglePreparationResourceReloaderMixin",
     "TagBuilderAccessor",
+    "TagGroupLoaderMixin",
     "TextureMapAccessor"
   ],
   "injectors": {

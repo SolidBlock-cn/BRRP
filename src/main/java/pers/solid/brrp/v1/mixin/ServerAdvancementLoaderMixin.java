@@ -11,10 +11,10 @@ import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import pers.solid.brrp.v1.api.ImmediateResource;
 import pers.solid.brrp.v1.impl.ImmediateResourceLoader;
 
 import java.util.Map;
-import java.util.function.Function;
 
 @Mixin(ServerAdvancementLoader.class)
 public abstract class ServerAdvancementLoaderMixin implements ImmediateResourceLoader {
@@ -36,7 +36,7 @@ public abstract class ServerAdvancementLoaderMixin implements ImmediateResourceL
   private AdvancementManager manager;
 
   @Override
-  public void applyImmediate$brrp(Map<Identifier, Function<RegistryWrapper.WrapperLookup, ?>> map, ResourceManager manager, Profiler profiler) {
+  public void applyImmediate$brrp(Map<Identifier, ImmediateResource<?>> map, ResourceManager manager, Profiler profiler) {
     if (map.isEmpty()) {
       return;
     }

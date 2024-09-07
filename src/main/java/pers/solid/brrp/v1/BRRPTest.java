@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import pers.solid.brrp.v1.api.LanguageProvider;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.generator.*;
+import pers.solid.brrp.v1.impl.BRRPBlockLootTableGenerator;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
 import pers.solid.brrp.v1.model.ModelOverrideBuilder;
 import pers.solid.brrp.v1.model.TransformationBuilder;
@@ -249,7 +250,7 @@ public class BRRPTest {
       return beforeUser.serialize(ModelJsonBuilder.create(Models.HANDHELD).addTexture(TextureKey.LAYER0, Identifier.of("item/diamond")).transformation(ModelTransformationMode.GROUND, new TransformationBuilder().translation(0, 4.5f, 0).scale(10.85f, 10.85f, 10.6f)));
     });
     beforeUser.addLang(Identifier.of("minecraft", "en_us"), LanguageProvider.create().add(Blocks.YELLOW_WOOL, "The model is modified by a 'before-user' runtime resource pack."));
-    beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableKey().getValue(), beforeUser.getBlockLootTableGenerator().drops(Blocks.YELLOW_WOOL, ConstantLootNumberProvider.create(3)));
+    beforeUser.addLootTable(Blocks.YELLOW_WOOL.getLootTableKey().getValue(), lookup -> new BRRPBlockLootTableGenerator(lookup).drops(Blocks.YELLOW_WOOL, ConstantLootNumberProvider.create(3)).build());
     beforeUser.addModel(Identifier.of("minecraft", "item/bow"), ModelJsonBuilder.create(Identifier.of("minecraft", "item/white_concrete"))
         .addOverride(ModelOverrideBuilder.of(Identifier.of("item/yellow_concrete"), Identifier.of("pulling"), 1))
         .addOverride(ModelOverrideBuilder.of(Identifier.of("item/orange_concrete"), Identifier.of("pulling"), 1).addCondition(Identifier.of("pull"), 0.65f))

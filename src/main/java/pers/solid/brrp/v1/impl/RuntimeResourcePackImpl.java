@@ -1,13 +1,15 @@
 package pers.solid.brrp.v1.impl;
 
 import com.google.common.base.Suppliers;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.Advancement;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.data.server.loottable.BlockLootTableGenerator;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.Recipe;
@@ -31,22 +33,23 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pers.solid.brrp.v1.JsonSerializers;
+import pers.solid.brrp.v1.api.ImmediateResource;
+import pers.solid.brrp.v1.api.ImmediateResourceSupplier;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.mixin.BuiltinRegistriesAccessor;
 import pers.solid.brrp.v1.mixin.RegistryBuilderAccessor;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.*;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.IntUnaryOperator;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -63,16 +66,10 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
   private final Map<List<String>, Supplier<byte[]>> root = new ConcurrentHashMap<>();
 
-  private final Map<Identifier, Function<RegistryWrapper.WrapperLookup, ?>> immediateResources = new ConcurrentHashMap<>();
-
   /**
    * This is required for many data pack elements since 1.20.5
    */
   private final RegistryWrapper.WrapperLookup registryLookup;
-  /**
-   * The special GSON that uses {@code registryLookup} to serialize data.
-   */
-  private final Gson gson;
   public final BlockLootTableGenerator blockLootTableGenerator;
 
   public static class Workaround extends RegistryBuilder {
@@ -95,43 +92,29 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
       return rb.createWrapperLookup(DynamicRegistryManager.of(Registries.REGISTRIES));
     });
 
-    private static final Gson gson = createGson(registryLookup);
     private static final BlockLootTableGenerator blockLootTableGenerator = new BRRPBlockLootTableGenerator(registryLookup);
   }
 
-  /**
-   * Creates a GSON that uses {@code registryLookup} to serialize data. If not provided, exceptions may be thrown for some registries.
-   */
-  private static Gson createGson(RegistryWrapper.WrapperLookup registryLookup) {
-    return GSON.newBuilder()
-        .registerTypeHierarchyAdapter(LootTable.class, JsonSerializers.forCodec(LootTable.CODEC, registryLookup))
-        .registerTypeHierarchyAdapter(Advancement.class, JsonSerializers.forCodec(Advancement.CODEC, registryLookup))
-        .registerTypeHierarchyAdapter(TagFile.class, JsonSerializers.forCodec(TagFile.CODEC, registryLookup))
-        .registerTypeHierarchyAdapter(Recipe.class, JsonSerializers.forCodec(Recipe.CODEC, registryLookup))
-        .create();
-  }
 
   public RuntimeResourcePackImpl(Identifier id, @NotNull RegistryWrapper.WrapperLookup registryLookup) {
     super(id);
     this.registryLookup = registryLookup;
-    this.gson = createGson(registryLookup);
     this.blockLootTableGenerator = new BRRPBlockLootTableGenerator(registryLookup);
   }
 
   public RuntimeResourcePackImpl(Identifier id) {
     super(id);
     this.registryLookup = Holder.registryLookup;
-    this.gson = Holder.gson;
     this.blockLootTableGenerator = Holder.blockLootTableGenerator;
   }
 
   @Override
   public byte[] serialize(Object object) {
-    return RuntimeResourcePack.serialize(object, gson);
+    return RuntimeResourcePack.serialize(object, GSON);
   }
 
   private static Identifier fix(Identifier identifier, String prefix, String append) {
-    return Identifier.of(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
+    return identifier.brrp_prefix_and_suffixed(prefix + '/', '.' + append);
   }
 
   @Override
@@ -159,6 +142,34 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     });
   }
 
+  //<editor-fold desc="check duplicate methods">
+
+  private void checkDuplicateAsset(Identifier id) {
+    if (!allowsDuplicateResource && assets.containsKey(id)) {
+      throw new IllegalArgumentException(String.format("Duplicate asset id %s in runtime resource pack %s.", id, getDisplayName().getString()));
+    }
+  }
+
+  private void checkDuplicateData(Identifier id) {
+    if (!allowsDuplicateResource && data.containsKey(id)) {
+      throw new IllegalArgumentException(String.format("Duplicate data id %s in runtime resource pack %s.", id, getDisplayName().getString()));
+    }
+  }
+
+  private void checkDuplicateResource(ResourceType resourceType, Identifier id) {
+    switch (resourceType) {
+      case CLIENT_RESOURCES -> checkDuplicateAsset(id);
+      case SERVER_DATA -> checkDuplicateData(id);
+    }
+  }
+
+  private void checkDuplicateRootResource(String path) {
+    if (!allowsDuplicateResource && root.containsKey(Arrays.asList(path.split("/")))) {
+      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getDisplayName().getString()));
+    }
+  }
+  //</editor-fold>
+
   @Override
   public byte[] addLang(Identifier identifier, byte[] serializedData) {
     return this.addAsset(fix(identifier, "lang", "json"), serializedData);
@@ -171,22 +182,20 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public byte[] addLootTable(Identifier identifier, LootTable lootTable) {
-    this.immediateResources.put(fix(identifier, "loot_table", "json"), wrapperLookup -> lootTable);
+    this.addImmediateData(fix(identifier, "loot_table", "json"), new ImmediateResourceSupplier.JsonBytesSupplierImpl<>(LootTable.CODEC, wrapperLookup -> lootTable));
     return ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
-  public byte[] addLootTable(Identifier identifier, Function<RegistryWrapper.WrapperLookup, LootTable> lootTable) {
-    this.immediateResources.put(fix(identifier, "loot_table", "json"), lootTable);
-    return ArrayUtils.EMPTY_BYTE_ARRAY;
+  @Override
+  public ImmediateResourceSupplier<LootTable> addLootTable(Identifier identifier, ImmediateResource<LootTable> lootTable) {
+    return this.addImmediateData(fix(identifier, "loot_table", "json"), new ImmediateResourceSupplier.JsonBytesSupplierImpl<>(LootTable.CODEC, lootTable));
   }
 
   @Override
   public Future<byte[]> addAsyncResource(ResourceType type, Identifier path, FailableFunction<Identifier, byte[], Exception> data) {
     Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.apply(path));
     final Map<Identifier, Supplier<byte[]>> sys = this.getSys(type);
-    if (!allowsDuplicateResource && sys.containsKey(path)) {
-      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getDisplayName().getString()));
-    }
+    checkDuplicateResource(type, path);
     sys.put(path, () -> {
       try {
         return future.get();
@@ -200,27 +209,21 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Override
   public void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> func) {
     final Map<Identifier, Supplier<byte[]>> sys = this.getSys(type);
-    if (!allowsDuplicateResource && sys.containsKey(path)) {
-      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getDisplayName().getString()));
-    }
+    checkDuplicateResource(type, path);
     sys.put(path, Suppliers.memoize(() -> func.apply(this, path)));
   }
 
   @Override
   public byte[] addResource(ResourceType type, Identifier path, byte[] data) {
     final Map<Identifier, Supplier<byte[]>> sys = this.getSys(type);
-    if (!allowsDuplicateResource && sys.containsKey(path)) {
-      throw new IllegalArgumentException(String.format("Duplicate resource id %s in runtime resource pack %s.", path, getDisplayName().getString()));
-    }
+    checkDuplicateResource(type, path);
     sys.put(path, Suppliers.ofInstance(data));
     return data;
   }
 
   @Override
   public Future<byte[]> addAsyncRootResource(String path, FailableFunction<String, byte[], Exception> data) {
-    if (!allowsDuplicateResource && root.containsKey(Arrays.asList(path.split("/")))) {
-      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getDisplayName().getString()));
-    }
+    checkDuplicateRootResource(path);
     Future<byte[]> future = EXECUTOR_SERVICE.submit(() -> data.apply(path));
     this.root.put(Arrays.asList(path.split("/")), () -> {
       try {
@@ -234,36 +237,42 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data) {
-    if (!allowsDuplicateResource && root.containsKey(Arrays.asList(path.split("/")))) {
-      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getDisplayName().getString()));
-    }
+    checkDuplicateRootResource(path);
     this.root.put(Arrays.asList(path.split("/")), Suppliers.memoize(() -> data.apply(this, path)));
   }
 
   @Override
   public byte[] addRootResource(String path, byte[] data) {
-    if (!allowsDuplicateResource && root.containsKey(Arrays.asList(path.split("/")))) {
-      throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getDisplayName().getString()));
-    }
+    checkDuplicateRootResource(path);
     this.root.put(Arrays.asList(path.split("/")), () -> data);
     return data;
   }
 
   @Override
   public byte[] addAsset(Identifier id, byte[] data) {
-    if (!allowsDuplicateResource && assets.containsKey(id)) {
-      throw new IllegalArgumentException(String.format("Duplicate asset id %s in runtime resource pack %s!", id, getDisplayName().getString()));
-    }
+    checkDuplicateAsset(id);
     assets.put(id, Suppliers.ofInstance(data));
     return data;
   }
 
   @Override
+  public <T> ImmediateResourceSupplier<T> addImmediateAsset(Identifier id, ImmediateResourceSupplier<T> data) {
+    checkDuplicateAsset(id);
+    assets.put(id, data);
+    return data;
+  }
+
+  @Override
   public byte[] addData(Identifier id, byte[] data) {
-    if (!allowsDuplicateResource && this.data.containsKey(id)) {
-      throw new IllegalArgumentException(String.format("Duplicate data id %s in runtime resource pack %s!", id, getDisplayName().getString()));
-    }
+    checkDuplicateData(id);
     this.data.put(id, Suppliers.ofInstance(data));
+    return data;
+  }
+
+  @Override
+  public <T> ImmediateResourceSupplier<T> addImmediateData(Identifier id, ImmediateResourceSupplier<T> data) {
+    checkDuplicateData(id);
+    this.data.put(id, data);
     return data;
   }
 
@@ -295,7 +304,9 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public <T> byte[] addTag(TagKey<T> tagKey, TagBuilder tagBuilder) {
-    return addData(Identifier.of(tagKey.id().getNamespace(), RegistryKeys.getTagPath(tagKey.registry()) + "/" + tagKey.id().getPath() + ".json"), serialize(new TagFile(tagBuilder.build(), false)));
+    final Identifier id = Identifier.of(tagKey.id().getNamespace(), RegistryKeys.getTagPath(tagKey.registry()) + "/" + tagKey.id().getPath() + ".json");
+    addImmediateData(id, new ImmediateResourceSupplier.JsonBytesSupplierImpl<>(TagFile.CODEC, x -> new TagFile(tagBuilder.build(), false)));
+    return ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
   @Override
@@ -310,7 +321,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public byte[] addRecipe(Identifier id, Recipe<?> recipe) {
-    this.immediateResources.put(fix(id, "recipe", "json"), r -> recipe);
+    this.addImmediateData(fix(id, "recipe", "json"), new ImmediateResourceSupplier.JsonBytesSupplierImpl<>(Recipe.CODEC, r -> recipe));
     return ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
@@ -321,7 +332,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public byte[] addAdvancement(Identifier id, Advancement advancement) {
-    this.immediateResources.put(fix(id, "advancement", "json"), r -> advancement);
+    this.addImmediateData(fix(id, "advancement", "json"), new ImmediateResourceSupplier.JsonBytesSupplierImpl<>(Advancement.CODEC, r -> advancement));
     return ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
@@ -359,7 +370,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
         Path assets = output.resolve("assets");
         Files.createDirectories(assets);
         for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
-          this.write(assets, entry.getKey(), entry.getValue().get());
+          this.write(assets, entry.getKey(), entry.getValue());
           if (stat != null) stat[1] += 1;
           if (Thread.interrupted()) throw new InterruptedException("Dumping server data");
         }
@@ -368,7 +379,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
         Path data = output.resolve("data");
         Files.createDirectories(data);
         for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
-          this.write(data, entry.getKey(), entry.getValue().get());
+          this.write(data, entry.getKey(), entry.getValue());
           if (stat != null) stat[2] += 1;
           if (Thread.interrupted()) throw new InterruptedException("Dumping client resources");
         }
@@ -459,27 +470,17 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Nullable
   @Override
   public InputSupplier<InputStream> open(ResourceType type, Identifier id) {
-    if (immediateResources.containsKey(id)) {
-      final var immediateResource = immediateResources.get(id);
-      if (id.getPath().startsWith("loot_table/")) {
-        LOGGER.info("immediate loot table {}", id);
-        return ImmediateInputSupplier.OfCodec.ofTrusted(LootTable.CODEC, immediateResource);
-      } else if (id.getPath().startsWith("advancement/")) {
-        LOGGER.info("immediate advancement {}", id);
-        return ImmediateInputSupplier.OfCodec.ofTrusted(Advancement.CODEC, immediateResource);
-      } else if (id.getPath().startsWith("recipe/")) {
-        LOGGER.info("immediate recipe {}", id);
-        return ImmediateInputSupplier.OfCodec.ofTrusted(Recipe.CODEC, immediateResource);
-      }
-    }
     Supplier<byte[]> supplier = this.getSys(type).get(id);
+    if (supplier instanceof ImmediateResourceSupplier<?> immediateResourceSupplier) {
+      return immediateResourceSupplier.getImmediateInputSupplier();
+    }
+
     return supplier == null ? null : () -> new ByteArrayInputStream(supplier.get());
   }
 
   @Override
   public void findResources(ResourceType type, String namespace, String prefix, ResultConsumer consumer) {
-    // todo optimize
-    for (Identifier identifier : Iterables.concat(this.getSys(type).keySet(), immediateResources.keySet())) {
+    for (Identifier identifier : this.getSys(type).keySet()) {
       // deleted section: detecting "No resource found for..."
       if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix)) {
         consumer.accept(identifier, open(type, identifier));
@@ -553,12 +554,28 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     map.put(Identifier.of(namespace, path), () -> data);
   }
 
-  private void write(Path dir, Identifier identifier, byte[] data) {
+  private void write(Path dir, Identifier identifier, Supplier<byte[]> dataSupplier) {
     try {
       Path file = dir.resolve(identifier.getNamespace()).resolve(identifier.getPath());
       Files.createDirectories(file.getParent());
-      try (OutputStream output = Files.newOutputStream(file)) {
-        output.write(data);
+      if (dataSupplier instanceof ImmediateResourceSupplier.JsonBytesSupplier<?> ir) {
+        final RegistryWrapper.WrapperLookup lookup;
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT && MinecraftClient.getInstance().getServer() != null) {
+          lookup = MinecraftClient.getInstance().getServer().getRegistryManager();
+        } else {
+          lookup = Holder.registryLookup;
+        }
+        final JsonElement element = ir.getJsonElement(lookup.getOps(JsonOps.INSTANCE), lookup);
+        if (element instanceof JsonObject jo) {
+          jo.addProperty("__brrp_output_note", "Converted from immediate resource. May sometimes differ from actual content.");
+        }
+        try (BufferedWriter writer = Files.newBufferedWriter(file)) {
+          GSON.toJson(element, writer);
+        }
+      } else {
+        try (OutputStream output = Files.newOutputStream(file)) {
+          output.write(dataSupplier.get());
+        }
       }
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -602,6 +619,8 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     return registryLookup;
   }
 
+  @SuppressWarnings("deprecation")
+  @Deprecated
   @Override
   public BlockLootTableGenerator getBlockLootTableGenerator() {
     return blockLootTableGenerator;

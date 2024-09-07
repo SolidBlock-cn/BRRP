@@ -15,10 +15,10 @@ import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import pers.solid.brrp.v1.api.ImmediateResource;
 import pers.solid.brrp.v1.impl.ImmediateResourceLoader;
 
 import java.util.Map;
-import java.util.function.Function;
 
 @Mixin(RecipeManager.class)
 public abstract class RecipeManagerMixin implements ImmediateResourceLoader {
@@ -40,7 +40,7 @@ public abstract class RecipeManagerMixin implements ImmediateResourceLoader {
   private Map<Identifier, RecipeEntry<?>> recipesById;
 
   @Override
-  public void applyImmediate$brrp(Map<Identifier, Function<RegistryWrapper.WrapperLookup, ?>> map, ResourceManager manager, Profiler profiler) {
+  public void applyImmediate$brrp(Map<Identifier, ImmediateResource<?>> map, ResourceManager manager, Profiler profiler) {
     if (map.isEmpty()) {
       LOGGER.info("BRRP: No immediate recipe loaded.");
       return;
@@ -52,7 +52,7 @@ public abstract class RecipeManagerMixin implements ImmediateResourceLoader {
     imRecipesByIdBuilder.putAll(this.recipesById);
 
     int count = 0;
-    for (Map.Entry<Identifier, Function<RegistryWrapper.WrapperLookup, ?>> entry : map.entrySet()) {
+    for (var entry : map.entrySet()) {
       Identifier identifier = entry.getKey();
 
       final Object apply = entry.getValue().apply(this.registryLookup);

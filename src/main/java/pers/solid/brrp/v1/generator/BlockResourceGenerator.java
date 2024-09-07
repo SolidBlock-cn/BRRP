@@ -323,10 +323,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
       // If the loot table is empty, don't write.
       return;
     }
-    final LootTable.Builder lootTable = getLootTable(pack.getBlockLootTableGenerator());
-    if (lootTable != null) {
-      pack.addLootTable(lootTableId, lootTable);
-    }
+    pack.addLootTable(lootTableId, registryLookup -> getLootTable(new BRRPBlockLootTableGenerator(registryLookup)).build());
   }
 
   /**
