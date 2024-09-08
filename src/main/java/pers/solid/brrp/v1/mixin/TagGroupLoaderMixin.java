@@ -15,8 +15,9 @@ import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import pers.solid.brrp.v1.BRRPMixins;
 import pers.solid.brrp.v1.api.ImmediateInputSupplier;
-import pers.solid.brrp.v1.api.RuntimeResourcePack;
+import pers.solid.brrp.v1.api.RegistryResourceFunction;
 
 import java.io.BufferedReader;
 import java.io.Reader;
@@ -57,11 +58,14 @@ public abstract class TagGroupLoaderMixin {
   @WrapOperation(method = "loadTags", at = @At(value = "INVOKE", target = "Lcom/mojang/serialization/DataResult;getOrThrow()Ljava/lang/Object;", remap = false))
   private Object wrapGetOrThrow(DataResult<TagFile> instance, Operation<TagFile> original, @Share("im") LocalRef<ImmediateInputSupplier<?>> share, @Local(ordinal = 0) Identifier identifier) {
     if (share.get() != null) {
-      final Object apply = share.get().immediateResource().apply(null);
+      Object apply = share.get().resource();
+      if (apply instanceof RegistryResourceFunction<?> r) {
+        apply = r.apply(null);
+      }
       if (apply instanceof TagFile tagFile) {
         return tagFile;
       } else {
-        RuntimeResourcePack.LOGGER.warn("Immediate resource with id {} is not a TagFile: {}", identifier, apply);
+        BRRPMixins.LOGGER.warn("Immediate resource with id {} is not a TagFile: {}", identifier, apply);
         return new TagFile(Collections.emptyList(), false);
       }
     }

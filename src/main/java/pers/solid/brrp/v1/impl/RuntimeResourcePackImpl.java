@@ -10,6 +10,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.data.client.BlockStateSupplier;
 import net.minecraft.data.server.loottable.BlockLootTableGenerator;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.Recipe;
@@ -33,11 +34,12 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pers.solid.brrp.v1.api.ImmediateResource;
 import pers.solid.brrp.v1.api.ImmediateResourceSupplier;
+import pers.solid.brrp.v1.api.RegistryResourceFunction;
 import pers.solid.brrp.v1.api.RuntimeResourcePack;
 import pers.solid.brrp.v1.mixin.BuiltinRegistriesAccessor;
 import pers.solid.brrp.v1.mixin.RegistryBuilderAccessor;
+import pers.solid.brrp.v1.model.ModelJsonBuilder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -182,13 +184,13 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public byte[] addLootTable(Identifier identifier, LootTable lootTable) {
-    this.addImmediateData(fix(identifier, "loot_table", "json"), new ImmediateResourceSupplier.JsonBytesSupplierImpl<>(LootTable.CODEC, wrapperLookup -> lootTable));
+    this.addImmediateData(fix(identifier, "loot_table", "json"), new ImmediateResourceSupplier.OfRegistryResource.Impl<>(LootTable.CODEC, wrapperLookup -> lootTable));
     return ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
   @Override
-  public ImmediateResourceSupplier<LootTable> addLootTable(Identifier identifier, ImmediateResource<LootTable> lootTable) {
-    return this.addImmediateData(fix(identifier, "loot_table", "json"), new ImmediateResourceSupplier.JsonBytesSupplierImpl<>(LootTable.CODEC, lootTable));
+  public void addLootTable(Identifier identifier, RegistryResourceFunction<LootTable> lootTable) {
+    this.addImmediateData(fix(identifier, "loot_table", "json"), new ImmediateResourceSupplier.OfRegistryResource.Impl<>(LootTable.CODEC, lootTable));
   }
 
   @Override
@@ -256,10 +258,9 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   @Override
-  public <T> ImmediateResourceSupplier<T> addImmediateAsset(Identifier id, ImmediateResourceSupplier<T> data) {
+  public <T> void addImmediateAsset(Identifier id, ImmediateResourceSupplier<T> data) {
     checkDuplicateAsset(id);
     assets.put(id, data);
-    return data;
   }
 
   @Override
@@ -270,10 +271,9 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   @Override
-  public <T> ImmediateResourceSupplier<T> addImmediateData(Identifier id, ImmediateResourceSupplier<T> data) {
+  public <T> void addImmediateData(Identifier id, ImmediateResourceSupplier<T> data) {
     checkDuplicateData(id);
     this.data.put(id, data);
-    return data;
   }
 
   @Override
@@ -282,8 +282,22 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   @Override
+  public byte[] addBlockState(Identifier id, @NotNull BlockStateSupplier state) {
+    final JsonElement jsonTree = state.get();
+    addImmediateAsset(fix(id, "blockstates", "json"), new ImmediateResourceSupplier.OfJson.Impl(jsonTree));
+    return ArrayUtils.EMPTY_BYTE_ARRAY;
+  }
+
+  @Override
   public byte[] addModel(Identifier id, byte[] serializedData) {
     return addAsset(fix(id, "models", "json"), serializedData);
+  }
+
+  @Override
+  public byte[] addModel(Identifier id, ModelJsonBuilder model) {
+    final JsonElement jsonTree = GSON.toJsonTree(model);
+    addImmediateAsset(fix(id, "models", "json"), new ImmediateResourceSupplier.OfJson.Impl(jsonTree));
+    return ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
   @Override
@@ -305,7 +319,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Override
   public <T> byte[] addTag(TagKey<T> tagKey, TagBuilder tagBuilder) {
     final Identifier id = Identifier.of(tagKey.id().getNamespace(), RegistryKeys.getTagPath(tagKey.registry()) + "/" + tagKey.id().getPath() + ".json");
-    addImmediateData(id, new ImmediateResourceSupplier.JsonBytesSupplierImpl<>(TagFile.CODEC, x -> new TagFile(tagBuilder.build(), false)));
+    addImmediateData(id, new ImmediateResourceSupplier.OfSimpleResource.Impl<>(TagFile.CODEC, new TagFile(tagBuilder.build(), false)));
     return ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
@@ -321,7 +335,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public byte[] addRecipe(Identifier id, Recipe<?> recipe) {
-    this.addImmediateData(fix(id, "recipe", "json"), new ImmediateResourceSupplier.JsonBytesSupplierImpl<>(Recipe.CODEC, r -> recipe));
+    this.addImmediateData(fix(id, "recipe", "json"), new ImmediateResourceSupplier.OfRegistryResource.Impl<>(Recipe.CODEC, r -> recipe));
     return ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
@@ -332,7 +346,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public byte[] addAdvancement(Identifier id, Advancement advancement) {
-    this.addImmediateData(fix(id, "advancement", "json"), new ImmediateResourceSupplier.JsonBytesSupplierImpl<>(Advancement.CODEC, r -> advancement));
+    this.addImmediateData(fix(id, "advancement", "json"), new ImmediateResourceSupplier.OfRegistryResource.Impl<>(Advancement.CODEC, r -> advancement));
     return ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
@@ -347,10 +361,9 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     try {
       if (stat != null) stat[0] = -1;
       if (output.toFile().exists()) {
-        FileUtils.cleanDirectory(output.toFile());
-      } else {
-        Files.createDirectories(output);
+        FileUtils.deleteDirectory(output.toFile());
       }
+      Files.createDirectories(output);
       if (stat != null) {
         stat[0] = stat[1] = stat[2] = 0;
       }
@@ -365,6 +378,15 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
           }
         }
       }
+
+      lookupSupplierForOutput = Suppliers.memoize(() -> {
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT && MinecraftClient.getInstance().getServer() != null) {
+          return MinecraftClient.getInstance().getServer().getRegistryManager();
+        } else {
+          return Holder.registryLookup;
+        }
+      });
+      registryOpsSupplierForOutput = Suppliers.memoize(() -> lookupSupplierForOutput.get().getOps(JsonOps.INSTANCE));
 
       if (dumpResourceType != ResourceType.SERVER_DATA && !assets.isEmpty()) {
         Path assets = output.resolve("assets");
@@ -554,21 +576,50 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     map.put(Identifier.of(namespace, path), () -> data);
   }
 
+  private Supplier<RegistryWrapper.@NotNull WrapperLookup> lookupSupplierForOutput;
+  private Supplier<@NotNull RegistryOps<JsonElement>> registryOpsSupplierForOutput;
+
   private void write(Path dir, Identifier identifier, Supplier<byte[]> dataSupplier) {
     try {
       Path file = dir.resolve(identifier.getNamespace()).resolve(identifier.getPath());
       Files.createDirectories(file.getParent());
-      if (dataSupplier instanceof ImmediateResourceSupplier.JsonBytesSupplier<?> ir) {
-        final RegistryWrapper.WrapperLookup lookup;
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT && MinecraftClient.getInstance().getServer() != null) {
-          lookup = MinecraftClient.getInstance().getServer().getRegistryManager();
-        } else {
-          lookup = Holder.registryLookup;
+      if (dataSupplier instanceof final ImmediateResourceSupplier<?> ir) {
+        // when calling this method,
+        // you must ensure the Supplier objects are not empty.
+        final JsonElement element;
+        switch (ir) {
+          case ImmediateResourceSupplier.OfRegistryResource<?> ofRegistryResource -> {
+            final RegistryWrapper.WrapperLookup lookup = lookupSupplierForOutput.get();
+            final RegistryOps<JsonElement> ops = registryOpsSupplierForOutput.get();
+            element = ofRegistryResource.getJsonElement(ops, lookup);
+            if (element instanceof JsonObject jo) {
+              jo.addProperty("__brrp_output_note", "Converted from immediate resource. May sometimes differ from actual content.");
+            }
+          }
+          case ImmediateResourceSupplier.OfJson ofJson -> {
+            element = ofJson.jsonElement().deepCopy();
+            if (element instanceof JsonObject jo) {
+              jo.addProperty("__brrp_output_note", "Converted from immediate JSON resource.");
+            }
+          }
+          case ImmediateResourceSupplier.OfSimpleResource<?> ofSimpleResource -> {
+            final RegistryOps<JsonElement> ops = registryOpsSupplierForOutput.get();
+            element = ofSimpleResource.getJsonElement(ops);
+            if (element instanceof JsonObject jo) {
+              jo.addProperty("__brrp_output_note", "Converted from immediate resource. May sometimes differ from actual content.");
+            }
+          }
+          default -> element = null;
         }
-        final JsonElement element = ir.getJsonElement(lookup.getOps(JsonOps.INSTANCE), lookup);
-        if (element instanceof JsonObject jo) {
-          jo.addProperty("__brrp_output_note", "Converted from immediate resource. May sometimes differ from actual content.");
+        try (BufferedWriter writer = Files.newBufferedWriter(file)) {
+          if (element != null) {
+            GSON.toJson(element, writer);
+          } else {
+            writer.append("<resource not supported>");
+          }
         }
+      } else if (dataSupplier instanceof final ImmediateResourceSupplier.OfJson ofJson) {
+        final JsonElement element = ofJson.jsonElement().deepCopy();
         try (BufferedWriter writer = Files.newBufferedWriter(file)) {
           GSON.toJson(element, writer);
         }

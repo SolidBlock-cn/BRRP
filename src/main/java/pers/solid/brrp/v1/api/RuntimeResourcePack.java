@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.impl.registry.sync.DynamicRegistriesImpl;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.block.AbstractBlock;
@@ -19,6 +21,9 @@ import net.minecraft.data.server.recipe.*;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.*;
 import net.minecraft.resource.ResourcePack;
@@ -238,8 +243,14 @@ public interface RuntimeResourcePack extends ResourcePack {
     return this.addLootTable(identifier, lootTable.build());
   }
 
+  /**
+   * Add an immediate loot table function, which will be called when loading loot tables, with a {@link RegistryWrapper.WrapperLookup} as a parameter. It is usually used to provide loot tables for your mod.
+   *
+   * @param identifier The identifier of the loot table. Please refer to {@link AbstractBlock#getLootTableKey()}.
+   * @param lootTable  The loot table function, which takes a {@link RegistryWrapper.WrapperLookup} as a parameter.
+   */
   @ApiStatus.AvailableSince("1.1.0")
-  ImmediateResourceSupplier<LootTable> addLootTable(Identifier identifier, ImmediateResource<LootTable> lootTable);
+  void addLootTable(Identifier identifier, RegistryResourceFunction<LootTable> lootTable);
 
   /**
    * Add an async resource, which is evaluated off-thread, and does not hold all resource retrieval unlike.
@@ -296,7 +307,11 @@ public interface RuntimeResourcePack extends ResourcePack {
   @Contract(mutates = "this")
   byte[] addAsset(Identifier id, byte[] data);
 
-  <T> ImmediateResourceSupplier<T> addImmediateAsset(Identifier id, ImmediateResourceSupplier<T> data);
+  /**
+   * Add an immediate asset, which may not go through serialization and deserialization when loading resource packs. Only a few types of resources support this feature, including block states and models.
+   */
+  @ApiStatus.AvailableSince("1.1.0")
+  <T> void addImmediateAsset(Identifier id, ImmediateResourceSupplier<T> data);
 
   /**
    * Add a custom server data.
@@ -304,7 +319,10 @@ public interface RuntimeResourcePack extends ResourcePack {
   @Contract(mutates = "this")
   byte[] addData(Identifier id, byte[] data);
 
-  <T> ImmediateResourceSupplier<T> addImmediateData(Identifier id, ImmediateResourceSupplier<T> data);
+  /**
+   * Add an immediate data, which may not go through serialization and deserialization when loading resource packs. Only a few types of resources support this feature, including loot tables, recipes, advancements, dynamic registry contents and tags.
+   */
+  <T> void addImmediateData(Identifier id, ImmediateResourceSupplier<T> data);
 
   @Contract(mutates = "this")
   byte[] addBlockState(Identifier id, byte[] serializedData);
@@ -505,6 +523,37 @@ public interface RuntimeResourcePack extends ResourcePack {
 
   @Contract(mutates = "this")
   byte[] addAdvancement(Identifier id, byte[] serializedData);
+
+  default <T> void addDynamicRegistryContent(RegistryKey<Registry<T>> registryKey, Identifier identifier, Codec<T> codec, T content) {
+    String path = RegistryKeys.getPath(registryKey);
+    Identifier id = registryKey.getValue();
+    if (!id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE)
+        && DynamicRegistriesImpl.FABRIC_DYNAMIC_REGISTRY_KEYS.contains(registryKey)) {
+      path = id.getNamespace() + "/" + path;
+    }
+
+    addImmediateData(identifier.brrp_prefix_and_suffixed(path + "/", ".json"), new ImmediateResourceSupplier.OfSimpleResource.Impl<>(codec, content));
+  }
+
+  default <T> void addDynamicRegistryContentFunction(RegistryKey<Registry<T>> registryKey, Identifier identifier, Codec<T> codec, RegistryResourceFunction.ByInfoGetter<T> content) {
+    String path = RegistryKeys.getPath(registryKey);
+    Identifier id = registryKey.getValue();
+    if (!id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE)
+        && DynamicRegistriesImpl.FABRIC_DYNAMIC_REGISTRY_KEYS.contains(registryKey)) {
+      path = id.getNamespace() + "/" + path;
+    }
+
+    addImmediateData(identifier.brrp_prefix_and_suffixed(path + "/", ".json"), new ImmediateResourceSupplier.OfRegistryResource.Impl<>(codec, content));
+  }
+
+
+  default <T> void addDynamicRegistryContent(RegistryKey<T> registryKey, Codec<T> codec, T content) {
+    addDynamicRegistryContent(registryKey.getRegistryRef(), registryKey.getValue(), codec, content);
+  }
+
+  default <T> void addDynamicRegistryContentFunction(RegistryKey<T> registryKey, Codec<T> codec, RegistryResourceFunction.ByInfoGetter<T> content) {
+    addDynamicRegistryContentFunction(registryKey.getRegistryRef(), registryKey.getValue(), codec, content);
+  }
 
   /**
    * <p>Invokes the action on the RRP executor. RRPs are thread-safe, so you can create expensive assets here. All resources are blocked until all async tasks are completed.</p>

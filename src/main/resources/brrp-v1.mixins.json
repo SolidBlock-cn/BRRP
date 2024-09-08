@@ -8,12 +8,14 @@
     "FileResourcePackProviderMixin",
     "IdentifierMixin",
     "JsonDataLoaderMixin",
+    "JsonUnbakedModelAccessor",
     "LifecycledResourceManagerImplMixin",
     "ModelAccessor",
-    "NamespaceResourceManagerMixin",
     "RecipeManagerMixin",
     "RegistryBuilderAccessor",
     "RegistryBuilderMixin",
+    "RegistryLoaderMixin",
+    "RegistryOpsAccessor",
     "ReloadableRegistriesMixin",
     "ResourceAccessor",
     "ServerAdvancementLoaderMixin",
@@ -24,5 +26,6 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": ["BakedModelManagerMixin"]
 }

@@ -1,6 +1,7 @@
 package pers.solid.brrp.v1;
 
 import com.google.common.collect.Collections2;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -8,10 +9,16 @@ import net.minecraft.block.WoodType;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.EnchantmentEffectComponentTypes;
+import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.client.TextureKey;
 import net.minecraft.data.server.recipe.*;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentLevelBasedValue;
+import net.minecraft.enchantment.effect.entity.ApplyMobEffectEnchantmentEffect;
+import net.minecraft.enchantment.effect.value.MultiplyEnchantmentEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.BlockItem;
@@ -23,7 +30,9 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.ItemTags;
@@ -77,6 +86,8 @@ public class BRRPTest {
    * <p>The block specifies the texture of top, side and bottom via parameters of {@link BRRPCubeBlock#cubeBottomTop(AbstractBlock.Settings, Identifier, Identifier, Identifier)}. {@link BRRPCubeBlock#getBlockModel()} will directly use the textures.</p>
    */
   public static final BRRPCubeBlock SMOOTH_STONE = register(BRRPCubeBlock.cubeBottomTop(AbstractBlock.Settings.copy(Blocks.SMOOTH_STONE), Identifier.of("block/smooth_stone"), Identifier.of("block/smooth_stone_slab_side"), Identifier.of("block/smooth_stone")), "smooth_stone");
+  public static final RegistryKey<Enchantment> POWER_DIAMOND = RegistryKey.of(RegistryKeys.ENCHANTMENT, Identifier.of("brrp", "power_diamond"));
+  public static final RegistryKey<Enchantment> POWER_GEM = RegistryKey.of(RegistryKeys.ENCHANTMENT, Identifier.of("brrp", "power_gem"));
   /**
    * <p>The runtime resource pack that will be used in development environment, as a simple example. The object is created in the initialization of this class.</p>
    */
@@ -139,6 +150,8 @@ public class BRRPTest {
           .add(LAVA_FENCE_GATE, "Lava Fence Gate (Development Environment Only)")
           .add(LAVA_WALL, "Lava Wall (Development Environment Only)")
           .add(SMOOTH_STONE, "Smooth Stone (Development Environment Only)")
+          .add(POWER_DIAMOND, "Power diamond")
+          .add(POWER_GEM, "Power gem")
       );
       // The difference of 'mergeLang' or 'addLang' is, if the same resource pack has already had a language file with a same name, 'addLang' will override the whole existing one, while 'mergeLang' simply merges it. You may refer to the source codes.
       // mergeLang 和 addLang 的不同之处在于，如果同一个资源包已经有了相同名称的语言文件，addLang 会直接将原有的全部覆盖，而 mergeLang 是将其合并。参见其方法的源代码。
@@ -150,6 +163,8 @@ public class BRRPTest {
           .add(LAVA_FENCE_GATE, "熔岩栅栏门（仅限开发环境）")
           .add(LAVA_WALL, "熔岩墙（仅限开发环境）")
           .add(SMOOTH_STONE, "平滑石头（仅限开发环境）")
+          .add(POWER_DIAMOND, "强化钻石")
+          .add(POWER_GEM, "强化宝石")
       );
       final LanguageProvider twLang = LanguageProvider.create()
           .add(LAVA_BLOCK, "熔岩方塊（僅限開發環境）")
@@ -158,7 +173,9 @@ public class BRRPTest {
           .add(LAVA_FENCE, "熔岩柵欄（僅限開發環境）")
           .add(LAVA_FENCE_GATE, "熔岩柵欄門（僅限開發環境）")
           .add(LAVA_WALL, "熔岩墻（僅限開發環境）")
-          .add(SMOOTH_STONE, "平滑石頭（僅限開發環境）");
+          .add(SMOOTH_STONE, "平滑石頭（僅限開發環境）")
+          .add(POWER_DIAMOND, "強化鑽石")
+          .add(POWER_GEM, "強化寶石");
       PACK.addLang(Identifier.of("brrp", "zh_tw"), twLang);
       PACK.addLang(Identifier.of("brrp", "zh_hk"), twLang
           .add(LAVA_FENCE, "熔岩欄杆（僅限開發環境）")
@@ -201,6 +218,30 @@ public class BRRPTest {
       PACK.addRecipeAndAdvancement(Identifier.of("brrp", "smithing_trim"), SmithingTrimRecipeJsonBuilder.create(Ingredient.ofItems(Items.DIAMOND), Ingredient.ofItems(Items.STONE), Ingredient.ofItems(Items.REDSTONE), RecipeCategory.BUILDING_BLOCKS).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true));
 
       PACK.addTag(new IdentifiedTagBuilder<>(RegistryKeys.BIOME, Identifier.of("brrp", "some_biomes")).add(BiomeKeys.THE_VOID, BiomeKeys.PLAINS, BiomeKeys.DESERT).addTag(BiomeTags.NETHER_FORTRESS_HAS_STRUCTURE));
+
+      PACK.addDynamicRegistryContent(POWER_DIAMOND, Enchantment.CODEC, Enchantment.builder(Enchantment.definition(RegistryEntryList.of(Items.DIAMOND.getRegistryEntry()),
+              1,
+              5,
+              new Enchantment.Cost(1, 5),
+              new Enchantment.Cost(2, 4),
+              1,
+              AttributeModifierSlot.ANY))
+          .addEffect(EnchantmentEffectComponentTypes.DAMAGE, new MultiplyEnchantmentEffect(EnchantmentLevelBasedValue.linear(114514)))
+          .build(POWER_DIAMOND.getValue()));
+      PACK.addDynamicRegistryContentFunction(POWER_GEM, Enchantment.CODEC, infoGetter -> Enchantment.builder(Enchantment.definition(
+              infoGetter.getRegistryInfo(RegistryKeys.ITEM).orElseThrow().entryLookup().getOrThrow(ConventionalItemTags.GEMS),
+              1,
+              8,
+              Enchantment.constantCost(1),
+              Enchantment.constantCost(100),
+              1,
+              AttributeModifierSlot.ANY
+          ))
+          .addEffect(EnchantmentEffectComponentTypes.TICK, new ApplyMobEffectEnchantmentEffect(RegistryEntryList.of(StatusEffects.WIND_CHARGED, StatusEffects.WEAVING, StatusEffects.INFESTED, StatusEffects.OOZING), EnchantmentLevelBasedValue.linear(2, 3),
+              EnchantmentLevelBasedValue.linear(5, 7),
+              EnchantmentLevelBasedValue.linear(1, 3),
+              EnchantmentLevelBasedValue.linear(3, 3)))
+          .build(POWER_GEM.getValue()));
     }
 
     // The following code will generate all resources (including block states, block models, item models, loot tables, and optional recipes with the corresponding advancements) for the blocks.

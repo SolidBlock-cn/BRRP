@@ -6,7 +6,6 @@ import net.minecraft.resource.ResourceFinder;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import pers.solid.brrp.v1.api.ImmediateInputSupplier;
-import pers.solid.brrp.v1.api.ImmediateResource;
 import pers.solid.brrp.v1.impl.RuntimeResourcePackImpl;
 import pers.solid.brrp.v1.mixin.ResourceAccessor;
 
@@ -15,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface ResourceExtension {
-  static Map<Identifier, ImmediateResource<?>> findExtendedResources(ResourceManager resourceManager, String dataType) {
-    final Map<Identifier, ImmediateResource<?>> map = new HashMap<>();
+  static Map<Identifier, Object> findExtendedResources(ResourceManager resourceManager, String dataType) {
+    final Map<Identifier, Object> map = new HashMap<>();
     ResourceFinder resourceFinder = ResourceFinder.json(dataType);
 
     for (Map.Entry<Identifier, Resource> entry : resourceFinder.findResources(resourceManager).entrySet()) {
@@ -26,7 +25,7 @@ public interface ResourceExtension {
       final InputSupplier<InputStream> provider = ((ResourceAccessor) resource).getInputSupplier();
       if (provider instanceof ImmediateInputSupplier<?> im) {
         RuntimeResourcePackImpl.LOGGER.debug("ImmediateInputSupplier found: {}", identifier);
-        map.put(resourceFinder.toResourceId(identifier), im.immediateResource());
+        map.put(resourceFinder.toResourceId(identifier), im.resource());
       }
     }
 
