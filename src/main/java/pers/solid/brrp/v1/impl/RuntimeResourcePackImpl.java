@@ -64,40 +64,19 @@ import java.util.zip.ZipOutputStream;
 @ApiStatus.Internal
 public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack implements ResourcePack {
   public static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(10, new ThreadFactoryBuilder().setDaemon(true).setNameFormat("BRRP-Workers-%s").build());
+  private static final ResourcePackSource RUNTIME = ResourcePackSource.create(name -> Text.translatable("pack.nameAndSource", name, Text.translatable("pack.source.runtime")).formatted(Formatting.GRAY), true);
+  public final BlockLootTableGenerator blockLootTableGenerator;
   private final Map<Identifier, Supplier<byte[]>> data = new ConcurrentHashMap<>();
   private final Map<Identifier, Supplier<byte[]>> assets = new ConcurrentHashMap<>();
   private final Map<List<String>, Supplier<byte[]>> root = new ConcurrentHashMap<>();
 
-  /**
-   * This is required for many data pack elements since 1.20.5
-   */
+  @SuppressWarnings("DeprecatedIsStillUsed")
+  @Deprecated(forRemoval = true)
   private final RegistryWrapper.WrapperLookup registryLookup;
-  public final BlockLootTableGenerator blockLootTableGenerator;
+  private Supplier<RegistryWrapper.@NotNull WrapperLookup> lookupSupplierForOutput;
+  private Supplier<@NotNull RegistryOps<JsonElement>> registryOpsSupplierForOutput;
 
-  public static class Workaround extends RegistryBuilder {
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @Contract(pure = true)
-    public static Workaround copy(RegistryBuilder from) {
-      final Workaround rb = new Workaround();
-      final List vanilla = ((RegistryBuilderAccessor) from).getRegistries();
-      ((RegistryBuilderAccessor) rb).getRegistries().addAll(vanilla);
-      return rb;
-    }
-  }
-
-  /**
-   * This class holds some shared {@code registryLookup} and {@code gson} that many runtime resource packs may use in common.
-   */
-  private static final class Holder {
-    private static final RegistryWrapper.WrapperLookup registryLookup = Util.make(() -> {
-      final RegistryBuilder rb = Workaround.copy(BuiltinRegistriesAccessor.getRegistryBuilder());
-      return rb.createWrapperLookup(DynamicRegistryManager.of(Registries.REGISTRIES));
-    });
-
-    private static final BlockLootTableGenerator blockLootTableGenerator = new BRRPBlockLootTableGenerator(registryLookup);
-  }
-
-
+  @Deprecated(since = "1.1.0", forRemoval = true)
   public RuntimeResourcePackImpl(Identifier id, @NotNull RegistryWrapper.WrapperLookup registryLookup) {
     super(id);
     this.registryLookup = registryLookup;
@@ -110,14 +89,16 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     this.blockLootTableGenerator = Holder.blockLootTableGenerator;
   }
 
+  private static Identifier fix(Identifier identifier, String prefix, String append) {
+    return identifier.brrp_prefix_and_suffixed(prefix + '/', '.' + append);
+  }
+
   @Override
   public byte[] serialize(Object object) {
     return RuntimeResourcePack.serialize(object, GSON);
   }
 
-  private static Identifier fix(Identifier identifier, String prefix, String append) {
-    return identifier.brrp_prefix_and_suffixed(prefix + '/', '.' + append);
-  }
+  //<editor-fold desc="check duplicate methods">
 
   @Override
   public void addRecoloredImage(Identifier identifier, InputStream target, IntUnaryOperator operator) {
@@ -144,8 +125,6 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     });
   }
 
-  //<editor-fold desc="check duplicate methods">
-
   private void checkDuplicateAsset(Identifier id) {
     if (!allowsDuplicateResource && assets.containsKey(id)) {
       throw new IllegalArgumentException(String.format("Duplicate asset id %s in runtime resource pack %s.", id, getDisplayName().getString()));
@@ -164,13 +143,13 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
       case SERVER_DATA -> checkDuplicateData(id);
     }
   }
+  //</editor-fold>
 
   private void checkDuplicateRootResource(String path) {
     if (!allowsDuplicateResource && root.containsKey(Arrays.asList(path.split("/")))) {
       throw new IllegalArgumentException(String.format("Duplicate root resource id %s in runtime resource pack %s!", path, getDisplayName().getString()));
     }
   }
-  //</editor-fold>
 
   @Override
   public byte[] addLang(Identifier identifier, byte[] serializedData) {
@@ -549,8 +528,6 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     }
   }
 
-  private static final ResourcePackSource RUNTIME = ResourcePackSource.create(name -> Text.translatable("pack.nameAndSource", name, Text.translatable("pack.source.runtime")).formatted(Formatting.GRAY), true);
-
   @Override
   public ResourcePackInfo getInfo() {
     return new ResourcePackInfo(getId(), getDisplayName(), RUNTIME, Optional.empty());
@@ -575,9 +552,6 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     String path = fullPath.substring(sep + 1);
     map.put(Identifier.of(namespace, path), () -> data);
   }
-
-  private Supplier<RegistryWrapper.@NotNull WrapperLookup> lookupSupplierForOutput;
-  private Supplier<@NotNull RegistryOps<JsonElement>> registryOpsSupplierForOutput;
 
   private void write(Path dir, Identifier identifier, Supplier<byte[]> dataSupplier) {
     try {
@@ -665,13 +639,15 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     return root.size();
   }
 
+  @SuppressWarnings("removal")
+  @Deprecated(since = "1.1.0", forRemoval = true)
   @Override
   public RegistryWrapper.WrapperLookup getRegistryLookup() {
     return registryLookup;
   }
 
-  @SuppressWarnings("deprecation")
-  @Deprecated
+  @SuppressWarnings("removal")
+  @Deprecated(since = "1.1.0", forRemoval = true)
   @Override
   public BlockLootTableGenerator getBlockLootTableGenerator() {
     return blockLootTableGenerator;
@@ -679,5 +655,28 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   protected Map<Identifier, Supplier<byte[]>> getSys(ResourceType side) {
     return side == ResourceType.CLIENT_RESOURCES ? this.assets : this.data;
+  }
+
+  public static class Workaround extends RegistryBuilder {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Contract(pure = true)
+    public static Workaround copy(RegistryBuilder from) {
+      final Workaround rb = new Workaround();
+      final List vanilla = ((RegistryBuilderAccessor) from).getRegistries();
+      ((RegistryBuilderAccessor) rb).getRegistries().addAll(vanilla);
+      return rb;
+    }
+  }
+
+  /**
+   * This class holds some shared {@code registryLookup} and {@code gson} that many runtime resource packs may use in common.
+   */
+  private static final class Holder {
+    private static final RegistryWrapper.WrapperLookup registryLookup = Util.make(() -> {
+      final RegistryBuilder rb = Workaround.copy(BuiltinRegistriesAccessor.getRegistryBuilder());
+      return rb.createWrapperLookup(DynamicRegistryManager.of(Registries.REGISTRIES));
+    });
+
+    private static final BlockLootTableGenerator blockLootTableGenerator = new BRRPBlockLootTableGenerator(registryLookup);
   }
 }

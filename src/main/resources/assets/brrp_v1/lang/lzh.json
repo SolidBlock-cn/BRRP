@@ -1,7 +1,7 @@
 {
   "modmenu.descriptionTranslation.brrp_v1": "BRRP（Better Runtime Resource Pack）者，前置以生資囊于運行時也。基於ARRP（Advanced Runtime Resource Pack）。",
   "modmenu.summaryTranslation.brrp_v1": "生資囊於運行時也。",
-  "modmenu.nameTranslation.brrp_v1": "BRRP（高級運行時資囊）v1",
+  "modmenu.nameTranslation.brrp_v1": "BRRP（善甚運行時資囊）v1",
 
   "brrp.pack.defaultName": "運行時資囊 [%s]",
   "brrp.pack.defaultDescription": "運行時資囊%s",
@@ -69,5 +69,7 @@
   "brrp.dumpScreen.existing.message": "是出錄路徑已有%1$s檔。請確認出錄路徑：\n%2$s\n若出錄，此%1$s檔之存者盡除。",
   "brrp.dumpScreen.existing.size": "逾%s",
   "brrp.dumpScreen.interrupt": "止",
-  "brrp.dumpScreen.interrupt.tooltip": "止出錄過程。"
+  "brrp.dumpScreen.interrupt.tooltip": "止出錄過程。",
+  "brrp.dumpScreen.open": "出録路徑啟",
+  "brrp.dumpScreen.open.tooltip": "出録路徑啟于系統資源管理器。"
 }

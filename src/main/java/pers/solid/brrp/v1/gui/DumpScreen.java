@@ -12,6 +12,7 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.Util;
 import org.apache.commons.io.file.PathUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public class DumpScreen extends Screen {
   private TextWidget summaryText;
   private TextWidget dumpProgressText;
   private ButtonWidget dumpButton;
+  private ButtonWidget openButton;
   private ButtonWidget interruptButton;
   private ButtonWidget backButton;
   private Thread dumpThread;
@@ -98,8 +100,10 @@ public class DumpScreen extends Screen {
     addDrawableChild(summaryText);
     dumpProgressText = new TextWidget(20, height - 73, width - 40, 20, ScreenTexts.EMPTY, textRenderer).alignCenter();
     addDrawableChild(dumpProgressText);
-    dumpButton = ButtonWidget.builder(Text.translatable("brrp.dumpScreen.dump"), button -> runDump()).dimensions(width / 2 - 200, height - 53, 200, 20).build();
+    dumpButton = ButtonWidget.builder(Text.translatable("brrp.dumpScreen.dump"), button -> runDump()).dimensions(width / 2 - 210, height - 53, 140, 20).build();
     addDrawableChild(dumpButton);
+    openButton = ButtonWidget.builder(Text.translatable("brrp.dumpScreen.open"), button -> Util.getOperatingSystem().open(dumpPath.toFile())).dimensions(width / 2 - 70, height - 53, 140, 20).tooltip(Tooltip.of(Text.translatable("brrp.dumpScreen.open.tooltip"))).build();
+    addDrawableChild(openButton);
     interruptButton = ButtonWidget.builder(Text.translatable("brrp.dumpScreen.interrupt"), button -> {
       if (dumpThread != null) {
         dumpThread.interrupt();
@@ -109,7 +113,7 @@ public class DumpScreen extends Screen {
           LOGGER.error("Interrupted dump screen:", e);
         }
       }
-    }).tooltip(Tooltip.of(Text.translatable("brrp.dumpScreen.interrupt.tooltip"))).dimensions(width / 2, height - 53, 200, 20).build();
+    }).tooltip(Tooltip.of(Text.translatable("brrp.dumpScreen.interrupt.tooltip"))).dimensions(width / 2 + 70, height - 53, 140, 20).build();
     interruptButton.active = false;
     addDrawableChild(interruptButton);
     addDrawableChild(backButton = ButtonWidget.builder(ScreenTexts.BACK, button -> close()).dimensions(this.width / 2 - 100, this.height - 28, 200, 20).build());

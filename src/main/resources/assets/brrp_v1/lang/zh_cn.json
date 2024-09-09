@@ -1,7 +1,7 @@
 {
   "modmenu.descriptionTranslation.brrp_v1": "BRRP（Better Runtime Resource Pack，更好的运行时资源包）是用于在运行时生成资源包的前置模组，基于ARRP（Advanced Runtime Resource Pack，高级运行时资源包）模组制作。",
   "modmenu.summaryTranslation.brrp_v1": "本模组用于在运行时生成资源包。",
-  "modmenu.nameTranslation.brrp_v1": "BRRP（高级运行时资源包）v1",
+  "modmenu.nameTranslation.brrp_v1": "BRRP（更好的运行时资源包）v1",
 
   "brrp.pack.defaultName": "运行时资源包 [%s]",
   "brrp.pack.defaultDescription": "运行时资源包%s",
@@ -69,5 +69,7 @@
   "brrp.dumpScreen.existing.message": "此导出路径中已经有%1$s个文件。请确认导出路径：\n%2$s\n如果导出，这%1$s个已经存在的文件将被移除。",
   "brrp.dumpScreen.existing.size": "超过%s",
   "brrp.dumpScreen.interrupt": "中止",
-  "brrp.dumpScreen.interrupt.tooltip": "中止导出过程。"
+  "brrp.dumpScreen.interrupt.tooltip": "中止导出过程。",
+  "brrp.dumpScreen.open": "打开导出路径",
+  "brrp.dumpScreen.open.tooltip": "在系统资源管理器中打开导出路径。"
 }

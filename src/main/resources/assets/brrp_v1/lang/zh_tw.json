@@ -1,7 +1,7 @@
 {
   "modmenu.descriptionTranslation.brrp_v1": "BRRP（Better Runtime Resource Pack，更好的運行時資源包）是用於在運行時生成資源包的前置模組，基於 ARRP（Advanced Runtime Resource Pack，高級運行時資源包）模組製作。",
   "modmenu.summaryTranslation.brrp_v1": "本模組用於在運行時生成資源包。",
-  "modmenu.nameTranslation.brrp_v1": "BRRP（高級運行時資源包）v1",
+  "modmenu.nameTranslation.brrp_v1": "BRRP（更好的運行時資源包）v1",
 
   "brrp.pack.defaultName": "運行時資源包 [%s]",
   "brrp.pack.defaultDescription": "運行時資源包 %s",
@@ -69,5 +69,7 @@
   "brrp.dumpScreen.existing.message": "此匯出路徑中已經有%1$s個檔。請確認匯出路徑：\n%2$s\n如果匯出，這%1$s個已經存在的檔將被移除。",
   "brrp.dumpScreen.existing.size": "超過%s",
   "brrp.dumpScreen.interrupt": "中止",
-  "brrp.dumpScreen.interrupt.tooltip": "中止匯出過程。"
+  "brrp.dumpScreen.interrupt.tooltip": "中止匯出過程。",
+  "brrp.dumpScreen.open": "打開匯出路徑",
+  "brrp.dumpScreen.open.tooltip": "在系統管理器中打開匯出路徑。"
 }
