@@ -100,7 +100,7 @@ public class ModelJsonBuilder implements Cloneable {
    *
    * @param overrides The list of model overrides, which will be used directly.
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   public ModelJsonBuilder setOverrides(List<ModelOverrideBuilder> overrides) {
     this.overrides = overrides;
     return this;
@@ -111,7 +111,7 @@ public class ModelJsonBuilder implements Cloneable {
    *
    * @param override The override rule to be added.
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   public ModelJsonBuilder addOverride(ModelOverrideBuilder override) {
     if (overrides == null) {
       overrides = new ArrayList<>();
@@ -125,7 +125,7 @@ public class ModelJsonBuilder implements Cloneable {
    *
    * @param elements The list of model elements, which will be directly used.
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   public ModelJsonBuilder setElements(List<ModelElementBuilder> elements) {
     this.elements = elements;
     return this;
@@ -136,33 +136,33 @@ public class ModelJsonBuilder implements Cloneable {
    *
    * @param element The model element.
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   public ModelJsonBuilder addElement(ModelElementBuilder element) {
     if (elements == null) elements = new ArrayList<>();
     elements.add(element);
     return this;
   }
 
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   public ModelJsonBuilder guiLight(GuiLight guiLight) {
     this.guiLight = guiLight;
     return this;
   }
 
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   public ModelJsonBuilder ambientOcclusion(Boolean ambientOcclusion) {
     this.ambientOcclusion = ambientOcclusion;
     return this;
   }
 
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   public ModelJsonBuilder transformation(ModelTransformationMode modelTransformationMode, TransformationBuilder transformation) {
     if (transformations == null) transformations = new LinkedHashMap<>();
     transformations.put(modelTransformationMode, transformation);
     return this;
   }
 
-  @Contract(mutates = "this", value = "_-> this")
+  @Contract(value = "_-> this")
   public ModelJsonBuilder transformations(Map<ModelTransformationMode, TransformationBuilder> transformations) {
     this.transformations = transformations;
     return this;
@@ -174,7 +174,7 @@ public class ModelJsonBuilder implements Cloneable {
    * @param textureKey      The texture key.
    * @param textureLocation The id of the texture, such as {@code Identifier.of()("minecraft", "stone")}.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   public ModelJsonBuilder addTexture(@NotNull TextureKey textureKey, @Nullable Identifier textureLocation) {
     return addTexture(textureKey.getName(), textureLocation);
   }
@@ -185,7 +185,7 @@ public class ModelJsonBuilder implements Cloneable {
    * @param textureKey       The texture key.
    * @param textureReference The reference to another texture, with is the texture variable name prefixed with {@code "#"}.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   public ModelJsonBuilder addTexture(@NotNull TextureKey textureKey, @Nullable String textureReference) {
     return addTexture(textureKey.getName(), textureReference);
   }
@@ -196,7 +196,7 @@ public class ModelJsonBuilder implements Cloneable {
    * @param key             The texture key.
    * @param textureLocation The id of the texture, such as {@code Identifier.of()("minecraft", "stone")}.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   public ModelJsonBuilder addTexture(@NotNull String key, @Nullable Identifier textureLocation) {
     return addTexture(key, textureLocation == null ? null : textureLocation.toString());
   }
@@ -207,7 +207,7 @@ public class ModelJsonBuilder implements Cloneable {
    * @param key              The texture key.
    * @param textureReference The reference to another texture, with is the texture variable name prefixed with {@code "#"}.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   public ModelJsonBuilder addTexture(@NotNull String key, @Nullable String textureReference) {
     if (textures == null) {
       textures = new LinkedHashMap<>();
@@ -221,7 +221,7 @@ public class ModelJsonBuilder implements Cloneable {
    *
    * @param textures The texture map.
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   public ModelJsonBuilder setTextures(TextureMap textures) {
     ((TextureMapAccessor) textures).getEntries().forEach(this::addTexture);
     return this;
@@ -230,7 +230,7 @@ public class ModelJsonBuilder implements Cloneable {
   /**
    * Set the texture from a specified simple string map. The map will be directly used.
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   public ModelJsonBuilder setTextures(Map<String, String> textures) {
     this.textures = textures;
     return this;
@@ -242,7 +242,7 @@ public class ModelJsonBuilder implements Cloneable {
    * @param model The parent model.
    * @see Models
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   public ModelJsonBuilder parent(Model model) {
     return parent(ModelUtils.getId(model));
   }
@@ -252,7 +252,7 @@ public class ModelJsonBuilder implements Cloneable {
    *
    * @param parentId The parent model id.
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   public ModelJsonBuilder parent(Identifier parentId) {
     this.parentId = parentId;
     return this;
@@ -263,7 +263,7 @@ public class ModelJsonBuilder implements Cloneable {
    *
    * @param parentId The parent model id.
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   public ModelJsonBuilder parent(String parentId) {
     return parent(Identifier.of(parentId));
   }
@@ -271,7 +271,7 @@ public class ModelJsonBuilder implements Cloneable {
   /**
    * Set the id of the model parent.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   public ModelJsonBuilder parent(String namespace, String path) {
     return parent(Identifier.of(namespace, path));
   }

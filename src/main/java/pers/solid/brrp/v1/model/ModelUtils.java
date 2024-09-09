@@ -75,7 +75,6 @@ public final class ModelUtils {
    * @param model   The model object, in which the {@link ModelJsonBuilder#withParent(Model)} will be used for the model parent.
    * @param parent  The model parent. The id and variant names will be used.
    */
-  @Contract(mutates = "param1")
   public static void writeModelsWithVariants(@NotNull RuntimeResourcePack pack, @NotNull Identifier modelId, @NotNull ModelJsonBuilder model, Model parent) {
     pack.addModel(appendVariant(modelId, parent), model.withParent(parent));
   }
@@ -88,7 +87,6 @@ public final class ModelUtils {
    * @param model   The model object, in which the {@link ModelJsonBuilder#withParent(Model)} will be used for each model parent.
    * @param parents The model parents. The id and variant names will be used.
    */
-  @Contract(mutates = "param1")
   public static void writeModelsWithVariants(@NotNull RuntimeResourcePack pack, @NotNull Identifier modelId, @NotNull ModelJsonBuilder model, Model... parents) {
     for (Model parent : parents) {
       writeModelsWithVariants(pack, modelId, model, parent);

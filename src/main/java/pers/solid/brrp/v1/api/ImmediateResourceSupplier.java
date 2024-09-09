@@ -13,7 +13,13 @@ import java.io.OutputStreamWriter;
 import java.util.function.Supplier;
 
 /**
- * The supplier that can provide direct resources instead of just providing {@code byte[]}-format data. It directly extends {@code Supplier<byte[]>} to be directly used as other indirect resources, but the byte format data will not be used, so the byte output may be empty.
+ * <p>The supplier that can provide direct resources instead of just providing {@code byte[]}-format data. It directly extends {@code Supplier<byte[]>} to be directly used like other indirect resources, but the byte format data will not be used, so the byte output may be empty.
+ * <p>There are several implementations:</p>
+ * <ul>
+ *   <li>{@link OfSimpleResource}</li>
+ *   <li>{@link OfRegistryResource}</li>
+ *   <li>{@link OfJson}</li>
+ * </ul>
  *
  * @param <T> Type of the direct resource.
  */
@@ -35,12 +41,20 @@ public interface ImmediateResourceSupplier<T> extends Supplier<byte[]> {
     return new ImmediateInputSupplier.OfEmpty<>(resource());
   }
 
+  /**
+   * The immediate resource that represents a simple resource, which does not a registry wrapper lookup to get content. The codec is used to specify the JSON output, including then dumping resource packs.
+   *
+   * @param <T> {@inheritDoc}
+   */
   interface OfSimpleResource<T> extends ImmediateResourceSupplier<T> {
+    /**
+     * @return The codec used to serialize the resource.
+     */
     Codec<T> codec();
 
     @Override
     default ImmediateInputSupplier<T> getImmediateInputSupplier() {
-      return ImmediateResourceSupplier.super.getImmediateInputSupplier();
+      return new ImmediateInputSupplier.OfSimpleResource<>(codec(), resource());
     }
 
     /**
@@ -50,15 +64,25 @@ public interface ImmediateResourceSupplier<T> extends Supplier<byte[]> {
       return codec().encodeStart(ops, resource()).getOrThrow();
     }
 
+    /**
+     * The default simple implementation of {@link OfSimpleResource}.
+     *
+     * @param codec    The codec used to serialize the resource.
+     * @param resource The resource.
+     * @param <T>      {@inheritDoc}
+     */
     record Impl<T>(Codec<T> codec, T resource) implements OfSimpleResource<T> {}
   }
 
   /**
-   * The interface based on {@link ImmediateResourceSupplier} provides any additional support of being in json element forms when dumping resource packs. Dumping the resources require a {@link RegistryWrapper.WrapperLookup}.
+   * The immediate resource that represents a resource that require a {@link RegistryWrapper.WrapperLookup} to get resources. The codec is used to specify the JSON output.
    *
-   * @param <T>
+   * @param <T> {@inheritDoc}
    */
   interface OfRegistryResource<T> extends ImmediateResourceSupplier<RegistryResourceFunction<T>> {
+    /**
+     * @return The codec used to serialize the resource.
+     */
     Codec<T> codec();
 
     /**
@@ -85,7 +109,13 @@ public interface ImmediateResourceSupplier<T> extends Supplier<byte[]> {
     record Impl<T>(Codec<T> codec, RegistryResourceFunction<T> resource) implements OfRegistryResource<T> {}
   }
 
+  /**
+   * The immediate resource that represents a simple JSON. In this case, codecs are not required.
+   */
   interface OfJson extends ImmediateResourceSupplier<JsonElement> {
+    /**
+     * @return The JSON of the resource.
+     */
     JsonElement jsonElement();
 
     @Override
@@ -102,9 +132,14 @@ public interface ImmediateResourceSupplier<T> extends Supplier<byte[]> {
 
     @Override
     default ImmediateInputSupplier<JsonElement> getImmediateInputSupplier() {
-      return new ImmediateInputSupplier.OfJsonElement(jsonElement());
+      return new ImmediateInputSupplier.OfJson(jsonElement());
     }
 
+    /**
+     * The default implementation of {@link OfJson}.
+     *
+     * @param jsonElement The JSON of the resource.
+     */
     record Impl(JsonElement jsonElement) implements OfJson {
     }
   }

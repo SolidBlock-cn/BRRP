@@ -172,7 +172,6 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @param pack The runtime resource pack.
    */
   @PreferredEnvironment(EnvType.CLIENT)
-  @Contract(mutates = "param1")
   default void writeBlockStates(RuntimeResourcePack pack) {
     final BlockStateSupplier blockStates = getBlockStates();
     if (blockStates != null) pack.addBlockState(getBlockId(), blockStates);
@@ -196,7 +195,6 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    * @param pack The runtime resource pack.
    */
   @PreferredEnvironment(EnvType.CLIENT)
-  @Contract(mutates = "param1")
   default void writeBlockModel(RuntimeResourcePack pack) {
     final @Nullable ModelJsonBuilder model = getBlockModel();
     if (model != null) pack.addModel(getBlockModelId(), model);
@@ -236,7 +234,6 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @Override
   @PreferredEnvironment(EnvType.CLIENT)
-  @Contract(mutates = "param1")
   default void writeItemModel(RuntimeResourcePack pack) {
     final Identifier itemModelId = getItemModelId();
     if (itemModelId != null) {
@@ -254,7 +251,6 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    */
   @Override
   @PreferredEnvironment(EnvType.CLIENT)
-  @Contract(mutates = "param1")
   default void writeAssets(RuntimeResourcePack pack) {
     writeBlockStates(pack);
     writeBlockModel(pack);
@@ -316,7 +312,6 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
    *
    * @param pack The runtime resource pack.
    */
-  @Contract(mutates = "param1")
   default void writeLootTable(RuntimeResourcePack pack) {
     final Identifier lootTableId = getLootTableId();
     if (lootTableId.equals(LootTables.EMPTY.getValue())) {

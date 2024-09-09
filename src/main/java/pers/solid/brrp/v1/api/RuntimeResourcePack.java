@@ -8,7 +8,7 @@ import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.impl.registry.sync.DynamicRegistriesImpl;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementEntry;
@@ -21,10 +21,7 @@ import net.minecraft.data.server.recipe.*;
 import net.minecraft.loot.LootTable;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.*;
 import net.minecraft.registry.tag.*;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
@@ -41,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import pers.solid.brrp.v1.JsonSerializers;
+import pers.solid.brrp.v1.annotations.PreferredEnvironment;
 import pers.solid.brrp.v1.gui.DumpScreen;
 import pers.solid.brrp.v1.gui.RRPConfigScreen;
 import pers.solid.brrp.v1.gui.RegenerateScreen;
@@ -102,10 +100,6 @@ public interface RuntimeResourcePack extends ResourcePack {
       .setPrettyPrinting()
       .disableHtmlEscaping()
       .enableComplexMapKeySerialization()
-      .registerTypeHierarchyAdapter(LootTable.class, JsonSerializers.forCodec(LootTable.CODEC))
-      .registerTypeHierarchyAdapter(Advancement.class, JsonSerializers.forCodec(Advancement.CODEC))
-      .registerTypeHierarchyAdapter(TagFile.class, JsonSerializers.forCodec(TagFile.CODEC))
-      .registerTypeHierarchyAdapter(Recipe.class, JsonSerializers.forCodec(Recipe.CODEC))
       .registerTypeHierarchyAdapter(JsonSerializable.class, JsonSerializable.SERIALIZER)
       .registerTypeHierarchyAdapter(Identifier.class, new Identifier.Serializer())
       .registerTypeHierarchyAdapter(StringIdentifiable.class, JsonSerializers.STRING_IDENTIFIABLE)
@@ -114,6 +108,8 @@ public interface RuntimeResourcePack extends ResourcePack {
       .setPrettyPrinting()
       .create();
   Logger LOGGER = LogUtils.getLogger();
+
+  //region Create resource pack
 
   /**
    * Create a new runtime resource pack.
@@ -130,6 +126,9 @@ public interface RuntimeResourcePack extends ResourcePack {
   static RuntimeResourcePack create(Identifier id, @NotNull RegistryWrapper.WrapperLookup registryLookup) {
     return new RuntimeResourcePackImpl(id, registryLookup);
   }
+  //endregion
+
+  //region Serialization
 
   /**
    * Serialize an object to a byte array, used for runtime resource packs.
@@ -159,6 +158,9 @@ public interface RuntimeResourcePack extends ResourcePack {
   default byte[] serialize(Object object) {
     return defaultSerialize(object);
   }
+  //endregion
+
+  //region Pack settings
 
   /**
    * The version of the pack, which will be used as a metadata for Minecraft. Minecraft uses it to identify whether it's too old or new. But do not worry — the mod can automatically configure it.
@@ -169,14 +171,14 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Set the pack version. This is not required to be manually set.
    */
-  @Contract(mutates = "this")
   void setPackVersion(int packVersion);
 
   /**
    * To avoid some potential bugs, the runtime resource pack does not allow duplicate resources. However, you can set this to {@code true} to prevent the exception.
    */
-  @Contract(mutates = "this")
   void setAllowsDuplicateResource(boolean b);
+
+  //endregion
 
   /**
    * Reads, clones, and recolors the texture at the given path, and puts the newly created image in the given id.
@@ -189,10 +191,8 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param pixel      the pixel recolorer
    */
   @ApiStatus.Experimental
-  @Contract(mutates = "this")
   void addRecoloredImage(Identifier identifier, InputStream target, IntUnaryOperator pixel);
 
-  @Contract(mutates = "this")
   byte[] addLang(Identifier identifier, byte[] serializedData);
 
   /**
@@ -213,12 +213,10 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param identifier The identifier of the language file. Usually, the path is the language code (such as {@code en_us}, {@code zh_cn}). The namespace does not matter, but it usually should be your mod's namespace.
    * @param lang       The {@link LanguageProvider} object.
    */
-  @Contract(mutates = "this")
   default byte[] addLang(Identifier identifier, LanguageProvider lang) {
     return addLang(identifier, serialize(lang.content()));
   }
 
-  @Contract(mutates = "this")
   byte[] addLootTable(Identifier identifier, byte[] serializedData);
 
   /**
@@ -227,7 +225,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param identifier The identifier of the loot table. Please refer to {@link AbstractBlock#getLootTableKey()}.
    * @param lootTable  The loot table object. It can be created through {@link LootTable#builder()}. Please also refer to {@link net.minecraft.data.server.loottable.LootTableProvider} for some methods to conveniently create loot tables.
    */
-  @Contract(mutates = "this")
   default byte[] addLootTable(Identifier identifier, LootTable lootTable) {
     return addLootTable(identifier, serialize(lootTable));
   }
@@ -238,7 +235,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param identifier The identifier of the loot table. Please refer to {@link AbstractBlock#getLootTableKey()}.
    * @param lootTable  The loot table (builder) object. It can be created through {@link LootTable#builder()}. Please also refer to {@link net.minecraft.data.server.loottable.LootTableProvider} for some methods to conveniently create loot tables.
    */
-  @Contract(mutates = "this")
   default byte[] addLootTable(Identifier identifier, LootTable.Builder lootTable) {
     return this.addLootTable(identifier, lootTable.build());
   }
@@ -257,7 +253,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @see #async(Consumer)
    */
-  @Contract(mutates = "this")
   Future<byte[]> addAsyncResource(ResourceType type,
                                   Identifier identifier,
                                   FailableFunction<Identifier, byte[], Exception> data);
@@ -265,13 +260,11 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a resource that is lazily evaluated, which is, evaluated only when required to get, and will not be evaluated again if required to get again.
    */
-  @Contract(mutates = "this")
   void addLazyResource(ResourceType type, Identifier path, BiFunction<RuntimeResourcePack, Identifier, byte[]> data);
 
   /**
    * Add a raw resource to the runtime resource pack.
    */
-  @Contract(mutates = "this")
   byte[] addResource(ResourceType type, Identifier path, byte[] data);
 
   /**
@@ -281,7 +274,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @see #async(Consumer)
    */
-  @Contract(mutates = "this")
   Future<byte[]> addAsyncRootResource(String path,
                                       FailableFunction<String, byte[], Exception> data);
 
@@ -290,7 +282,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <p>
    * A root resource is something like pack.png, pack.mcmeta, etc. By default, default mcmeta will be generated.
    */
-  @Contract(mutates = "this")
   void addLazyRootResource(String path, BiFunction<RuntimeResourcePack, String, byte[]> data);
 
   /**
@@ -298,13 +289,11 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <p>
    * A root resource is something like pack.png, pack.mcmeta, etc. By default, default mcmeta will be generated.
    */
-  @Contract(mutates = "this")
   byte[] addRootResource(String path, byte[] data);
 
   /**
    * Add a custom client-side resource.
    */
-  @Contract(mutates = "this")
   byte[] addAsset(Identifier id, byte[] data);
 
   /**
@@ -316,7 +305,6 @@ public interface RuntimeResourcePack extends ResourcePack {
   /**
    * Add a custom server data.
    */
-  @Contract(mutates = "this")
   byte[] addData(Identifier id, byte[] data);
 
   /**
@@ -324,7 +312,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    */
   <T> void addImmediateData(Identifier id, ImmediateResourceSupplier<T> data);
 
-  @Contract(mutates = "this")
   byte[] addBlockState(Identifier id, byte[] serializedData);
 
   /**
@@ -336,7 +323,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param id    The id of the block state, usually identical to the id of the block.
    * @param state The {@link BlockStateSupplier} file. You can also easily create them using methods in {@link net.minecraft.data.client.BlockStateModelGenerator}.
    */
-  @Contract(mutates = "this")
   default byte[] addBlockState(Identifier id, @NotNull BlockStateSupplier state) {
     return addBlockState(id, serialize(state.get()));
   }
@@ -346,19 +332,16 @@ public interface RuntimeResourcePack extends ResourcePack {
    * <p>
    * {@code ".png"} is automatically appended to the path.
    */
-  @Contract(mutates = "this")
   byte[] addTexture(Identifier id, BufferedImage image);
 
   /**
    * Add a tag to the pack.
    *
-   * @param fullId         The full resource location of the pack. For example, <code>Identifier.of("minecraft", "blocks/stairs")</code>, <code>Identifier.of("minecraft", "functions/tick")</code>.
+   * @param fullId         The full resource location of the pack. For example, <code>Identifier.of("minecraft", "block/stairs")</code> (for 1.21), <code>Identifier.of("minecraft", "function/tick")</code>.
    * @param serializedData The serialized tag data.
    */
-  @Contract(mutates = "this")
   byte[] addTag(Identifier fullId, byte[] serializedData);
 
-  @Contract(mutates = "this")
   default byte[] addTag(Identifier fullId, TagBuilder tagBuilder) {
     return addTag(fullId, serialize(new TagFile(tagBuilder.build(), false)));
   }
@@ -370,7 +353,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param tagBuilder The vanilla {@link TagBuilder} object. You may also find {@link ObjectTagBuilder} and {@link IdentifiedTagBuilder} provided by this mod.
    * @param <T>        The type parameter of the tag.
    */
-  @Contract(mutates = "this")
   <T> byte[] addTag(TagKey<T> tagKey, TagBuilder tagBuilder);
 
   /**
@@ -378,12 +360,10 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @param identifiedTagBuilder The {@link IdentifiedTagBuilder} object. It contains both the registry the tag uses, the tag id and the tag content.
    */
-  @Contract(mutates = "this")
   default <T> byte[] addTag(IdentifiedTagBuilder<T> identifiedTagBuilder) {
     return addTag(TagKey.of(identifiedTagBuilder.registryKey, identifiedTagBuilder.identifier), identifiedTagBuilder);
   }
 
-  @Contract(mutates = "this")
   byte[] addAnimation(Identifier id, byte[] serializedData);
 
   /**
@@ -398,14 +378,13 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @param id        The id of the animation json. You do not need to include the suffix {@code .json} in it.
    * @param animation The metadata object.
+   * @since 1.1.0 The method is no longer client-only.
    */
-  @Contract(mutates = "this")
-  @Environment(EnvType.CLIENT)
+  @PreferredEnvironment(EnvType.CLIENT)
   default byte[] addAnimation(Identifier id, AnimationResourceMetadata animation) {
     return this.addAnimation(id, serialize(animation));
   }
 
-  @Contract(mutates = "this")
   byte[] addRecipe(Identifier id, byte[] serializedData);
 
   /**
@@ -414,7 +393,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param id     The id of the recipe, which is usually same to the item id, but can sometimes be suffixed with other string. Example: {@code Identifier.of("my_mod", "strange_stone_stairs"}}, {@code Identifier.of("my_mod", "strange_stone_from_stonecutting")}.
    * @param recipe The {@link Recipe} object. You may conveniently create it using methods in {@link RecipeProvider}.
    */
-  @Contract(mutates = "this")
   default byte[] addRecipe(Identifier id, Recipe<?> recipe) {
     return addRecipe(id, serialize(recipe));
   }
@@ -424,7 +402,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @param recipeEntry The recipe as well as its id..
    */
-  @Contract(mutates = "this")
   default byte[] addRecipe(@NotNull RecipeEntry<?> recipeEntry) {
     return addRecipe(recipeEntry.id(), recipeEntry.value());
   }
@@ -450,7 +427,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param recipeId          The id of the recipe.
    * @param recipeJsonBuilder The {@link Recipe}. The id of the advancement will be determined by {@link CraftingRecipeJsonBuilder#offerTo}.
    */
-  @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull CraftingRecipeJsonBuilder recipeJsonBuilder) {
     recipeJsonBuilder.offerTo(getRecipeExporter(), recipeId);
   }
@@ -461,7 +437,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param recipeId          The id of the recipe.
    * @param recipeJsonBuilder The {@link Recipe}. The id of the advancement will be determined by {@link SmithingTransformRecipeJsonBuilder#offerTo}.
    */
-  @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingTransformRecipeJsonBuilder recipeJsonBuilder) {
     recipeJsonBuilder.offerTo(getRecipeExporter(), recipeId);
   }
@@ -472,7 +447,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param recipeId          The id of the recipe.
    * @param recipeJsonBuilder The {@link Recipe}. The id of the advancement will be determined by {@link SmithingTrimRecipeJsonBuilder#offerTo}.
    */
-  @Contract(mutates = "this")
   default void addRecipeAndAdvancement(Identifier recipeId, @NotNull SmithingTrimRecipeJsonBuilder recipeJsonBuilder) {
     recipeJsonBuilder.offerTo(getRecipeExporter(), recipeId);
   }
@@ -483,12 +457,10 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param id    The id of the model. For block models, it is referred to in the {@link BlockStateModelGenerator}. Some examples: {@code Identifier.of("my_mod", "block/my_stone_slab_top")}, {@code Identifier.of("my_mod", "item/my_item")}.
    * @param model The {@link ModelJsonBuilder} object.
    */
-  @Contract(mutates = "this")
   default byte[] addModel(Identifier id, ModelJsonBuilder model) {
     return addModel(id, serialize(model));
   }
 
-  @Contract(mutates = "this")
   byte[] addModel(Identifier id, byte[] serializedData);
 
   /**
@@ -497,7 +469,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param id          The {@linkplain Identifier identifier} of the advancement.
    * @param advancement The advancement to be added.
    */
-  @Contract(mutates = "this")
   default byte[] addAdvancement(Identifier id, Advancement.Builder advancement) {
     return addAdvancement(id, serialize(advancement.build(id).value()));
   }
@@ -521,9 +492,16 @@ public interface RuntimeResourcePack extends ResourcePack {
     return addAdvancement(advancementEntry.id(), advancementEntry.value());
   }
 
-  @Contract(mutates = "this")
   byte[] addAdvancement(Identifier id, byte[] serializedData);
 
+  /**
+   * Add a dynamic registry content. This will use immediate resources. If you are adding contents of dynamic resources in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
+   *
+   * @param registryKey The registry key of the registry. Such as static fields of {@link RegistryKeys} (instead of {@link Registries}).
+   * @param identifier  The identifier of the content, not the identifier of the registry.
+   * @param codec       The codec used to serialize.
+   * @param content     The content of your dynamic registry.
+   */
   default <T> void addDynamicRegistryContent(RegistryKey<Registry<T>> registryKey, Identifier identifier, Codec<T> codec, T content) {
     String path = RegistryKeys.getPath(registryKey);
     Identifier id = registryKey.getValue();
@@ -535,6 +513,14 @@ public interface RuntimeResourcePack extends ResourcePack {
     addImmediateData(identifier.brrp_prefix_and_suffixed(path + "/", ".json"), new ImmediateResourceSupplier.OfSimpleResource.Impl<>(codec, content));
   }
 
+  /**
+   * Add a dynamic registry content function with takes a {@link RegistryOps.RegistryInfoGetter} as a parameter. This will use immediate resources. If you are adding contents of dynamic resources in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
+   *
+   * @param registryKey The registry key of the registry. Such as static fields of {@link RegistryKeys} (instead of {@link Registries}).
+   * @param identifier  The identifier of the content, not the identifier of the registry.
+   * @param codec       The codec used to serialize.
+   * @param content     The function to get your content, such as {@code registryInfoGetter -> your content}.
+   */
   default <T> void addDynamicRegistryContentFunction(RegistryKey<Registry<T>> registryKey, Identifier identifier, Codec<T> codec, RegistryResourceFunction.ByInfoGetter<T> content) {
     String path = RegistryKeys.getPath(registryKey);
     Identifier id = registryKey.getValue();
@@ -546,10 +532,24 @@ public interface RuntimeResourcePack extends ResourcePack {
     addImmediateData(identifier.brrp_prefix_and_suffixed(path + "/", ".json"), new ImmediateResourceSupplier.OfRegistryResource.Impl<>(codec, content));
   }
 
-
+  /**
+   * Add a dynamic registry content. This will use immediate resources. If you are adding contents of dynamic resources in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
+   *
+   * @param registryKey The registry key of the content. It is not the registry key of registry. For example, {@code RegistryKey.of(RegistryKeys.XXX, Identifier.of(...))}.
+   * @param codec       The codec used to serialize.
+   * @param content     The content of your dynamic registry.
+   */
   default <T> void addDynamicRegistryContent(RegistryKey<T> registryKey, Codec<T> codec, T content) {
     addDynamicRegistryContent(registryKey.getRegistryRef(), registryKey.getValue(), codec, content);
   }
+
+  /**
+   * Add a dynamic registry content function with takes a {@link RegistryOps.RegistryInfoGetter} as a parameter. This will use immediate resources. If you are adding contents of dynamic resources in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
+   *
+   * @param registryKey The registry key of the content. It is not the registry key of registry. For example, {@code RegistryKey.of(RegistryKeys.XXX, Identifier.of(...))}.
+   * @param codec       The codec used to serialize.
+   * @param content     The function to get your content, such as {@code registryInfoGetter -> your content}.
+   */
 
   default <T> void addDynamicRegistryContentFunction(RegistryKey<T> registryKey, Codec<T> codec, RegistryResourceFunction.ByInfoGetter<T> content) {
     addDynamicRegistryContentFunction(registryKey.getRegistryRef(), registryKey.getValue(), codec, content);
@@ -577,7 +577,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param dumpResourceType The resource type to be dumped. If it is null, both client resource and server data will be dumped, which is the default situation.
    * @param stat             The array used to store stats. It should contain three elements: First to store root resources, second to store server data, and third to store client resources.
    */
-  @Contract(mutates = "param3")
   void dumpInPath(Path path, @Nullable ResourceType dumpResourceType, int @Nullable [] stat);
 
   /**
@@ -670,7 +669,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param regenerationCallback The callback that will be run when regenerating resources.
    * @see #setSidedRegenerationCallback
    */
-  @Contract(mutates = "this")
   void setRegenerationCallback(FailableRunnable<InterruptedException> regenerationCallback);
 
   /**
@@ -711,7 +709,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param regenerationCallback The callback that will be run when regenerating the side of resources.
    * @see #setRegenerationCallback
    */
-  @Contract(mutates = "this")
   void setSidedRegenerationCallback(@NotNull ResourceType resourceType, FailableRunnable<InterruptedException> regenerationCallback);
 
   /**
@@ -737,19 +734,16 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @param side The side (client or server) of resource to be cleared.
    */
-  @Contract(mutates = "this")
   void clearResources(ResourceType side);
 
   /**
    * Clear all resources of this runtime resource pack, including both client and server, and as well as root resources.
    */
-  @Contract(mutates = "this")
   void clearResources();
 
   /**
    * Clear root resources of this runtime resource pack.
    */
-  @Contract(mutates = "this")
   void clearRootResources();
 
   /**
@@ -765,7 +759,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @param name The display name, which is a text component and can be localized.
    */
-  @Contract(mutates = "this")
   void setDisplayName(Text name);
 
   /**
@@ -780,7 +773,6 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @param description The description, which is a text component and can be localized.
    */
-  @Contract(mutates = "this")
   void setDescription(Text description);
 
   @Contract(pure = true)

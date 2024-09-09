@@ -28,8 +28,8 @@ public abstract class BakedModelManagerMixin {
 
   @WrapOperation(method = {"method_45898", "method_45890"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/Resource;getReader()Ljava/io/BufferedReader;"))
   private static BufferedReader modifyResourceReading(Resource instance, Operation<BufferedReader> original, @Share("ir") LocalRef<JsonElement> share, @Local(argsOnly = true) Map.Entry<Identifier, Resource> entry) {
-    if (((ResourceAccessor) instance).getInputSupplier() instanceof ImmediateInputSupplier.OfJsonElement im) {
-      BRRPMixins.LOGGER.info("Loading immediate model json for {}", entry.getKey());
+    if (((ResourceAccessor) instance).getInputSupplier() instanceof ImmediateInputSupplier.OfJson im) {
+      BRRPMixins.LOGGER.debug("Loading immediate model json for {}", entry.getKey());
       share.set(im.jsonElement());
     } else {
       share.set(null);

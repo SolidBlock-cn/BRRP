@@ -36,35 +36,35 @@ public class TransformationBuilder {
   }
 
 
-  @Contract(value = "_, _, _ -> this", mutates = "this")
+  @Contract(value = "_, _, _ -> this")
   public TransformationBuilder rotation(float x, float y, float z) {
     return rotation(new Vector3f(x, y, z));
   }
 
-  @Contract(value = "_ -> this", mutates = "this")
+  @Contract(value = "_ -> this")
   public TransformationBuilder rotation(Vector3f rotation) {
     this.rotation = rotation;
     return this;
   }
 
 
-  @Contract(value = "_, _, _ -> this", mutates = "this")
+  @Contract(value = "_, _, _ -> this")
   public TransformationBuilder translation(float x, float y, float z) {
     return translation(new Vector3f(x, y, z));
   }
 
-  @Contract(value = "_ -> this", mutates = "this")
+  @Contract(value = "_ -> this")
   public TransformationBuilder translation(Vector3f translation) {
     this.translation = translation;
     return this;
   }
 
-  @Contract(value = "_, _, _ -> this", mutates = "this")
+  @Contract(value = "_, _, _ -> this")
   public TransformationBuilder scale(float x, float y, float z) {
     return scale(new Vector3f(x, y, z));
   }
 
-  @Contract(value = "_ -> this", mutates = "this")
+  @Contract(value = "_ -> this")
   public TransformationBuilder scale(Vector3f scale) {
     this.scale = scale;
     return this;

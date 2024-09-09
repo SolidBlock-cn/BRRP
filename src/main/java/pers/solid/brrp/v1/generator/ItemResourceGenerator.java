@@ -97,7 +97,6 @@ public interface ItemResourceGenerator {
    * @param pack The runtime resource pack.
    */
   @PreferredEnvironment(EnvType.CLIENT)
-  @Contract(mutates = "param1")
   default void writeItemModel(RuntimeResourcePack pack) {
     final ModelJsonBuilder model = getItemModel();
     if (model != null) pack.addModel(getItemModelId(), model);
@@ -117,7 +116,6 @@ public interface ItemResourceGenerator {
    * @see #writeAssets(RuntimeResourcePack)
    */
   @PreferredEnvironment(EnvType.CLIENT)
-  @Contract(mutates = "param1")
   default void writeAssets(RuntimeResourcePack pack) {
     writeItemModel(pack);
   }
@@ -180,7 +178,6 @@ public interface ItemResourceGenerator {
    *
    * @param pack The runtime resource pack.
    */
-  @Contract(mutates = "param1")
   default void writeRecipes(RuntimeResourcePack pack) {
     final @Nullable CraftingRecipeJsonBuilder recipe = getCraftingRecipe();
     if (recipe != null) {
@@ -196,7 +193,6 @@ public interface ItemResourceGenerator {
    * @see #writeAssets(RuntimeResourcePack)
    * @see #writeData(RuntimeResourcePack)
    */
-  @Contract(mutates = "param1")
   default void writeData(RuntimeResourcePack pack) {
     writeRecipes(pack);
   }
@@ -208,7 +204,6 @@ public interface ItemResourceGenerator {
    * @see #writeAssets(RuntimeResourcePack)
    * @see #writeData(RuntimeResourcePack)
    */
-  @Contract(mutates = "param1")
   default void writeAll(RuntimeResourcePack pack) {
     if (PlatformBridge.getInstance().isClientEnvironment()) {
       writeAssets(pack);
@@ -222,7 +217,6 @@ public interface ItemResourceGenerator {
    * @param pack         The runtime resource pack.
    * @param resourceType The resource type to write. If it is null, both resource types will be used, regardless of the instance environment.
    */
-  @Contract(mutates = "param1")
   @ApiStatus.NonExtendable
   default void writeResources(RuntimeResourcePack pack, @Nullable ResourceType resourceType) {
     if (resourceType == null) {
@@ -242,7 +236,6 @@ public interface ItemResourceGenerator {
    * @param clientIncluded Whether to write client resources to this object.
    * @param serverIncluded Whether to write server data to this object.
    */
-  @Contract(mutates = "param1")
   @ApiStatus.NonExtendable
   default void writeResources(RuntimeResourcePack pack, boolean clientIncluded, boolean serverIncluded) {
     if (clientIncluded) {

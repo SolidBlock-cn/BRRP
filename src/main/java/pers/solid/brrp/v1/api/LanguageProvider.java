@@ -75,7 +75,7 @@ public interface LanguageProvider {
    * @param key   The translation key.
    * @param value The translated string.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   LanguageProvider add(@NotNull String key, String value);
 
   /**
@@ -89,7 +89,7 @@ public interface LanguageProvider {
    * @param item  The {@link Item} to get the translation key from.
    * @param value The translated name of the item.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   default LanguageProvider add(@NotNull Item item, String value) {
     return add(item.getTranslationKey(), value);
   }
@@ -100,7 +100,7 @@ public interface LanguageProvider {
    * @param block The {@link Block} to get the translation key from.
    * @param value The translated name of the block.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   default LanguageProvider add(@NotNull Block block, String value) {
     return add(block.getTranslationKey(), value);
   }
@@ -127,7 +127,7 @@ public interface LanguageProvider {
    * @param entityType The {@link EntityType} to get the translation key from.
    * @param value      The translated name of the entity type.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   default LanguageProvider add(EntityType<?> entityType, String value) {
     return add(entityType.getTranslationKey(), value);
   }
@@ -138,7 +138,7 @@ public interface LanguageProvider {
    * @param enchantment The {@link Enchantment} to get the translation key from.
    * @param value       The translated name of the enchantment.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   default LanguageProvider add(@NotNull RegistryKey<Enchantment> enchantment, String value) {
     return add(Util.createTranslationKey("enchantment", enchantment.getValue()), value);
   }
@@ -149,7 +149,7 @@ public interface LanguageProvider {
    * @param entityAttribute The {@link EntityAttribute} to get the translation key from.
    * @param value           The translated name of the entity attribute.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   default LanguageProvider add(@NotNull EntityAttribute entityAttribute, String value) {
     return add(entityAttribute.getTranslationKey(), value);
   }
@@ -160,7 +160,7 @@ public interface LanguageProvider {
    * @param statType The {@link StatType} to get the translation key from.
    * @param value    The translated name of the stat type.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   default LanguageProvider add(@NotNull StatType<?> statType, String value) {
     return add("stat_type." + Registries.STAT_TYPE.getId(statType).toString().replace(':', '.'), value);
   }
@@ -171,7 +171,7 @@ public interface LanguageProvider {
    * @param statusEffect The {@link StatusEffect} to get the translation key from.
    * @param value        The translated name of the status effect.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   default LanguageProvider add(StatusEffect statusEffect, String value) {
     return add(statusEffect.getTranslationKey(), value);
   }
@@ -182,7 +182,7 @@ public interface LanguageProvider {
    * @param identifier The {@link Identifier} to get the translation key from.
    * @param value      The translated name of the identifier.
    */
-  @Contract(mutates = "this", value = "_, _ -> this")
+  @Contract(value = "_, _ -> this")
   default LanguageProvider add(@NotNull Identifier identifier, String value) {
     return add(identifier.toTranslationKey(), value);
   }
@@ -190,14 +190,14 @@ public interface LanguageProvider {
   /**
    * Add all key-value pairs from another value to this object.
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   LanguageProvider addAll(@NotNull Map<String, String> map);
 
 
   /**
    * Add all key-value pairs from another value to this object.
    */
-  @Contract(mutates = "this", value = "_ -> this")
+  @Contract(value = "_ -> this")
   default LanguageProvider addAll(LanguageProvider another) {
     return addAll(another.content());
   }

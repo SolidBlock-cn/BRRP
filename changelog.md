@@ -1,2 +1,3 @@
-- Fixed the conflict with some mods that modify data driven contents.
-- Optimized the implementation of loot table generation.
+- Introduced immediate resource feature.
+- Tweaked implementation of logging.
+- Introduced the feature of adding dynamic registry resources.

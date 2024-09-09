@@ -42,12 +42,12 @@ public interface ImmediateInputSupplier<T> extends InputSupplier<InputStream> {
   record OfRegistryResource<T>(Codec<T> codec, RegistryResourceFunction<T> resource) implements ImmediateInputSupplier<RegistryResourceFunction<T>> {
     @Override
     public InputStream get() throws IOException {
-      LOGGER.warn("Getting resource that require {} converting into binary forms. This is not supported.", RegistryWrapper.WrapperLookup.class);
+      LOGGER.warn("BRRP: Getting resource that require {} converting into binary forms. This is not supported.", RegistryWrapper.WrapperLookup.class);
       return InputStream.nullInputStream();
     }
   }
 
-  record OfJsonElement(JsonElement jsonElement) implements ImmediateInputSupplier<JsonElement> {
+  record OfJson(JsonElement jsonElement) implements ImmediateInputSupplier<JsonElement> {
     @Override
     public JsonElement resource() {
       return jsonElement;

@@ -43,7 +43,7 @@ public abstract class ReloadableRegistriesMixin {
     if (content instanceof RegistryResourceFunction<?> rf) {
       content = rf.apply(wrapperLookup);
     }
-    BRRPMixins.LOGGER.info("Adding immediate resource {} to registry {}", identifier, mutableRegistry.getKey().getValue());
+    BRRPMixins.LOGGER.debug("Adding immediate resource {} to registry {}", identifier, mutableRegistry.getKey().getValue());
     ((MutableRegistry<T>) mutableRegistry).add(RegistryKey.of(type.registryKey(), identifier), (T) content, DEFAULT_REGISTRY_ENTRY_INFO);
   }
 }

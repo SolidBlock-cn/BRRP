@@ -48,13 +48,13 @@ public class ModelOverrideBuilder implements Cloneable {
     return new ModelOverrideBuilder(modelId).addCondition(type, threshold);
   }
 
-  @Contract(value = "_ -> this", mutates = "this")
+  @Contract(value = "_ -> this")
   public ModelOverrideBuilder setConditions(Object2FloatMap<Identifier> conditions) {
     this.conditions = conditions;
     return this;
   }
 
-  @Contract(value = "_, _ -> this", mutates = "this")
+  @Contract(value = "_, _ -> this")
   public ModelOverrideBuilder addCondition(@NotNull Identifier type, float threshold) {
     if (conditions == null) {
       conditions = new Object2FloatLinkedOpenHashMap<>();
@@ -63,12 +63,12 @@ public class ModelOverrideBuilder implements Cloneable {
     return this;
   }
 
-  @Contract(value = "_, _, _ -> this", mutates = "this")
+  @Contract(value = "_, _, _ -> this")
   public ModelOverrideBuilder addCondition(String namespace, String value, float threshold) {
     return addCondition(Identifier.of(namespace, value), threshold);
   }
 
-  @Contract(value = "_, _ -> this", mutates = "this")
+  @Contract(value = "_, _ -> this")
   public ModelOverrideBuilder addCondition(String identifier, float threshold) {
     return addCondition(Identifier.of(identifier), threshold);
   }
