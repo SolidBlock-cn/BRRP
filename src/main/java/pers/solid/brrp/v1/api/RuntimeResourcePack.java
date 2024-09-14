@@ -779,7 +779,18 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @see ByteBufOutputStream
    */
-  void dump(ZipOutputStream stream) throws IOException;
+  default void dump(ZipOutputStream stream) throws IOException {
+    dump(stream, null, null);
+  }
+
+  /**
+   * Write the runtime resource pack as a local zip file, making you available to directly visit its content.
+   *
+   * @param dumpResourceType The resource type to be dumped. If it is null, both client resource and server data will be dumped, which is the default situation.
+   * @param stat             The array used to store stats. It should contain three elements: First to store root resources, second to store server data, and third to store client resources.
+   * @see ByteBufOutputStream
+   */
+  void dump(ZipOutputStream stream, @Nullable ResourceType dumpResourceType, int @Nullable [] stat) throws IOException;
 
   /**
    * The method is mainly used for pack dumping and being parsed metadata. This should be used when the runtime resource pack does not contain a root resource named {@code pack.mcmeta}.

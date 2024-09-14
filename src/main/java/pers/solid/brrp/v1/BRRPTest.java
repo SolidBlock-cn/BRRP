@@ -230,8 +230,8 @@ public class BRRPTest {
               AttributeModifierSlot.ANY))
           .addEffect(EnchantmentEffectComponentTypes.DAMAGE, new MultiplyEnchantmentEffect(EnchantmentLevelBasedValue.linear(114514)))
           .build(POWER_DIAMOND.getValue()));
-      PACK.addDynamicRegistryContentFunction(POWER_GEM, Enchantment.CODEC, infoGetter -> Enchantment.builder(Enchantment.definition(
-              infoGetter.getWrapperOrThrow(RegistryKeys.ITEM).getOrThrow(ConventionalItemTags.GEMS),
+      PACK.addDynamicRegistryContentFunction(POWER_GEM, Enchantment.CODEC, registryLookup -> Enchantment.builder(Enchantment.definition(
+              registryLookup.getWrapperOrThrow(RegistryKeys.ITEM).getOrThrow(ConventionalItemTags.GEMS),
               1,
               8,
               Enchantment.constantCost(1),

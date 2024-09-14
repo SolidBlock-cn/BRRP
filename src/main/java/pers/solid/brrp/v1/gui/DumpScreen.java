@@ -14,6 +14,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.Util;
 import org.apache.commons.io.file.PathUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.stream.Stream;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -73,8 +75,13 @@ public class DumpScreen extends Screen {
     dumpAsZipButton = CyclingButtonWidget.onOffBuilder()
         .initially(dumpAsZip)
         .tooltip(value -> Tooltip.of(Text.translatable("brrp.dumpScreen.dumpAsZip.tooltip." + value)))
-        // todo 翻译
-        .build(width / 2, 30, 200, 20, Text.translatable("brrp.dumpScreen.dumpAsZip"), (button, value) -> dumpAsZip = value);
+        .build(width / 2, 30, 200, 20, Text.translatable("brrp.dumpScreen.dumpAsZip"), (button, value) -> {
+          if (dumpAsZip != value) {
+            dumpAsZip = value;
+            // 修改后，更新显示的导出路径的信息
+            this.dumpPathTextField.setCursor(this.dumpPathTextField.getCursor(), false);
+          }
+        });
     addDrawableChild(dumpAsZipButton);
     dumpPathText = new TextWidget(width / 2 - 100, 65, 200, 20, Text.translatable("brrp.dumpScreen.dumpPath.title"), textRenderer).setTextColor(0xcccccc).alignCenter();
     addDrawableChild(dumpPathText);
@@ -84,7 +91,7 @@ public class DumpScreen extends Screen {
     dumpPathTextField.setChangedListener(s -> {
       dumpPathString = s;
       try {
-        dumpPath = Path.of(s);
+        dumpPath = getDumpPath(s);
         invalidPathException = null;
         dumpPathPreviewText.setMessage(Text.translatable("brrp.dumpScreen.dumpToPath", dumpPath.toAbsolutePath().toString()).formatted(Formatting.GREEN));
       } catch (InvalidPathException exception) {
@@ -128,6 +135,18 @@ public class DumpScreen extends Screen {
     addDrawableChild(backButton = ButtonWidget.builder(ScreenTexts.BACK, button -> close()).dimensions(this.width / 2 - 100, this.height - 28, 200, 20).build());
   }
 
+  /**
+   * @param s The dump path as string from the text box
+   * @return The dump path of the directory or zip.
+   * @throws InvalidPathException if the path is invalid.
+   */
+  private @NotNull Path getDumpPath(String s) {
+    if (this.dumpAsZip) {
+      s = StringUtils.appendIfMissingIgnoreCase(s, ".zip");
+    }
+    return Path.of(s);
+  }
+
   @Override
   public void render(DrawContext context, int mouseX, int mouseY, float delta) {
     super.render(context, mouseX, mouseY, delta);
@@ -158,19 +177,43 @@ public class DumpScreen extends Screen {
 
   private void runDump(boolean ignoreExistingWarning) {
     try {
-      if (!ignoreExistingWarning && PathUtils.isDirectory(dumpPath) && !PathUtils.isEmptyDirectory(dumpPath)) {
-        final long size = Files.walk(dumpPath).limit(2001).count();
-        if (client != null) {
-          dumpProgressText.setMessage(ScreenTexts.EMPTY);
-          client.setScreen(new ConfirmScreen(value -> {
-            if (client != null) {
-              client.setScreen(this);
-              if (value) {
-                runDump(true);
+      final boolean exists;
+      if (dumpAsZip) {
+        exists = !ignoreExistingWarning && Files.exists(this.dumpPath);
+      } else {
+        exists = !ignoreExistingWarning && Files.isDirectory(this.dumpPath) && !PathUtils.isEmptyDirectory(this.dumpPath);
+      }
+      if (exists) {
+        if (dumpAsZip) {
+          if (client != null) {
+            dumpProgressText.setMessage(ScreenTexts.EMPTY);
+            client.setScreen(new ConfirmScreen(value -> {
+              if (client != null) {
+                client.setScreen(this);
+                if (value) {
+                  runDump(true);
+                }
               }
-            }
-          }, Text.translatable("brrp.dumpScreen.existing.title"), Text.translatable("brrp.dumpScreen.existing.message", size > 2000 ? Text.translatable("brrp.dumpScreen.existing.size", 2000) : size, dumpPath.toAbsolutePath().toString())));
-          return;
+            }, Text.translatable("brrp.dumpScreen.existing.title"), Text.translatable("brrp.dumpScreen.existing.message.zip", this.dumpPath.toAbsolutePath().toString())));
+            return;
+          }
+        } else {
+          final long size;
+          try (Stream<Path> walk = Files.walk(this.dumpPath)) {
+            size = walk.limit(2001).count();
+          }
+          if (client != null) {
+            dumpProgressText.setMessage(ScreenTexts.EMPTY);
+            client.setScreen(new ConfirmScreen(value -> {
+              if (client != null) {
+                client.setScreen(this);
+                if (value) {
+                  runDump(true);
+                }
+              }
+            }, Text.translatable("brrp.dumpScreen.existing.title"), Text.translatable("brrp.dumpScreen.existing.message", size > 2000 ? Text.translatable("brrp.dumpScreen.existing.size", 2000) : size, this.dumpPath.toAbsolutePath().toString())));
+            return;
+          }
         }
       }
     } catch (IOException e) {
@@ -182,8 +225,8 @@ public class DumpScreen extends Screen {
       dumpButton.setMessage(Text.translatable("brrp.dumpScreen.dumping"));
       Arrays.fill(dumpStat, 0);
       if (dumpAsZip) {
-        try (final ZipOutputStream stream = new ZipOutputStream(Files.newOutputStream(dumpPath.resolveSibling(dumpPath.getFileName() + ".zip")))) {
-          pack.dump(stream);
+        try (final ZipOutputStream stream = new ZipOutputStream(Files.newOutputStream(dumpPath))) {
+          pack.dump(stream, dumpType.resourceType, dumpStat);
         } catch (IOException e) {
           LOGGER.error("Cannot dump as zip:", e);
         }

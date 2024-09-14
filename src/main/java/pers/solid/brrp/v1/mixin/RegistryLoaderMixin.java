@@ -16,6 +16,9 @@ import pers.solid.brrp.v1.api.ImmediateInputSupplier;
 import pers.solid.brrp.v1.api.RegistryResourceFunction;
 import pers.solid.brrp.v1.impl.RegistryInfoGetterExtension;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
 @Mixin(RegistryLoader.class)
 public abstract class RegistryLoaderMixin {
   /**
@@ -38,9 +41,21 @@ public abstract class RegistryLoaderMixin {
       try {
         Object instance = im.resource();
         if (instance instanceof RegistryResourceFunction<?> rf) {
-          final RegistryOps.RegistryInfoGetter registryInfoGetter = ((RegistryOpsAccessor) ops).getRegistryInfoGetter();
+          final RegistryOps.RegistryInfoGetter registryInfoGetter = ((RegistryOpsAccessor) ops).getRegistryInfoGetter(); // todo 检查其他的资源是否需要 tag creating
           if (registryInfoGetter instanceof RegistryInfoGetterExtension extension) {
-            instance = rf.apply(extension.getWrapperLookup$brrp());
+            final RegistryWrapper.WrapperLookup wrapperLookup$brrp = extension.getWrapperLookup$brrp();
+            final RegistryWrapper.WrapperLookup tagCreatingWrapper = new RegistryWrapper.WrapperLookup() {
+              @Override
+              public Stream<RegistryKey<? extends Registry<?>>> streamAllRegistryKeys() {
+                return wrapperLookup$brrp.streamAllRegistryKeys();
+              }
+
+              @Override
+              public <T> Optional<RegistryWrapper.Impl<T>> getOptionalWrapper(RegistryKey<? extends Registry<? extends T>> registryRef) {
+                return ((DynamicRegistryManager) wrapperLookup$brrp).getOptional(registryRef).map(Registry::getTagCreatingWrapper);
+              }
+            };
+            instance = rf.apply(tagCreatingWrapper);
           } else {
             BRRPMixins.LOGGER.warn("BRRP: Failed to read resource because {} objects are not available. This may be due to version mismatch, mixin not loaded, or mod conflict.", RegistryWrapper.WrapperLookup.class.getSimpleName());
           }

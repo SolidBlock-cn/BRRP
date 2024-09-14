@@ -430,29 +430,37 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   @Override
-  public void dump(ZipOutputStream zos) throws IOException {
+  public void dump(ZipOutputStream zos, @Nullable ResourceType dumpResourceType, int[] stat) throws IOException {
     this.lookupMemorizedSupplier = Suppliers.memoize(lookupSupplier);
     this.registryOpsMemorizedSupplier = Suppliers.memoize(registryOpsSupplier);
 
     for (Map.Entry<List<String>, Supplier<byte[]>> entry : this.root.entrySet()) {
       zos.putNextEntry(new ZipEntry(String.join("/", entry.getKey())));
       this.writeToStream(entry.getValue(), zos);
+      if (stat != null) stat[0] += 1;
     }
     if (!root.containsKey(List.of("pack.mcmeta"))) {
       zos.putNextEntry(new ZipEntry("pack.mcmeta"));
       this.writeToStream(new ImmediateResourceSupplier.OfJson.Impl(createMetadataJson()), zos);
+      if (stat != null) stat[0] += 1;
     }
 
-    for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
-      Identifier id = entry.getKey();
-      zos.putNextEntry(new ZipEntry("assets/" + id.getNamespace() + "/" + id.getPath()));
-      this.writeToStream(entry.getValue(), zos);
+    if (dumpResourceType != ResourceType.SERVER_DATA && !assets.isEmpty()) {
+      for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
+        Identifier id = entry.getKey();
+        zos.putNextEntry(new ZipEntry("assets/" + id.getNamespace() + "/" + id.getPath()));
+        this.writeToStream(entry.getValue(), zos);
+        if (stat != null) stat[1] += 1;
+      }
     }
 
-    for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
-      Identifier id = entry.getKey();
-      zos.putNextEntry(new ZipEntry("data/" + id.getNamespace() + "/" + id.getPath()));
-      this.writeToStream(entry.getValue(), zos);
+    if (dumpResourceType != ResourceType.CLIENT_RESOURCES && !data.isEmpty()) {
+      for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
+        Identifier id = entry.getKey();
+        zos.putNextEntry(new ZipEntry("data/" + id.getNamespace() + "/" + id.getPath()));
+        this.writeToStream(entry.getValue(), zos);
+        if (stat != null) stat[2] += 1;
+      }
     }
   }
 
