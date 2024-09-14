@@ -2,9 +2,12 @@ package pers.solid.brrp.v1.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import net.fabricmc.api.EnvType;
@@ -26,6 +29,7 @@ import net.minecraft.registry.tag.*;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -362,6 +366,11 @@ public interface RuntimeResourcePack extends ResourcePack {
   byte[] addRootResource(String path, byte[] data);
 
   /**
+   * Add a direct root resource to the root path.
+   */
+  <T> void addDirectRootResource(String path, ImmediateResourceSupplier<T> data);
+
+  /**
    * Add a custom client-side resource.
    */
   byte[] addAsset(Identifier id, byte[] data);
@@ -683,9 +692,9 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param registryKey The registry key of the registry. Such as static fields of {@link RegistryKeys} (instead of {@link Registries}).
    * @param identifier  The identifier of the content, not the identifier of the registry.
    * @param codec       The codec used to serialize.
-   * @param content     The function to get your content, such as {@code registryInfoGetter -> your content}.
+   * @param content     The function to get your content, such as {@code registryLookup -> your content}.
    */
-  default <T> void addDynamicRegistryContentFunction(RegistryKey<Registry<T>> registryKey, Identifier identifier, Codec<T> codec, RegistryResourceFunction.ByInfoGetter<T> content) {
+  default <T> void addDynamicRegistryContentFunction(RegistryKey<Registry<T>> registryKey, Identifier identifier, Codec<T> codec, RegistryResourceFunction<T> content) {
     String path = RegistryKeys.getPath(registryKey);
     Identifier id = registryKey.getValue();
     if (!id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE)
@@ -712,10 +721,10 @@ public interface RuntimeResourcePack extends ResourcePack {
    *
    * @param registryKey The registry key of the content. It is not the registry key of registry. For example, {@code RegistryKey.of(RegistryKeys.XXX, Identifier.of(...))}.
    * @param codec       The codec used to serialize.
-   * @param content     The function to get your content, such as {@code registryInfoGetter -> your content}.
+   * @param content     The function to get your content, such as {@code registryLookup -> your content}.
    */
 
-  default <T> void addDynamicRegistryContentFunction(RegistryKey<T> registryKey, Codec<T> codec, RegistryResourceFunction.ByInfoGetter<T> content) {
+  default <T> void addDynamicRegistryContentFunction(RegistryKey<T> registryKey, Codec<T> codec, RegistryResourceFunction<T> content) {
     addDynamicRegistryContentFunction(registryKey.getRegistryRef(), registryKey.getValue(), codec, content);
   }
 
@@ -771,6 +780,23 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @see ByteBufOutputStream
    */
   void dump(ZipOutputStream stream) throws IOException;
+
+  /**
+   * The method is mainly used for pack dumping and being parsed metadata. This should be used when the runtime resource pack does not contain a root resource named {@code pack.mcmeta}.
+   *
+   * @return The JSON format of the metadata, which includes only the most basic information.
+   */
+  @ApiStatus.Internal
+  @ApiStatus.AvailableSince("1.1.0")
+  default JsonObject createMetadataJson() {
+    JsonObject object = new JsonObject();
+    object.addProperty("pack_format", getPackVersion());
+    final Text description = getDescription();
+    object.add("description", TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, description == null ? Text.translatable("brrp.pack.defaultDescription", getId()) : description).getOrThrow(JsonParseException::new));
+    JsonObject object2 = new JsonObject();
+    object2.add("pack", object);
+    return object2;
+  }
 
 
   /**

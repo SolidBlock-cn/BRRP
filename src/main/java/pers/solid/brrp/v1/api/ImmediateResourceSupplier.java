@@ -6,7 +6,6 @@ import com.mojang.serialization.DynamicOps;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.registry.RegistryWrapper;
 import org.apache.commons.lang3.ArrayUtils;
-import pers.solid.brrp.v1.mixin.RegistryOpsAccessor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -90,11 +89,7 @@ public interface ImmediateResourceSupplier<T> extends Supplier<byte[]> {
      */
     default JsonElement getJsonElement(RegistryOps<JsonElement> ops, RegistryWrapper.WrapperLookup registryLookup) {
       final T apply;
-      if (resource() instanceof RegistryResourceFunction.ByInfoGetter<T> byInfoGetter) {
-        apply = byInfoGetter.applyFromInfoGetter(((RegistryOpsAccessor) ops).getRegistryInfoGetter());
-      } else {
-        apply = resource().apply(registryLookup);
-      }
+      apply = resource().apply(registryLookup);
       return codec().encodeStart(ops, apply).getOrThrow();
     }
 

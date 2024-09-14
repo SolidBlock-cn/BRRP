@@ -11,9 +11,11 @@
     "JsonUnbakedModelAccessor",
     "LifecycledResourceManagerImplMixin",
     "ModelAccessor",
+    "NamespaceResourceManagerMixin",
     "RecipeManagerMixin",
     "RegistryBuilderAccessor",
     "RegistryBuilderMixin",
+    "RegistryInfoGetterAyMixin",
     "RegistryLoaderMixin",
     "RegistryOpsAccessor",
     "ReloadableRegistriesMixin",
@@ -27,5 +29,8 @@
   "injectors": {
     "defaultRequire": 1
   },
-  "client": ["BakedModelManagerMixin"]
+  "client": [
+    "BakedModelManagerMixin",
+    "SpriteOwnerMixin", "TranslationStorageMixin"
+  ]
 }

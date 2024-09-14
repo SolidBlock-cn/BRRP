@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.zip.ZipOutputStream;
 
 /**
  * The screen to dump a runtime resource pack.
@@ -35,9 +36,11 @@ public class DumpScreen extends Screen {
   private final RuntimeResourcePack pack;
   private final int[] dumpStat = new int[3];
   private CyclingButtonWidget<DumpType> dumpTypeButton;
+  private CyclingButtonWidget<Boolean> dumpAsZipButton;
   private @NotNull DumpType dumpType = DumpType.ALL;
   private TextWidget dumpPathText;
   private TextFieldWidget dumpPathTextField;
+  private boolean dumpAsZip = false;
   private Path dumpPath;
   private String dumpPathString;
   private InvalidPathException invalidPathException;
@@ -65,8 +68,14 @@ public class DumpScreen extends Screen {
         .values(DumpType.values())
         .initially(dumpType)
         .tooltip(value -> Tooltip.of(Text.translatable("brrp.dumpScreen.dumpType.tooltip." + value.asString())))
-        .build(width / 2 - 100, 30, 200, 20, Text.translatable("brrp.dumpScreen.dumpType"), (button, value) -> dumpType = value);
+        .build(width / 2 - 200, 30, 200, 20, Text.translatable("brrp.dumpScreen.dumpType"), (button, value) -> dumpType = value);
     addDrawableChild(dumpTypeButton);
+    dumpAsZipButton = CyclingButtonWidget.onOffBuilder()
+        .initially(dumpAsZip)
+        .tooltip(value -> Tooltip.of(Text.translatable("brrp.dumpScreen.dumpAsZip.tooltip." + value)))
+        // todo 翻译
+        .build(width / 2, 30, 200, 20, Text.translatable("brrp.dumpScreen.dumpAsZip"), (button, value) -> dumpAsZip = value);
+    addDrawableChild(dumpAsZipButton);
     dumpPathText = new TextWidget(width / 2 - 100, 65, 200, 20, Text.translatable("brrp.dumpScreen.dumpPath.title"), textRenderer).setTextColor(0xcccccc).alignCenter();
     addDrawableChild(dumpPathText);
     dumpPathTextField = new TextFieldWidget(textRenderer, 20, 85, width - 40, 20, Text.translatable("brrp.dumpScreen.dumpPath.message"));
@@ -172,7 +181,15 @@ public class DumpScreen extends Screen {
       backButton.active = false;
       dumpButton.setMessage(Text.translatable("brrp.dumpScreen.dumping"));
       Arrays.fill(dumpStat, 0);
-      pack.dumpInPath(dumpPath, dumpType.resourceType, dumpStat);
+      if (dumpAsZip) {
+        try (final ZipOutputStream stream = new ZipOutputStream(Files.newOutputStream(dumpPath.resolveSibling(dumpPath.getFileName() + ".zip")))) {
+          pack.dump(stream);
+        } catch (IOException e) {
+          LOGGER.error("Cannot dump as zip:", e);
+        }
+      } else {
+        pack.dumpInPath(dumpPath, dumpType.resourceType, dumpStat);
+      }
       dumpButton.setMessage(Text.translatable("brrp.dumpScreen.dump"));
       interruptButton.active = false;
       backButton.active = true;

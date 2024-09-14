@@ -1,11 +1,10 @@
 package pers.solid.brrp.v1.mixin;
 
 import com.google.gson.JsonElement;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.serialization.Decoder;
-import net.minecraft.registry.MutableRegistry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryLoader;
-import net.minecraft.registry.RegistryOps;
+import net.minecraft.registry.*;
 import net.minecraft.registry.entry.RegistryEntryInfo;
 import net.minecraft.resource.Resource;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,9 +14,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pers.solid.brrp.v1.BRRPMixins;
 import pers.solid.brrp.v1.api.ImmediateInputSupplier;
 import pers.solid.brrp.v1.api.RegistryResourceFunction;
+import pers.solid.brrp.v1.impl.RegistryInfoGetterExtension;
 
 @Mixin(RegistryLoader.class)
 public abstract class RegistryLoaderMixin {
+  /**
+   * 将 {@link DynamicRegistryManager} 存储在返回的 {@link RegistryOps.RegistryInfoGetter} 中，从而在需要时读取。
+   */
+  @ModifyReturnValue(method = "createInfoGetter", at = @At("RETURN"))
+  private static RegistryOps.RegistryInfoGetter storeInInfoGetter(RegistryOps.RegistryInfoGetter original, @Local(argsOnly = true) DynamicRegistryManager baseRegistryManager) {
+    if (original instanceof RegistryInfoGetterExtension extension) {
+      extension.setWrapperLookup$brrp(baseRegistryManager);
+    } else {
+      BRRPMixins.LOGGER.warn("The {} returned is not extended by the mixin. This may be due to mixin not loaded successfully, or the object is replaced by other mods.", RegistryOps.RegistryInfoGetter.class.getSimpleName());
+    }
+    return original;
+  }
 
   @SuppressWarnings("unchecked")
   @Inject(method = "parseAndAdd", at = @At("HEAD"), cancellable = true)
@@ -26,10 +38,11 @@ public abstract class RegistryLoaderMixin {
       try {
         Object instance = im.resource();
         if (instance instanceof RegistryResourceFunction<?> rf) {
-          if (instance instanceof RegistryResourceFunction.ByInfoGetter<?> byInfoGetter) {
-            instance = byInfoGetter.applyFromInfoGetter(((RegistryOpsAccessor) ops).getRegistryInfoGetter());
+          final RegistryOps.RegistryInfoGetter registryInfoGetter = ((RegistryOpsAccessor) ops).getRegistryInfoGetter();
+          if (registryInfoGetter instanceof RegistryInfoGetterExtension extension) {
+            instance = rf.apply(extension.getWrapperLookup$brrp());
           } else {
-            throw new IllegalArgumentException("The object added for dynamic registry must be a direct instance or %s, instead of a simple %s instance! (key = %s)".formatted(RegistryResourceFunction.ByInfoGetter.class.getSimpleName(), RegistryResourceFunction.class.getSimpleName(), key));
+            BRRPMixins.LOGGER.warn("BRRP: Failed to read resource because {} objects are not available. This may be due to version mismatch, mixin not loaded, or mod conflict.", RegistryWrapper.WrapperLookup.class.getSimpleName());
           }
         }
         registry.add(key, (E) instance, entryInfo);

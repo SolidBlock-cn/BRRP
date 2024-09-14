@@ -71,7 +71,12 @@ public class BRRPStairsBlock extends StairsBlock implements BlockResourceGenerat
 
   @Override
   public CraftingRecipeJsonBuilder getCraftingRecipe() {
-    return ShapedRecipeJsonBuilder.create(getRecipeCategory(), this, 4).input('#', baseBlock).pattern("#  ").pattern("## ").pattern("###").criterionFromItem(baseBlock);
+    return ShapedRecipeJsonBuilder.create(getRecipeCategory(), this, 4)
+        .input('#', baseBlock)
+        .pattern("#  ")
+        .pattern("## ")
+        .pattern("###")
+        .criterionFromItem(baseBlock);
   }
 
   @Override

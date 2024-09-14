@@ -57,6 +57,7 @@ import pers.solid.brrp.v1.model.ModelOverrideBuilder;
 import pers.solid.brrp.v1.model.TransformationBuilder;
 import pers.solid.brrp.v1.tag.IdentifiedTagBuilder;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -138,6 +139,7 @@ public class BRRPTest {
    */
   private static void refreshPack(boolean clientIncluded, boolean serverIncluded) {
     LOGGER.info("Generating resources for the development environment.");
+    PACK.addRootResource("test.txt", "Hello world! 你好，世界！".getBytes(StandardCharsets.UTF_8));
     if (clientIncluded) {
       PACK.clearResources(ResourceType.CLIENT_RESOURCES);
       // add language files to the runtime resource pack.
@@ -229,7 +231,7 @@ public class BRRPTest {
           .addEffect(EnchantmentEffectComponentTypes.DAMAGE, new MultiplyEnchantmentEffect(EnchantmentLevelBasedValue.linear(114514)))
           .build(POWER_DIAMOND.getValue()));
       PACK.addDynamicRegistryContentFunction(POWER_GEM, Enchantment.CODEC, infoGetter -> Enchantment.builder(Enchantment.definition(
-              infoGetter.getRegistryInfo(RegistryKeys.ITEM).orElseThrow().entryLookup().getOrThrow(ConventionalItemTags.GEMS),
+              infoGetter.getWrapperOrThrow(RegistryKeys.ITEM).getOrThrow(ConventionalItemTags.GEMS),
               1,
               8,
               Enchantment.constantCost(1),

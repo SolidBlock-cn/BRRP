@@ -4,7 +4,6 @@ import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -21,9 +20,9 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.resource.*;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
 import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.Util;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CountingInputStream;
@@ -34,9 +33,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pers.solid.brrp.v1.api.ImmediateResourceSupplier;
-import pers.solid.brrp.v1.api.RegistryResourceFunction;
-import pers.solid.brrp.v1.api.RuntimeResourcePack;
+import pers.solid.brrp.v1.api.*;
 import pers.solid.brrp.v1.mixin.BuiltinRegistriesAccessor;
 import pers.solid.brrp.v1.mixin.RegistryBuilderAccessor;
 import pers.solid.brrp.v1.model.ModelJsonBuilder;
@@ -73,8 +70,16 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @SuppressWarnings("DeprecatedIsStillUsed")
   @Deprecated(forRemoval = true)
   private final RegistryWrapper.WrapperLookup registryLookup;
-  private Supplier<RegistryWrapper.@NotNull WrapperLookup> lookupSupplierForOutput;
-  private Supplier<@NotNull RegistryOps<JsonElement>> registryOpsSupplierForOutput;
+  private static final com.google.common.base.Supplier<RegistryWrapper.@NotNull WrapperLookup> lookupSupplier = () -> {
+    if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT && MinecraftClient.getInstance().getServer() != null) {
+      return MinecraftClient.getInstance().getServer().getRegistryManager();
+    } else {
+      return Holder.registryLookup;
+    }
+  };
+  private static final com.google.common.base.Supplier<@NotNull RegistryOps<JsonElement>> registryOpsSupplier = () -> lookupSupplier.get().getOps(JsonOps.INSTANCE);
+  private com.google.common.base.Supplier<RegistryWrapper.@NotNull WrapperLookup> lookupMemorizedSupplier = Suppliers.memoize(lookupSupplier);
+  private com.google.common.base.Supplier<@NotNull RegistryOps<JsonElement>> registryOpsMemorizedSupplier = Suppliers.memoize(registryOpsSupplier);
 
   @Deprecated(since = "1.1.0", forRemoval = true)
   public RuntimeResourcePackImpl(Identifier id, @NotNull RegistryWrapper.WrapperLookup registryLookup) {
@@ -157,6 +162,12 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   @Override
+  public byte[] addLang(Identifier identifier, LanguageProvider lang) {
+    this.addImmediateAsset(fix(identifier, "lang", "json"), new ImmediateResourceSupplier.OfSimpleResource.Impl<>(LanguageProvider.CODEC, lang));
+    return ArrayUtils.EMPTY_BYTE_ARRAY;
+  }
+
+  @Override
   public byte[] addLootTable(Identifier identifier, byte[] serializedData) {
     return this.addData(fix(identifier, "loot_table", "json"), serializedData);
   }
@@ -227,6 +238,12 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     checkDuplicateRootResource(path);
     this.root.put(Arrays.asList(path.split("/")), () -> data);
     return data;
+  }
+
+  @Override
+  public <T> void addDirectRootResource(String path, ImmediateResourceSupplier<T> data) {
+    checkDuplicateRootResource(path);
+    this.root.put(Arrays.asList(path.split("/")), data);
   }
 
   @Override
@@ -337,6 +354,10 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Override
   public void dumpInPath(Path output, @Nullable ResourceType dumpResourceType, int @Nullable [] stat) {
     LOGGER.info("Dumping {} in the path {}. The path will be cleared.", getDisplayName().getString(), output);
+
+    this.lookupMemorizedSupplier = Suppliers.memoize(lookupSupplier);
+    this.registryOpsMemorizedSupplier = Suppliers.memoize(registryOpsSupplier);
+
     try {
       if (stat != null) stat[0] = -1;
       if (output.toFile().exists()) {
@@ -348,9 +369,8 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
       }
       if (!root.isEmpty()) {
         for (Map.Entry<List<String>, Supplier<byte[]>> e : this.root.entrySet()) {
-          Path root = output.resolve(String.join("/", e.getKey()));
-          Files.createDirectories(root.getParent());
-          Files.write(root, e.getValue().get());
+          Path rootPath = output.resolve(String.join("/", e.getKey()));
+          this.writeAtPath(e.getValue(), rootPath);
           if (stat != null) stat[0] += 1;
           if (Thread.interrupted()) {
             throw new InterruptedException("Dumping root resources");
@@ -358,29 +378,26 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
         }
       }
 
-      lookupSupplierForOutput = Suppliers.memoize(() -> {
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT && MinecraftClient.getInstance().getServer() != null) {
-          return MinecraftClient.getInstance().getServer().getRegistryManager();
-        } else {
-          return Holder.registryLookup;
-        }
-      });
-      registryOpsSupplierForOutput = Suppliers.memoize(() -> lookupSupplierForOutput.get().getOps(JsonOps.INSTANCE));
+      if (!root.containsKey(List.of("pack.mcmeta"))) {
+        Path rootPath = output.resolve("pack.mcmeta");
+        this.writeAtPath(new ImmediateResourceSupplier.OfJson.Impl(createMetadataJson()), rootPath);
+        if (stat != null) stat[0] += 1;
+      }
 
       if (dumpResourceType != ResourceType.SERVER_DATA && !assets.isEmpty()) {
-        Path assets = output.resolve("assets");
-        Files.createDirectories(assets);
+        Path assetsPath = output.resolve("assets");
+        Files.createDirectories(assetsPath);
         for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
-          this.write(assets, entry.getKey(), entry.getValue());
+          this.write(assetsPath, entry.getKey(), entry.getValue());
           if (stat != null) stat[1] += 1;
           if (Thread.interrupted()) throw new InterruptedException("Dumping server data");
         }
       }
       if (dumpResourceType != ResourceType.CLIENT_RESOURCES && !data.isEmpty()) {
-        Path data = output.resolve("data");
-        Files.createDirectories(data);
+        Path dataPath = output.resolve("data");
+        Files.createDirectories(dataPath);
         for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
-          this.write(data, entry.getKey(), entry.getValue());
+          this.write(dataPath, entry.getKey(), entry.getValue());
           if (stat != null) stat[2] += 1;
           if (Thread.interrupted()) throw new InterruptedException("Dumping client resources");
         }
@@ -414,24 +431,28 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
 
   @Override
   public void dump(ZipOutputStream zos) throws IOException {
+    this.lookupMemorizedSupplier = Suppliers.memoize(lookupSupplier);
+    this.registryOpsMemorizedSupplier = Suppliers.memoize(registryOpsSupplier);
+
     for (Map.Entry<List<String>, Supplier<byte[]>> entry : this.root.entrySet()) {
       zos.putNextEntry(new ZipEntry(String.join("/", entry.getKey())));
-      zos.write(entry.getValue().get());
-      zos.closeEntry();
+      this.writeToStream(entry.getValue(), zos);
+    }
+    if (!root.containsKey(List.of("pack.mcmeta"))) {
+      zos.putNextEntry(new ZipEntry("pack.mcmeta"));
+      this.writeToStream(new ImmediateResourceSupplier.OfJson.Impl(createMetadataJson()), zos);
     }
 
     for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.assets.entrySet()) {
       Identifier id = entry.getKey();
       zos.putNextEntry(new ZipEntry("assets/" + id.getNamespace() + "/" + id.getPath()));
-      zos.write(entry.getValue().get());
-      zos.closeEntry();
+      this.writeToStream(entry.getValue(), zos);
     }
 
     for (Map.Entry<Identifier, Supplier<byte[]>> entry : this.data.entrySet()) {
       Identifier id = entry.getKey();
       zos.putNextEntry(new ZipEntry("data/" + id.getNamespace() + "/" + id.getPath()));
-      zos.write(entry.getValue().get());
-      zos.closeEntry();
+      this.writeToStream(entry.getValue(), zos);
     }
   }
 
@@ -462,6 +483,9 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   @Override
   public InputSupplier<InputStream> openRoot(String... segments) {
     Supplier<byte[]> supplier = this.root.get(Arrays.asList(segments));
+    if (supplier instanceof ImmediateResourceSupplier<?> immediateResourceSupplier) {
+      return immediateResourceSupplier.getImmediateInputSupplier();
+    }
     if (supplier == null) {
       return null;
     }
@@ -508,6 +532,16 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     InputStream stream = null;
     try {
       InputSupplier<InputStream> supplier = this.openRoot("pack.mcmeta");
+      if (supplier instanceof ImmediateInputSupplier.OfJson ofJson) {
+        try {
+          final JsonElement jsonElement = ofJson.jsonElement();
+          if (jsonElement != null) {
+            return metaReader.fromJson(JsonHelper.getObject(jsonElement.getAsJsonObject(), metaReader.getKey()));
+          }
+        } catch (Exception e) {
+          LOGGER.error("Couldn't load immediate metadata {} for runtime resource pack {}", metaReader.getKey(), getId(), e);
+        }
+      }
       if (supplier != null) {
         stream = supplier.get();
       }
@@ -518,11 +552,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
       return AbstractFileResourcePack.parseMetadata(metaReader, stream);
     } else {
       if (metaReader.getKey().equals("pack")) {
-        JsonObject object = new JsonObject();
-        object.addProperty("pack_format", this.packVersion);
-        final Text description = getDescription();
-        object.add("description", TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, description == null ? Text.translatable("brrp.pack.defaultDescription", getId()) : description).getOrThrow(JsonParseException::new));
-        return metaReader.fromJson(object);
+        return metaReader.fromJson(createMetadataJson().getAsJsonObject("pack"));
       }
       return null;
     }
@@ -553,57 +583,69 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
     map.put(Identifier.of(namespace, path), () -> data);
   }
 
-  private void write(Path dir, Identifier identifier, Supplier<byte[]> dataSupplier) {
-    try {
-      Path file = dir.resolve(identifier.getNamespace()).resolve(identifier.getPath());
-      Files.createDirectories(file.getParent());
-      if (dataSupplier instanceof final ImmediateResourceSupplier<?> ir) {
-        // when calling this method,
-        // you must ensure the Supplier objects are not empty.
-        final JsonElement element;
-        switch (ir) {
-          case ImmediateResourceSupplier.OfRegistryResource<?> ofRegistryResource -> {
-            final RegistryWrapper.WrapperLookup lookup = lookupSupplierForOutput.get();
-            final RegistryOps<JsonElement> ops = registryOpsSupplierForOutput.get();
-            element = ofRegistryResource.getJsonElement(ops, lookup);
-            if (element instanceof JsonObject jo) {
-              jo.addProperty("__brrp_output_note", "Converted from immediate resource. May sometimes differ from actual content.");
-            }
-          }
-          case ImmediateResourceSupplier.OfJson ofJson -> {
-            element = ofJson.jsonElement().deepCopy();
-            if (element instanceof JsonObject jo) {
-              jo.addProperty("__brrp_output_note", "Converted from immediate JSON resource.");
-            }
-          }
-          case ImmediateResourceSupplier.OfSimpleResource<?> ofSimpleResource -> {
-            final RegistryOps<JsonElement> ops = registryOpsSupplierForOutput.get();
-            element = ofSimpleResource.getJsonElement(ops);
-            if (element instanceof JsonObject jo) {
-              jo.addProperty("__brrp_output_note", "Converted from immediate resource. May sometimes differ from actual content.");
-            }
-          }
-          default -> element = null;
-        }
-        try (BufferedWriter writer = Files.newBufferedWriter(file)) {
-          if (element != null) {
-            GSON.toJson(element, writer);
-          } else {
-            writer.append("<resource not supported>");
+  private void write(Path dir, Identifier identifier, Supplier<byte[]> dataSupplier) throws IOException {
+    Path file = dir.resolve(identifier.getNamespace()).resolve(identifier.getPath());
+    writeAtPath(dataSupplier, file);
+  }
+
+  private void writeAtPath(Supplier<byte[]> dataSupplier, Path path) throws IOException {
+    Files.createDirectories(path.getParent());
+    try (OutputStream outputStream = Files.newOutputStream(path)) {
+      writeToStream(dataSupplier, outputStream);
+    }
+  }
+
+  @ApiStatus.AvailableSince("1.1.0")
+  private void writeToStream(Supplier<byte[]> dataSupplier, OutputStream outputStream) throws IOException {
+    if (dataSupplier instanceof final ImmediateResourceSupplier<?> ir) {
+      // when calling this method,
+      // you must ensure the Supplier objects are not empty.
+      final JsonElement element;
+      switch (ir) {
+        case ImmediateResourceSupplier.OfRegistryResource<?> ofRegistryResource -> {
+          final RegistryWrapper.WrapperLookup lookup = lookupMemorizedSupplier.get();
+          final RegistryOps<JsonElement> ops = registryOpsMemorizedSupplier.get();
+          element = ofRegistryResource.getJsonElement(ops, lookup);
+          if (element instanceof JsonObject jo) {
+            jo.addProperty("__brrp_output_note", "Converted from immediate resource. May sometimes differ from actual content.");
           }
         }
-      } else if (dataSupplier instanceof final ImmediateResourceSupplier.OfJson ofJson) {
-        final JsonElement element = ofJson.jsonElement().deepCopy();
-        try (BufferedWriter writer = Files.newBufferedWriter(file)) {
-          GSON.toJson(element, writer);
+        case ImmediateResourceSupplier.OfJson ofJson -> {
+          element = ofJson.jsonElement().deepCopy();
+          if (element instanceof JsonObject jo) {
+            jo.addProperty("__brrp_output_note", "Converted from immediate JSON resource.");
+          }
         }
-      } else {
-        try (OutputStream output = Files.newOutputStream(file)) {
-          output.write(dataSupplier.get());
+        case ImmediateResourceSupplier.OfSimpleResource<?> ofSimpleResource -> {
+          final RegistryOps<JsonElement> ops = registryOpsMemorizedSupplier.get();
+          element = ofSimpleResource.getJsonElement(ops);
+          if (element instanceof JsonObject jo) {
+            jo.addProperty("__brrp_output_note", "Converted from immediate resource. May sometimes differ from actual content.");
+          }
         }
+        default -> element = null;
       }
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+      // todo 无法写 zip，会报已经关闭
+      final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+      try {
+        if (element != null) {
+          GSON.toJson(element, writer);
+        } else {
+          writer.write("<resource not supported>");
+        }
+      } finally {
+        writer.flush();
+      }
+    } else if (dataSupplier instanceof final ImmediateResourceSupplier.OfJson ofJson) {
+      final JsonElement element = ofJson.jsonElement().deepCopy();
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+      try {
+        GSON.toJson(element, writer);
+      } finally {
+        writer.flush();
+      }
+    } else {
+      outputStream.write(dataSupplier.get());
     }
   }
 

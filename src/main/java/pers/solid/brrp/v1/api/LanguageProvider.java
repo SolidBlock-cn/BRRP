@@ -1,5 +1,7 @@
 package pers.solid.brrp.v1.api;
 
+import com.google.common.collect.ImmutableMap;
+import com.mojang.serialization.Codec;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
@@ -45,6 +47,9 @@ import java.util.TreeMap;
  * @see RuntimeResourcePack#addLang(Identifier, LanguageProvider)
  */
 public interface LanguageProvider {
+  @ApiStatus.AvailableSince("1.1.0")
+  Codec<LanguageProvider> CODEC = Codec.unboundedMap(Codec.STRING, Codec.STRING).xmap(Impl::new, LanguageProvider::content);
+
   /**
    * Create a new object using a simple hash map. The key is not sorted.
    */
@@ -200,6 +205,11 @@ public interface LanguageProvider {
   @Contract(value = "_ -> this")
   default LanguageProvider addAll(LanguageProvider another) {
     return addAll(another.content());
+  }
+
+  @ApiStatus.AvailableSince("1.1.0")
+  default Impl<ImmutableMap<String, String>> toImmutable() {
+    return new Impl<>(ImmutableMap.copyOf(content()));
   }
 
   /**
