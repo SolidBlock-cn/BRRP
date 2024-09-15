@@ -15,19 +15,18 @@ import pers.solid.brrp.v1.BRRPMixins;
 import pers.solid.brrp.v1.api.ImmediateInputSupplier;
 import pers.solid.brrp.v1.api.RegistryResourceFunction;
 import pers.solid.brrp.v1.impl.RegistryInfoGetterExtension;
-
-import java.util.Optional;
-import java.util.stream.Stream;
+import pers.solid.brrp.v1.impl.RegistryLoaderWrapperLookup;
 
 @Mixin(RegistryLoader.class)
 public abstract class RegistryLoaderMixin {
+
   /**
-   * 将 {@link DynamicRegistryManager} 存储在返回的 {@link RegistryOps.RegistryInfoGetter} 中，从而在需要时读取。
+   * Store the {@link DynamicRegistryManager} in the returned {@link RegistryOps.RegistryInfoGetter} to fetch when needed.
    */
   @ModifyReturnValue(method = "createInfoGetter", at = @At("RETURN"))
   private static RegistryOps.RegistryInfoGetter storeInInfoGetter(RegistryOps.RegistryInfoGetter original, @Local(argsOnly = true) DynamicRegistryManager baseRegistryManager) {
     if (original instanceof RegistryInfoGetterExtension extension) {
-      extension.setWrapperLookup$brrp(baseRegistryManager);
+      extension.setBaseRegistryManager$brrp(baseRegistryManager);
     } else {
       BRRPMixins.LOGGER.warn("The {} returned is not extended by the mixin. This may be due to mixin not loaded successfully, or the object is replaced by other mods.", RegistryOps.RegistryInfoGetter.class.getSimpleName());
     }
@@ -43,18 +42,8 @@ public abstract class RegistryLoaderMixin {
         if (instance instanceof RegistryResourceFunction<?> rf) {
           final RegistryOps.RegistryInfoGetter registryInfoGetter = ((RegistryOpsAccessor) ops).getRegistryInfoGetter(); // todo 检查其他的资源是否需要 tag creating
           if (registryInfoGetter instanceof RegistryInfoGetterExtension extension) {
-            final RegistryWrapper.WrapperLookup wrapperLookup$brrp = extension.getWrapperLookup$brrp();
-            final RegistryWrapper.WrapperLookup tagCreatingWrapper = new RegistryWrapper.WrapperLookup() {
-              @Override
-              public Stream<RegistryKey<? extends Registry<?>>> streamAllRegistryKeys() {
-                return wrapperLookup$brrp.streamAllRegistryKeys();
-              }
-
-              @Override
-              public <T> Optional<RegistryWrapper.Impl<T>> getOptionalWrapper(RegistryKey<? extends Registry<? extends T>> registryRef) {
-                return ((DynamicRegistryManager) wrapperLookup$brrp).getOptional(registryRef).map(Registry::getTagCreatingWrapper);
-              }
-            };
+            final DynamicRegistryManager base = extension.getBaseRegistryManager$brrp();
+            final RegistryWrapper.WrapperLookup tagCreatingWrapper = new RegistryLoaderWrapperLookup(base);
             instance = rf.apply(tagCreatingWrapper);
           } else {
             BRRPMixins.LOGGER.warn("BRRP: Failed to read resource because {} objects are not available. This may be due to version mismatch, mixin not loaded, or mod conflict.", RegistryWrapper.WrapperLookup.class.getSimpleName());

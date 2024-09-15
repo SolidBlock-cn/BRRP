@@ -3,7 +3,6 @@ package pers.solid.brrp.v1.impl;
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -336,6 +335,11 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   }
 
   @Override
+  public void addRecipe(Identifier id, RegistryResourceFunction<Recipe<?>> recipe) {
+    this.addImmediateData(fix(id, "recipe", "json"), new ImmediateResourceSupplier.OfRegistryResource.Impl<>(Recipe.CODEC, recipe));
+  }
+
+  @Override
   public byte[] addAdvancement(Identifier id, byte[] serializedData) {
     return this.addData(fix(id, "advancement", "json"), serializedData);
   }
@@ -344,6 +348,11 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   public byte[] addAdvancement(Identifier id, Advancement advancement) {
     this.addImmediateData(fix(id, "advancement", "json"), new ImmediateResourceSupplier.OfRegistryResource.Impl<>(Advancement.CODEC, r -> advancement));
     return ArrayUtils.EMPTY_BYTE_ARRAY;
+  }
+
+  @Override
+  public void addAdvancement(Identifier id, RegistryResourceFunction<Advancement> advancement) {
+    this.addImmediateData(fix(id, "advancement", "json"), new ImmediateResourceSupplier.OfRegistryResource.Impl<>(Advancement.CODEC, advancement));
   }
 
   @Override
@@ -614,22 +623,13 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
           final RegistryWrapper.WrapperLookup lookup = lookupMemorizedSupplier.get();
           final RegistryOps<JsonElement> ops = registryOpsMemorizedSupplier.get();
           element = ofRegistryResource.getJsonElement(ops, lookup);
-          if (element instanceof JsonObject jo) {
-            jo.addProperty("__brrp_output_note", "Converted from immediate resource. May sometimes differ from actual content.");
-          }
         }
         case ImmediateResourceSupplier.OfJson ofJson -> {
-          element = ofJson.jsonElement().deepCopy();
-          if (element instanceof JsonObject jo) {
-            jo.addProperty("__brrp_output_note", "Converted from immediate JSON resource.");
-          }
+          element = ofJson.jsonElement();
         }
         case ImmediateResourceSupplier.OfSimpleResource<?> ofSimpleResource -> {
           final RegistryOps<JsonElement> ops = registryOpsMemorizedSupplier.get();
           element = ofSimpleResource.getJsonElement(ops);
-          if (element instanceof JsonObject jo) {
-            jo.addProperty("__brrp_output_note", "Converted from immediate resource. May sometimes differ from actual content.");
-          }
         }
         default -> element = null;
       }

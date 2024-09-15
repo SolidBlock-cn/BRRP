@@ -118,7 +118,7 @@ public class DumpScreen extends Screen {
     addDrawableChild(dumpProgressText);
     dumpButton = ButtonWidget.builder(Text.translatable("brrp.dumpScreen.dump"), button -> runDump()).dimensions(width / 2 - 210, height - 53, 140, 20).build();
     addDrawableChild(dumpButton);
-    openButton = ButtonWidget.builder(Text.translatable("brrp.dumpScreen.open"), button -> Util.getOperatingSystem().open(dumpPath.toFile())).dimensions(width / 2 - 70, height - 53, 140, 20).tooltip(Tooltip.of(Text.translatable("brrp.dumpScreen.open.tooltip"))).build();
+    openButton = ButtonWidget.builder(Text.translatable("brrp.dumpScreen.open"), button -> Util.getOperatingSystem().open(dumpAsZip ? dumpPath.getParent() : dumpPath)).dimensions(width / 2 - 70, height - 53, 140, 20).tooltip(Tooltip.of(Text.translatable("brrp.dumpScreen.open.tooltip"))).build();
     addDrawableChild(openButton);
     interruptButton = ButtonWidget.builder(Text.translatable("brrp.dumpScreen.interrupt"), button -> {
       if (dumpThread != null) {

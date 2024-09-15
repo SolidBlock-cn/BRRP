@@ -583,6 +583,14 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
+   * Add a recipe to the runtime resource pack. The recipe id is usually same to the item id, but sometimes append with some extra information.
+   *
+   * @param id     The id of the recipe, which is usually same to the item id, but can sometimes be suffixed with other string. Example: {@code Identifier.of("my_mod", "strange_stone_stairs"}}, {@code Identifier.of("my_mod", "strange_stone_from_stonecutting")}.
+   * @param recipe The function of the {@link Recipe}, which takes a {@link RegistryWrapper.WrapperLookup}.
+   */
+  void addRecipe(Identifier id, RegistryResourceFunction<Recipe<?>> recipe);
+
+  /**
    * Add a recipe to the runtime resource pack. The recipe id is specified in the {@link RecipeEntry}.
    *
    * @param recipeEntry The recipe as well as its id..
@@ -655,6 +663,14 @@ public interface RuntimeResourcePack extends ResourcePack {
   default byte[] addAdvancement(Identifier id, Advancement advancement) {
     return addAdvancement(id, serialize(advancement));
   }
+
+  /**
+   * Add an advancement to the runtime resource pack. The extension {@code ".json"} is automatically appended to the path.
+   *
+   * @param id          The {@linkplain Identifier identifier} of the advancement.
+   * @param advancement The function of advancement to be added, which takes a {@link RegistryWrapper.WrapperLookup}.
+   */
+  void addAdvancement(Identifier id, RegistryResourceFunction<Advancement> advancement);
 
   /**
    * Add an advancement to the runtime resource pack. The extension {@code ".json"} is automatically appended to the path.

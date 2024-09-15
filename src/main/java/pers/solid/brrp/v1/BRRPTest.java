@@ -1,7 +1,10 @@
 package pers.solid.brrp.v1;
 
 import com.google.common.collect.Collections2;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.criterion.TickCriterion;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -25,7 +28,13 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.condition.LocationCheckLootCondition;
+import net.minecraft.loot.entry.TagEntry;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
+import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.entity.LocationPredicate;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
@@ -212,7 +221,11 @@ public class BRRPTest {
           .add(DataComponentTypes.ITEM_NAME, Text.literal("Unobtainable!"))
           .build();
 
-      PACK.addRecipeAndAdvancement(Identifier.of("brrp", "cook_bedrock"), CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(Items.BEDROCK), null, Items.BARRIER, 1000, 2).setCustomRecipeCategory("brrp_custom").criterionFromItem(Items.BEDROCK).setComponentChanges(bedrockTestComponentChanges));
+      PACK.addRecipeAndAdvancement(Identifier.of("brrp", "cook_bedrock"), CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(Items.BEDROCK), null, Items.BARRIER, 1000, 2)
+          .setCustomRecipeCategory("brrp_custom")
+          .criterionFromItem(Items.BEDROCK)
+          .setComponentChanges(bedrockTestComponentChanges));
+      PACK.addAdvancement(Identifier.of("brrp", "test_advancement"), registryLookup -> Advancement.Builder.create().criterion("in_mesa_biome", TickCriterion.Conditions.createLocation(EntityPredicate.Builder.create().location(LocationPredicate.Builder.create().biome(registryLookup.getWrapperOrThrow(RegistryKeys.BIOME).getOrThrow(ConventionalBiomeTags.IS_SNOWY))))).build(Identifier.of("brrp", "test_advancement")).value());
       PACK.addRecipeAndAdvancement(Identifier.of("brrp", "unobtainable_shaped"), ShapedRecipeJsonBuilder.create(null, Items.BEDROCK).patterns("xx", "xx").input('x', Items.BEDROCK).setBypassesValidation(true).setCustomRecipeCategory("brrp_custom").setCustomCraftingCategory(CraftingRecipeCategory.MISC).setComponentChanges(bedrockTestComponentChanges));
       PACK.addRecipeAndAdvancement(Identifier.of("brrp", "unobtainable_shapeless"), ShapelessRecipeJsonBuilder.create(null, Items.BEDROCK).input(Items.STONE, 5).criterionFromItem(Items.STONE).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setCustomCraftingCategory(CraftingRecipeCategory.MISC).setComponentChanges(bedrockTestComponentChanges));
       PACK.addRecipeAndAdvancement(Identifier.of("brrp", "unobtainable_single_item"), StonecuttingRecipeJsonBuilder.createStonecutting(Ingredient.ofItems(Items.STONE), null, Items.BEDROCK).setCustomRecipeCategory("brrp_custom").setBypassesValidation(true).setComponentChanges(bedrockTestComponentChanges));
@@ -298,6 +311,13 @@ public class BRRPTest {
         .addOverride(ModelOverrideBuilder.of(Identifier.of("item/yellow_concrete"), Identifier.of("pulling"), 1))
         .addOverride(ModelOverrideBuilder.of(Identifier.of("item/orange_concrete"), Identifier.of("pulling"), 1).addCondition(Identifier.of("pull"), 0.65f))
         .addOverride(ModelOverrideBuilder.of(Identifier.of("item/red_concrete"), Identifier.of("pulling"), 1).addCondition(Identifier.of("pull"), 0.9f)));
+    beforeUser.addLootTable(Blocks.CYAN_WOOL.getLootTableKey().getValue(), registryLookup -> LootTable.builder()
+        .pool(LootPool.builder()
+            .with(TagEntry.builder(ItemTags.WOOL))
+            .conditionally(LocationCheckLootCondition.builder(LocationPredicate.Builder.create()
+                .biome(registryLookup.getWrapperOrThrow(RegistryKeys.BIOME).getOrThrow(ConventionalBiomeTags.IS_SNOWY))))
+            .build())
+        .build());
     RRPEventHelper.BEFORE_USER.registerPack(beforeUser);
 
     final RuntimeResourcePack test2 = RuntimeResourcePack.create(Identifier.of("brrp", "test2"));
