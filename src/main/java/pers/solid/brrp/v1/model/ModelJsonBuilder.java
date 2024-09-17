@@ -172,7 +172,7 @@ public class ModelJsonBuilder implements Cloneable {
    * Add a texture using the specific id of the texture. If you want to refer to a texture variable, please use {@link #addTexture(TextureKey, String)} instead.
    *
    * @param textureKey      The texture key.
-   * @param textureLocation The id of the texture, such as {@code Identifier.of()("minecraft", "stone")}.
+   * @param textureLocation The id of the texture, such as {@code Identifier.of("minecraft", "stone")}.
    */
   @Contract(value = "_, _ -> this")
   public ModelJsonBuilder addTexture(@NotNull TextureKey textureKey, @Nullable Identifier textureLocation) {
@@ -194,7 +194,7 @@ public class ModelJsonBuilder implements Cloneable {
    * Add a texture using the specific id of the texture. If you want to refer to a texture variable, please use {@link #addTexture(String, String)} instead.
    *
    * @param key             The texture key.
-   * @param textureLocation The id of the texture, such as {@code Identifier.of()("minecraft", "stone")}.
+   * @param textureLocation The id of the texture, such as {@code Identifier.of("minecraft", "stone")}.
    */
   @Contract(value = "_, _ -> this")
   public ModelJsonBuilder addTexture(@NotNull String key, @Nullable Identifier textureLocation) {
