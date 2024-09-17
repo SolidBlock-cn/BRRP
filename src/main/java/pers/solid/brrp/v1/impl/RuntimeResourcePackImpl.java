@@ -624,16 +624,13 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
           final RegistryOps<JsonElement> ops = registryOpsMemorizedSupplier.get();
           element = ofRegistryResource.getJsonElement(ops, lookup);
         }
-        case ImmediateResourceSupplier.OfJson ofJson -> {
-          element = ofJson.jsonElement();
-        }
+        case ImmediateResourceSupplier.OfJson ofJson -> element = ofJson.jsonElement();
         case ImmediateResourceSupplier.OfSimpleResource<?> ofSimpleResource -> {
           final RegistryOps<JsonElement> ops = registryOpsMemorizedSupplier.get();
           element = ofSimpleResource.getJsonElement(ops);
         }
         default -> element = null;
       }
-      // todo 无法写 zip，会报已经关闭
       final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
       try {
         if (element != null) {

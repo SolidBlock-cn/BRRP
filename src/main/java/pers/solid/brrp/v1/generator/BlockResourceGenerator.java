@@ -324,7 +324,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   /**
    * Get the stonecutting recipe of the block. This is quite useful for block-based blocks, like stairs, slabs and fences.
    * <p>
-   * <strong>Note:</strong> Stonecutting recipes will not be generated unless {@link #shouldWriteStonecuttingRecipe()} returns {@code true}.
+   * <strong>Note:</strong> Stonecutting recipes will not be generated when calling {@link #writeRecipes} unless {@link #shouldWriteStonecuttingRecipe()} returns {@code true}.
    *
    * @return The stonecutting recipe.
    */
@@ -334,7 +334,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
   }
 
   /**
-   * Whether to write stonecutting recipe. <strong>It's by default <code>false</code></strong> and you can override this method according to your actual need.
+   * Whether to write stonecutting recipe when calling {@link #writeRecipes}. <strong>It's by default <code>false</code></strong> and you can override this method according to your actual need.
    *
    * @return The boolean value indicating whether to write stonecutting recipes of the block in {@link #writeRecipes(RuntimeResourcePack)}.
    */

@@ -2,3 +2,4 @@
 - Tweaked implementation of logging.
 - Introduced the feature of adding dynamic registry resources.
 - Added a button to open dump path in the dump screen.
+- Now you can decide whether to dump as direct files or zip files.

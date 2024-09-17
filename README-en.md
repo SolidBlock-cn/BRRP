@@ -16,14 +16,31 @@ For instance, the loot table of most blocks can be described as "drop the block 
 
 Runtime resource packs have no difference than regular resource packs with regard to features. Normal resource packs (including the mod's builtin resource and manually-installed resource-packs or data-packs) can override contents of runtime resource packs, or have relations to runtime resource packs. A typical example is, block models are defined in runtime resource packs, and their texture files are stored in mod files as usual (as it's not appropriate to generate texture files in runtime).
 
-Compared to traditional resource packs, runtime resource packs reduce I/Os, but adds the process of object serialization, which is a drawback of runtime resource pack. When resource packs are generated, objects are converted to byte forms (usually JSON). This process is called *serialization*. When game instance reads these resource packs, these byte-form contents are analysed to generate objects in game. This process is called *deserialization*. In traditional resource packs, all resources are serialized, and the game instance needs only to deserialize them when loading resources. However, runtime resource packs require the process of both serialization and deserialization.
+Compared to traditional resource packs, runtime resource packs reduce I/Os. When resource packs are generated, objects are converted to byte forms (usually JSON). This process is called *serialization*. When game instance reads these resource packs, these byte-form contents are analysed to generate objects in game. This process is called *deserialization*. In traditional resource packs, all resources are serialized, and the game instance needs only to deserialize them when loading resources. However, the runtime resource in runtime resource packs has the following types:
 
-To summarize again the process traditional resource packs and runtime resource packs are read in game:
+- Stored in bytes form. This is the most original and compatible form. The older version of this mod used this form, but when generating resources, it's required to serialize Java objects into bytes form, and convert to Java objects from bytes form when loading resources. This may consume performance.
+- Stored as JSON form. The block states and block models are stored in this way. When generating resources, it is required to convert objects in Java into JSON, but not required to serialize JSON into bytes forms. When loading resources, deserialized from JSON forms.
+- Directly stored as Java objects. In this mod, loot tables, tags, advancements, recipes, etc. are stored like this. When generating resources, directly stores Java objects into the runtime resource pack, and when loading resource packs, it's possible to directly read the Java objects. 
 
-- *Traditional* File → (read as) byte form → (deserialized as) in-game objects
-- *Runtime* Code → ARRP objects → (serialized as) byte form → (deserialized as) in-game objects
+Let's briefly summarize the reading process of traditional resource packs and runtime resource packs:
 
-It's been in my plan to make it possible to directly use objects generated in game in future versions, without the process of deserialization and serialization. This is already possible in theory, but to be in the form of resource pack and allow overriding by traditional resource packs and data packs, some further research is required.
+- *traditional resource packs*
+    - JSON form files (such as loot tables, models):
+        - Read resource: bytes form → JSON objects → Java objects
+    - non-JSON form files (such as textures):
+        - Read resources: bytes form → Java objects
+- *runtime resource packs*
+    - JSON form files (old versions):
+        - Generate resources: Java objects → JSON objects → bytes form
+        - Read resources: bytes form → JSON objects → Java 对象
+    - JSON form files (such as model):
+        - Generate resources: Java objects → JSON objects
+        - Read resources: JSON objects → Java objects
+    - JSON form files (such as recipes and loot tables):
+        - Generate resources: Java objects (directly written into resource packs)
+        - Read resources: Java objects (directly read from resource packs)
+
+纹理及其动态数据（如有）目前也支持动态生成，但一般不使用。
 
 ## About this mod
 

@@ -40,7 +40,7 @@ public abstract class RegistryLoaderMixin {
       try {
         Object instance = im.resource();
         if (instance instanceof RegistryResourceFunction<?> rf) {
-          final RegistryOps.RegistryInfoGetter registryInfoGetter = ((RegistryOpsAccessor) ops).getRegistryInfoGetter(); // todo 检查其他的资源是否需要 tag creating
+          final RegistryOps.RegistryInfoGetter registryInfoGetter = ((RegistryOpsAccessor) ops).getRegistryInfoGetter();
           if (registryInfoGetter instanceof RegistryInfoGetterExtension extension) {
             final DynamicRegistryManager base = extension.getBaseRegistryManager$brrp();
             final RegistryWrapper.WrapperLookup tagCreatingWrapper = new RegistryLoaderWrapperLookup(base);
