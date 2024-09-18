@@ -28,7 +28,7 @@ public abstract class RegistryLoaderMixin {
     if (original instanceof RegistryInfoGetterExtension extension) {
       extension.setBaseRegistryManager$brrp(baseRegistryManager);
     } else {
-      BRRPMixins.LOGGER.warn("The {} returned is not extended by the mixin. This may be due to mixin not loaded successfully, or the object is replaced by other mods.", RegistryOps.RegistryInfoGetter.class.getSimpleName());
+      BRRPMixins.LOGGER.warn("BRRP: The {} returned is not extended by the mixin. This may be due to mixin not loaded successfully, or the object is replaced by other mods.", RegistryOps.RegistryInfoGetter.class.getSimpleName());
     }
     return original;
   }
@@ -51,9 +51,10 @@ public abstract class RegistryLoaderMixin {
         }
         registry.add(key, (E) instance, entryInfo);
       } catch (ClassCastException e) {
-        BRRPMixins.LOGGER.warn("Cannot add immediate dynamic registry content {} into registry {}", key.getValue(), key.getRegistry(), e);
+        BRRPMixins.LOGGER.warn("BRRP: Cannot add immediate dynamic registry content {} into registry {}", key.getValue(), key.getRegistry(), e);
       }
       ci.cancel();
     }
   }
+
 }

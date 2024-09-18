@@ -38,7 +38,11 @@ public abstract class ServerAdvancementLoaderMixin implements ImmediateResourceL
     }
     ImmutableMap.Builder<Identifier, AdvancementEntry> builder = ImmutableMap.builder();
     builder.putAll(this.advancements);
-    map.forEach((id, resource) -> {
+
+    int count = 0;
+    for (var entry : map.entrySet()) {
+      Identifier id = entry.getKey();
+      Object resource = entry.getValue();
       try {
         Object apply = resource;
         if (resource instanceof RegistryResourceFunction<?> rf) {
@@ -46,16 +50,18 @@ public abstract class ServerAdvancementLoaderMixin implements ImmediateResourceL
         }
         if (!(apply instanceof Advancement advancement)) {
           BRRPMixins.LOGGER.warn("BRRP: immediate resource with id {} is not an advancement: {}", id, apply);
-          return;
+          continue;
         }
         this.validate(id, advancement);
         builder.put(id, new AdvancementEntry(id, advancement));
+        count++;
       } catch (Exception var6x) {
         BRRPMixins.LOGGER.error("BRRP: Parsing error loading custom immediate advancement {}: {}", id, var6x.getMessage());
       }
-    });
+    }
     this.advancements = builder.buildOrThrow();
     this.manager.addAll(this.advancements.values());
+    BRRPMixins.LOGGER.info("BRRP: Applied {} immediate advancements", count);
 
     for (PlacedAdvancement placedAdvancement : this.manager.getRoots()) {
       if (placedAdvancement.getAdvancementEntry().value().display().isPresent()) {

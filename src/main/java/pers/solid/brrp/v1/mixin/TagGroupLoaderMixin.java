@@ -65,7 +65,7 @@ public abstract class TagGroupLoaderMixin {
       if (apply instanceof TagFile tagFile) {
         return tagFile;
       } else {
-        BRRPMixins.LOGGER.warn("Immediate resource with id {} is not a TagFile: {}", identifier, apply);
+        BRRPMixins.LOGGER.warn("BRRP: Immediate resource with id {} is not a TagFile: {}", identifier, apply);
         return new TagFile(Collections.emptyList(), false);
       }
     }

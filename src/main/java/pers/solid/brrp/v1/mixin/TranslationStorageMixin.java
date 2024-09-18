@@ -33,7 +33,7 @@ public abstract class TranslationStorageMixin {
       switch (resource) {
         case JsonObject jsonObject -> brrp$load(Iterables.transform(jsonObject.entrySet(), input -> Map.entry(input.getKey(), JsonHelper.asString(input.getValue(), input.getKey()))), translations::put);
         case LanguageProvider languageProvider -> brrp$load(languageProvider.content().entrySet(), translations::put);
-        default -> BRRPMixins.LOGGER.warn("Cannot read immediate language file (langCode = {}): {} is not a {}!", langCode, resource, LanguageProvider.class.getSimpleName());
+        default -> BRRPMixins.LOGGER.warn("BRRP: Cannot read immediate language file (langCode = {}): {} is not a {}!", langCode, resource, LanguageProvider.class.getSimpleName());
       }
       ref.set(true);
       return null;

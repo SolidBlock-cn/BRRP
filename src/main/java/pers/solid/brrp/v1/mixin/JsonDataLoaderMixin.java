@@ -2,19 +2,19 @@ package pers.solid.brrp.v1.mixin;
 
 import com.google.common.collect.Iterators;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import net.minecraft.resource.JsonDataLoader;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import pers.solid.brrp.v1.ResourceExtension;
+import pers.solid.brrp.v1.BRRPMixins;
 import pers.solid.brrp.v1.api.ImmediateInputSupplier;
 import pers.solid.brrp.v1.impl.ImmediateResourceLoader;
 
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -31,6 +31,23 @@ public abstract class JsonDataLoaderMixin implements ImmediateResourceLoader {
 
   @Override
   public Map<Identifier, Object> prepareImmediate$brrp(ResourceManager resourceManager, Profiler profiler) {
-    return ResourceExtension.findExtendedResources(resourceManager, dataType);
+    final Map<Identifier, Object> map = new HashMap<>();
+    ResourceFinder resourceFinder = ResourceFinder.json(dataType);
+
+    for (Map.Entry<Identifier, Resource> entry : resourceFinder.findResources(resourceManager).entrySet()) {
+      Identifier identifier = entry.getKey();
+      final Resource resource = entry.getValue();
+      final InputSupplier<InputStream> provider = ((ResourceAccessor) resource).getInputSupplier();
+      if (provider instanceof ImmediateInputSupplier<?> im) {
+        BRRPMixins.LOGGER.debug("BRRP: ImmediateInputSupplier found: {}", identifier);
+        map.put(resourceFinder.toResourceId(identifier), im.resource());
+      }
+    }
+
+    if (!map.isEmpty()) {
+      BRRPMixins.LOGGER.info("BRRP: Loaded {} immediate resources for data type: {}", map.size(), dataType);
+    }
+
+    return map;
   }
 }

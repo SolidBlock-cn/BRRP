@@ -28,7 +28,7 @@ public interface SpriteOwnerMixin {
         share.set(ni);
         return null;
       } else {
-        BRRPMixins.LOGGER.error("The immediate resource with id {} is not an instance of {}, ignored.", id, NativeImage.class.getSimpleName());
+        BRRPMixins.LOGGER.error("BRRP: The immediate resource with id {} is not an instance of {}, ignored.", id, NativeImage.class.getSimpleName());
       }
     }
     return original.call(instance);

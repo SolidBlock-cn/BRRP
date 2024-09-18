@@ -38,7 +38,6 @@ public abstract class RecipeManagerMixin implements ImmediateResourceLoader {
   @Override
   public void applyImmediate$brrp(Map<Identifier, Object> map, ResourceManager manager, Profiler profiler) {
     if (map.isEmpty()) {
-      BRRPMixins.LOGGER.info("BRRP: No immediate recipe loaded.");
       return;
     }
     this.errored = false;
@@ -67,6 +66,6 @@ public abstract class RecipeManagerMixin implements ImmediateResourceLoader {
 
     this.recipesByType = imRecipesByTypeBuilder.build();
     this.recipesById = imRecipesByIdBuilder.build();
-    BRRPMixins.LOGGER.info("BRRP: Loaded {} immediate recipes", count);
+    BRRPMixins.LOGGER.info("BRRP: Applied {} immediate recipes", count);
   }
 }

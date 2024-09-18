@@ -36,7 +36,7 @@ public abstract class NamespaceResourceManagerMixin {
           }
         });
       } else {
-        BRRPMixins.LOGGER.warn("Immediate resource meta data found but type correct: {} not {}", resource.toString(), ResourceMetadata.class.getSimpleName());
+        BRRPMixins.LOGGER.warn("BRRP: Immediate resource meta data found but type correct: {} not {}", resource.toString(), ResourceMetadata.class.getSimpleName());
       }
     }
   }
