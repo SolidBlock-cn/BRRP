@@ -15,6 +15,7 @@ import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.Util;
 import org.apache.commons.io.file.PathUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ public class DumpScreen extends Screen {
   private final RuntimeResourcePack pack;
   private final int[] dumpStat = new int[3];
   private CyclingButtonWidget<DumpType> dumpTypeButton;
+  @ApiStatus.AvailableSince("1.1.0")
   private CyclingButtonWidget<Boolean> dumpAsZipButton;
   private @NotNull DumpType dumpType = DumpType.ALL;
   private TextWidget dumpPathText;
@@ -50,6 +52,7 @@ public class DumpScreen extends Screen {
   private TextWidget summaryText;
   private TextWidget dumpProgressText;
   private ButtonWidget dumpButton;
+  @ApiStatus.AvailableSince("1.1.0")
   private ButtonWidget openButton;
   private ButtonWidget interruptButton;
   private ButtonWidget backButton;

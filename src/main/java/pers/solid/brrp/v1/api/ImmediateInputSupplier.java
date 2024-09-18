@@ -7,6 +7,7 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import java.io.*;
  *
  * @param <T> The type of the instant resource.
  */
+@ApiStatus.AvailableSince("1.1.0")
 public interface ImmediateInputSupplier<T> extends InputSupplier<InputStream> {
   Logger LOGGER = LoggerFactory.getLogger(ImmediateInputSupplier.class);
 

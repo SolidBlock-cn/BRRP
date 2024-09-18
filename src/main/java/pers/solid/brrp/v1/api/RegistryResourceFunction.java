@@ -1,6 +1,7 @@
 package pers.solid.brrp.v1.api;
 
 import net.minecraft.registry.RegistryWrapper;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Function;
 
@@ -9,6 +10,7 @@ import java.util.function.Function;
  *
  * @param <T> The type of the resource, which is the return type of {@link #apply(RegistryWrapper.WrapperLookup)}.
  */
+@ApiStatus.AvailableSince("1.1.0")
 @FunctionalInterface
 public interface RegistryResourceFunction<T> extends Function<RegistryWrapper.WrapperLookup, T> {
   /**

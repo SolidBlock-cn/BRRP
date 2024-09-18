@@ -6,6 +6,7 @@ import com.mojang.serialization.DynamicOps;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.registry.RegistryWrapper;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -22,6 +23,7 @@ import java.util.function.Supplier;
  *
  * @param <T> Type of the direct resource.
  */
+@ApiStatus.AvailableSince("1.1.0")
 public interface ImmediateResourceSupplier<T> extends Supplier<byte[]> {
   /**
    * @return The immediate resource.

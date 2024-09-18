@@ -84,7 +84,7 @@ public class RuntimeResourcePackImpl extends AbstractRuntimeResourcePack impleme
   public RuntimeResourcePackImpl(Identifier id, @NotNull RegistryWrapper.WrapperLookup registryLookup) {
     super(id);
     this.registryLookup = registryLookup;
-    this.blockLootTableGenerator = new BRRPBlockLootTableGenerator(registryLookup);
+    this.blockLootTableGenerator = BRRPBlockLootTableGenerator.of(registryLookup);
   }
 
   public RuntimeResourcePackImpl(Identifier id) {

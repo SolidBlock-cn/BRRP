@@ -8,6 +8,7 @@ public final class BRRPMixins {
   /**
    * The logger used for mixins of this mod.
    */
+  @ApiStatus.AvailableSince("1.1.0")
   @ApiStatus.Internal
   public static final Logger LOGGER = LoggerFactory.getLogger("BRRP/Mixin");
 

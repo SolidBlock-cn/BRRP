@@ -684,13 +684,14 @@ public interface RuntimeResourcePack extends ResourcePack {
   byte[] addAdvancement(Identifier id, byte[] serializedData);
 
   /**
-   * Add a dynamic registry content. This will use immediate resources. If you are adding contents of dynamic resources in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
+   * Add a dynamic registry content. This will use immediate resources. If you are adding contents of dynamic registries in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
    *
    * @param registryKey The registry key of the registry. Such as static fields of {@link RegistryKeys} (instead of {@link Registries}).
    * @param identifier  The identifier of the content, not the identifier of the registry.
    * @param codec       The codec used to serialize.
    * @param content     The content of your dynamic registry.
    */
+  @ApiStatus.AvailableSince("1.1.0")
   default <T> void addDynamicRegistryContent(RegistryKey<Registry<T>> registryKey, Identifier identifier, Codec<T> codec, T content) {
     String path = RegistryKeys.getPath(registryKey);
     Identifier id = registryKey.getValue();
@@ -703,14 +704,16 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
-   * Add a dynamic registry content function with takes a {@link RegistryOps.RegistryInfoGetter} as a parameter. This will use immediate resources. If you are adding contents of dynamic resources in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
+   * Add a dynamic registry content function with takes a {@link RegistryWrapper.WrapperLookup} as a parameter. This will use immediate resources. If you are adding contents of dynamic registries in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
    *
    * @param registryKey The registry key of the registry. Such as static fields of {@link RegistryKeys} (instead of {@link Registries}).
    * @param identifier  The identifier of the content, not the identifier of the registry.
    * @param codec       The codec used to serialize.
    * @param content     The function to get your content, such as {@code registryLookup -> your content}.
    */
-  default <T> void addDynamicRegistryContentFunction(RegistryKey<Registry<T>> registryKey, Identifier identifier, Codec<T> codec, RegistryResourceFunction<T> content) {
+  @ApiStatus.AvailableSince("1.1.0")
+  default <T> void addDynamicRegistryContentFunction(RegistryKey<Registry<T>> registryKey,
+                                                     Identifier identifier, Codec<T> codec, RegistryResourceFunction<T> content) {
     String path = RegistryKeys.getPath(registryKey);
     Identifier id = registryKey.getValue();
     if (!id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE)
@@ -722,24 +725,25 @@ public interface RuntimeResourcePack extends ResourcePack {
   }
 
   /**
-   * Add a dynamic registry content. This will use immediate resources. If you are adding contents of dynamic resources in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
+   * Add a dynamic registry content. This will use immediate resources. If you are adding contents of dynamic registries in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
    *
    * @param registryKey The registry key of the content. It is not the registry key of registry. For example, {@code RegistryKey.of(RegistryKeys.XXX, Identifier.of(...))}.
    * @param codec       The codec used to serialize.
    * @param content     The content of your dynamic registry.
    */
+  @ApiStatus.AvailableSince("1.1.0")
   default <T> void addDynamicRegistryContent(RegistryKey<T> registryKey, Codec<T> codec, T content) {
     addDynamicRegistryContent(registryKey.getRegistryRef(), registryKey.getValue(), codec, content);
   }
 
   /**
-   * Add a dynamic registry content function with takes a {@link RegistryOps.RegistryInfoGetter} as a parameter. This will use immediate resources. If you are adding contents of dynamic resources in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
+   * Add a dynamic registry content function with takes a {@link RegistryWrapper.WrapperLookup} as a parameter. This will use immediate resources. If you are adding contents of dynamic registries in your mod, you should call {@link DynamicRegistries#register} (or similar methods) before calling this.
    *
    * @param registryKey The registry key of the content. It is not the registry key of registry. For example, {@code RegistryKey.of(RegistryKeys.XXX, Identifier.of(...))}.
    * @param codec       The codec used to serialize.
    * @param content     The function to get your content, such as {@code registryLookup -> your content}.
    */
-
+  @ApiStatus.AvailableSince("1.1.0")
   default <T> void addDynamicRegistryContentFunction(RegistryKey<T> registryKey, Codec<T> codec, RegistryResourceFunction<T> content) {
     addDynamicRegistryContentFunction(registryKey.getRegistryRef(), registryKey.getValue(), codec, content);
   }
@@ -806,6 +810,7 @@ public interface RuntimeResourcePack extends ResourcePack {
    * @param stat             The array used to store stats. It should contain three elements: First to store root resources, second to store server data, and third to store client resources.
    * @see ByteBufOutputStream
    */
+  @ApiStatus.AvailableSince("1.1.0")
   void dump(ZipOutputStream stream, @Nullable ResourceType dumpResourceType, int @Nullable [] stat) throws IOException;
 
   /**
@@ -867,6 +872,6 @@ public interface RuntimeResourcePack extends ResourcePack {
   @Deprecated(since = "1.1.0", forRemoval = true)
   @Contract(pure = true)
   default BlockLootTableGenerator getBlockLootTableGenerator() {
-    return new BRRPBlockLootTableGenerator(getRegistryLookup());
+    return BRRPBlockLootTableGenerator.of(getRegistryLookup());
   }
 }

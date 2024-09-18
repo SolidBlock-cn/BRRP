@@ -318,7 +318,7 @@ public interface BlockResourceGenerator extends ItemResourceGenerator {
       // If the loot table is empty, don't write.
       return;
     }
-    pack.addLootTable(lootTableId, registryLookup -> getLootTable(new BRRPBlockLootTableGenerator(registryLookup)).build());
+    pack.addLootTable(lootTableId, registryLookup -> getLootTable(BRRPBlockLootTableGenerator.of(registryLookup)).build());
   }
 
   /**
