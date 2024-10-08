@@ -6,7 +6,19 @@ BRRP (Better Runtime Resource Pack), is a library mod used for generate resource
 
 Welcome to join Tencent QQ group **587928350** to experience the latest update of this mod.
 
-Notice: Since version 1.0.0, the ID of the mod was changed from `better_runtime_resource_pack` to `brrp_v1`, and modified the code without compatibility for older versions, but can co-exist with older versions. Unless needed, please do not used old version.
+Notice: Since version 1.0.0, the ID of the mod was changed from `better_runtime_resource_pack` to `brrp_v1`, and modified the code without compatibility for older versions, but can co-exist with older versions. Unless needed, please do not use the old version.
+
+## Important note
+
+The author tested the performance of this mod, and tested launching mod's built-in resource pack in the following three ways:
+
+1. Using the old implementation of the mod (mod version 1.1.0 and before), storing resources generated at run-time as byte-format in the memory, and read the byte formats from the memory.
+2. Using the new implementation of the mod (since mod versions 1.1.0), storing resources generated at runtime as Java objects, and reading these objects from the memory directly, reducing the process of serialization and deserialization.
+3. Not using runtime resources, storing resources directly in mod file.
+
+It turns out that the three implementations above **do not differ largely in performance**, which means, for current versions, runtime resource packs do not have the effect of boosting performance. And while the mod itself is related to complex modifications, it is hard to totally avoid compatibility and manufacturing difficulty issues. Therefore, the author's other mods, will not depend on this mod in the future. Actually, Fabric Data Generation API, bundled in Fabric API, has a better compatibility and is also being updated and manufactured, which does not consume my own effort, and thus is more worth using.
+
+However, runtime resource packs can significantly reduce the size of mod files, and may be dynamic. Currently, there are also some mods depending on this mod. Therefore, for future Minecraft versions, the mod will still update, and accept issue feedbacks in GitHub.
 
 ## What is a runtime resource pack?
 
